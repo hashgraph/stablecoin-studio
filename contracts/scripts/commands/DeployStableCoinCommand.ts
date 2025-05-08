@@ -25,7 +25,8 @@ export interface TokenInformation {
 }
 
 interface DeployStableCoinCommandParamsCommon {
-    businessLogicResolverAddress: string
+    businessLogicResolverProxyAddress: string
+    stableCoinFactoryProxyAddress: string
     grantKYCToOriginalSender?: boolean
     useEnvironment?: boolean
 }
@@ -43,7 +44,6 @@ export interface DeployStableCoinCommandNewParams extends DeployStableCoinComman
     rolesToAccount?: string
     initialMetadata?: string
     proxyAdminOwnerAccount?: string
-    businessLogicResolverAddress: string
     stableCoinConfigurationId?: IStableCoinFactory.ResolverProxyConfigurationStruct
     reserveConfigurationId?: IStableCoinFactory.ResolverProxyConfigurationStruct
 }
@@ -56,27 +56,31 @@ interface DeployStableCoinCommandParams extends DeployStableCoinCommandParamsCom
 export default class DeployStableCoinCommand {
     public readonly wallet: Wallet
     public readonly tokenStruct: IStableCoinFactory.TokenStructStruct
-    public readonly businessLogicResolverAddress: string
+    public readonly businessLogicResolverProxyAddress: string
+    public readonly stableCoinFactoryProxyAddress: string
     public readonly grantKYCToOriginalSender: boolean
     public readonly useEnvironment: boolean
 
     constructor({
         wallet,
         tokenStruct,
-        businessLogicResolverAddress,
+        businessLogicResolverProxyAddress,
+        stableCoinFactoryProxyAddress,
         grantKYCToOriginalSender = false,
         useEnvironment = false,
     }: DeployStableCoinCommandParams) {
         this.wallet = wallet
         this.tokenStruct = tokenStruct
-        this.businessLogicResolverAddress = businessLogicResolverAddress
+        this.businessLogicResolverProxyAddress = businessLogicResolverProxyAddress
+        this.stableCoinFactoryProxyAddress = stableCoinFactoryProxyAddress
         this.grantKYCToOriginalSender = grantKYCToOriginalSender
         this.useEnvironment = useEnvironment
     }
 
     public static async newInstance({
         signer,
-        businessLogicResolverAddress,
+        businessLogicResolverProxyAddress,
+        stableCoinFactoryProxyAddress,
         grantKYCToOriginalSender = false,
         useEnvironment = false,
         tokenInformation,
@@ -129,7 +133,7 @@ export default class DeployStableCoinCommand {
                 allowance: NUMBER_ZERO,
             },
             metadata: initialMetadata,
-            businessLogicResolverAddress,
+            businessLogicResolverAddress: businessLogicResolverProxyAddress,
             stableCoinConfigurationId: stableCoinConfigurationId ?? {
                 key: CONFIG_ID.stableCoin,
                 version: DEFAULT_CONFIG_VERSION,
@@ -143,7 +147,8 @@ export default class DeployStableCoinCommand {
         return new DeployStableCoinCommand({
             wallet,
             tokenStruct,
-            businessLogicResolverAddress,
+            businessLogicResolverProxyAddress,
+            stableCoinFactoryProxyAddress,
             grantKYCToOriginalSender,
             useEnvironment,
         })

@@ -1,5 +1,5 @@
 import { BigNumber } from 'ethers'
-import { DEFAULT_TOKEN } from 'scripts/constants'
+import { CONFIG_ID, DEFAULT_CONFIG_VERSION, DEFAULT_TOKEN } from 'scripts/constants'
 import { WithSignerCommand, WithSignerCommandParams, WithSignerConstructorParams } from '@tasks'
 
 interface DeployStableCoinCommandBaseParams {
@@ -22,7 +22,8 @@ interface DeployStableCoinCommandBaseParams {
     stableCoinConfigurationIdVersion?: number
     reserveConfigurationIdKey?: string
     reserveConfigurationIdVersion?: number
-    businessLogicResolverAddress: string
+    businessLogicResolverProxyAddress: string
+    stableCoinFactoryProxyAddress: string
     grantKYCToOriginalSender?: boolean
     useEnvironment?: boolean
 }
@@ -51,7 +52,8 @@ export default class DeployStableCoinCommand extends WithSignerCommand {
     public readonly stableCoinConfigurationIdVersion?: number
     public readonly reserveConfigurationIdKey?: string
     public readonly reserveConfigurationIdVersion?: number
-    public readonly businessLogicResolverAddress: string
+    public readonly businessLogicResolverProxyAddress: string
+    public readonly stableCoinFactoryProxyAddress: string
     public readonly grantKYCToOriginalSender?: boolean
     public readonly useEnvironment?: boolean
 
@@ -71,11 +73,12 @@ export default class DeployStableCoinCommand extends WithSignerCommand {
         initialMetadata,
         addFeeSchedule,
         addKyc,
-        stableCoinConfigurationIdKey,
-        stableCoinConfigurationIdVersion,
-        reserveConfigurationIdKey,
-        reserveConfigurationIdVersion,
-        businessLogicResolverAddress,
+        stableCoinConfigurationIdKey = CONFIG_ID.stableCoin,
+        stableCoinConfigurationIdVersion = DEFAULT_CONFIG_VERSION,
+        reserveConfigurationIdKey = CONFIG_ID.reserve,
+        reserveConfigurationIdVersion = DEFAULT_CONFIG_VERSION,
+        businessLogicResolverProxyAddress,
+        stableCoinFactoryProxyAddress,
         grantKYCToOriginalSender = false,
         useEnvironment = false,
         ...args
@@ -100,7 +103,8 @@ export default class DeployStableCoinCommand extends WithSignerCommand {
         this.stableCoinConfigurationIdVersion = stableCoinConfigurationIdVersion
         this.reserveConfigurationIdKey = reserveConfigurationIdKey
         this.reserveConfigurationIdVersion = reserveConfigurationIdVersion
-        this.businessLogicResolverAddress = businessLogicResolverAddress
+        this.businessLogicResolverProxyAddress = businessLogicResolverProxyAddress
+        this.stableCoinFactoryProxyAddress = stableCoinFactoryProxyAddress
         this.grantKYCToOriginalSender = grantKYCToOriginalSender
         this.useEnvironment = useEnvironment
     }
@@ -126,7 +130,8 @@ export default class DeployStableCoinCommand extends WithSignerCommand {
             stableCoinConfigurationIdVersion,
             reserveConfigurationIdKey,
             reserveConfigurationIdVersion,
-            businessLogicResolverAddress,
+            businessLogicResolverProxyAddress,
+            stableCoinFactoryProxyAddress,
             grantKYCToOriginalSender,
             useEnvironment,
             ...signerArgs
@@ -152,7 +157,8 @@ export default class DeployStableCoinCommand extends WithSignerCommand {
             stableCoinConfigurationIdVersion,
             reserveConfigurationIdKey,
             reserveConfigurationIdVersion,
-            businessLogicResolverAddress,
+            businessLogicResolverProxyAddress,
+            stableCoinFactoryProxyAddress,
             grantKYCToOriginalSender,
             useEnvironment,
             ...parentCommand,

@@ -23,11 +23,27 @@ task('deployStableCoin', 'Deploy new stable coin')
     .addOptionalParam('rolesToAccount', 'Roles to account', undefined, types.string)
     .addOptionalParam('addFeeSchedule', 'Add fee schedule', false, types.boolean)
     .addOptionalParam('addKyc', 'Add KYC', false, types.boolean)
-    .addOptionalParam('stableCoinConfigurationIdKey', 'The stable coin configuration ID key', '', types.string)
-    .addOptionalParam('stableCoinConfigurationIdVersion', 'The stable coin configuration ID version', 0, types.int)
-    .addOptionalParam('reserveConfigurationIdKey', 'The reserve configuration ID key', '', types.string)
-    .addOptionalParam('reserveConfigurationIdVersion', 'The reserve configuration ID version', 0, types.int)
-    .addParam('businessLogicResolverAddress', 'The address of the business logic resolver', undefined, types.string)
+    .addOptionalParam('stableCoinConfigurationIdKey', 'The stable coin configuration ID key', undefined, types.string)
+    .addOptionalParam(
+        'stableCoinConfigurationIdVersion',
+        'The stable coin configuration ID version',
+        undefined,
+        types.int
+    )
+    .addOptionalParam('reserveConfigurationIdKey', 'The reserve configuration ID key', undefined, types.string)
+    .addOptionalParam('reserveConfigurationIdVersion', 'The reserve configuration ID version', undefined, types.int)
+    .addParam(
+        'businessLogicResolverProxyAddress',
+        'The address of the business logic resolver proxy',
+        undefined,
+        types.string
+    )
+    .addParam(
+        'stableCoinFactoryProxyAddress',
+        'The address of the stable coin factory ResolverProxy',
+        undefined,
+        types.string
+    )
     .addOptionalParam('grantKYCToOriginalSender', 'Grant KYC to original sender', false, types.boolean)
     .addOptionalParam('useEnvironment', 'Use environment', false, types.boolean)
     // Signer related parameters ⬇️
@@ -67,7 +83,8 @@ task('deployStableCoin', 'Deploy new stable coin')
             stableCoinConfigurationIdVersion,
             reserveConfigurationIdKey,
             reserveConfigurationIdVersion,
-            businessLogicResolverAddress,
+            businessLogicResolverProxyAddress,
+            stableCoinFactoryProxyAddress,
             grantKYCToOriginalSender,
             useEnvironment,
             signer,
@@ -76,7 +93,8 @@ task('deployStableCoin', 'Deploy new stable coin')
 
         const deployScCommand = await DeployScCommandScripts.newInstance({
             signer,
-            businessLogicResolverAddress,
+            businessLogicResolverProxyAddress,
+            stableCoinFactoryProxyAddress,
             grantKYCToOriginalSender,
             tokenInformation: {
                 name: tokenName ?? DEFAULT_TOKEN.name,
@@ -110,6 +128,8 @@ task('deployStableCoin', 'Deploy new stable coin')
                   }
                 : undefined,
         })
+
+        console.log(deployScCommand)
 
         // * Deploy the stable coin
         const result = await deployStableCoin(deployScCommand)
@@ -159,11 +179,11 @@ task(
 
         // * Display the deployed addresses
         const addressList = {
+            'Business Logic Resolver': result.businessLogicResolver.address,
             'Business Logic Resolver Proxy': result.businessLogicResolver.proxyAddress,
             'Business Logic Resolver Proxy Admin': result.businessLogicResolver.proxyAdminAddress,
-            'Business Logic Resolver': result.businessLogicResolver.address,
             'Stable Coin Factory Facet': result.stableCoinFactoryFacet.address,
-            'Stable Coin Factory Proxy': result.stableCoinFactoryFacet.proxyAddress,
+            'Stable Coin Factory Facet Proxy': result.stableCoinFactoryFacet.proxyAddress,
             'Hedera Token Manager Facet': result.hederaTokenManagerFacet.address,
             'Diamond Facet': result.diamondFacet.address,
             'Reserve Facet': result.reserveFacet.address,

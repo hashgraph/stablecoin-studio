@@ -21,7 +21,8 @@ export default class CreateConfigurationsForDeployedContractsCommand extends Bas
             businessLogicResolver,
             ...contractListToRegister
         } = deployedContractList
-        const { stableCoinFactoryFacet, reserveFacet, ...stableCoinFacetList } = contractListToRegister
+        const { stableCoinFactoryFacet, hederaReserveFacet, reserveFacet, ...stableCoinFacetList } =
+            contractListToRegister
 
         if (!businessLogicResolver.proxyAddress) {
             throw new BusinessLogicResolverProxyNotFound()
@@ -37,9 +38,7 @@ export default class CreateConfigurationsForDeployedContractsCommand extends Bas
         })
 
         this.stableCoinFactoryAddressList = [stableCoinFactoryFacet.address]
-        this.stableCoinAddressList = Object.values(stableCoinFacetList).map(
-            (stableCoinFacet) => stableCoinFacet.address
-        )
-        this.reserveAddressList = [reserveFacet.address]
+        this.stableCoinAddressList = Object.values(stableCoinFacetList).map((facet) => facet.address)
+        this.reserveAddressList = [reserveFacet.address, hederaReserveFacet.address]
     }
 }

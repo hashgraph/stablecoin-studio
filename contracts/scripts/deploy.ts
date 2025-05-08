@@ -63,15 +63,15 @@ export let environment = Environment.empty()
 export async function deployStableCoin({
     wallet,
     tokenStruct,
-    businessLogicResolverAddress,
+    businessLogicResolverProxyAddress,
+    stableCoinFactoryProxyAddress,
     grantKYCToOriginalSender,
     useEnvironment,
 }: DeployStableCoinCommand) {
     const kycFacet = KYCFacet__factory.connect(ADDRESS_ZERO, wallet)
-    const stableCoinFactory = StableCoinFactoryFacet__factory.connect(businessLogicResolverAddress, wallet)
+    const stableCoinFactory = StableCoinFactoryFacet__factory.connect(stableCoinFactoryProxyAddress, wallet)
     // * Deploy new StableCoin using the Factory
     console.log(MESSAGES.stableCoinFactory.info.deployStableCoin)
-    console.log(tokenStruct)
     const deployScResponse = await stableCoinFactory.deployStableCoin(tokenStruct, {
         gasLimit: GAS_LIMIT.stableCoinFactory.deployStableCoin,
         value: VALUE.stableCoinFactory.deployStableCoin,
@@ -92,7 +92,7 @@ export async function deployStableCoin({
     }
     const deployedScEventData = confirmationEvent.args
         .deployedStableCoin as IStableCoinFactory.DeployedStableCoinStructOutput
-
+    console.log(`Deployed StableCoin: ${deployedScEventData.stableCoinProxy}`)
     // * Associate token to deployer directly
     console.log(MESSAGES.hederaTokenManager.info.associate)
     const associateResponse = await IHRC__factory.connect(deployedScEventData.tokenAddress, wallet).associate({
@@ -125,7 +125,10 @@ export async function deployStableCoin({
         const { stableCoinProxy, reserveProxy, tokenAddress } = deployedScEventData
         if (!environment.initialized) {
             environment = new Environment({
-                businessLogicResolver: BusinessLogicResolver__factory.connect(businessLogicResolverAddress, wallet),
+                businessLogicResolver: BusinessLogicResolver__factory.connect(
+                    businessLogicResolverProxyAddress,
+                    wallet
+                ),
                 stableCoinProxyAddress: stableCoinProxy,
                 tokenAddress: tokenAddress,
                 reserveProxyAddress: reserveProxy,
@@ -232,7 +235,7 @@ export async function deployFullInfrastructure({
         },
     })
     const stableCoinFactoryResolverProxy = await deployContract(resolverProxyDeployCommand)
-    console.log(MESSAGES.stableCoinFactory.info.deployResolverProxy)
+    console.log(MESSAGES.stableCoinFactory.success.deployResolverProxy)
     // Store the proxy address in the deployed contract list
     deployedContractList.stableCoinFactoryFacet.proxyAddress = stableCoinFactoryResolverProxy.address
 

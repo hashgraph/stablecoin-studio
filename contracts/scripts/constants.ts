@@ -124,7 +124,7 @@ export const GAS_LIMIT = {
     stableCoinFactory: {
         deploy: 5_000_000n,
         initialize: 130_000n,
-        deployStableCoin: 1_900_000n,
+        deployStableCoin: 2_300_000n,
         addHederaTokenManagerVersion: 4_800_000n,
         editHederaTokenManagerAddress: 4_800_000n,
         removeHederaTokenManagerAddress: 4_800_000n, // Added gas limit for removeHederaTokenManagerAddress

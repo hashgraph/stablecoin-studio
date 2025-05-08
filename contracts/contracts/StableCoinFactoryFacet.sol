@@ -126,9 +126,9 @@ contract StableCoinFactoryFacet is IStaticFunctionSelectors, IStableCoinFactory,
      *
      * @param requestedToken The token struct
      *
-     * @return reserve address
+     * @return reserveProxy address
      */
-    function _handleReserve(TokenStruct calldata requestedToken) private returns (address) {
+    function _handleReserve(TokenStruct calldata requestedToken) private returns (address reserveProxy) {
         bool createReserve = requestedToken.createReserve;
         address reserveAddress = requestedToken.reserveAddress;
         if (!createReserve && reserveAddress == address(0)) {
@@ -143,7 +143,7 @@ contract StableCoinFactoryFacet is IStaticFunctionSelectors, IStableCoinFactory,
                 requestedToken.tokenDecimals,
                 requestedToken.tokenInitialSupply
             );
-            address reserveProxy = address(
+            reserveProxy = address(
                 new ResolverProxy(
                     requestedToken.businessLogicResolverAddress,
                     requestedToken.reserveConfigurationId.key,
@@ -220,13 +220,13 @@ contract StableCoinFactoryFacet is IStaticFunctionSelectors, IStableCoinFactory,
 
     function getStaticFunctionSelectors() external pure override returns (bytes4[] memory staticFunctionSelectors_) {
         uint256 selectorIndex;
-        staticFunctionSelectors_ = new bytes4[](8);
+        staticFunctionSelectors_ = new bytes4[](1);
         staticFunctionSelectors_[selectorIndex++] = this.deployStableCoin.selector;
     }
 
     function getStaticInterfaceIds() external pure override returns (bytes4[] memory staticInterfaceIds_) {
-        staticInterfaceIds_ = new bytes4[](1);
         uint256 selectorsIndex;
+        staticInterfaceIds_ = new bytes4[](1);
         staticInterfaceIds_[selectorsIndex++] = type(IStableCoinFactory).interfaceId;
     }
 }
