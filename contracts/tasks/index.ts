@@ -34,9 +34,6 @@ export * from './utils'
 // * Deploy
 export * from './deploy'
 
-// * Stable Coin Factory
-// export * from './stableCoinFactory'
-
 // * Business Logic Resolver
 export * from './businessLogicResolver'
 
