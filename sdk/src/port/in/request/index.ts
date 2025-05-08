@@ -64,18 +64,14 @@ import AddFractionalFeeRequest from './AddFractionalFeeRequest.js';
 import SetConfigurationRequest from './SetConfigurationRequest.js';
 import GetTokenManagerListRequest from './GetTokenManagerListRequest.js';
 import UpdateRequest from './UpdateRequest.js';
-import GetProxyConfigRequest from './GetProxyConfigRequest.js';
-import GetFactoryProxyConfigRequest from './GetFactoryProxyConfigRequest.js';
-import ChangeProxyOwnerRequest from './ChangeProxyOwnerRequest.js';
-import AcceptProxyOwnerRequest from './AcceptProxyOwnerRequest.js';
-import ChangeFactoryProxyOwnerRequest from './ChangeFactoryProxyOwnerRequest.js';
-import AcceptFactoryProxyOwnerRequest from './AcceptFactoryProxyOwnerRequest.js';
-import UpgradeImplementationRequest from './UpgradeImplementationRequest.js';
-import UpgradeFactoryImplementationRequest from './UpgradeFactoryImplementationRequest.js';
 import SignTransactionRequest from './SignTransactionRequest.js';
 import SubmitTransactionRequest from './SubmitTransactionRequest.js';
 import RemoveTransactionRequest from './RemoveTransactionRequest.js';
 import GetTransactionsRequest from './GetTransactionsRequest.js';
+import UpdateConfigRequest from './UpdateConfigRequest.js';
+import UpdateConfigVersionRequest from './UpdateConfigVersionRequest.js';
+import UpdateResolverRequest from './UpdateResolverRequest.js';
+import GetConfigInfoRequest from './GetConfigInfoRequest.js';
 
 export * from './ConnectRequest.js';
 export * from './BaseRequest.js';
@@ -126,16 +122,12 @@ export {
 	AddFractionalFeeRequest,
 	GetTokenManagerListRequest,
 	UpdateRequest,
-	GetProxyConfigRequest,
-	GetFactoryProxyConfigRequest,
-	ChangeProxyOwnerRequest,
-	AcceptProxyOwnerRequest,
-	ChangeFactoryProxyOwnerRequest,
-	AcceptFactoryProxyOwnerRequest,
-	UpgradeImplementationRequest,
-	UpgradeFactoryImplementationRequest,
 	SignTransactionRequest,
 	SubmitTransactionRequest,
 	RemoveTransactionRequest,
 	GetTransactionsRequest,
+	UpdateConfigRequest,
+	UpdateConfigVersionRequest,
+	UpdateResolverRequest,
+	GetConfigInfoRequest,
 };

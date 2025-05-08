@@ -26,7 +26,7 @@ import Event from './Event.js';
 import ReserveDataFeed from './ReserveDataFeed.js';
 import Fees from './CustomFees.js';
 import Factory from './Factory.js';
-import Proxy from './Proxy.js';
+import Management from './Management.js';
 
 export {
 	StableCoin,
@@ -37,7 +37,7 @@ export {
 	ReserveDataFeed,
 	Fees,
 	Factory,
-	Proxy,
+	Management,
 };
 
 export * from './request';
@@ -51,4 +51,4 @@ export * from './Common.js';
 export * from './ReserveDataFeed.js';
 export * from './CustomFees.js';
 export * from './Factory.js';
-export * from './Proxy.js';
+export * from './Management.js';
