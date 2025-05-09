@@ -1,8 +1,6 @@
 {
     "extends": "solhint:recommended",
-    "plugins": [
-        "prettier"
-    ],
+    "plugins": ["prettier"],
     "rules": {
         "prettier/prettier": [
             "error",
@@ -10,14 +8,8 @@
                 "endOfLine": "auto"
             }
         ],
-        "max-line-length": [
-            "warn",
-            120
-        ],
-        "max-states-count": [
-            "off",
-            15
-        ],
+        "max-line-length": ["warn", 120],
+        "max-states-count": ["off", 15],
         "no-empty-blocks": "error",
         "no-unused-vars": "error",
         "payable-fallback": "error",
@@ -29,8 +21,6 @@
         ],
         "constructor-syntax": "error",
         "const-name-snakecase": "error",
-        "contract-name-camelcase": "error",
-        "event-name-camelcase": "error",
         "func-name-mixedcase": "error",
         "func-param-name-mixedcase": "error",
         "modifier-name-mixedcase": "error",
@@ -50,10 +40,7 @@
         "avoid-throw": "error",
         "avoid-tx-origin": "error",
         "check-send-result": "error",
-        "compiler-version": [
-            "error",
-            "^0.8.18"
-        ],
+        "compiler-version": ["error", "^0.8.18"],
         "func-visibility": [
             "warn",
             {
@@ -63,10 +50,7 @@
         "multiple-sends": "error",
         "reentrancy": "error",
         "state-visibility": "error",
-        "quotes": [
-            "error",
-            "single"
-        ],
+        "quotes": ["error", "single"],
         "not-rely-on-time": "off"
     }
 }

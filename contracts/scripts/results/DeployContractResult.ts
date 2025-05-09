@@ -1,9 +1,13 @@
 import { Contract, ContractReceipt } from 'ethers'
 import { ContractName } from '@configuration'
-import DeployContractWithFactoryResult from './DeployContractWithFactoryResult'
 
-export default class DeployContractResult extends DeployContractWithFactoryResult<Contract> {
-    public readonly name: ContractName
+export default class DeployContractResult<C extends Contract> {
+    public name: ContractName
+    public address: string
+    public contract: C
+    public proxyAddress?: string
+    public proxyAdminAddress?: string
+    public receipt?: ContractReceipt
 
     constructor({
         name,
@@ -15,18 +19,16 @@ export default class DeployContractResult extends DeployContractWithFactoryResul
     }: {
         name: ContractName
         address: string
-        contract: Contract
+        contract: C
         proxyAddress?: string
         proxyAdminAddress?: string
         receipt?: ContractReceipt
     }) {
-        super({
-            address,
-            contract,
-            proxyAddress,
-            proxyAdminAddress,
-            receipt,
-        })
         this.name = name
+        this.address = address
+        this.contract = contract
+        this.proxyAddress = proxyAddress
+        this.proxyAdminAddress = proxyAdminAddress
+        this.receipt = receipt
     }
 }

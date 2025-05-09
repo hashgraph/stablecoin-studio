@@ -1,9 +1,25 @@
-import { constants } from 'ethers'
+import { BigNumber, constants } from 'ethers'
 import { GAS_LIMIT as CONF_GAS_LIMIT } from '@configuration'
+import { parseUnits } from 'ethers/lib/utils'
+
+// * General
+export const CONFIG_ID = {
+    stableCoinFactory: '0x0000000000000000000000000000000000000000000000000000000000000001',
+    stableCoin: '0x0000000000000000000000000000000000000000000000000000000000000002',
+    reserve: '0x0000000000000000000000000000000000000000000000000000000000000003',
+}
+export const DEFAULT_CONFIG_VERSION = 1
 
 // * Ethereum
 export const ADDRESS_ZERO = constants.AddressZero
 export const NUMBER_ZERO = constants.Zero
+
+// * Hedera
+export const HBAR_DECIMALS = 8
+export const HBAR_FACTOR = BigNumber.from(10).pow(HBAR_DECIMALS)
+export const ONE_HBAR = parseUnits('1', 'ether') // Amount in HBAR (1 HBAR = 1 ether unit)
+export const TWO_HBAR = parseUnits('2', 'ether') // Amount in HBAR (1 HBAR = 1 ether unit)
+
 // * Roles
 export const ROLES = {
     defaultAdmin: {
@@ -56,6 +72,9 @@ export const ROLES = {
 export const GAS_LIMIT = {
     ...CONF_GAS_LIMIT,
     transfer: 60_000n,
+    initialize: {
+        businessLogicResolver: 8_000_000,
+    },
     hederaTokenManager: {
         deploy: 5_000_000n,
         initialize: 60_000n,
@@ -105,7 +124,7 @@ export const GAS_LIMIT = {
     stableCoinFactory: {
         deploy: 5_000_000n,
         initialize: 130_000n,
-        deployStableCoin: 1_900_000n,
+        deployStableCoin: 2_300_000n,
         addHederaTokenManagerVersion: 4_800_000n,
         editHederaTokenManagerAddress: 4_800_000n,
         removeHederaTokenManagerAddress: 4_800_000n, // Added gas limit for removeHederaTokenManagerAddress
@@ -115,6 +134,15 @@ export const GAS_LIMIT = {
         getAdmin: 4_800_000n,
     },
     proxyAdmin: {
+        deploy: 2_000_000n,
+        upgrade: 150_000n,
+    },
+    tup: {
+        deploy: 500_000n,
+        upgrade: 150_000n,
+    },
+    resolverProxy: {
+        deploy: 2_000_000n,
         upgrade: 150_000n,
     },
     hederaReserve: {
@@ -126,6 +154,12 @@ export const GAS_LIMIT = {
         decimals: 60_000n,
         description: 60_000n,
         version: 60_000n,
+    },
+    businessLogicResolver: {
+        deploy: 5_000_000n,
+        getStaticResolverKey: 60_000,
+        registerBusinessLogics: 7_800_000,
+        createConfiguration: 15_000_000,
     },
 }
 
@@ -143,6 +177,11 @@ export const MESSAGES = {
             validateTxResponse: ['❌ Failed to validate transaction response.', ' Transaction Hash: '],
             signerWithoutProvider: '❌ Signer is missing a provider.',
             couldNotFindWallet: '🔍 Could not find wallet for signer.',
+            businessLogicResolverAddressRequired: '❌ Business logic resolver address is required.',
+            configurationIdRequired: '❌ Configuration ID is required.',
+            configurationVersionRequired: '❌ Configuration version is required.',
+            rolesStructRequired: '❌ Roles struct is required.',
+            nameOrFactoryRequired: '❌ Name or factory parameters are required.',
         },
     },
     deploy: {
@@ -180,6 +219,7 @@ export const MESSAGES = {
             deploy: '🚀 Deploying StableCoinFactory...',
             initialize: '🚀 Initializing StableCoinFactory...',
             deployStableCoin: '🚀 Deploying StableCoin...',
+            deployFactoryResolverProxy: '🚀 Deploying StableCoinFactory Resolver Proxy...',
             addHederaTokenManagerVersion: '🚀 Adding HederaTokenManager version...',
             editHederaTokenManagerAddress: '✏️ Editing HederaTokenManager address...',
             removeHederaTokenManagerAddress: '🗑️ Removing HederaTokenManager address...',
@@ -188,6 +228,7 @@ export const MESSAGES = {
             deploy: '✅ StableCoinFactory deployed successfully.',
             initialize: '✅ StableCoinFactory initialized successfully.',
             deployStableCoin: '✅ StableCoin deployed successfully.',
+            deployFactoryResolverProxy: '✅ StableCoinFactory Resolver Proxy deployed successfully.',
             addHederaTokenManagerVersion: '✅ HederaTokenManager version added successfully.',
             editHederaTokenManagerAddress: '✅ HederaTokenManager address edited successfully.',
             removeHederaTokenManagerAddress: '✅ HederaTokenManager address removed successfully.', // Added success message for removeHederaTokenManagerAddress
@@ -201,4 +242,52 @@ export const MESSAGES = {
             removeHederaTokenManagerAddress: '❌ Failed to remove HederaTokenManager address.', // Added error message for removeHederaTokenManagerAddress
         },
     },
+    businessLogicResolver: {
+        info: {
+            initialize: 'Initializing business logic resolver...',
+            register: 'Registering business logics...',
+            createConfigurations: 'Creating configurations...',
+        },
+        success: {
+            initialize: '✅ Business logic resolver initialized successfully',
+            register: '✅ Business logics registered successfully',
+            createConfigurations: '✅ Configurations created successfully',
+        },
+        error: {
+            notFound: 'Business logic resolver not found',
+            proxyNotFound: 'Business logic resolver proxy not found',
+            initialize: 'Error initializing business logic resolver',
+            register: 'Error registering business logics',
+            createConfigurations: 'Error creating configurations',
+        },
+    },
 }
+
+// * Events
+export const EVENTS = {
+    businessLogicResolver: {
+        registered: 'BusinessLogicsRegistered',
+        configurationCreated: 'DiamondBatchConfigurationCreated',
+    },
+}
+
+// * Default Values
+export const DEFAULT_TOKEN = (() => {
+    const decimals = 6
+    const tokenFactor = BigNumber.from(10).pow(decimals)
+    return {
+        memo: 'Example Token Memo',
+        name: 'ExampleToken',
+        symbol: 'EXMPL',
+        decimals,
+        tokenFactor,
+        initialSupply: tokenFactor.mul(100),
+        maxSupply: tokenFactor.mul(1_000),
+        initialAmountDataFeed: tokenFactor.mul(100_000).toString(),
+        additionalData: 'Some additional data here',
+        freeze: false,
+    }
+})()
+
+export const ONE_TOKEN = DEFAULT_TOKEN.tokenFactor
+export const TEN_TOKENS = DEFAULT_TOKEN.tokenFactor.mul(10)

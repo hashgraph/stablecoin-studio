@@ -38,14 +38,13 @@ import {
 	TokenGrantKycTransaction,
 	TokenRevokeKycTransaction,
 } from '@hashgraph/sdk';
-import { StableCoinFactory__factory } from '@hashgraph/stablecoin-npm-contracts';
+import { StableCoinFactoryFacet__factory } from '@hashgraph/stablecoin-npm-contracts';
 import {
 	IStrategyConfig,
 	SignatureRequest,
 } from '@hashgraph/hedera-custodians-integration';
 import {
 	CLIENT_PUBLIC_KEY_ED25519,
-	HEDERA_TOKEN_MANAGER_ADDRESS,
 	GET_TRANSACTION,
 	GET_TRANSACTIONS,
 	SIGNATURE,
@@ -65,6 +64,7 @@ import {
 	RESERVE_ADDRESS,
 	CLIENT_PRIVATE_KEY_ECDSA_2,
 	CLIENT_ACCOUNT_ED25519,
+	HEDERA_TOKEN_MANAGER_ADDRESS,
 } from './config.js';
 import {
 	AccountViewModel,
@@ -107,6 +107,7 @@ import { KeysStruct } from '../src/domain/context/factory/FactoryKey.js';
 import { FactoryRole } from '../src/domain/context/factory/FactoryRole.js';
 import { FactoryStableCoin } from '../src/domain/context/factory/FactoryStableCoin.js';
 import { REGEX_TRANSACTION } from '../src/port/out/error/TransactionResponseError.js';
+import { ResolverProxyConfiguration } from '../src/domain/context/factory/ResolverProxyConfiguration.js';
 
 interface token {
 	tokenId: string;
@@ -147,12 +148,12 @@ const autoRenewAccount = AUTO_RENEW_ACCOUNT;
 
 let proxyOwner = '0x0000000000000000000000000000000000000003';
 let proxyPendingOwner = '0x0000000000000000000000000000000000000000';
-let implementation = identifiers(
-	HederaId.from(HEDERA_TOKEN_MANAGER_ADDRESS),
-)[1];
 let reserveAmount = RESERVE_AMOUNT;
 let reserveAddress = RESERVE_ADDRESS;
 let user_account: Account;
+let configVersion: number;
+let configId: string;
+let resolverAddress: string;
 
 function hexToDecimal(hexString: string): number {
 	if (!/^0x[a-fA-F0-9]+$|^[a-fA-F0-9]+$/.test(hexString)) {
@@ -297,9 +298,6 @@ function smartContractCalls(functionName: string, decoded: any): void {
 	} else if (functionName == 'acceptOwnership') {
 		proxyOwner = proxyPendingOwner;
 		proxyPendingOwner = '0x0000000000000000000000000000000000000000';
-	} else if (functionName == 'upgrade') {
-		implementation =
-			'0x' + (decoded as any).implementation.toUpperCase().substring(2);
 	} else if (functionName == 'setAmount') {
 		reserveAmount = (decoded as any).newValue;
 	} else if (functionName == 'grantRole') {
@@ -523,6 +521,18 @@ function smartContractCalls(functionName: string, decoded: any): void {
 		const account =
 			'0x' + (decoded as any).account.toUpperCase().substring(2);
 		wipe(account, amount);
+	} else if (functionName == 'updateConfigVersion') {
+		const version = (decoded as any)._newVersion as BigNumber;
+		configVersion = version.toNumber();
+	} else if (functionName == 'updateConfig') {
+		configId = (decoded as any)._newConfigurationId;
+		const version = (decoded as any)._newVersion as BigNumber;
+		configVersion = version.toNumber();
+	} else if (functionName == 'updateResolver') {
+		resolverAddress = (decoded as any)._newResolver;
+		configId = (decoded as any)._newConfigurationId;
+		const version = (decoded as any)._newVersion as BigNumber;
+		configVersion = version.toNumber();
 	} else if (functionName == 'updateToken') {
 		const updatedToken = (decoded as any).updatedToken;
 		TokenName = updatedToken.tokenName;
@@ -669,12 +679,8 @@ jest.mock('../src/port/out/mirror/MirrorNodeAdapter', () => {
 			initialSupply: BigDecimal.fromString(initialSupply, DECIMALS),
 			treasury: HederaId.from(PROXY_CONTRACT_ID),
 			proxyAddress: new ContractId(PROXY_CONTRACT_ID),
-			proxyAdminAddress: new ContractId(PROXY_ADMIN_CONTRACT_ID),
 			evmProxyAddress: new EvmAddress(
 				identifiers(HederaId.from(PROXY_CONTRACT_ID))[1],
-			),
-			evmProxyAdminAddress: new EvmAddress(
-				identifiers(HederaId.from(PROXY_ADMIN_CONTRACT_ID))[1],
 			),
 			expirationTime: expirationTimestamp,
 			freezeDefault: false,
@@ -940,11 +946,13 @@ jest.mock('../src/port/out/hs/hts/HTSTransactionAdapter', () => {
 	HTSTransactionAdapterMock.create = async function (
 		coin: StableCoinProps,
 		factory: ContractId,
-		hederaTokenManager: ContractId,
 		createReserve: boolean,
+		resolver: ContractId,
+		configId: string,
+		configVersion: number,
+		proxyOwnerAccount: HederaId,
 		reserveAddress?: ContractId,
 		reserveInitialAmount?: BigDecimal,
-		proxyAdminOwnerAccount?: ContractId,
 	): Promise<TransactionResponse<any, Error>> {
 		const mirrorNodeAdapter = new MirrorNodeAdapter();
 		try {
@@ -972,6 +980,10 @@ jest.mock('../src/port/out/hs/hts/HTSTransactionAdapter', () => {
 				this.setKeysForSmartContract(providedKeys);
 
 			const providedRoles = [
+				{
+					account: proxyOwnerAccount,
+					role: StableCoinRole.DEFAULT_ADMIN_ROLE,
+				},
 				{
 					account: coin.burnRoleAccount,
 					role: StableCoinRole.BURN_ROLE,
@@ -1002,6 +1014,16 @@ jest.mock('../src/port/out/hs/hts/HTSTransactionAdapter', () => {
 					role: StableCoinRole.CUSTOM_FEES_ROLE,
 				},
 			];
+
+			const stableCoinConfigurationId: ResolverProxyConfiguration = {
+				key: configId,
+				version: configVersion,
+			};
+
+			const reserveConfigurationId: ResolverProxyConfiguration = {
+				key: configId,
+				version: configVersion,
+			};
 
 			const roles = await Promise.all(
 				providedRoles
@@ -1047,29 +1069,20 @@ jest.mock('../src/port/out/hs/hts/HTSTransactionAdapter', () => {
 				roles,
 				cashinRole,
 				coin.metadata ?? '',
-				proxyAdminOwnerAccount == undefined ||
-				proxyAdminOwnerAccount.toString() == '0.0.0'
-					? '0x0000000000000000000000000000000000000000'
-					: HContractId.fromString(
-							proxyAdminOwnerAccount.value,
-					  ).toSolidityAddress(),
-			);
-			const params = [
-				stableCoinToCreate,
 				(
-					await mirrorNodeAdapter.getContractInfo(
-						hederaTokenManager.value,
-					)
+					await mirrorNodeAdapter.getContractInfo(resolver.value)
 				).evmAddress,
-			];
-
+				stableCoinConfigurationId,
+				reserveConfigurationId,
+			);
+			const params = [stableCoinToCreate];
 			return await this.contractCall(
 				factory.value,
 				'deployStableCoin',
 				params,
 				CREATE_SC_GAS,
 				TransactionType.RECORD,
-				StableCoinFactory__factory.abi,
+				StableCoinFactoryFacet__factory.abi,
 				TOKEN_CREATION_COST_HBAR,
 			);
 		} catch (error) {
@@ -1219,11 +1232,6 @@ jest.mock('../src/port/out/rpc/RPCQueryAdapter', () => {
 			return r;
 		},
 	);
-	singletonInstance.getProxyImplementation = jest.fn(
-		(proxyAdmin: EvmAddress, proxy: EvmAddress) => {
-			return implementation;
-		},
-	);
 	singletonInstance.getProxyAdmin = jest.fn((proxy: EvmAddress) => {
 		return '0x0000000000000000000000000000000000000002';
 	});
@@ -1276,6 +1284,10 @@ jest.mock('../src/port/out/rpc/RPCQueryAdapter', () => {
 	);
 	singletonInstance.getMetadata = jest.fn((address: EvmAddress) => {
 		return metadata;
+	});
+
+	singletonInstance.getConfigInfo = jest.fn(async (address: EvmAddress) => {
+		return [resolverAddress, configId, configVersion];
 	});
 
 	return {
