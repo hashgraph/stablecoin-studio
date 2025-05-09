@@ -29,7 +29,7 @@ task('createConfiguration', 'Create a new configuration')
     .addParam('factoryAddress', 'The factory addresses', undefined, types.string)
     .addParam('reserveAddress', 'The hedera reserve addresses', undefined, types.string)
     .addVariadicPositionalParam('scsContracts', 'The SCS contract addresses', undefined, types.string)
-    .addOptionalParam('privatekey', 'The private key of the account in raw hexadecimal format', undefined, types.string)
+    .addOptionalParam('privateKey', 'The private key of the account in raw hexadecimal format', undefined, types.string)
     .addOptionalParam(
         'signeraddress',
         'The address of the signer to select from the Hardhat signers array',
@@ -156,12 +156,12 @@ task('createConfiguration', 'Create a new configuration')
         }
 
         await createConfigurationsForDeployedContracts(
-            true,
+            false,
             new CreateConfigurationsForDeployedContractsCommand({
                 deployedContractList: deployedContracts,
                 signer,
             })
         )
 
-        console.log(`createConfiguration on ${hre.network.name} succesfully completed`)
+        console.log(`Configurations succesfully created`)
     })

@@ -1,13 +1,9 @@
-export interface GetConfigurationInfoQueryParams {
-    resolver: string
-    configurationId: string
-}
+import { BaseResolverQuery, BaseResolverQueryParams } from '@tasks'
 
-export default class GetConfigurationInfoQuery {
-    public readonly resolver: string
-    public readonly configurationId: string
-    constructor({ resolver, configurationId }: GetConfigurationInfoQueryParams) {
-        this.resolver = resolver
-        this.configurationId = configurationId
+type GetConfigurationInfoQueryParams = BaseResolverQueryParams
+
+export default class GetConfigurationInfoQuery extends BaseResolverQuery {
+    constructor({ configurationId, businessLogicResolverProxyAddress }: GetConfigurationInfoQueryParams) {
+        super({ businessLogicResolverProxyAddress, configurationId })
     }
 }

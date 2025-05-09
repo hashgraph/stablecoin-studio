@@ -24,6 +24,7 @@ export {
     default as BaseStableCoinFactoryQuery,
     BaseStableCoinFactoryQueryParams,
 } from './queries/base/BaseStableCoinFactoryQuery'
+export { default as BaseResolverQuery, BaseResolverQueryParams } from './queries/base/BaseResolverQuery'
 export { default as GetTokenManagerQuery } from './queries/GetTokenManagerQuery'
 export { default as GetStableCoinFactoryAdminQuery } from './queries/GetStableCoinFactoryAdminQuery'
 export { default as GetConfigurationInfoQuery } from './queries/GetConfigurationInfoQuery'

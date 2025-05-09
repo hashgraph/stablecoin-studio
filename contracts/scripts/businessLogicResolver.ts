@@ -5,9 +5,6 @@ import {
     IStaticFunctionSelectors__factory,
 } from '@typechain'
 import {
-    CONFIG_ID,
-    CreateConfigurationsForDeployedContractsCommand,
-    CreateConfigurationsForDeployedContractsResult,
     EVENTS,
     GAS_LIMIT,
     GetFacetsByConfigurationIdAndVersionQuery,
@@ -18,8 +15,6 @@ import {
     validateTxResponse,
     ValidateTxResponseCommand,
 } from '@scripts'
-
-import { Signer } from 'ethers'
 
 export interface BusinessLogicRegistryData {
     businessLogicKey: string
@@ -37,7 +32,6 @@ export async function getFacetsByConfigurationIdAndVersion({
     businessLogicResolverAddress,
     configurationId,
     provider,
-    overrides,
 }: GetFacetsByConfigurationIdAndVersionQuery): Promise<GetFacetsByConfigurationIdAndVersionResult> {
     const diamondCutManager = IDiamondCutManager__factory.connect(businessLogicResolverAddress, provider)
     const latestConfigVersionRaw = await diamondCutManager.getLatestVersionByConfiguration(configurationId)
@@ -52,8 +46,7 @@ export async function getFacetsByConfigurationIdAndVersion({
     for (let currentVersion = 1; currentVersion <= lastestConfigVersion; currentVersion++) {
         const facetListLengthRaw = await diamondCutManager.getFacetsLengthByConfigurationIdAndVersion(
             configurationId,
-            currentVersion,
-            overrides
+            currentVersion
         )
         const facetListLength = parseInt(facetListLengthRaw.toHexString(), 16)
 
@@ -61,8 +54,7 @@ export async function getFacetsByConfigurationIdAndVersion({
             configurationId,
             currentVersion,
             0,
-            facetListLength,
-            overrides
+            facetListLength
         )
     }
     return result
