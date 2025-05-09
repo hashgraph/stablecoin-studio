@@ -24,14 +24,12 @@ import { language, utilsService, wizardService } from '../../../index.js';
 import Service from '../Service.js';
 import DetailsStableCoinService from './DetailsStableCoinService.js';
 import {
-  AcceptProxyOwnerRequest,
   Access,
   Account,
   AddFixedFeeRequest,
   AddFractionalFeeRequest,
   BurnRequest,
   CashInRequest,
-  ChangeProxyOwnerRequest,
   CheckSupplierLimitRequest,
   DecreaseSupplierAllowanceRequest,
   DeleteRequest,
@@ -60,9 +58,11 @@ import {
   StableCoinViewModel,
   TRANSFER_LIST_SIZE,
   TransfersRequest,
+  UpdateConfigRequest,
+  UpdateConfigVersionRequest,
   UpdateCustomFeesRequest,
   UpdateRequest,
-  UpgradeImplementationRequest,
+  UpdateResolverRequest,
   WipeRequest,
 } from '@hashgraph/stablecoin-npm-sdk';
 
@@ -83,11 +83,8 @@ import FeeStableCoinService from './FeeStableCoinService.js';
 import TransfersStableCoinService from './TransfersStableCoinService.js';
 import colors from 'colors';
 import UpdateStableCoinService from './UpdateStableCoinService.js';
-import OwnerProxyService from '../proxy/OwnerProxyService.js';
-import ConfigurationProxyService from '../proxy/ConfigurationProxyService.js';
-import ImplementationProxyService from '../proxy/ImplementationProxyService.js';
-import { IAccountConfig } from '../../../domain/configuration/interfaces/IAccountConfig.js';
 import { AccountType } from '../../../domain/configuration/interfaces/AccountType.js';
+import ResolverStableCoinService from './ResolverStableCoinService.js';
 
 enum tokenKeys {
   admin,
@@ -233,7 +230,6 @@ export default class OperationStableCoinService extends Service {
         await this.filterMenuOptions(
           wizardOperationsStableCoinOptions,
           capabilitiesStableCoin,
-          configAccount,
           await this.getRolesAccount(),
         ),
         false,
@@ -587,6 +583,12 @@ export default class OperationStableCoinService extends Service {
             error,
           );
         }
+        break;
+      case language.getText('wizard.stableCoinOptions.ResolverMgmt'):
+        await utilsService.cleanAndShowBanner();
+
+        await this.resolverManagementFlow();
+
         break;
       case language.getText('wizard.stableCoinOptions.FreezeMgmt'):
         await utilsService.cleanAndShowBanner();
@@ -1103,6 +1105,180 @@ export default class OperationStableCoinService extends Service {
         await this.operationsStableCoin();
     }
     await this.freezeManagementFlow();
+  }
+
+  private async resolverManagementFlow(): Promise<void> {
+    const configAccount = utilsService.getCurrentAccount();
+    const currentMirror = utilsService.getCurrentMirror();
+    const currentRPC = utilsService.getCurrentRPC();
+    const currentBackend = utilsService.getCurrentBackend();
+
+    const resolverOptions = language.getArrayFromObject(
+      'resolverManagement.options',
+    );
+
+    switch (
+      await utilsService.defaultMultipleAsk(
+        language.getText('stablecoin.askAction'),
+        resolverOptions,
+        true,
+        {
+          network: configAccount.network,
+          mirrorNode: currentMirror.name,
+          rpc: currentRPC.name,
+          backend: currentBackend?.endpoint,
+          account: `${configAccount.accountId} - ${configAccount.alias}`,
+          token: this.stableCoinWithSymbol,
+          tokenPaused: this.stableCoinPaused,
+          tokenDeleted: this.stableCoinDeleted,
+        },
+      )
+    ) {
+      // * UpdateConfigVersion
+      case language.getText('resolverManagement.options.UpdateConfigVersion'):
+        await utilsService.cleanAndShowBanner();
+        utilsService.displayCurrentUserInfo(
+          configAccount,
+          this.stableCoinWithSymbol,
+        );
+
+        const updateConfigVersionRequest = new UpdateConfigVersionRequest({
+          tokenId: this.stableCoinId,
+          configVersion: 0,
+        });
+
+        await utilsService.handleValidation(
+          () => updateConfigVersionRequest.validate('configVersion'),
+          async () => {
+            updateConfigVersionRequest.configVersion = Number(
+              await utilsService.defaultSingleAsk(
+                language.getText('resolverManagement.askConfigVersion'),
+                '1',
+              ),
+            );
+          },
+        );
+
+        try {
+          await new ResolverStableCoinService().updateConfigVersion(
+            updateConfigVersionRequest,
+          );
+        } catch (error) {
+          await utilsService.askErrorConfirmation(
+            async () => await this.operationsStableCoin(),
+            error,
+          );
+        }
+        break;
+      // * UpdateConfig
+      case language.getText('resolverManagement.options.UpdateConfig'):
+        await utilsService.cleanAndShowBanner();
+        utilsService.displayCurrentUserInfo(
+          configAccount,
+          this.stableCoinWithSymbol,
+        );
+
+        const updateConfigRequest = new UpdateConfigRequest({
+          tokenId: this.stableCoinId,
+          configId: '',
+          configVersion: 0,
+        });
+
+        await utilsService.handleValidation(
+          () => updateConfigRequest.validate('configId'),
+          async () => {
+            updateConfigRequest.configId = await utilsService.defaultSingleAsk(
+              language.getText('resolverManagement.askConfigId'),
+              '0x0000000000000000000000000000000000000000000000000000000000000001',
+            );
+          },
+        );
+        await utilsService.handleValidation(
+          () => updateConfigRequest.validate('configVersion'),
+          async () => {
+            updateConfigRequest.configVersion = Number(
+              await utilsService.defaultSingleAsk(
+                language.getText('resolverManagement.askConfigVersion'),
+                '1',
+              ),
+            );
+          },
+        );
+
+        try {
+          await new ResolverStableCoinService().updateConfig(
+            updateConfigRequest,
+          );
+        } catch (error) {
+          await utilsService.askErrorConfirmation(
+            async () => await this.operationsStableCoin(),
+            error,
+          );
+        }
+        break;
+      // * UpdateResolver
+      case language.getText('resolverManagement.options.UpdateResolver'):
+        await utilsService.cleanAndShowBanner();
+        utilsService.displayCurrentUserInfo(
+          configAccount,
+          this.stableCoinWithSymbol,
+        );
+
+        const updateResolverRequest = new UpdateResolverRequest({
+          configVersion: 0,
+          configId: '',
+          tokenId: this.stableCoinId,
+          resolver: '',
+        });
+
+        await utilsService.handleValidation(
+          () => updateResolverRequest.validate('configId'),
+          async () => {
+            updateResolverRequest.configId =
+              await utilsService.defaultSingleAsk(
+                language.getText('resolverManagement.askConfigId'),
+                '0x0000000000000000000000000000000000000000000000000000000000000001',
+              );
+          },
+        );
+        await utilsService.handleValidation(
+          () => updateResolverRequest.validate('configVersion'),
+          async () => {
+            updateResolverRequest.configVersion = Number(
+              await utilsService.defaultSingleAsk(
+                language.getText('resolverManagement.askConfigVersion'),
+                '1',
+              ),
+            );
+          },
+        );
+        await utilsService.handleValidation(
+          () => updateResolverRequest.validate('resolver'),
+          async () => {
+            updateResolverRequest.resolver =
+              await utilsService.defaultSingleAsk(
+                language.getText('resolverManagement.askResolverAddress'),
+                '0.0.0',
+              );
+          },
+        );
+
+        try {
+          await new ResolverStableCoinService().updateResolver(
+            updateResolverRequest,
+          );
+        } catch (error) {
+          await utilsService.askErrorConfirmation(
+            async () => await this.operationsStableCoin(),
+            error,
+          );
+        }
+        break;
+      default:
+        await utilsService.cleanAndShowBanner();
+        await this.operationsStableCoin();
+    }
+    await this.resolverManagementFlow();
   }
 
   private async feesManagementFlow(): Promise<void> {
@@ -2346,13 +2522,8 @@ export default class OperationStableCoinService extends Service {
   private async filterMenuOptions(
     options: string[],
     stableCoinCapabilities: StableCoinCapabilities,
-    configAccount: IAccountConfig,
     roles?: string[],
   ): Promise<string[]> {
-    const proxyConfig =
-      await new ConfigurationProxyService().getProxyconfiguration(
-        this.stableCoinId,
-      );
     let result = [];
     let capabilitiesFilter = [];
     const capabilities: Operation[] = stableCoinCapabilities.capabilities.map(
@@ -2389,7 +2560,11 @@ export default class OperationStableCoinService extends Service {
           !this.stableCoinDeleted) ||
         (option === language.getText('wizard.stableCoinOptions.Balance') &&
           !this.stableCoinDeleted) ||
-        option === language.getText('wizard.stableCoinOptions.Configuration')
+        option === language.getText('wizard.stableCoinOptions.Configuration') ||
+        (option === language.getText('wizard.stableCoinOptions.ResolverMgmt') &&
+          (capabilities.includes(Operation.UPDATE_CONFIG_VERSION) ||
+            capabilities.includes(Operation.UPDATE_CONFIG))) ||
+        capabilities.includes(Operation.UPDATE_RESOLVER)
       ) {
         return true;
       }
@@ -2464,10 +2639,7 @@ export default class OperationStableCoinService extends Service {
                   stableCoinCapabilities,
                   Operation.UPDATE,
                   Access.HTS,
-                ) ||
-                proxyConfig.owner.toString() === configAccount.accountId ||
-                proxyConfig.pendingOwner.toString() ===
-                  configAccount.accountId))
+                )))
           ) {
             return true;
           }
@@ -2481,55 +2653,28 @@ export default class OperationStableCoinService extends Service {
   private async filterConfigurationOptions(
     options: string[],
     stableCoinCapabilities: StableCoinCapabilities,
-    configAccount: IAccountConfig,
     roles: string[],
   ): Promise<string[]> {
-    const proxyConfig =
-      await new ConfigurationProxyService().getProxyconfiguration(
-        this.stableCoinId,
-      );
-
     const capabilities: Operation[] = stableCoinCapabilities.capabilities.map(
       (a) => a.operation,
     );
-
-    options.push(proxyConfig.implementationAddress.toString());
 
     let filteredOptions: string[] = [];
     let result = [];
 
     filteredOptions = options.filter((option) => {
       if (
-        (option ===
-          language.getText(
-            'stableCoinConfiguration.options.proxyConfiguration',
-          ) &&
-          (proxyConfig.owner.toString() === configAccount.accountId ||
-            proxyConfig.pendingOwner.toString() === configAccount.accountId)) ||
-        (option ===
+        option ===
           language.getText(
             'stableCoinConfiguration.options.tokenConfiguration',
           ) &&
-          capabilities.includes(Operation.UPDATE)) ||
-        (option !==
-          language.getText(
-            'stableCoinConfiguration.options.proxyConfiguration',
-          ) &&
-          option !==
-            language.getText(
-              'stableCoinConfiguration.options.tokenConfiguration',
-            ))
+        capabilities.includes(Operation.UPDATE)
       )
         return true;
       return false;
     });
 
     result = filteredOptions.filter((option) => {
-      if (
-        option !==
-        language.getText('stableCoinConfiguration.options.tokenConfiguration')
-      )
-        return true;
       if (
         (option ===
           language.getText(
@@ -2657,49 +2802,6 @@ export default class OperationStableCoinService extends Service {
           return false;
         })
       : capabilitiesFilter;
-
-    return result;
-  }
-
-  private async filterProxyConfigurationMenuOptions(
-    options: string[],
-  ): Promise<string[]> {
-    const configAccount = utilsService.getCurrentAccount();
-
-    const proxyConfig =
-      await new ConfigurationProxyService().getProxyconfiguration(
-        this.stableCoinId,
-      );
-
-    console.log(
-      language.getText('proxyConfiguration.pendingOwner') +
-        proxyConfig.pendingOwner.toString(),
-    );
-
-    let result: string[] = [];
-
-    result = options.filter((option) => {
-      if (
-        (option ===
-          language.getText('proxyConfiguration.options.implementation') &&
-          proxyConfig.owner.toString() === configAccount.accountId) ||
-        (option === language.getText('proxyConfiguration.options.owner') &&
-          proxyConfig.owner.toString() === configAccount.accountId) ||
-        (option === language.getText('proxyConfiguration.options.accept') &&
-          proxyConfig.pendingOwner.toString() === configAccount.accountId) ||
-        (option === language.getText('proxyConfiguration.options.cancel') &&
-          proxyConfig.owner.toString() === configAccount.accountId &&
-          proxyConfig.pendingOwner.toString() !==
-            Account.NullHederaAccount.id.toString()) ||
-        (option !==
-          language.getText('proxyConfiguration.options.implementation') &&
-          option !== language.getText('proxyConfiguration.options.owner') &&
-          option !== language.getText('proxyConfiguration.options.accept') &&
-          option !== language.getText('proxyConfiguration.options.cancel'))
-      )
-        return true;
-      return false;
-    });
 
     return result;
   }
@@ -2926,12 +3028,9 @@ export default class OperationStableCoinService extends Service {
     const result = await this.filterConfigurationOptions(
       configurationOptions,
       capabilitiesStableCoin,
-      configAccount,
       await this.getRolesAccount(),
     );
 
-    const currentImplementation = result[result.length - 1];
-    result.pop();
     const configurationOptionsFiltered = result;
 
     switch (
@@ -2942,12 +3041,6 @@ export default class OperationStableCoinService extends Service {
       )
     ) {
       case language.getText(
-        'stableCoinConfiguration.options.proxyConfiguration',
-      ):
-        await this.stableCoinConfiguration(currentImplementation);
-        break;
-
-      case language.getText(
         'stableCoinConfiguration.options.tokenConfiguration',
       ):
         await this.tokenConfiguration();
@@ -2957,160 +3050,6 @@ export default class OperationStableCoinService extends Service {
       default:
         await utilsService.cleanAndShowBanner();
         await this.operationsStableCoin();
-    }
-  }
-
-  private async stableCoinConfiguration(currentImpl: string): Promise<void> {
-    const proxyConfigurationOptions = language.getArrayFromObject(
-      'proxyConfiguration.options',
-    );
-
-    const proxyConfigurationOptionsFiltered =
-      await this.filterProxyConfigurationMenuOptions(proxyConfigurationOptions);
-
-    switch (
-      await utilsService.defaultMultipleAsk(
-        language.getText('proxyConfiguration.askProxyConfiguration'),
-        proxyConfigurationOptionsFiltered,
-        false,
-      )
-    ) {
-      case language.getText('proxyConfiguration.options.implementation'):
-        await this.upgradeImplementationFlow(currentImpl);
-        break;
-
-      case language.getText('proxyConfiguration.options.owner'):
-        await this.changeOwnerFlow(currentImpl);
-        break;
-      case language.getText('proxyConfiguration.options.accept'):
-        await this.acceptOwnerFlow(currentImpl);
-        break;
-
-      case language.getText('proxyConfiguration.options.cancel'):
-        await this.cancelOwnerFlow(currentImpl);
-        break;
-
-      case proxyConfigurationOptions[proxyConfigurationOptions.length - 1]:
-      default:
-        await utilsService.cleanAndShowBanner();
-        await this.configuration();
-    }
-  }
-
-  private async upgradeImplementationFlow(currentImpl: string): Promise<void> {
-    const configAccount = utilsService.getCurrentAccount();
-
-    await utilsService.cleanAndShowBanner();
-    utilsService.displayCurrentUserInfo(
-      configAccount,
-      this.stableCoinWithSymbol,
-    );
-
-    const upgradeImplementationRequest = new UpgradeImplementationRequest({
-      tokenId: this.stableCoinId,
-      implementationAddress: '',
-    });
-
-    try {
-      await new ImplementationProxyService().upgradeImplementationOwner(
-        upgradeImplementationRequest,
-        currentImpl,
-      );
-    } catch (error) {
-      await utilsService.askErrorConfirmation(
-        async () => await this.stableCoinConfiguration(currentImpl),
-        error,
-      );
-    }
-  }
-
-  private async changeOwnerFlow(currentImpl: string): Promise<void> {
-    const configAccount = utilsService.getCurrentAccount();
-
-    await utilsService.cleanAndShowBanner();
-    utilsService.displayCurrentUserInfo(
-      configAccount,
-      this.stableCoinWithSymbol,
-    );
-
-    const changeProxyOwnerRequest = new ChangeProxyOwnerRequest({
-      tokenId: this.stableCoinId,
-      targetId: '',
-    });
-
-    await utilsService.handleValidation(
-      () => changeProxyOwnerRequest.validate('targetId'),
-      async () => {
-        changeProxyOwnerRequest.targetId = await utilsService.defaultSingleAsk(
-          language.getText('proxyConfiguration.askNewOwner'),
-          '0.0.0',
-        );
-      },
-    );
-
-    try {
-      await new OwnerProxyService().changeProxyOwner(changeProxyOwnerRequest);
-    } catch (error) {
-      await utilsService.askErrorConfirmation(
-        async () => await this.stableCoinConfiguration(currentImpl),
-        error,
-      );
-    }
-  }
-
-  private async acceptOwnerFlow(currentImpl: string): Promise<void> {
-    const configAccount = utilsService.getCurrentAccount();
-
-    await utilsService.cleanAndShowBanner();
-    utilsService.displayCurrentUserInfo(
-      configAccount,
-      this.stableCoinWithSymbol,
-    );
-
-    const confirm = await utilsService.defaultConfirmAsk(
-      language.getText('proxyConfiguration.askAcceptOwner'),
-      true,
-    );
-
-    if (!confirm) return;
-
-    try {
-      const acceptProxyOwnerRequest = new AcceptProxyOwnerRequest({
-        tokenId: this.stableCoinId,
-      });
-
-      await new OwnerProxyService().acceptProxyOwner(acceptProxyOwnerRequest);
-    } catch (error) {
-      await utilsService.askErrorConfirmation(
-        async () => await this.stableCoinConfiguration(currentImpl),
-        error,
-      );
-    }
-  }
-
-  private async cancelOwnerFlow(currentImpl: string): Promise<void> {
-    const configAccount = utilsService.getCurrentAccount();
-
-    await utilsService.cleanAndShowBanner();
-    utilsService.displayCurrentUserInfo(
-      configAccount,
-      this.stableCoinWithSymbol,
-    );
-
-    const confirm = await utilsService.defaultConfirmAsk(
-      language.getText('proxyConfiguration.askCancelOwner'),
-      true,
-    );
-
-    if (!confirm) return;
-
-    try {
-      await new OwnerProxyService().cancelProxyOwner(this.stableCoinId);
-    } catch (error) {
-      await utilsService.askErrorConfirmation(
-        async () => await this.stableCoinConfiguration(currentImpl),
-        error,
-      );
     }
   }
 

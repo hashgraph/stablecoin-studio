@@ -155,6 +155,16 @@ const CONFIG_MOCK: IConfiguration = {
       network: NETWORKS.preview,
     },
   ],
+  resolvers: [
+    {
+      id: DEFAULT_CONTRACT_IDS[0],
+      network: NETWORKS.test,
+    },
+    {
+      id: DEFAULT_CONTRACT_IDS[1],
+      network: NETWORKS.preview,
+    },
+  ],
   mirrors: [
     {
       name: 'HEDERA',
@@ -234,7 +244,9 @@ describe('setConfigurationService', () => {
           return Promise.resolve(true);
         case language.getText('configuration.askMoreAccounts'):
           return Promise.resolve(false);
-        case language.getText('configuration.askConfigurateFactories'):
+        case language.getText(
+          'configuration.askConfigurateResolversAndFactories',
+        ):
           return Promise.resolve(false);
         case language.getText(
           'configuration.askConfigurateDefaultMirrorsAndRPCs',
@@ -278,7 +290,9 @@ describe('setConfigurationService', () => {
           return Promise.resolve(true);
         case language.getText('configuration.askMoreAccounts'):
           return Promise.resolve(false);
-        case language.getText('configuration.askConfigurateFactories'):
+        case language.getText(
+          'configuration.askConfigurateResolversAndFactories',
+        ):
           return Promise.resolve(false);
         case language.getText(
           'configuration.askConfigurateDefaultMirrorsAndRPCs',
