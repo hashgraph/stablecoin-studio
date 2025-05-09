@@ -16,6 +16,7 @@ export { default as EditHederaTokenManagerAddressCommand } from './commands/Edit
 export { default as RemoveHederaTokenManagerAddressCommand } from './commands/RemoveHederaTokenManagerAddressCommand'
 export { default as DeployStableCoinFactoryCommand } from './commands/DeployStableCoinFactoryCommand'
 export { default as UpdateBusinessLogicKeysCommand } from './commands/UpdateBusinessLogicKeysCommand'
+export { default as CreateConfigurationCommand } from './commands/CreateConfigurationCommand'
 
 // * Queries
 export { default as Keccak256Query } from './queries/Keccak256Query'
@@ -23,6 +24,7 @@ export {
     default as BaseStableCoinFactoryQuery,
     BaseStableCoinFactoryQueryParams,
 } from './queries/base/BaseStableCoinFactoryQuery'
+export { default as BaseResolverQuery, BaseResolverQueryParams } from './queries/base/BaseResolverQuery'
 export { default as GetTokenManagerQuery } from './queries/GetTokenManagerQuery'
 export { default as GetStableCoinFactoryAdminQuery } from './queries/GetStableCoinFactoryAdminQuery'
 export { default as GetConfigurationInfoQuery } from './queries/GetConfigurationInfoQuery'
@@ -36,6 +38,9 @@ export * from './deploy'
 
 // * Business Logic Resolver
 export * from './businessLogicResolver'
+
+// * Resolver Diamond Cut
+export * from './resolverDiamondCut'
 
 // * Upgrades
 // export * from './upgrade'
