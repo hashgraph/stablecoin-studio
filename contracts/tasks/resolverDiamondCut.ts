@@ -1,5 +1,5 @@
 import { task, types } from 'hardhat/config'
-import { CreateConfigurationCommand, CreateConfigurationCommandBaseParams } from '@tasks'
+import { CreateConfigurationCommand } from '@tasks'
 import {
     BusinessLogicResolver__factory,
     HederaReserveFacet__factory,
@@ -18,11 +18,17 @@ import {
     TokenOwnerFacet__factory,
     WipeableFacet__factory,
     DiamondFacet__factory,
+    HederaTokenManagerFacet__factory,
+    RescuableFacet__factory,
+    StableCoinFactoryFacet__factory,
 } from '@typechain'
+import { CONTRACT_NAMES } from '@configuration'
 
 task('createConfiguration', 'Create a new configuration')
-    .addPositionalParam('resolverAddress', 'The resolver address', undefined, types.string)
-    .addPositionalParam('facetsAddress', 'The facets addresses', undefined, types.string)
+    .addParam('resolverAddress', 'The resolver address', undefined, types.string)
+    .addParam('factoryAddress', 'The factory addresses', undefined, types.string)
+    .addParam('reserveAddress', 'The hedera reserve addresses', undefined, types.string)
+    .addVariadicPositionalParam('scsContracts', 'The SCS contract addresses', undefined, types.string)
     .addOptionalParam('privatekey', 'The private key of the account in raw hexadecimal format', undefined, types.string)
     .addOptionalParam(
         'signeraddress',
@@ -31,85 +37,120 @@ task('createConfiguration', 'Create a new configuration')
         types.string
     )
     .addOptionalParam('signerposition', 'The index of the signer in the Hardhat signers array', undefined, types.int)
-    .setAction(async (args: CreateConfigurationCommandBaseParams, hre) => {
+    .setAction(async (args: CreateConfigurationCommand, hre) => {
         const { createConfigurationsForDeployedContracts, CreateConfigurationsForDeployedContractsCommand } =
             await import('@scripts')
         console.log(`Executing createConfiguration on ${hre.network.name} ...`)
 
-        const { facetsAddressList, signer } = await CreateConfigurationCommand.newInstance({
-            hre,
-            ...args,
-        })
+        const ADDRESS_ZERO = '0x0000000000000000000000000000000000000000'
+
+        const { resolverAddress, factoryAddress, reserveAddress, scsContracts, signer } =
+            await CreateConfigurationCommand.newInstance({
+                hre,
+                ...args,
+            })
 
         const deployedContracts = {
             businessLogicResolver: {
-                address: args.resolverAddress,
-                contract: BusinessLogicResolver__factory.connect(args.resolverAddress, signer),
-                proxyAddress: args.resolverAddress,
-            },
-            hederaReserveFacet: {
-                address: facetsAddressList[0],
-                contract: HederaReserveFacet__factory.connect(facetsAddressList[0], signer),
-            },
-            burnableFacet: {
-                address: facetsAddressList[1],
-                contract: BurnableFacet__factory.connect(facetsAddressList[1], signer),
-            },
-            cashInFacet: {
-                address: facetsAddressList[2],
-                contract: CashInFacet__factory.connect(facetsAddressList[2], signer),
-            },
-            customFeesFacet: {
-                address: facetsAddressList[3],
-                contract: CustomFeesFacet__factory.connect(facetsAddressList[3], signer),
-            },
-            deletableFacet: {
-                address: facetsAddressList[4],
-                contract: DeletableFacet__factory.connect(facetsAddressList[4], signer),
-            },
-            freezableFacet: {
-                address: facetsAddressList[5],
-                contract: FreezableFacet__factory.connect(facetsAddressList[5], signer),
-            },
-            holdManagementFacet: {
-                address: facetsAddressList[6],
-                contract: HoldManagementFacet__factory.connect(facetsAddressList[6], signer),
-            },
-            kycFacet: {
-                address: facetsAddressList[7],
-                contract: KYCFacet__factory.connect(facetsAddressList[7], signer),
-            },
-            pausableFacet: {
-                address: facetsAddressList[8],
-                contract: PausableFacet__factory.connect(facetsAddressList[8], signer),
-            },
-            reserveFacet: {
-                address: facetsAddressList[9],
-                contract: ReserveFacet__factory.connect(facetsAddressList[9], signer),
-            },
-            roleManagementFacet: {
-                address: facetsAddressList[10],
-                contract: RoleManagementFacet__factory.connect(facetsAddressList[10], signer),
-            },
-            rolesFacet: {
-                address: facetsAddressList[11],
-                contract: RolesFacet__factory.connect(facetsAddressList[11], signer),
-            },
-            supplierAdminFacet: {
-                address: facetsAddressList[12],
-                contract: SupplierAdminFacet__factory.connect(facetsAddressList[12], signer),
-            },
-            tokenOwnerFacet: {
-                address: facetsAddressList[13],
-                contract: TokenOwnerFacet__factory.connect(facetsAddressList[13], signer),
-            },
-            wipeableFacet: {
-                address: facetsAddressList[14],
-                contract: WipeableFacet__factory.connect(facetsAddressList[14], signer),
+                name: CONTRACT_NAMES[3],
+                address: ADDRESS_ZERO,
+                contract: BusinessLogicResolver__factory.connect(ADDRESS_ZERO, signer),
+                proxyAddress: resolverAddress,
             },
             diamondFacet: {
-                address: facetsAddressList[15],
-                contract: DiamondFacet__factory.connect(facetsAddressList[15], signer),
+                name: CONTRACT_NAMES[4],
+                address: scsContracts[0],
+                contract: DiamondFacet__factory.connect(scsContracts[0], signer),
+            },
+            stableCoinFactoryFacet: {
+                name: CONTRACT_NAMES[5],
+                address: factoryAddress,
+                contract: StableCoinFactoryFacet__factory.connect(factoryAddress, signer),
+            },
+            hederaTokenManagerFacet: {
+                name: CONTRACT_NAMES[6],
+                address: scsContracts[1],
+                contract: HederaTokenManagerFacet__factory.connect(scsContracts[1], signer),
+            },
+            hederaReserveFacet: {
+                name: CONTRACT_NAMES[7],
+                address: reserveAddress,
+                contract: HederaReserveFacet__factory.connect(reserveAddress, signer),
+            },
+            burnableFacet: {
+                name: CONTRACT_NAMES[8],
+                address: scsContracts[2],
+                contract: BurnableFacet__factory.connect(scsContracts[2], signer),
+            },
+            cashInFacet: {
+                name: CONTRACT_NAMES[9],
+                address: scsContracts[3],
+                contract: CashInFacet__factory.connect(scsContracts[3], signer),
+            },
+            customFeesFacet: {
+                name: CONTRACT_NAMES[10],
+                address: scsContracts[4],
+                contract: CustomFeesFacet__factory.connect(scsContracts[4], signer),
+            },
+            deletableFacet: {
+                name: CONTRACT_NAMES[11],
+                address: scsContracts[5],
+                contract: DeletableFacet__factory.connect(scsContracts[5], signer),
+            },
+            freezableFacet: {
+                name: CONTRACT_NAMES[12],
+                address: scsContracts[6],
+                contract: FreezableFacet__factory.connect(scsContracts[6], signer),
+            },
+            holdManagementFacet: {
+                name: CONTRACT_NAMES[13],
+                address: scsContracts[7],
+                contract: HoldManagementFacet__factory.connect(scsContracts[7], signer),
+            },
+            kycFacet: {
+                name: CONTRACT_NAMES[14],
+                address: scsContracts[8],
+                contract: KYCFacet__factory.connect(scsContracts[8], signer),
+            },
+            pausableFacet: {
+                name: CONTRACT_NAMES[15],
+                address: scsContracts[9],
+                contract: PausableFacet__factory.connect(scsContracts[9], signer),
+            },
+            rescuableFacet: {
+                name: CONTRACT_NAMES[16],
+                address: scsContracts[10],
+                contract: RescuableFacet__factory.connect(scsContracts[10], signer),
+            },
+            reserveFacet: {
+                name: CONTRACT_NAMES[17],
+                address: scsContracts[11],
+                contract: ReserveFacet__factory.connect(scsContracts[11], signer),
+            },
+            roleManagementFacet: {
+                name: CONTRACT_NAMES[18],
+                address: scsContracts[12],
+                contract: RoleManagementFacet__factory.connect(scsContracts[12], signer),
+            },
+            rolesFacet: {
+                name: CONTRACT_NAMES[19],
+                address: scsContracts[13],
+                contract: RolesFacet__factory.connect(scsContracts[13], signer),
+            },
+            supplierAdminFacet: {
+                name: CONTRACT_NAMES[20],
+                address: scsContracts[14],
+                contract: SupplierAdminFacet__factory.connect(scsContracts[14], signer),
+            },
+            tokenOwnerFacet: {
+                name: CONTRACT_NAMES[21],
+                address: scsContracts[15],
+                contract: TokenOwnerFacet__factory.connect(scsContracts[15], signer),
+            },
+            wipeableFacet: {
+                name: CONTRACT_NAMES[22],
+                address: scsContracts[16],
+                contract: WipeableFacet__factory.connect(scsContracts[16], signer),
             },
             deployer: signer,
         }

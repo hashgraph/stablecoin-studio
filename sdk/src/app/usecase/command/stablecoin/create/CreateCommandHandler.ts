@@ -60,20 +60,36 @@ export class CreateCommandHandler implements ICommandHandler<CreateCommand> {
 	async execute(command: CreateCommand): Promise<CreateCommandResponse> {
 		const {
 			factory,
-			hederaTokenManager,
 			coin,
 			reserveAddress,
 			reserveInitialAmount,
 			createReserve,
-			proxyAdminOwnerAccount,
+			proxyOwnerAccount,
+			resolver,
+			configId,
+			configVersion,
 		} = command;
 
 		if (!factory) {
 			throw new InvalidRequest('Factory not found in request');
 		}
 
-		if (!hederaTokenManager) {
-			throw new InvalidRequest('HederaTokenManager not found in request');
+		if (!resolver) {
+			throw new InvalidRequest('Resolver not found in request');
+		}
+
+		if (!configId) {
+			throw new InvalidRequest('Config Id not found in request');
+		}
+
+		if (!proxyOwnerAccount) {
+			throw new InvalidRequest(
+				'Proxy Owner Account not found in request',
+			);
+		}
+
+		if (configVersion === undefined) {
+			throw new InvalidRequest('Config Version not found in request');
 		}
 
 		const handler = this.transactionService.getHandler();
@@ -135,11 +151,13 @@ export class CreateCommandHandler implements ICommandHandler<CreateCommand> {
 		const res = await handler.create(
 			new StableCoin(coin),
 			factory,
-			hederaTokenManager,
 			createReserve,
+			resolver,
+			configId,
+			configVersion,
+			proxyOwnerAccount,
 			reserveAddress,
 			reserveInitialAmount,
-			proxyAdminOwnerAccount,
 		);
 
 		if (!res.id)

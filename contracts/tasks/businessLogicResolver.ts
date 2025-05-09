@@ -54,14 +54,14 @@ task('getResolverBusinessLogics', 'Get business logics from resolver')
     })
 
 task('updateBusinessLogicKeys', 'Update the address of a business logic key')
-    .addPositionalParam('resolverAddress', 'The BusinessLogicResolver Contract address', undefined, types.string)
+    .addPositionalParam('resolverAddress', 'The BusinessLogicResolver contract address', undefined, types.string)
     .addPositionalParam(
         'implementationAddressList',
         'The implementation contract list to update. List of comma separated contract addresses',
         undefined,
         types.string
     )
-    .addOptionalParam('privatekey', 'The private key of the account in raw hexadecimal format', undefined, types.string)
+    .addOptionalParam('privateKey', 'The private key of the account in raw hexadecimal format', undefined, types.string)
     .addOptionalParam(
         'signeraddress',
         'The address of the signer to select from the Hardhat signers array',
@@ -94,8 +94,8 @@ task('updateBusinessLogicKeys', 'Update the address of a business logic key')
     })
 
 task('initializeBuisnessLogicResolver', 'Initialize the business logic resolver')
-    .addPositionalParam('resolverAddress', 'The BusinessLogicResolver Contract address', undefined, types.string)
-    .addOptionalParam('privatekey', 'The private key of the account in raw hexadecimal format', undefined, types.string)
+    .addPositionalParam('resolverAddress', 'The BusinessLogicResolver contract address', undefined, types.string)
+    .addParam('privateKey', 'The private key of the account in raw hexadecimal format', undefined, types.string)
     .addOptionalParam(
         'signeraddress',
         'The address of the signer to select from the Hardhat signers array',
@@ -103,10 +103,10 @@ task('initializeBuisnessLogicResolver', 'Initialize the business logic resolver'
         types.string
     )
     .addOptionalParam('signerposition', 'The index of the signer in the Hardhat signers array', undefined, types.int)
-    .setAction(async (args: { resolverAddress: string; privatekey: string }, hre) => {
+    .setAction(async (args: { resolverAddress: string; privateKey: string }, hre) => {
         console.log(`Executing initialize_BusinessLogicResolver on ${hre.network.name} ...`)
 
-        const signer = new Wallet(args.privatekey, hre.ethers.provider)
+        const signer = new Wallet(args.privateKey, hre.ethers.provider)
 
         await BusinessLogicResolver__factory.connect(args.resolverAddress, signer).initialize_BusinessLogicResolver()
 

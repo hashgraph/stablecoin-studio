@@ -1,12 +1,12 @@
 import {
-    DeployScsContractsResult,
     BusinessLogicResolverProxyNotFound,
     BaseContractListCommand,
     BaseBlockchainCommandParams,
+    DeployScsContractListResult,
 } from '@scripts'
 
 interface RegisterDeployedContractBusinessLogicsCommandParams extends BaseBlockchainCommandParams {
-    readonly deployedContractList: DeployScsContractsResult
+    readonly deployedContractList: DeployScsContractListResult
 }
 
 export default class RegisterDeployedContractBusinessLogicsCommand extends BaseContractListCommand {

@@ -5,7 +5,6 @@ interface DeployAtsContractsCommandNewParams {
     signer: Signer
     useDeployed?: boolean
     useEnvironment?: boolean
-    timeTravelEnabled?: boolean
     partialBatchDeploy?: boolean
 }
 
@@ -14,11 +13,10 @@ export interface DeployScsContractListCommandParams extends DeployAtsContractsCo
 }
 
 export default class DeployScsContractListCommand {
-    public readonly useDeployed: boolean
-    public readonly useEnvironment: boolean = false
     public readonly signer: Signer
     public readonly network: NetworkName
-    public readonly timeTravelEnabled: boolean = false
+    public readonly useDeployed: boolean
+    public readonly useEnvironment: boolean = false
     public readonly partialBatchDeploy: boolean = false
 
     constructor({
@@ -26,14 +24,12 @@ export default class DeployScsContractListCommand {
         network,
         useDeployed = true,
         useEnvironment = false,
-        timeTravelEnabled = false,
         partialBatchDeploy = false,
     }: DeployScsContractListCommandParams) {
         this.useDeployed = useDeployed
         this.useEnvironment = useEnvironment
         this.network = network!
         this.signer = signer
-        this.timeTravelEnabled = timeTravelEnabled
         this.partialBatchDeploy = partialBatchDeploy
     }
 
@@ -41,7 +37,6 @@ export default class DeployScsContractListCommand {
         signer,
         useDeployed = true,
         useEnvironment = false,
-        timeTravelEnabled = false,
         partialBatchDeploy = false,
     }: DeployAtsContractsCommandNewParams): Promise<DeployScsContractListCommand> {
         if (!signer.provider) {
@@ -52,7 +47,6 @@ export default class DeployScsContractListCommand {
             network: (await signer.provider.getNetwork()).name as NetworkName,
             useDeployed,
             useEnvironment,
-            timeTravelEnabled,
             partialBatchDeploy,
         })
     }

@@ -1,6 +1,7 @@
 import {
     CONTRACT_NAMES,
-    CONTRACT_NAMES_WITH_PROXY,
+    CONTRACT_NAMES_WITH_TUP,
+    CONTRACT_NAMES_WITH_RESOLVER_PROXY,
     DEFAULD_CHAR_INDEX,
     DEFAULT_MNEMONIC_COUNT,
     DEFAULT_MNEMONIC_LOCALE,
@@ -182,7 +183,11 @@ export default class Configuration {
             contracts[contractName] = {
                 name: contractName,
                 factoryName: `${contractName}__factory`,
-                deployType: CONTRACT_NAMES_WITH_PROXY.includes(contractName) ? 'proxy' : 'direct',
+                deployType: CONTRACT_NAMES_WITH_RESOLVER_PROXY.includes(contractName)
+                    ? 'resolverProxy'
+                    : CONTRACT_NAMES_WITH_TUP.includes(contractName)
+                      ? 'tup'
+                      : 'direct',
                 addresses: Configuration._getDeployedAddresses({
                     contractName,
                 }),

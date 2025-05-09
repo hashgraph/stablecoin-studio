@@ -5,6 +5,10 @@ import {
     IStaticFunctionSelectors__factory,
 } from '@typechain'
 import {
+    CONFIG_ID,
+    CreateConfigurationsForDeployedContractsCommand,
+    CreateConfigurationsForDeployedContractsResult,
+    EVENTS,
     GAS_LIMIT,
     GetFacetsByConfigurationIdAndVersionQuery,
     GetFacetsByConfigurationIdAndVersionResult,
@@ -14,7 +18,8 @@ import {
     validateTxResponse,
     ValidateTxResponseCommand,
 } from '@scripts'
-import { EVENTS } from './constants'
+
+import { Signer } from 'ethers'
 
 export interface BusinessLogicRegistryData {
     businessLogicKey: string
@@ -35,7 +40,7 @@ export async function getFacetsByConfigurationIdAndVersion({
     overrides,
 }: GetFacetsByConfigurationIdAndVersionQuery): Promise<GetFacetsByConfigurationIdAndVersionResult> {
     const diamondCutManager = IDiamondCutManager__factory.connect(businessLogicResolverAddress, provider)
-    const latestConfigVersionRaw = await diamondCutManager.getLatestVersionByConfiguration(configurationId, overrides)
+    const latestConfigVersionRaw = await diamondCutManager.getLatestVersionByConfiguration(configurationId)
 
     const lastestConfigVersion = parseInt(latestConfigVersionRaw.toHexString(), 16)
 
@@ -123,7 +128,7 @@ export async function registerBusinessLogics({
         new ValidateTxResponseCommand({
             txResponse: response,
             confirmationEvent: EVENTS.businessLogicResolver.registered,
-            errorMessage: MESSAGES.businessLogicResolver.error.registering,
+            errorMessage: MESSAGES.businessLogicResolver.error.register,
         })
     )
 }
