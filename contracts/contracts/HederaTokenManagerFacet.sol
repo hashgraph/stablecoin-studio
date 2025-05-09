@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: MIT
 pragma solidity 0.8.18;
 
-import {IHederaTokenManager} from './Interfaces/IHederaTokenManager.sol';
+import {IHederaTokenManager, RolesStruct} from './Interfaces/IHederaTokenManager.sol';
 import {_HEDERA_TOKEN_MANAGER_RESOLVER_KEY} from './constants/resolverKeys.sol';
 import {SupplierAdminStorageWrapper} from './extensions/SupplierAdminStorageWrapper.sol';
 import {ReserveStorageWrapper} from './extensions/ReserveStorageWrapper.sol';

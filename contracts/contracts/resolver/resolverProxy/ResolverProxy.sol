@@ -4,14 +4,14 @@ pragma solidity 0.8.18;
 import {ResolverProxyUnstructured} from './unstructured/ResolverProxyUnstructured.sol';
 import {IResolverProxy} from '../interfaces/resolverProxy/IResolverProxy.sol';
 import {IBusinessLogicResolver} from '../interfaces/IBusinessLogicResolver.sol';
-import {IHederaTokenManager} from '../../Interfaces/IHederaTokenManager.sol';
+import {IHederaTokenManager, RolesStruct} from '../../Interfaces/IHederaTokenManager.sol';
 
 contract ResolverProxy is ResolverProxyUnstructured {
     constructor(
         IBusinessLogicResolver _resolver,
         bytes32 _resolverProxyConfigurationId,
         uint256 _version,
-        IHederaTokenManager.RolesStruct[] memory _roles
+        RolesStruct[] memory _roles
     ) payable {
         _initialize(_resolver, _resolverProxyConfigurationId, _version, _roles);
     }

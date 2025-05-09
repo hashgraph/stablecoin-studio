@@ -1,39 +1,18 @@
-interface TupDeployment {
-    address: string
-    proxyAddress: string
-    proxyAdminAddress: string
-}
-interface StableCoinDeployment extends TupDeployment {
-    tokenAddress: string
-    reserveProxyAddress?: string
-    reserveProxyAdminAddress?: string
-}
-interface DeployFullInfrastructureResultParams {
-    hederaTokenManagerAddress: string
-    stableCoinDeployment: StableCoinDeployment
-    stableCoinFactoryDeployment: TupDeployment
-    stableCoinCreator: string
-    KycGranted: boolean
+import {
+    CreateConfigurationsForDeployedContractsResult,
+    DeployScsContractListResult,
+    DeployScsContractListResultParams,
+} from '@scripts'
+
+interface DeployFullInfrastructureResultParams extends DeployScsContractListResultParams {
+    facetLists: CreateConfigurationsForDeployedContractsResult
 }
 
-export default class DeployFullInfrastructureResult {
-    public readonly hederaTokenManagerAddress: string
-    public readonly stableCoinDeployment: StableCoinDeployment
-    public readonly stableCoinFactoryDeployment: TupDeployment
-    public readonly stableCoinCreator: string
-    public readonly KycGranted: boolean
+export default class DeployFullInfrastructureResult extends DeployScsContractListResult {
+    public readonly facetLists: CreateConfigurationsForDeployedContractsResult
 
-    constructor({
-        hederaTokenManagerAddress,
-        stableCoinDeployment,
-        stableCoinFactoryDeployment,
-        stableCoinCreator,
-        KycGranted,
-    }: DeployFullInfrastructureResultParams) {
-        this.hederaTokenManagerAddress = hederaTokenManagerAddress
-        this.stableCoinDeployment = stableCoinDeployment
-        this.stableCoinFactoryDeployment = stableCoinFactoryDeployment
-        this.stableCoinCreator = stableCoinCreator
-        this.KycGranted = KycGranted
+    constructor({ facetLists, ...params }: DeployFullInfrastructureResultParams) {
+        super(params)
+        this.facetLists = facetLists
     }
 }
