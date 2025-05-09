@@ -1,14 +1,14 @@
 import { NetworkName } from '@configuration'
 import { Signer } from 'ethers'
 
-interface DeployAtsContractsCommandNewParams {
+interface DeployScsContractsCommandNewParams {
     signer: Signer
     useDeployed?: boolean
     useEnvironment?: boolean
     partialBatchDeploy?: boolean
 }
 
-export interface DeployScsContractListCommandParams extends DeployAtsContractsCommandNewParams {
+export interface DeployScsContractListCommandParams extends DeployScsContractsCommandNewParams {
     network: NetworkName
 }
 
@@ -38,7 +38,7 @@ export default class DeployScsContractListCommand {
         useDeployed = true,
         useEnvironment = false,
         partialBatchDeploy = false,
-    }: DeployAtsContractsCommandNewParams): Promise<DeployScsContractListCommand> {
+    }: DeployScsContractsCommandNewParams): Promise<DeployScsContractListCommand> {
         if (!signer.provider) {
             throw new Error('Signer must have a provider')
         }

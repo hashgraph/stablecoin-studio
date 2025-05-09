@@ -523,13 +523,6 @@ export async function deployScsContractList({
         deployer: signer,
     })
 
-    // Note: The original code had many contracts listed (Cap, ControlList, Kyc, etc.)
-    // which seem related to ATS/Security Tokens rather than the core StableCoin Studio (SCS) contracts.
-    // I've kept BusinessLogicResolver and BurnableFacet as examples.
-    // You should add the specific SCS contracts required for your setup.
-    // The original code also had a DeployAtsContractsResult type which was renamed to DeployScsContractListResult.
-    // Ensure the DeployScsContractListResult type definition matches the structure returned here.
-
     return deployedContracts
 }
 
