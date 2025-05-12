@@ -161,6 +161,9 @@ export const GAS_LIMIT = {
         registerBusinessLogics: 7_800_000,
         createConfiguration: 15_000_000,
     },
+    migrationImplementationProxy: {
+        deploy: 2_000_000n,
+    },
 }
 
 // * Values (Payable Amounts)
