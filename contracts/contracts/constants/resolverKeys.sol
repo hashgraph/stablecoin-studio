@@ -69,4 +69,7 @@ bytes32 constant _DIAMOND_RESOLVER_KEY = 0xe7c2bf92f4ac789767b12cd9a8999cefe03a9
 // keccak256('stablecoin.studio.standard.diamond.cut.resolverKey')
 bytes32 constant _DIAMOND_CUT_RESOLVER_KEY = 0xec97912280645fb8759d3503d74d0034275fcd2435a3eebfb862e6dff89dccee;
 
+// keccak256('stablecoin.studio.migration.implementation.proxy.v2.resolverKey')
+bytes32 constant _MIGRATION_IMPLEMENTATION_PROXY_V2_RESOLVER_KEY = 0x88750959f7ac2e67d6e5e9564408d67f346ef647ed4ecf39f0e0c3c0f1765ece;
+
 // solhint-enable max-line-length
