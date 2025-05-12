@@ -163,6 +163,7 @@ export const GAS_LIMIT = {
     },
     migrationImplementationProxy: {
         deploy: 2_000_000n,
+        upgrade: 150_000n,
     },
 }
 
