@@ -3,7 +3,7 @@ import {
     IBusinessLogicResolver__factory,
     IDiamondCutManager__factory,
     IStaticFunctionSelectors__factory,
-} from '@typechain'
+} from '@typechain-types'
 import {
     EVENTS,
     GAS_LIMIT,

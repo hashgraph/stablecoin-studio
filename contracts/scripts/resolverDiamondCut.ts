@@ -1,4 +1,4 @@
-import { IDiamondCutManager__factory, IStaticFunctionSelectors__factory } from '@typechain'
+import { IDiamondCutManager__factory, IStaticFunctionSelectors__factory } from '@typechain-types'
 import {
     CreateConfigurationsForDeployedContractsCommand,
     CreateConfigurationsForDeployedContractsResult,

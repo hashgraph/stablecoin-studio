@@ -1,7 +1,6 @@
+import { Wallet } from 'ethers'
 import { task, types } from 'hardhat/config'
 import { GetConfigurationInfoQuery, GetResolverBusinessLogicsQuery, UpdateBusinessLogicKeysCommand } from '@tasks'
-import { BusinessLogicResolver__factory } from '@typechain'
-import { Wallet } from 'ethers'
 
 task('getConfigurationInfo', 'Get all info for a given configuration')
     .addPositionalParam('resolver', 'The resolver proxy admin address', undefined, types.string)
@@ -14,7 +13,7 @@ task('getConfigurationInfo', 'Get all info for a given configuration')
         )
 
         const query = new GetFacetsByConfigurationIdAndVersionQuery({
-            businessLogicResolverAddress: args.resolver,
+            businessLogicResolverAddress: args.businessLogicResolverProxyAddress,
             configurationId: args.configurationId,
             provider: hre.ethers.provider,
         })
@@ -38,11 +37,11 @@ task('getResolverBusinessLogics', 'Get business logics from resolver')
     .addPositionalParam('resolver', 'The resolver proxy admin address', undefined, types.string)
     .setAction(async (args: GetResolverBusinessLogicsQuery, hre) => {
         console.log(`Executing getResolverBusinessLogics on ${hre.network.name} ...`)
-        const { IBusinessLogicResolver__factory } = await import('@typechain')
+        const { IBusinessLogicResolver__factory } = await import('@typechain-types')
 
         // Fetch business logic keys
         const businessLogicKeys = await IBusinessLogicResolver__factory.connect(
-            args.resolver,
+            args.businessLogicResolverProxyAddress,
             hre.ethers.provider
         ).getBusinessLogicKeys(0, 100)
 
@@ -104,6 +103,8 @@ task('initializeBuisnessLogicResolver', 'Initialize the business logic resolver'
     )
     .addOptionalParam('signerposition', 'The index of the signer in the Hardhat signers array', undefined, types.int)
     .setAction(async (args: { resolverAddress: string; privateKey: string }, hre) => {
+        // Inlined import due to circular dependency
+        const { BusinessLogicResolver__factory } = await import('@typechain-types')
         console.log(`Executing initialize_BusinessLogicResolver on ${hre.network.name} ...`)
 
         const signer = new Wallet(args.privateKey, hre.ethers.provider)

@@ -3,7 +3,7 @@ import { SignerWithAddress } from '@nomiclabs/hardhat-ethers/signers'
 import { ethers, network } from 'hardhat'
 import { TransactionRequest } from '@ethersproject/abstract-provider'
 import { WEIBARS_PER_TINYBAR, NetworkName } from '@configuration'
-import { HederaTokenManager, HederaTokenManager__factory } from '@typechain'
+import { HederaTokenManager, HederaTokenManager__factory } from '@typechain-types'
 import { delay, MESSAGES, ValidateTxResponseCommand } from '@scripts'
 import { deployFullInfrastructureInTests, GAS_LIMIT, ONE_HBAR, ONE_TOKEN, TEN_TOKENS, TWO_HBAR } from '@test/shared'
 
