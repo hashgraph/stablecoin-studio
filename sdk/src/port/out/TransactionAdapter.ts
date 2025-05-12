@@ -586,6 +586,15 @@ export default abstract class TransactionAdapter
 	): Promise<TransactionResponse> {
 		throw new Error('Method not implemented.');
 	}
+	createHold(
+		coin: StableCoinCapabilities,
+		amount: BigDecimal,
+		escrow: HederaId,
+		expirationDate: string,
+		targetId?: HederaId,
+	): Promise<TransactionResponse> {
+		throw new Error('Method not implemented.');
+	}
 	getMirrorNodeAdapter(): MirrorNodeAdapter {
 		throw new Error('Method not implemented.');
 	}

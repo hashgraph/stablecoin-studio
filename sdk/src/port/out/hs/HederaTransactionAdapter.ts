@@ -24,7 +24,6 @@
 /* eslint-disable no-case-declarations */
 import {
 	Transaction,
-	ContractId as HContractId,
 	CustomFee as HCustomFee,
 	Client,
 	Long,
@@ -103,6 +102,7 @@ import {
 	UPDATE_CONFIG_VERSION_GAS,
 	UPDATE_CONFIG_GAS,
 	UPDATE_RESOLVER_GAS,
+	CREATE_HOLD_GAS,
 } from '../../../core/Constants.js';
 import LogService from '../../../app/service/LogService.js';
 import { RESERVE_DECIMALS } from '../../../domain/context/reserve/Reserve.js';
@@ -1031,6 +1031,30 @@ export abstract class HederaTransactionAdapter extends TransactionAdapter {
 		);
 	}
 
+	public async createHold(
+		coin: StableCoinCapabilities,
+		amount: BigDecimal,
+		escrow: HederaId,
+		expirationDate: string,
+		targetId?: HederaId,
+	): Promise<TransactionResponse> {
+		const params = new Params({
+			amount,
+			escrow,
+			expirationDate,
+			targetId: targetId ?? HederaId.NULL,
+		});
+		return this.performOperation(
+			coin,
+			Operation.HOLD_MANAGEMENT,
+			'createHold',
+			CREATE_HOLD_GAS,
+			params,
+			TransactionType.RECEIPT,
+			HoldFacet__factory.abi,
+		);
+	}
+
 	public async transfers(
 		coin: StableCoinCapabilities,
 		amounts: BigDecimal[],
@@ -1561,6 +1585,8 @@ class Params {
 	resolver?: ContractId;
 	configId?: string;
 	configVersion?: number;
+	expirationDate?: string;
+	escrow?: HederaId;
 
 	constructor({
 		proxy,
@@ -1586,6 +1612,8 @@ class Params {
 		resolver,
 		configId,
 		configVersion,
+		expirationDate,
+		escrow,
 	}: {
 		proxy?: HederaId;
 		role?: string;
@@ -1610,6 +1638,8 @@ class Params {
 		resolver?: ContractId;
 		configId?: string;
 		configVersion?: number;
+		expirationDate?: string;
+		escrow?: HederaId;
 	}) {
 		this.proxy = proxy;
 		this.role = role;
@@ -1634,5 +1664,7 @@ class Params {
 		this.resolver = resolver;
 		this.configId = configId;
 		this.configVersion = configVersion;
+		this.expirationDate = expirationDate;
+		this.escrow = escrow;
 	}
 }

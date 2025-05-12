@@ -141,6 +141,7 @@ export class StableCoin extends BaseEntity implements StableCoinProps {
 	kycRoleAccount?: HederaId;
 	cashInRoleAccount?: HederaId;
 	feeRoleAccount?: HederaId;
+	holdRoleAccount?: HederaId;
 	cashInRoleAllowance?: BigDecimal;
 	metadata?: string;
 

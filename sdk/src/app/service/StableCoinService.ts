@@ -287,6 +287,16 @@ export default class StableCoinService extends Service {
 				new Capability(Operation.UPDATE_RESOLVER, Access.CONTRACT),
 			);
 
+			if (
+				operable &&
+				_coin.supplyKey instanceof HederaId &&
+				_coin.wipeKey instanceof HederaId
+			) {
+				listCapabilities.push(
+					new Capability(Operation.HOLD_MANAGEMENT, Access.CONTRACT),
+				);
+			}
+
 			return new StableCoinCapabilities(_coin, listCapabilities, account);
 		} catch (error) {
 			return Promise.reject(error);

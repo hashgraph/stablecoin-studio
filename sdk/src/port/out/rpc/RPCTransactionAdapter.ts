@@ -38,6 +38,7 @@ import {
 	FreezableFacet__factory,
 	HederaReserveFacet__factory,
 	HederaTokenManagerFacet__factory,
+	HoldManagementFacet__factory,
 	IHederaTokenService__factory,
 	IHRC__factory,
 	KYCFacet__factory,
@@ -104,6 +105,8 @@ import {
 	UPDATE_CONFIG_VERSION_GAS,
 	UPDATE_CONFIG_GAS,
 	UPDATE_RESOLVER_GAS,
+	EVM_ZERO_ADDRESS,
+	CREATE_HOLD_GAS,
 } from '../../../core/Constants.js';
 import { MetaMaskInpageProvider } from '@metamask/providers';
 import { WalletConnectError } from '../../../domain/context/network/error/WalletConnectError.js';
@@ -154,6 +157,7 @@ import {
 	EnvironmentResolver,
 	Resolvers,
 } from '../../../domain/context/factory/Resolvers.js';
+import { Hold } from 'domain/context/hold/Hold.js';
 
 // eslint-disable-next-line no-var
 declare var ethereum: MetaMaskInpageProvider;
@@ -566,6 +570,24 @@ export default class RPCTransactionAdapter extends TransactionAdapter {
 			configId: configId,
 		});
 		return this.performOperation(coin, Operation.UPDATE_RESOLVER, params);
+	}
+
+	public async createHold(
+		coin: StableCoinCapabilities,
+		amount: BigDecimal,
+		escrow: HederaId,
+		expirationDate: string,
+		targetId?: HederaId,
+	): Promise<TransactionResponse> {
+		const params = new Params({
+			amount,
+			escrow: await this.getEVMAddress(escrow),
+			expirationDate,
+			targetId: targetId
+				? await this.getEVMAddress(targetId)
+				: EVM_ZERO_ADDRESS,
+		});
+		return this.performOperation(coin, Operation.CREATE_HOLD, params);
 	}
 
 	public async getReserveAddress(
@@ -1886,6 +1908,24 @@ export default class RPCTransactionAdapter extends TransactionAdapter {
 					),
 					this.networkService.environment,
 				);
+			case Operation.CREATE_HOLD:
+				const hold = new Hold(
+					params!.amount!.toBigNumber(),
+					params!.expirationDate!,
+					params!.escrow!,
+					params!.targetId ? params!.targetId : EVM_ZERO_ADDRESS,
+					'0x',
+				);
+
+				return RPCTransactionResponseAdapter.manageResponse(
+					await HoldManagementFacet__factory.connect(
+						evmProxy,
+						this.signerOrProvider,
+					).createHold(hold, {
+						gasLimit: CREATE_HOLD_GAS,
+					}),
+					this.networkService.environment,
+				);
 
 			default:
 				throw new Error(
@@ -2112,6 +2152,8 @@ class Params {
 	configId?: string;
 	configVersion?: number;
 	resolver?: string;
+	expirationDate?: string;
+	escrow?: string;
 
 	constructor({
 		role,
@@ -2133,6 +2175,8 @@ class Params {
 		configId,
 		configVersion,
 		resolver,
+		expirationDate,
+		escrow,
 	}: {
 		role?: string;
 		targetId?: string;
@@ -2153,6 +2197,8 @@ class Params {
 		configId?: string;
 		configVersion?: number;
 		resolver?: string;
+		expirationDate?: string;
+		escrow?: string;
 	}) {
 		this.role = role;
 		this.targetId = targetId;
@@ -2173,5 +2219,7 @@ class Params {
 		this.configId = configId;
 		this.configVersion = configVersion;
 		this.resolver = resolver;
+		this.expirationDate = expirationDate;
+		this.escrow = escrow;
 	}
 }
