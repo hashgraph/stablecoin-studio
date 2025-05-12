@@ -1,7 +1,7 @@
 import { expect } from 'chai'
 import { SignerWithAddress } from '@nomiclabs/hardhat-ethers/signers'
 import { ethers } from 'hardhat'
-import { HederaReserve__factory, HederaTokenManager, HederaTokenManager__factory } from '@typechain'
+import { HederaReserve__factory, HederaTokenManager, HederaTokenManager__factory } from '@typechain-types'
 import {
     delay,
     deployContractWithFactory,

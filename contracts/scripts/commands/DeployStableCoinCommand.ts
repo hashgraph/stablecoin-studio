@@ -1,5 +1,5 @@
 import { BigNumber, Signer, Wallet } from 'ethers'
-import { IStableCoinFactory } from '@typechain'
+import { IStableCoinFactory } from '@typechain-types'
 import {
     DEFAULT_TOKEN,
     ADDRESS_ZERO,

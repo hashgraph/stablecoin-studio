@@ -20,7 +20,7 @@ import {
     SupplierAdminFacet,
     TokenOwnerFacet,
     WipeableFacet,
-} from '@typechain'
+} from '@typechain-types'
 import { DeployContractResult } from '@scripts'
 
 export interface DeployScsContractListResultParams {

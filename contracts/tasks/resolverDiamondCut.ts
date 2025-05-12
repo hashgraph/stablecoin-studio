@@ -1,27 +1,5 @@
 import { task, types } from 'hardhat/config'
 import { CreateConfigurationCommand } from '@tasks'
-import {
-    BusinessLogicResolver__factory,
-    HederaReserveFacet__factory,
-    BurnableFacet__factory,
-    CashInFacet__factory,
-    CustomFeesFacet__factory,
-    DeletableFacet__factory,
-    FreezableFacet__factory,
-    HoldManagementFacet__factory,
-    KYCFacet__factory,
-    PausableFacet__factory,
-    ReserveFacet__factory,
-    RoleManagementFacet__factory,
-    RolesFacet__factory,
-    SupplierAdminFacet__factory,
-    TokenOwnerFacet__factory,
-    WipeableFacet__factory,
-    DiamondFacet__factory,
-    HederaTokenManagerFacet__factory,
-    RescuableFacet__factory,
-    StableCoinFactoryFacet__factory,
-} from '@typechain'
 import { CONTRACT_NAMES } from '@configuration'
 
 task('createConfiguration', 'Create a new configuration')
@@ -38,8 +16,31 @@ task('createConfiguration', 'Create a new configuration')
     )
     .addOptionalParam('signerposition', 'The index of the signer in the Hardhat signers array', undefined, types.int)
     .setAction(async (args: CreateConfigurationCommand, hre) => {
+        // Inlined import due to circular dependency
         const { createConfigurationsForDeployedContracts, CreateConfigurationsForDeployedContractsCommand } =
             await import('@scripts')
+        const {
+            BusinessLogicResolver__factory,
+            HederaReserveFacet__factory,
+            BurnableFacet__factory,
+            CashInFacet__factory,
+            CustomFeesFacet__factory,
+            DeletableFacet__factory,
+            FreezableFacet__factory,
+            HoldManagementFacet__factory,
+            KYCFacet__factory,
+            PausableFacet__factory,
+            ReserveFacet__factory,
+            RoleManagementFacet__factory,
+            RolesFacet__factory,
+            SupplierAdminFacet__factory,
+            TokenOwnerFacet__factory,
+            WipeableFacet__factory,
+            DiamondFacet__factory,
+            HederaTokenManagerFacet__factory,
+            RescuableFacet__factory,
+            StableCoinFactoryFacet__factory,
+        } = await import('@typechain-types')
         console.log(`Executing createConfiguration on ${hre.network.name} ...`)
 
         const ADDRESS_ZERO = '0x0000000000000000000000000000000000000000'

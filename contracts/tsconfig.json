@@ -16,7 +16,7 @@
         "paths": {
             "@configuration": ["configuration/index"],
             "@hardhat-configuration": ["hardhat.config"],
-            "@typechain": ["typechain-types/*", "typechain-types/index.ts"],
+            "@typechain-types": ["typechain-types/*", "typechain-types/index.ts"],
             "@scripts": ["scripts/index"],
             "@environment": ["scripts/Environment"],
             "@tasks": ["tasks/index"],
