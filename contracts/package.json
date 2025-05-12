@@ -64,14 +64,17 @@
     "license": "Apache-2.0",
     "devDependencies": {
         "@chainlink/contracts": "^0.5.1",
+        "@commitlint/cli": "^19.7.1",
+        "@commitlint/config-conventional": "^19.7.1",
+        "@hashgraph/sdk": "^2.63.0",
         "@hashgraph/smart-contracts": "github:hashgraph/hedera-smart-contracts#v0.10.1",
         "@nomicfoundation/hardhat-chai-matchers": "^1.0.3",
         "@nomicfoundation/hardhat-network-helpers": "^1.0.6",
         "@nomicfoundation/hardhat-toolbox": "^2.0.0",
         "@nomiclabs/hardhat-ethers": "2.1.1",
         "@nomiclabs/hardhat-etherscan": "3.1.0",
-        "@openzeppelin/contracts": "^4.8.2",
-        "@openzeppelin/contracts-upgradeable": "^4.8.2",
+        "@openzeppelin/contracts": "^4.9.6",
+        "@openzeppelin/contracts-upgradeable": "^4.9.6",
         "@openzeppelin/hardhat-upgrades": "^1.22.1",
         "@primitivefi/hardhat-dodoc": "^0.2.3",
         "@typechain/ethers-v5": "10.1.0",
@@ -96,9 +99,7 @@
         "tsconfig-paths": "^4.2.0",
         "typechain": "8.1.0",
         "typescript": "4.9.5",
-        "web3": "1.8.0",
-        "@commitlint/cli": "^19.7.1",
-        "@commitlint/config-conventional": "^19.7.1"
+        "web3": "1.8.0"
     },
     "dependencies": {
         "commit-msg": "^0.2.3"
