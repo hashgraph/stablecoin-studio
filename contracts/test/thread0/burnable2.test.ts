@@ -28,10 +28,9 @@ describe('Burn Tests de prueba', () => {
     let burnFacet: BurnableFacet
     let signer_A: SignerWithAddress
     let signer_B: SignerWithAddress
-    let signer_C: SignerWithAddress
 
-    let factory: IStableCoinFactory
-    let businessLogicResolver: BusinessLogicResolver
+    let factory: string
+    let businessLogicResolver: string
     // Accounts
     // let operator: SignerWithAddress
     // let nonOperator: SignerWithAddress
@@ -40,7 +39,7 @@ describe('Burn Tests de prueba', () => {
         // mute | mock console.log
         console.log = () => {} // eslint-disable-line
         console.info(MESSAGES.deploy.info.deployFullInfrastructureInTests)
-        ;[signer_A, signer_B, signer_C] = await ethers.getSigners()
+        ;[signer_A, signer_B] = await ethers.getSigners()
 
         const { ...deployedContracts } = await deployFullInfrastructure(
             await DeployFullInfrastructureCommand.newInstance({
@@ -50,16 +49,16 @@ describe('Burn Tests de prueba', () => {
             })
         )
 
-        factory = deployedContracts.stableCoinFactoryFacet.contract
-        businessLogicResolver = deployedContracts.businessLogicResolver.contract
+        factory = deployedContracts.stableCoinFactoryFacet.proxyAddress!
+        businessLogicResolver = deployedContracts.businessLogicResolver.proxyAddress!
     })
 
     beforeEach(async () => {
         // eslint-disable-next-line @typescript-eslint/no-extra-semi
         ;({ tokenAddress } = await deployStableCoinInTests({
             signer: signer_A,
-            businessLogicResolverProxyAddress: businessLogicResolver.address,
-            stableCoinFactoryProxyAddress: factory.address,
+            businessLogicResolverProxyAddress: businessLogicResolver,
+            stableCoinFactoryProxyAddress: factory,
             network: network.name as NetworkName,
         }))
         hederaTokenManagerFacet = HederaTokenManagerFacet__factory.connect(tokenAddress, signer_A)
@@ -73,7 +72,7 @@ describe('Burn Tests de prueba', () => {
         const initialTotalSupply = await hederaTokenManagerFacet.totalSupply()
 
         // burn some tokens
-        const burnResponse = await burnFacet.burn(tokensToBurn, {
+        const burnResponse = await burnFacet.burn(1, {
             gasLimit: GAS_LIMIT.hederaTokenManager.burn,
         })
         await validateTxResponse(

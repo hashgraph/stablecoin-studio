@@ -83,20 +83,9 @@ export async function deployStableCoinInTests({
     deployedResult = await deployStableCoin(command)
 
     return {
-        stableCoinProxyAddress: await addressToHederaId({
-            address: deployedResult.stableCoinProxyAddress,
-            network,
-        }),
-        tokenAddress: await addressToHederaId({
-            address: deployedResult.tokenAddress,
-            network,
-        }),
-        reserveProxyAddress: deployedResult.reserveProxyAddress
-            ? await addressToHederaId({
-                  address: deployedResult.reserveProxyAddress,
-                  network,
-              })
-            : undefined,
+        stableCoinProxyAddress: deployedResult.stableCoinProxyAddress,
+        tokenAddress: deployedResult.tokenAddress,
+        reserveProxyAddress: deployedResult.reserveProxyAddress,
     }
 }
 
