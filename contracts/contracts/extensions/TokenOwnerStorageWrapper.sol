@@ -20,7 +20,6 @@ abstract contract TokenOwnerStorageWrapper is Common {
         address tokenAddress;
     }
 
-
     /**
      * @dev Emitted when tokens have been transferred from sender to receiver
      *

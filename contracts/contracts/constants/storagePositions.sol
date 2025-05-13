@@ -27,34 +27,35 @@ bytes32 constant _BUSINESS_LOGIC_RESOLVER_STORAGE_POSITION = 0x955a2786fa49b1e11
 // keccak256('stablecoin.studio.diamond.cut.manager.storage');
 bytes32 constant _DIAMOND_CUT_MANAGER_STORAGE_POSITION = 0x72d5df1de692f6c56351e47399f8b12f5a54cd3673dce5092e095fa19212f5a5;
 
-// keccak256('stablecoin.studio.hedera.reserve.storage');
-bytes32 constant _HEDERA_RESERVE_STORAGE_POSITION = 0xbed633dbd0bacd43d3399872bf1a59f5d8a56ae8e7638cd27a49cc24ecec5630;
+// keccak256('stablecoin.studio.initializable.storage');
+bytes32 constant _INITIALIZABLE_STORAGE_POSITION = 0xa58f1fcb40822c09091f9fa7b9f2bcc0672875fea7cf65ea9be9334e91fd948e;
 
-// keccak256('stablecoin.studio.hedera.token.manager.storage');
-bytes32 constant _HEDERA_TOKEN_MANAGER_STORAGE_POSITION = bytes32(uint256(701)); // legacy slot
+// keccak256('stablecoin.studio.token.owner.storage');
+bytes32 constant _TOKEN_OWNER_STORAGE_POSITION = 0xffe23b303bca7e4ba4a81747cce9a4b7900868fa595989c506407085297c6003;
 
 // keccak256('stablecoin.studio.hold.storage');
 bytes32 constant _HOLD_STORAGE_POSITION = 0x55eb875db6f21625db342149ef0f0b78f6afec1625e2c812812e031b05ee4bd1;
 
-// keccak256('stablecoin.studio.initializable.storage');
-bytes32 constant _INITIALIZABLE_STORAGE_POSITION = 0xa58f1fcb40822c09091f9fa7b9f2bcc0672875fea7cf65ea9be9334e91fd948e;
-
-// keccak256('stablecoin.studio.reserve.storage');
-bytes32 constant _RESERVE_STORAGE_POSITION = bytes32(uint256(151)); // legacy slot
-
-// keccak256('stablecoin.studio.resolverProxy.storage');
-bytes32 constant _RESOLVER_PROXY_STORAGE_POSITION = 0x72d4cc0a3f672d627d7746733345a3b1cc00ee12f57141f1dd5e005c8ceaec5e;
-
-// keccak256('stablecoin.studio.roles.storage');
-bytes32 constant _ROLES_STORAGE_POSITION = bytes32(uint256(51)); // legacy slot
+// keccak256('stablecoin.studio.hedera.reserve.storage');
+bytes32 constant _HEDERA_RESERVE_STORAGE_POSITION = 0xbed633dbd0bacd43d3399872bf1a59f5d8a56ae8e7638cd27a49cc24ecec5630;
 
 // keccak256('stablecoin.studio.stable.coin.factory.storage');
 bytes32 constant _STABLE_COIN_FACTORY_STORAGE_POSITION = 0xb0e6750e851c57435b04114f257b158c4b5f3ed0ea8aa4cc132d1cbcbe0b79e6;
 
+// keccak256('stablecoin.studio.resolverProxy.storage');
+bytes32 constant _RESOLVER_PROXY_STORAGE_POSITION = 0x72d4cc0a3f672d627d7746733345a3b1cc00ee12f57141f1dd5e005c8ceaec5e;
+
+// keccak256('stablecoin.studio.hedera.token.manager.storage');
+bytes32 constant _HEDERA_TOKEN_MANAGER_STORAGE_POSITION = bytes32(uint256(701)); // legacy slot
+
+// keccak256('stablecoin.studio.reserve.storage');
+bytes32 constant _RESERVE_STORAGE_POSITION = bytes32(uint256(151)); // legacy slot
+
+// keccak256('stablecoin.studio.roles.storage');
+bytes32 constant _ROLES_STORAGE_POSITION = bytes32(uint256(51)); // legacy slot
+
 // keccak256('stablecoin.studio.supplier.admin.storage');
 bytes32 constant _SUPPLIER_ADMIN_STORAGE_POSITION = bytes32(uint256(101)); // legacy slot
 
-// keccak256('stablecoin.studio.token.owner.storage');
-bytes32 constant _TOKEN_OWNER_STORAGE_POSITION = 0xffe23b303bca7e4ba4a81747cce9a4b7900868fa595989c506407085297c6003;
 
 // solhint-enable max-line-length
