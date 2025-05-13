@@ -19,12 +19,9 @@ abstract contract RolesStorageWrapper {
 
     struct RolesStorage {
         mapping(bytes32 => RoleData) roles;
-        /**
-         * @dev Array containing all roles
-         *
-         */
-        bytes32[] listOfRoles;
     }
+
+    bytes32 internal constant _LIST_OF_ROLES_SLOT = bytes32(uint256(52));
 
     // TODO: Better at interface
     /**
@@ -143,7 +140,7 @@ abstract contract RolesStorageWrapper {
     }
 
     function _getRoles(address account) internal view returns (bytes32[] memory rolesToReturn_) {
-        bytes32[] storage listOfRoles = _rolesStorage().listOfRoles;
+        bytes32[] storage listOfRoles = _listOfRoles();
         uint256 rolesLength = listOfRoles.length;
 
         rolesToReturn_ = new bytes32[](rolesLength);
@@ -170,6 +167,17 @@ abstract contract RolesStorageWrapper {
         // solhint-disable-next-line no-inline-assembly
         assembly {
             rolesStorage_.slot := position
+        }
+    }
+
+    /**
+     * @dev Array containing all roles
+     *
+     */
+    function _listOfRoles() private pure returns (bytes32[] storage result) {
+        bytes32 position = _LIST_OF_ROLES_SLOT;
+        assembly {
+            result.slot := position
         }
     }
 }

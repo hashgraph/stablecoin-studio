@@ -57,5 +57,4 @@ bytes32 constant _ROLES_STORAGE_POSITION = bytes32(uint256(51)); // legacy slot
 // keccak256('stablecoin.studio.supplier.admin.storage');
 bytes32 constant _SUPPLIER_ADMIN_STORAGE_POSITION = bytes32(uint256(101)); // legacy slot
 
-
 // solhint-enable max-line-length
