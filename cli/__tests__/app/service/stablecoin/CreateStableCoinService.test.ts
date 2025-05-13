@@ -25,7 +25,6 @@ import SetResolverAndFactoryService from '../../../../src/app/service/configurat
 import {
   Account,
   ContractId,
-  Factory,
   CreateRequest,
   HederaId,
   PublicKey,
@@ -67,7 +66,7 @@ const request = new CreateRequest({
   configVersion: 1,
 });
 
-describe(`Testing ManageImportedTokenService class`, () => {
+describe(`Testing CreateStableCoinService class`, () => {
   beforeEach(() => {
     jest
       .spyOn(utilsService, 'getCurrentAccount')
@@ -180,25 +179,6 @@ describe(`Testing ManageImportedTokenService class`, () => {
     jest
       .spyOn(utilsService, 'defaultSingleAsk')
       .mockResolvedValueOnce('0.0.12345');
-
-    // HederaTokenManagerVersion
-    jest
-      .spyOn(Factory, 'getHederaTokenManagerList')
-      .mockResolvedValue([
-        new ContractId('0.0.12345'),
-        new ContractId('0.0.12347'),
-        new ContractId('0.0.12346'),
-      ]);
-    jest
-      .spyOn(utilsService, 'defaultMultipleAsk')
-      .mockResolvedValueOnce(
-        language.getText('stablecoin.askHederaTokenManagerOther'),
-      );
-    jest
-      .spyOn(utilsService, 'defaultSingleAsk')
-      .mockResolvedValueOnce('0.0.12345');
-
-    jest.spyOn(utilsService, 'defaultConfirmAsk').mockResolvedValueOnce(true);
 
     // grantKYCToOriginalSender true
     jest
@@ -381,26 +361,13 @@ describe(`Testing ManageImportedTokenService class`, () => {
     // Reserve
     jest.spyOn(utilsService, 'defaultConfirmAsk').mockResolvedValueOnce(true);
     jest.spyOn(utilsService, 'defaultConfirmAsk').mockResolvedValueOnce(false);
-    jest.spyOn(utilsService, 'defaultSingleAsk').mockResolvedValueOnce('10');
-
-    // HederaTokenManagerVersion
-    jest
-      .spyOn(Factory, 'getHederaTokenManagerList')
-      .mockResolvedValue([
-        new ContractId('0.0.12345'),
-        new ContractId('0.0.12347'),
-        new ContractId('0.0.12346'),
-      ]);
-    jest
-      .spyOn(utilsService, 'defaultMultipleAsk')
-      .mockResolvedValueOnce(
-        language.getText('stablecoin.askHederaTokenManagerOther'),
-      );
     jest
       .spyOn(utilsService, 'defaultSingleAsk')
-      .mockResolvedValueOnce('0.0.12345');
-
-    jest.spyOn(utilsService, 'defaultConfirmAsk').mockResolvedValueOnce(true);
+      .mockResolvedValueOnce(
+        '0x0000000000000000000000000000000000000000000000000000000000000003',
+      );
+    jest.spyOn(utilsService, 'defaultSingleAsk').mockResolvedValueOnce('1');
+    jest.spyOn(utilsService, 'defaultSingleAsk').mockResolvedValueOnce('10');
 
     jest
       .spyOn(utilsService, 'getCurrentAccount')

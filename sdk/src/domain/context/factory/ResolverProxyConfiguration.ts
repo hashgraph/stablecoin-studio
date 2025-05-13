@@ -21,4 +21,11 @@
 export class ResolverProxyConfiguration {
 	public key: string;
 	public version: number;
+
+	static empty(): ResolverProxyConfiguration {
+		return {
+			key: '0x0000000000000000000000000000000000000000000000000000000000000000',
+			version: 0,
+		};
+	}
 }

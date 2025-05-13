@@ -50,6 +50,12 @@ export default class CreateRequest extends ValidatedRequest<CreateRequest> {
 	reserveAddress?: string;
 
 	@OptionalField()
+	reserveConfigId?: string;
+
+	@OptionalField()
+	reserveConfigVersion?: number;
+
+	@OptionalField()
 	reserveInitialAmount?: string | undefined;
 
 	@OptionalField()
@@ -137,6 +143,8 @@ export default class CreateRequest extends ValidatedRequest<CreateRequest> {
 		stableCoinFactory,
 		reserveAddress,
 		reserveInitialAmount,
+		reserveConfigId,
+		reserveConfigVersion,
 		createReserve,
 		grantKYCToOriginalSender,
 		burnRoleAccount,
@@ -169,6 +177,8 @@ export default class CreateRequest extends ValidatedRequest<CreateRequest> {
 		stableCoinFactory?: string;
 		reserveAddress?: string;
 		reserveInitialAmount?: string;
+		reserveConfigId?: string;
+		reserveConfigVersion?: number;
 		createReserve: boolean;
 		grantKYCToOriginalSender?: boolean;
 		burnRoleAccount?: string;
@@ -335,6 +345,8 @@ export default class CreateRequest extends ValidatedRequest<CreateRequest> {
 			proxyOwnerAccount: Validation.checkHederaIdFormat(),
 			configId: Validation.checkBytes32Format(),
 			configVersion: Validation.checkNumber(),
+			reserveConfigId: Validation.checkBytes32Format(),
+			reserveConfigVersion: Validation.checkNumber(),
 		});
 		this.name = name;
 		this.symbol = symbol;
@@ -352,6 +364,8 @@ export default class CreateRequest extends ValidatedRequest<CreateRequest> {
 		this.stableCoinFactory = stableCoinFactory;
 		this.reserveAddress = reserveAddress;
 		this.reserveInitialAmount = reserveInitialAmount;
+		this.reserveConfigId = reserveConfigId;
+		this.reserveConfigVersion = reserveConfigVersion;
 		this.createReserve = createReserve;
 		this.grantKYCToOriginalSender = grantKYCToOriginalSender;
 		this.burnRoleAccount = burnRoleAccount;

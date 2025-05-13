@@ -85,8 +85,8 @@ export default class CreateStableCoinService extends Service {
         (await resolverAndFactoryService.getSDKResolver())
     ) {
       await resolverAndFactoryService.setSDKResolverAndFactory(
-        utilsService.getCurrentFactory().id,
         utilsService.getCurrentResolver().id,
+        utilsService.getCurrentFactory().id,
       );
     }
     let createdToken;
@@ -149,6 +149,7 @@ export default class CreateStableCoinService extends Service {
       createReserve: false,
       configId: '',
       configVersion: 1,
+      proxyOwnerAccount: currentAccount.accountId,
     });
 
     // Name
@@ -180,7 +181,7 @@ export default class CreateStableCoinService extends Service {
         tokenToCreate.configId = await utilsService.defaultSingleAsk(
           language.getText('stablecoin.askConfigId'),
           tokenToCreate.configId ||
-            '0x0000000000000000000000000000000000000000000000000000000000000001',
+            '0x0000000000000000000000000000000000000000000000000000000000000002',
         );
       },
     );
@@ -189,7 +190,7 @@ export default class CreateStableCoinService extends Service {
       async () => {
         tokenToCreate.configVersion = Number(
           await utilsService.defaultSingleAsk(
-            language.getText('stablecoin.askConfigId'),
+            language.getText('stablecoin.askConfigVersion'),
             tokenToCreate.configVersion.toString() || '1',
           ),
         );
@@ -339,6 +340,19 @@ export default class CreateStableCoinService extends Service {
       existingReserve = await this.askForExistingReserve();
       if (!existingReserve) {
         tokenToCreate.createReserve = true;
+        await utilsService.handleValidation(
+          () => tokenToCreate.validate('reserveConfigId'),
+          async () => {
+            tokenToCreate.reserveConfigId = await this.askForReserveConfigId();
+          },
+        );
+        await utilsService.handleValidation(
+          () => tokenToCreate.validate('reserveConfigVersion'),
+          async () => {
+            tokenToCreate.reserveConfigVersion =
+              await this.askForReserveConfigVersion();
+          },
+        );
         await utilsService.handleValidation(
           () => tokenToCreate.validate('reserveInitialAmount'),
           async () => {
@@ -491,6 +505,23 @@ export default class CreateStableCoinService extends Service {
     return await utilsService.defaultSingleAsk(
       language.getText('stablecoin.askReserveInitialAmount'),
       val || '1',
+    );
+  }
+
+  private async askForReserveConfigVersion(val?: string): Promise<number> {
+    return Number(
+      await utilsService.defaultSingleAsk(
+        language.getText('stablecoin.askReserveConfigVersion'),
+        val || '1',
+      ),
+    );
+  }
+
+  private async askForReserveConfigId(val?: string): Promise<string> {
+    return await utilsService.defaultSingleAsk(
+      language.getText('stablecoin.askReserveConfigId'),
+      val ||
+        '0x0000000000000000000000000000000000000000000000000000000000000003',
     );
   }
 

@@ -207,8 +207,10 @@ export const english = {
     askReserve: 'Do you want to link the stablecoin to a Proof-of-Reserve?',
     askExistingReserve:
       'Do you want to link it to an already existing Proof-of-Reserve?',
-    askReserveAddress:
-      'Enter the Proof-of-Reserve Feed you wish to link your stablecoin to',
+    askReserveConfigId:
+      'A new Proof-of-Reserve Feed will be deployed, enter the resolver configuration ID',
+    askReserveConfigVersion: 'Enter the resolver configuration version',
+    askCreateReserve: 'Do you want to deploy a new Proof-of-Reserve?',
     askReserveInitialAmount: 'Enter the Proof-of-Reserve Feed initial amount',
     askInitialSupply: 'Enter the initial supply',
     askSupplyType: 'Do you want the token max supply to be infinite?',
@@ -405,6 +407,7 @@ export const english = {
       ManageMirrorNode: 'Manage mirror node',
       ManageRPC: 'Manage JSON-RPC-Relay',
       ManageBackend: 'Manage backend',
+      ManageFactoryAndResolver: 'Edit factory and resolver',
       ...returnToMainMenu,
     },
     manageAccountOptions: {

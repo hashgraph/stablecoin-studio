@@ -2639,7 +2639,10 @@ export default class OperationStableCoinService extends Service {
                   stableCoinCapabilities,
                   Operation.UPDATE,
                   Access.HTS,
-                )))
+                ))) ||
+            (option ===
+              language.getText('wizard.stableCoinOptions.ResolverMgmt') &&
+              roles.includes(StableCoinRole.DEFAULT_ADMIN_ROLE))
           ) {
             return true;
           }
@@ -3037,7 +3040,7 @@ export default class OperationStableCoinService extends Service {
       await utilsService.defaultMultipleAsk(
         language.getText('stableCoinConfiguration.askConfiguration'),
         configurationOptionsFiltered,
-        false,
+        true,
       )
     ) {
       case language.getText(

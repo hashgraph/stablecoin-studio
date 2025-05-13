@@ -68,6 +68,8 @@ export class CreateCommandHandler implements ICommandHandler<CreateCommand> {
 			resolver,
 			configId,
 			configVersion,
+			reserveConfigId,
+			reserveConfigVersion,
 		} = command;
 
 		if (!factory) {
@@ -90,6 +92,12 @@ export class CreateCommandHandler implements ICommandHandler<CreateCommand> {
 
 		if (configVersion === undefined) {
 			throw new InvalidRequest('Config Version not found in request');
+		}
+
+		if (createReserve && (!reserveConfigId || !reserveConfigVersion)) {
+			throw new InvalidRequest(
+				'Cannot create reserve without reserve config id and version',
+			);
 		}
 
 		const handler = this.transactionService.getHandler();
@@ -158,6 +166,8 @@ export class CreateCommandHandler implements ICommandHandler<CreateCommand> {
 			proxyOwnerAccount,
 			reserveAddress,
 			reserveInitialAmount,
+			reserveConfigId,
+			reserveConfigVersion,
 		);
 
 		if (!res.id)
@@ -189,26 +199,26 @@ export class CreateCommandHandler implements ICommandHandler<CreateCommand> {
 				return Promise.resolve(
 					new CreateCommandResponse(
 						ContractId.fromHederaContractId(
-							HContractId.fromSolidityAddress(data[3]),
+							HContractId.fromEvmAddress(0, 0, data[1]),
 						),
-						data[4] === EVM_ZERO_ADDRESS
+						data[0] === EVM_ZERO_ADDRESS
 							? new ContractId('0.0.0')
 							: ContractId.fromHederaContractId(
 									HContractId.fromString(
 										(
 											await this.mirrorNodeAdapter.getContractInfo(
-												data[4],
+												data[0],
 											)
 										).id,
 									),
 							  ),
-						data[5] === EVM_ZERO_ADDRESS
+						data[2] === EVM_ZERO_ADDRESS
 							? new ContractId('0.0.0')
 							: ContractId.fromHederaContractId(
 									HContractId.fromString(
 										(
 											await this.mirrorNodeAdapter.getContractInfo(
-												data[5],
+												data[2],
 											)
 										).id,
 									),

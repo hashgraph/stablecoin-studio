@@ -23,8 +23,11 @@ import {
   wizardService,
   utilsService,
   configurationService,
+  language,
 } from '../../../../src/index.js';
 import { AccountType } from '../../../../src/domain/configuration/interfaces/AccountType';
+import WizardService from '../../../../src/app/service/wizard/WizardService.js';
+import SetResolverAndFactoryService from '../../../../src/app/service/configuration/SetResolverAndFactoryService.js';
 
 describe('wizardService', () => {
   const configurationMock = {
@@ -134,6 +137,14 @@ describe('wizardService', () => {
       },
     ],
   };
+
+  const mocks: Record<string, jest.SpyInstance> = {};
+
+  beforeAll(() => {
+    mocks.cleanAndShowBanner = jest
+      .spyOn(utilsService, 'cleanAndShowBanner')
+      .mockImplementation();
+  });
 
   afterEach(() => {
     jest.restoreAllMocks();
@@ -344,5 +355,59 @@ describe('wizardService', () => {
       { id: '2', network: 'testnet' },
     );
     expect(setNetworkMock).toHaveBeenCalledWith(expect.any(Object));
+  });
+
+  it('should configure factories and resolvers', async () => {
+    // mocks
+    jest
+      .spyOn(utilsService, 'getCurrentAccount')
+      .mockReturnValue(configurationMock.accounts[0]);
+    jest
+      .spyOn(utilsService, 'getCurrentMirror')
+      .mockReturnValue(configurationMock.mirrors[0]);
+    jest
+      .spyOn(utilsService, 'getCurrentRPC')
+      .mockReturnValue(configurationMock.rpcs[0]);
+    jest
+      .spyOn(utilsService, 'getCurrentBackend')
+      .mockReturnValue(configurationMock.backend);
+    jest
+      .spyOn(utilsService, 'defaultMultipleAsk')
+      .mockResolvedValueOnce(
+        language.getText('wizard.mainOptions.Configuration'),
+      )
+      .mockResolvedValueOnce(
+        language.getText('wizard.changeOptions.ManageFactoryAndResolver'),
+      )
+      .mockResolvedValueOnce(language.getText('wizard.changeOptions.Return'))
+      .mockResolvedValueOnce(language.getText('wizard.mainOptions.Exit'));
+
+    let keep = (WizardService.prototype as any).configurationMenu;
+    jest
+      .spyOn(WizardService.prototype as any, 'configurationMenu')
+      .mockImplementationOnce(keep)
+      .mockImplementation(jest.fn());
+
+    const configureResolversAndFactoriesMock = jest
+      .spyOn(
+        SetResolverAndFactoryService.prototype,
+        'configureResolversAndFactories',
+      )
+      .mockResolvedValue([
+        configurationMock.factories,
+        configurationMock.resolvers,
+      ]);
+
+    keep = (WizardService.prototype as any).mainMenu;
+    jest
+      .spyOn(WizardService.prototype as any, 'mainMenu')
+      .mockImplementationOnce(keep)
+      .mockImplementation(jest.fn());
+
+    // act
+    await wizardService.mainMenu();
+
+    // asserts
+    expect(configureResolversAndFactoriesMock).toHaveBeenCalledTimes(1);
   });
 });

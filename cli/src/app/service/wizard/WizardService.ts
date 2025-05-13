@@ -241,6 +241,11 @@ export default class WizardService extends Service {
         });
         break;
 
+      case language.getText('wizard.changeOptions.ManageFactoryAndResolver'):
+        await utilsService.cleanAndShowBanner();
+        await this.setResolverAndFactoryService.configureResolversAndFactories();
+        break;
+
       default:
         await utilsService.cleanAndShowBanner();
         await this.mainMenu();

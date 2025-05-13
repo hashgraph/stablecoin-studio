@@ -192,6 +192,8 @@ export default class RPCTransactionAdapter extends TransactionAdapter {
 		proxyOwnerAccount: HederaId,
 		reserveAddress?: ContractId,
 		reserveInitialAmount?: BigDecimal,
+		reserveConfigId?: string,
+		reserveConfigVersion?: number,
 	): Promise<TransactionResponse<any, Error>> {
 		try {
 			const cashinRole: FactoryCashinRole = {
@@ -259,10 +261,12 @@ export default class RPCTransactionAdapter extends TransactionAdapter {
 				version: configVersion,
 			};
 
-			const reserveConfigurationId: ResolverProxyConfiguration = {
-				key: configId,
-				version: configVersion,
-			};
+			const reserveConfigurationId = ResolverProxyConfiguration.empty();
+
+			if (createReserve) {
+				reserveConfigurationId.key = reserveConfigId!;
+				reserveConfigurationId.version = reserveConfigVersion!;
+			}
 
 			const roles = await Promise.all(
 				providedRoles

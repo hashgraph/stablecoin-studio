@@ -138,6 +138,8 @@ export abstract class HederaTransactionAdapter extends TransactionAdapter {
 		proxyOwnerAccount: HederaId,
 		reserveAddress?: ContractId,
 		reserveInitialAmount?: BigDecimal,
+		reserveConfigId?: string,
+		reserveConfigVersion?: number,
 	): Promise<TransactionResponse<any, Error>> {
 		try {
 			const cashinRole: FactoryCashinRole = {
@@ -204,10 +206,12 @@ export abstract class HederaTransactionAdapter extends TransactionAdapter {
 				version: configVersion,
 			};
 
-			const reserveConfigurationId: ResolverProxyConfiguration = {
-				key: configId,
-				version: configVersion,
-			};
+			const reserveConfigurationId = ResolverProxyConfiguration.empty();
+
+			if (createReserve) {
+				reserveConfigurationId.key = reserveConfigId!;
+				reserveConfigurationId.version = reserveConfigVersion!;
+			}
 
 			const roles = await Promise.all(
 				providedRoles
@@ -224,6 +228,7 @@ export abstract class HederaTransactionAdapter extends TransactionAdapter {
 						return role;
 					}),
 			);
+
 			const stableCoinToCreate = new FactoryStableCoin(
 				coin.name,
 				coin.symbol,
