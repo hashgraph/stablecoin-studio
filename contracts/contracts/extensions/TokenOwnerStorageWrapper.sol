@@ -14,9 +14,12 @@ abstract contract TokenOwnerStorageWrapper is Common {
     // Hedera HTS precompiled contract
     address internal constant _PRECOMPILED_ADDRESS = address(0x167);
     struct TokenOwnerStorage {
+        // 2 bytes offset - maintained for compatibility with legacy migration layout
+        bytes2 offset;
         // HTS Token this contract owns
         address tokenAddress;
     }
+
 
     /**
      * @dev Emitted when tokens have been transferred from sender to receiver
