@@ -39,39 +39,44 @@ The smart contracts located in the `hts-precompile` folder are used to interact 
 - `IHederaTokenService.sol`: Interface implemented by the _HTS precompiled smart contract_. In order to execute an HTS operation, our smart contracts will need to instantiate this interface with the _HTS precompiled smart contract_ address.
 
 The remaining smart contracts have been implemented for this project:
-
 - Contracts within the `extensions` folder: _one contract for each stablecoin operation_.
-    - `Burnable.sol`: abstract contract implementing the _burn_ operation (burns tokens from the treasury account. Decreases the total supply).
-    - `CashIn.sol`: abstract contract implementing the _cash-in_ operation (mints new tokens and transfers them to an account. Increases the total supply).
-    - `Deletable.sol`: abstract contract implementing the _delete_ operation (deletes the stablecoin's underlying token. **WARNING** : THIS OPERATION CANNOT BE ROLLED-BACK AND A stablecoin WITHOUT AN UNDERLYING TOKEN WILL NOT WORK ANYMORE).
-    - `Freezable.sol`: abstract contract implementing the _freeze_ and _unfreeze_ operations (if the token is fronzen for an account, this account will not be able to operate with the stablecoin until unfrozen).
-    - `KYC.sol`: abstract contract implementing the _grantKyc_ and _revokeKyc_ operations to grant or revoke KYC flag to a Hedera account for the stablecoin.
-    - `Pausable.sol`: abstract contract implementing the _pause_ and _unpause_ operations (if a token is paused, nobody will be able to operate with it until the token is unpaused).
-    - `Rescatable.sol`: abstract contract implementing the _rescue_ and _rescueHBAR_ operation (transfers tokens and HBAR, respectively, from the treasury account being the stablecoin's smart contract to another account).
-    - `Reserve.sol`: abstract contract implementing the reserve for the stablecoin (checking against the current reserve before minting, changing the reserve data feed, etc...). The Reserve contract allows the option to update the reserve address to 0.0.0 (zero address) to disable the actual address.
-    - `RoleManagement.sol`: abstract contract implementing the _grantRoles_ and _revokeRoles_ operations (granting and revoking multiple roles to/from multiple accounts in one single transaction).
-    - `Roles.sol`: contains the definition of the roles that can be assigned for every stablecoin.
-    - `Supplieradmin.sol`: abstract contract implementing all the _cash-in_ role assignment and management (assigning/removing the role as well as setting, increasing and decreasing the cash-in limit).
-    - `TokenOwner.sol`: abstract contract that stores the addresses of the _HTS precompiled smart contract_ and the _underlying token_ related to the stablecoin. All the smart contracts mentioned above, inherit from this abstract contract.
-    - `Wipeable.sol`: abstract contract implementing the _wipe_ operation (burn token from any account. Decreases the total supply).
-- Contracts within the `proxies` folder:
-    - `StableCoinProxyAdmin.sol`: This contract implements the OpenZeppelin's `transparent ProxyAdmin` but also inherits from the OpenZeppelin's `Ownable2Step` to prevent the ownership to be accidentally transferred.
-- `HederaReserve.sol`: implements the ChainLink AggregatorV3Interface to provide the current data about the stablecoin's reserve.
-- `HederaTokenManager.sol`: main stablecoin contract. Contains all the stablecoin related logic. Inherits all the contracts defined in the "extension" folder as well as the Role.sol contract. **IMPORTANT** : a HederaTokenManager contract will be deployed in testnet for anybody to use. Users are also free to deploy and use their own HederaTokenManager contract. Whatever HederaTokenManager contract users choose to use, they will need to pass the contract's address as an input argument when calling the factory.
-- `StableCoinFactory.sol`: implements the flow to create a new stablecoin. Every time a new stablecoin is created, several smart contracts must be deployed and initialized and an underlying token must be created through the `HTS precompiled smart contract`. this multi-transaction process is encapsulated in this contract so that users can create new stablecoins in a single transaction. **IMPORTANT** : a factory contract will be deployed in tesnet for anybody to use. Users are also free to deploy and use their own factory contract.
+  - `BurnableFacet.sol`: implements the _burn_ operation (burns tokens from the treasury account. Decreases the total supply).
+  - `CashInFacet.sol`: implements the _cash-in_ operation (mints new tokens and transfers them to an account. Increases the total supply).
+  - `DeletableFacet.sol`: implements the _delete_ operation (deletes the stablecoin's underlying token).  
+    **WARNING**: THIS OPERATION CANNOT BE ROLLED BACK. A stablecoin WITHOUT AN UNDERLYING TOKEN WILL NOT WORK ANYMORE.
+  - `FreezableFacet.sol`: implements the _freeze_ and _unfreeze_ operations (if the token is frozen for an account, this account will not be able to operate with the stablecoin until unfrozen).
+  - `KYCFacet.sol`: implements the _grantKyc_ and _revokeKyc_ operations to grant or revoke the KYC flag to a Hedera account for the stablecoin.
+  - `PausableFacet.sol`: implements the _pause_ and _unpause_ operations (if a token is paused, no one will be able to operate with it until unpaused).
+  - `RescatableFacet.sol`: implements the _rescue_ and _rescueHBAR_ operations (transfers tokens and HBAR, respectively, from the treasury account—being the stablecoin’s smart contract—to another account).
+  - `ReserveFacet.sol`: implements the reserve logic for the stablecoin (checks against the current reserve before minting, allows updating the reserve data feed, etc.).  
+    The reserve address can be set to `0.0.0` (zero address) to disable the reserve mechanism.
+  - `RoleManagementFacet.sol`: implements the _grantRoles_ and _revokeRoles_ operations (grants and revokes multiple roles to/from multiple accounts in a single transaction).
+  - `RolesFacet.sol`: contains the definition of the roles that can be assigned to each stablecoin.
+  - `SupplierAdminFacet.sol`: implements the management of the _cash-in_ role (assigning/removing the role and setting, increasing, or decreasing the cash-in limit).
+  - `TokenOwnerFacet.sol`: stores the addresses of the _HTS precompiled smart contract_ and the _underlying token_ related to the stablecoin. All other facets rely on this.
+  - `WipeableFacet.sol`: implements the _wipe_ operation (burns tokens from any account. Decreases the total supply).
+  - `HoldManagementFacet.sol`: implements the _hold_ functionality, enabling temporary locking of tokens under the control of an escrow address. This is used in scenarios like secondary market trades or regulatory compliance.
+- Important contracts within the `resolver` folder:
+  - `BusinessLogicResolver.sol`: central contract that maps function selectors to facet addresses. All stablecoin proxies delegate the selector resolution to this resolver, enabling centralized upgradeability across all stablecoins.
+  - `ResolverProxy.sol`: lightweight diamond clone that delegates execution to the correct facet based on the mapping returned by the `BusinessLogicResolver`.
+  - `BusinessLogicResolverWrapper.sol`: helper contract to simplify interaction with the resolver.
+
+- `HederaReserveFacet.sol`: implements the ChainLink AggregatorV3Interface to provide the current data about the stablecoin's reserve.
+- `HederaTokenManagerFacet.sol`: defines the main logic to initialize and manage a stablecoin. It exposes key ERC-20-like read functions (`name`, `symbol`, `decimals`, `totalSupply`, `balanceOf`) and supports on-chain metadata and token updates via HTS.
+- `StableCoinFactoryFacet.sol`: implements the flow to create a new stablecoin. Every time a new stablecoin is created, several smart contracts must be deployed and initialized and an underlying token must be created through the `HTS precompiled smart contract`. this multi-transaction process is encapsulated in this contract so that users can create new stablecoins in a single transaction. **IMPORTANT** : a factory contract will be deployed in tesnet for anybody to use. Users are also free to deploy and use their own factory contract.
 - These last three contracts have their own interfaces in the `Interfaces` folder.
 
-> Every stablecoin is made of a **ProxyAdmin** and a **TransparentUpgradeableProxy** contracts (from OpenZeppelin) plus an **underlying token** managed through the _HTS precompiled smart contract_. The **hederaTokenManager** contract is meant to be "shared" by multiple users (using proxies). A stablecoin admin may also choose to deploy a **HederaReserve** along with the stablecoin at creation time, with its own **TransparentUpgradeableProxy** and **ProxyAdmin** contracts, or to define an existing reserve instead.
+> 💡 Each stablecoin is deployed as a diamond clone (via `ResolverProxy`) and uses a shared `BusinessLogicResolver` to dynamically delegate logic calls. This enables centralized logic upgrades across all stablecoins with a single transaction.
 
 # Architecture
 
 ## Overall architecture
 
-![StableCoinOverallArchitecture](https://github.com/hashgraph/stablecoin-studio/assets/108128685/218702f9-a0af-4e9a-901a-ffdd97a28b12)
+TDB: diagram
 
 ## Detailed architecture
 
-![](./img/StableCoinArchitecture_2.jpg)
+TDB: diagram
 
 # Content
 
@@ -124,28 +129,24 @@ import { hederaTokenManager__factory } from '@hashgraph/stablecoin-npm-contracts
 
 # Test
 
-Each test has been designed to be self-contained following the _arrange, act, assert_ pattern. Tests are completely independent of each other and as such should successfully run in any order.
+Each test follows the _arrange, act, assert_ pattern and is self-contained, ensuring full independence and allowing them to run in parallel and in any order.
 
 ## Files
 
-Typescript test files can be found in the `test` folder:
+Typescript test files are located in the `test` folder and are organized into two parallel execution threads:
+- `Thread0/`
+- `Thread1/`
 
-- `burnable.ts`: tests the stablecoin burn functionality.
-- `deletable.ts`: tests the stablecoin delete functionality.
-- `deployFactory.ts`: tests the stablecoin factory deployment functionality.
-- `freezable.ts`: tests the stablecoin freeze/unfreeze functionality.
-- `hederaReserve.ts`: tests the HederaReserve functionality.
-- `hederaTokenManager.ts`: tests the hederaTokenManager functionality.
-- `kyc.ts`: tests the KYC grant/revoke functionality to account for stablecoins.
-- `pausable.ts`: tests the stablecoin pause functionality.
-- `rescatable.ts`: tests the stablecoin rescue functionality.
-- `reserve.ts`: tests the stablecoin reserve functionality.
-- `roleManagement.ts`: tests the stablecoin roles (granting/revoking multiple roles) functionality.
-- `roles.ts`: tests the stablecoin roles functionality.
-- `stableCoinFactory.ts`: tests the Factory functionality.
-- `supplieradmin.ts`: tests the stablecoin cash-in functionality.
-- `wipeable.ts`: tests the stablecoin wipe functionality.
-- `customFees.ts`: tests the stablecoin custom fees functionality.
+## Execution
+
+Tests are designed to run in parallel, but they can also be executed individually for debugging or focused testing.  
+For example:
+
+```bash
+npm run test:customFees
+# or directly
+npx hardhat test test/thread0/customFees.test.ts
+```
 
 ## Configuration
 
@@ -169,25 +170,29 @@ For each account you must provide the following information:
 Example for the Hedera testnet (_these are fake accounts/keys_):
 
 ```.env
-    TESTNET_HEDERA_OPERATOR_ACCOUNT='0.0.48513676'
-    TESTNET_HEDERA_OPERATOR_PUBLICKEY='c14dbe4c936181b7a2fe7faf086fd95bdc6900e2d16533e3e8ffd00cac1fe607'
-    TESTNET_HEDERA_OPERATOR_PRIVATEKEY='8830990f02fae1c3a843b8aaad0433a73ee47b08d56426a8e416d08727ea0609'
-    TESTNET_HEDERA_OPERATOR_ED25519=true
-
-    TESTNET_HEDERA_NON_OPERATOR_ACCOUNT='0.0.47786654'
-    TESTNET_HEDERA_NON_OPERATOR_PUBLICKEY='302a300506032b657003210057056288u5d5a9cdaeb85687391dc7372707c464f9e7cb0efb386cf4244ebdf6'
-    TESTNET_HEDERA_NON_OPERATOR_PRIVATEKEY='302e020100300506032b6baf04220420b7ca8f1a5453d5c03b0d8ba99d06306ed6c93ee64d7bf122c21b0981e2b0b679'
-    TESTNET_HEDERA_NON_OPERATOR_ED25519=true
-
-    PREVIEWNET_HEDERA_OPERATOR_ACCOUNT='0.0.48513676'
-    PREVIEWNET_HEDERA_OPERATOR_PUBLICKEY='c14dbe4c936181b7a2fe7faf086fd95bdc6900e2d16533e3e8ffd00cac1fe607'
-    PREVIEWNET_HEDERA_OPERATOR_PRIVATEKEY='8830990f02fae1c3a843b8aaad0433a73ee47b08d56426a8e416d08727ea0609'
-    PREVIEWNET_HEDERA_OPERATOR_ED25519=true
-
-    PREVIEWNET_HEDERA_NON_OPERATOR_ACCOUNT='0.0.47786654'
-    PREVIEWNET_HEDERA_NON_OPERATOR_PUBLICKEY='302a300506032b657003210057056288u5d5a9cdaeb85687391dc7372707c464f9e7cb0efb386cf4244ebdf6'
-    PREVIEWNET_HEDERA_NON_OPERATOR_PRIVATEKEY='302e020100300506032b6baf04220420b7ca8f1a5453d5c03b0d8ba99d06306ed6c93ee64d7bf122c21b0981e2b0b679'
-    PREVIEWNET_HEDERA_NON_OPERATOR_ED25519=true
+    # * Accounts and Keys
+    # Private keys in RAW Format (Not DER)
+    # local
+    LOCAL_PRIVATE_KEY_0='0xEXAMPLEPRIVATEKEY0'
+    LOCAL_PRIVATE_KEY_1='0xEXAMPLEPRIVATEKEY1'
+    # testnet
+    TESTNET_PRIVATE_KEY_0='0xEXAMPLEPRIVATEKEY4'
+    TESTNET_PRIVATE_KEY_1='0xEXAMPLEPRIVATEKEY5'
+    # ... add more keys as needed
+    
+    # * Hedera Network
+    # Local
+    LOCAL_JSON_RPC_ENDPOINT='http://localhost:7546'
+    LOCAL_MIRROR_NODE_ENDPOINT='http://localhost:5551'
+    # Testnet
+    TESTNET_JSON_RPC_ENDPOINT='https://testnet.hashio.io/api'
+    TESTNET_MIRROR_NODE_ENDPOINT='https://testnet.mirrornode.hedera.com'
+    
+    # * Deployed Contracts
+    TESTNET_TOKENMANAGER='0x0000000000000000000000000000000000000000'
+    TESTNET_FACTORY_PROXY='0x0000000000000000000000000000000000000000'
+    TESTNET_FACTORY_PROXY_ADMIN='0x0000000000000000000000000000000000000000'
+    TESTNET_FACTORY='0x0000000000000000000000000000000000000000'
 ```
 
 ### Operating accounts
@@ -198,7 +203,7 @@ All tests will use the two above mentioned accounts.
 - `Non Operator Account`: This is the account that will NOT deploy the stablecoin used for testing. It will have no rights to the stablecoin unless explicitly granted during the test.
 
 You can change which account is the _operator_ and the _non-operator_ account by changing the **clientId** value at:
-scripts -> utilities.ts -> const clientId
+scripts -> utils.ts -> const clientId
 
 ### Pre-deployed factory & hederaTokenManager contracts
 
