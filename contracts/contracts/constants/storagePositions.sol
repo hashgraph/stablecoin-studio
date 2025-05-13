@@ -16,7 +16,7 @@ pragma solidity 0.8.18;
  *
  * 2. Fixed slot numbers (converted to bytes32): these are used in modules that must maintain compatibility
  *    with legacy storage layout from a previous monolithic contract (e.g. `HederaTokenManager`). They point to
- *    specific slot numbers (e.g. 51, 101, 701) where critical data is already stored and must not move.
+ *    specific slot numbers where critical data is already stored and must not move.
  *
  *  Do NOT modify or reorder these values.
  */
@@ -41,9 +41,6 @@ bytes32 constant _STABLE_COIN_FACTORY_STORAGE_POSITION = 0xb0e6750e851c57435b041
 
 // keccak256('stablecoin.studio.resolverProxy.storage');
 bytes32 constant _RESOLVER_PROXY_STORAGE_POSITION = 0x72d4cc0a3f672d627d7746733345a3b1cc00ee12f57141f1dd5e005c8ceaec5e;
-
-// @dev Legacy storage slots used for migration purposes.
-// These constants preserve the storage layout from previous deployments behind a proxy.
 
 // Slot 1
 bytes32 constant _TOKEN_OWNER_STORAGE_POSITION = 0x0000000000000000000000000000000000000000000000000000000000000001;
