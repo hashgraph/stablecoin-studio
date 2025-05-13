@@ -145,7 +145,7 @@ abstract contract RolesStorageWrapper {
     }
 
     function _getRoles(address account) internal view returns (bytes32[] memory rolesToReturn_) {
-        bytes32[] storage listOfRoles = _listOfRoles();
+        bytes32[] storage listOfRoles = _rolesStorage().listOfRoles;
         uint256 rolesLength = listOfRoles.length;
 
         rolesToReturn_ = new bytes32[](rolesLength);
