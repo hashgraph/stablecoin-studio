@@ -27,17 +27,17 @@ import { HederaId } from '../../../../../domain/context/shared/HederaId.js';
 
 export class CreateCommandResponse implements CommandResponse {
 	public readonly tokenId: ContractId;
+	public readonly stableCoinProxy: ContractId;
 	public readonly reserveProxy: ContractId;
-	public readonly reserveProxyAdmin: ContractId;
 
 	constructor(
 		tokenId: ContractId,
+		stableCoinProxy: ContractId,
 		reserveProxy: ContractId,
-		reserveProxyAdmin: ContractId,
 	) {
 		this.tokenId = tokenId;
 		this.reserveProxy = reserveProxy;
-		this.reserveProxyAdmin = reserveProxyAdmin;
+		this.stableCoinProxy = stableCoinProxy;
 	}
 }
 
