@@ -5,12 +5,12 @@ import {ResolverProxyFallBack} from '../../resolver/resolverProxy/ResolverProxy.
 import {IResolverProxy} from '../../resolver/interfaces/resolverProxy/IResolverProxy.sol';
 import {IBusinessLogicResolver} from '../../resolver/interfaces/IBusinessLogicResolver.sol';
 import {RolesStruct} from '../../Interfaces/IHederaTokenManager.sol';
-import {_MIGRATION_IMPLEMENTATION_PROXY_V2_RESOLVER_KEY} from './../../constants/resolverKeys.sol';
+import {_MIGRATION_PROXY_V2_RESOLVER_KEY} from './../../constants/resolverKeys.sol';
 import {Initializable} from './../../core/Initializable.sol';
 
-contract MigrationImplementationProxy is Initializable, ResolverProxyFallBack {
+contract MigrationProxy is Initializable, ResolverProxyFallBack {
     constructor() {
-        _disableInitializers(_MIGRATION_IMPLEMENTATION_PROXY_V2_RESOLVER_KEY);
+        _disableInitializers(_MIGRATION_PROXY_V2_RESOLVER_KEY);
     }
 
     // initialization to migrate transparent proxy (v1) to resolver proxy (v2)
@@ -19,7 +19,7 @@ contract MigrationImplementationProxy is Initializable, ResolverProxyFallBack {
         bytes32 _resolverProxyConfigurationId,
         uint256 _version,
         RolesStruct[] memory _roles
-    ) external payable initializer(_MIGRATION_IMPLEMENTATION_PROXY_V2_RESOLVER_KEY) {
+    ) external payable initializer(_MIGRATION_PROXY_V2_RESOLVER_KEY) {
         _initialize(_resolver, _resolverProxyConfigurationId, _version, _roles);
     }
 }

@@ -1,6 +1,6 @@
 import { task, types } from 'hardhat/config'
 import { NetworkName } from '@configuration'
-import { MigrationImplementationProxy__factory, ProxyAdmin__factory } from '../../../typechain-types/index'
+import { MigrationProxy__factory, ProxyAdmin__factory } from '../../../typechain-types/index'
 import { WithSignerCommand } from '@tasks'
 import { ethers } from 'ethers'
 
@@ -39,17 +39,17 @@ task('migrateStableCoinToV2', 'Migrate a v1 stable coin to v2')
 
         // Deploying the migration implementation proxy
 
-        const migrationImplementationProxyDeployCommand = await DeployContractCommand.newInstance({
-            factory: new MigrationImplementationProxy__factory(),
+        const migrationProxyDeployCommand = await DeployContractCommand.newInstance({
+            factory: new MigrationProxy__factory(),
             signer,
             deployType: 'direct',
             deployedContract: undefined,
-            overrides: { gasLimit: GAS_LIMIT.migrationImplementationProxy.deploy },
+            overrides: { gasLimit: GAS_LIMIT.migrationProxy.deploy },
         })
 
-        const migrationImplementationProxy = await deployContract(migrationImplementationProxyDeployCommand)
+        const migrationProxy = await deployContract(migrationProxyDeployCommand)
             .then((result) => {
-                console.log('✓ Migration Implementation Proxy has been deployed successfully')
+                console.log('✓ Migration Proxy has been deployed successfully')
                 console.log(`   --> Transaction Hash: ${result.receipt?.transactionHash}`)
                 console.log(`   --> Contract Address: ${result.address}`)
                 return result
@@ -74,14 +74,9 @@ task('migrateStableCoinToV2', 'Migrate a v1 stable coin to v2')
 
         const previous_impl = await proxyAdmin.getProxyImplementation(stablecoinaddress)
 
-        const upgradeTx = await proxyAdmin.upgradeAndCall(
-            stablecoinaddress,
-            migrationImplementationProxy.address,
-            inputData,
-            {
-                gasLimit: GAS_LIMIT.migrationImplementationProxy.upgrade,
-            }
-        )
+        const upgradeTx = await proxyAdmin.upgradeAndCall(stablecoinaddress, migrationProxy.address, inputData, {
+            gasLimit: GAS_LIMIT.migrationProxy.upgrade,
+        })
 
         const receipt = await upgradeTx.wait()
 
