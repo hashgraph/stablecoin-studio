@@ -26,8 +26,6 @@ abstract contract RolesStorageWrapper {
         bytes32[] listOfRoles;
     }
 
-    bytes32 internal constant _LIST_OF_ROLES_SLOT = bytes32(uint256(52));
-
     // TODO: Better at interface
     /**
      * @dev Emitted when a role is granted to an account
