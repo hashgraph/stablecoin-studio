@@ -113,8 +113,19 @@ export class ControllerCreateHoldCommandHandler
 			targetId,
 		);
 
+		const holdId = await this.transactionService.getTransactionResult({
+			res,
+			result: res.response?.holdId,
+			className: ControllerCreateHoldCommandHandler.name,
+			position: 1,
+			numberOfResultsItems: 2,
+		});
+
 		return Promise.resolve(
-			new ControllerCreateHoldCommandResponse(res.error === undefined),
+			new ControllerCreateHoldCommandResponse(
+				parseInt(holdId, 16),
+				res.error == undefined,
+			),
 		);
 	}
 }

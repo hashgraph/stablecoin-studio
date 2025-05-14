@@ -58,6 +58,7 @@ export enum ErrorCode {
 	InvalidResponse = '30005',
 	NotFound = '30006',
 	UnsupportedKeyType = '30007',
+	EmptyResponse = '30008',
 	InitializationError = '40001',
 	PairingError = '40002',
 	TransactionCheck = '40003',

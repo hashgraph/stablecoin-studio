@@ -3,7 +3,10 @@ import { CommandResponse } from '../../../../../../../core/command/CommandRespon
 import { HederaId } from '../../../../../../../domain/context/shared/HederaId.js';
 
 export class CreateHoldCommandResponse implements CommandResponse {
-	constructor(public readonly payload: boolean) {}
+	constructor(
+		public readonly holdId: number,
+		public readonly payload: boolean,
+	) {}
 }
 
 export class CreateHoldCommand extends Command<CreateHoldCommandResponse> {

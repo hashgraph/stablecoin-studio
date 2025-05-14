@@ -117,8 +117,19 @@ export class CreateHoldCommandHandler
 			targetId,
 		);
 
+		const holdId = await this.transactionService.getTransactionResult({
+			res,
+			result: res.response?.holdId,
+			className: CreateHoldCommandHandler.name,
+			position: 1,
+			numberOfResultsItems: 2,
+		});
+
 		return Promise.resolve(
-			new CreateHoldCommandResponse(res.error === undefined),
+			new CreateHoldCommandResponse(
+				parseInt(holdId, 16),
+				res.error == undefined,
+			),
 		);
 	}
 }
