@@ -39,7 +39,6 @@ describe('➡️ KYC Tests', function () {
                 useEnvironment: true,
             })
         )
-        console.info(deployedContracts.businessLogicResolver.proxyAddress!)
         ;({ stableCoinProxyAddress } = await deployStableCoinInTests({
             signer: operator,
             businessLogicResolverProxyAddress: deployedContracts.businessLogicResolver.proxyAddress!,
@@ -47,7 +46,6 @@ describe('➡️ KYC Tests', function () {
             addKyc: true,
             grantKYCToOriginalSender: true,
         }))
-        console.info(stableCoinProxyAddress)
         await setFacets(stableCoinProxyAddress)
     })
 
