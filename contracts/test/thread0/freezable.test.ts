@@ -1,12 +1,7 @@
 import { expect } from 'chai'
 import { SignerWithAddress } from '@nomiclabs/hardhat-ethers/signers'
 import { ethers } from 'hardhat'
-import {
-    CashInFacet,
-    CashInFacet__factory,
-    FreezableFacet,
-    FreezableFacet__factory,
-} from '@typechain-types'
+import { CashInFacet, CashInFacet__factory, FreezableFacet, FreezableFacet__factory } from '@typechain-types'
 import {
     deployFullInfrastructure,
     DeployFullInfrastructureCommand,

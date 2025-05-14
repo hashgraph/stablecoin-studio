@@ -1,12 +1,7 @@
 import { expect } from 'chai'
 import { SignerWithAddress } from '@nomiclabs/hardhat-ethers/signers'
 import { ethers } from 'hardhat'
-import {
-    CustomFeesFacet,
-    CustomFeesFacet__factory,
-    IHederaTokenService,
-    IHRC__factory,
-} from '@typechain-types'
+import { CustomFeesFacet, CustomFeesFacet__factory, IHederaTokenService, IHRC__factory } from '@typechain-types'
 import {
     ADDRESS_ZERO,
     delay,
@@ -27,7 +22,7 @@ describe('➡️ Custom Fees Tests', function () {
     // Accounts
     let operator: SignerWithAddress
     let nonOperator: SignerWithAddress
-    
+
     // Custom Fees
     let fixedFees: IHederaTokenService.FixedFeeStruct[]
     let fractionalFees: IHederaTokenService.FractionalFeeStruct[]

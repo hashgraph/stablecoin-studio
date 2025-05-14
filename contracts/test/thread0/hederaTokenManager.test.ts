@@ -26,12 +26,7 @@ import {
     validateTxResponse,
     ValidateTxResponseCommand,
 } from '@scripts'
-import {
-    DEFAULT_UPDATE_TOKEN_STRUCT,
-    deployStableCoinInTests,
-    GAS_LIMIT,
-    OTHER_AUTO_RENEW_PERIOD,
-} from '@test/shared'
+import { DEFAULT_UPDATE_TOKEN_STRUCT, deployStableCoinInTests, GAS_LIMIT, OTHER_AUTO_RENEW_PERIOD } from '@test/shared'
 import { BigNumber, Wallet } from 'ethers'
 
 describe('➡️ HederaTokenManager Tests', function () {
@@ -186,7 +181,6 @@ describe('➡️ HederaTokenManager Tests', function () {
         const rolesFacet = RolesFacet__factory.connect(stableCoinProxyAddress, operator)
         const supplierAdminFacet = SupplierAdminFacet__factory.connect(stableCoinProxyAddress, operator)
 
-
         // Checking roles
         const [resultOperatorAccount, resultNonOperatorAccount, isUnlimitedOperator, isUnlimitedNonOperator] =
             await Promise.all([
@@ -275,7 +269,7 @@ describe('➡️ HederaTokenManager Tests', function () {
     it.skip('Check initialize can only be run once', async function () {
         const initStruct = {
             // eslint-disable-next-line @typescript-eslint/no-explicit-any
-            token: ethers.constants.HashZero as any,  //! imposible to test...
+            token: ethers.constants.HashZero as any, //! imposible to test...
             initialTotalSupply: 0,
             tokenDecimals: 0,
             originalSender: operator.address,
