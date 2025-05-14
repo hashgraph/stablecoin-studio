@@ -4,22 +4,18 @@ pragma solidity 0.8.18;
 // solhint-disable max-line-length
 
 /**
- * @notice Storage position constants used across the Stablecoin Studio system.
- *
- * These constants define the exact storage slot to be used by each module or facet when accessing
- * or writing state variables in the proxy's storage context via delegatecall.
- *
- * There are two types of constants:
- *
- * 1. Hashed storage keys (via keccak256): these are used for most modules and follow the standard
- *    unstructured storage pattern to avoid slot collisions. Each module has a unique hash.
- *
- * 2. Fixed slot numbers (converted to bytes32): these are used in modules that must maintain compatibility
- *    with legacy storage layout from a previous monolithic contract (e.g. `HederaTokenManager`). They point to
- *    specific slot numbers where critical data is already stored and must not move.
- *
- *  Do NOT modify or reorder these values.
- */
+  @dev Storage position constants used across the Stablecoin Studio system
+
+  Each module or facet uses a fixed storage slot to safely read/write state via delegatecall
+
+  There are two types of storage positions:
+
+  1. Hashed keys (keccak256): used for modules outside the SCS core, following the unstructured storage pattern
+  2. Fixed slot numbers: used by SCS modules to maintain compatibility with legacy layout
+
+  These fixed slots must not be reordered
+
+**/
 
 // keccak256('stablecoin.studio.business.logic.resolver.storage');
 bytes32 constant _BUSINESS_LOGIC_RESOLVER_STORAGE_POSITION = 0x955a2786fa49b1e11605278e5b534741ae6d6570ebfa34ef604980228573c85d;
@@ -30,9 +26,6 @@ bytes32 constant _DIAMOND_CUT_MANAGER_STORAGE_POSITION = 0x72d5df1de692f6c56351e
 // keccak256('stablecoin.studio.initializable.storage');
 bytes32 constant _INITIALIZABLE_STORAGE_POSITION = 0xa58f1fcb40822c09091f9fa7b9f2bcc0672875fea7cf65ea9be9334e91fd948e;
 
-// keccak256('stablecoin.studio.hold.storage');
-bytes32 constant _HOLD_STORAGE_POSITION = 0x55eb875db6f21625db342149ef0f0b78f6afec1625e2c812812e031b05ee4bd1;
-
 // keccak256('stablecoin.studio.hedera.reserve.storage');
 bytes32 constant _HEDERA_RESERVE_STORAGE_POSITION = 0xbed633dbd0bacd43d3399872bf1a59f5d8a56ae8e7638cd27a49cc24ecec5630;
 
@@ -41,6 +34,23 @@ bytes32 constant _STABLE_COIN_FACTORY_STORAGE_POSITION = 0xb0e6750e851c57435b041
 
 // keccak256('stablecoin.studio.resolverProxy.storage');
 bytes32 constant _RESOLVER_PROXY_STORAGE_POSITION = 0x72d4cc0a3f672d627d7746733345a3b1cc00ee12f57141f1dd5e005c8ceaec5e;
+
+/**
+    @dev Fixed slot numbers
+
+    Due to inheritance from a `TransparentUpgradeableProxy`, all facets in the Stablecoin Contract System (SCS) must share the same storage context. This means each facet must use **fixed storage slots** that do not overlap.
+
+    To maintain upgrade safety and extensibility:
+    - Each facet is assigned a dedicated slot offset, spaced 50 slots apart (e.g., slot 1, 51, 101, ...).
+    - This ensures future facets can be added without overwriting existing storage.
+    - Even if a facet currently does not require storage, its reserved slot is left in place and must not be reused.
+
+    This storage alignment is critical to preserve proxy compatibility and prevent storage collisions.
+
+    > Do NOT modify or reorder storage slots. Each position is intentionally reserved for a specific module or future expansion.
+
+    To add a new facet with storage, simply add 50 to the last used slot and define the next available slot accordingly.
+**/
 
 // Slot 1
 bytes32 constant _TOKEN_OWNER_STORAGE_POSITION = 0x0000000000000000000000000000000000000000000000000000000000000001;
@@ -89,5 +99,7 @@ bytes32 constant _HEDERA_TOKEN_MANAGER_STORAGE_POSITION = 0x00000000000000000000
 
 // slot 751
 bytes32 constant _HOLD_STORAGE_POSITION = 0x00000000000000000000000000000000000000000000000000000000000002ef;
+
+// slot 801
 
 // solhint-enable max-line-length
