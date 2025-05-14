@@ -28,7 +28,7 @@
         "test:ci:thread1": "npx hardhat test test/thread1/*.test.ts --no-compile",
         "test:ci:parallel": "npx hardhat test test/**/*.test.ts --no-compile --parallel",
         "test:kyc": "npx hardhat test test/thread0/00_kyc.test.ts",
-        "test:burnable": "npx hardhat test test/thread0/burnable2.test.ts",
+        "test:burnable": "npx hardhat test test/thread0/burnable.test.ts",
         "test:customFees": "npx hardhat test test/thread0/customFees.test.ts",
         "test:deletable": "npx hardhat test test/thread0/deletable.test.ts",
         "test:freezable": "npx hardhat test test/thread0/freezable.test.ts",

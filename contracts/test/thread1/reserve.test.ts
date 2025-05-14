@@ -1,347 +1,368 @@
-// import { expect } from 'chai'
-// import { SignerWithAddress } from '@nomiclabs/hardhat-ethers/signers'
-// import { ethers } from 'hardhat'
-// import { HederaReserve__factory, HederaTokenManager, HederaTokenManager__factory } from '@typechain-types'
-// import {
-//     delay,
-//     deployContractWithFactory,
-//     DeployContractWithFactoryCommand,
-//     deployFullInfrastructure,
-//     DeployFullInfrastructureCommand,
-//     MESSAGES,
-//     ValidateTxResponseCommand,
-// } from '@scripts'
-// import { GAS_LIMIT, TOKEN_NAME, TOKEN_SYMBOL } from '@test/shared'
-// import { BigNumber } from 'ethers'
+import { expect } from 'chai'
+import { SignerWithAddress } from '@nomiclabs/hardhat-ethers/signers'
+import { ethers } from 'hardhat'
+import {
+    CashInFacet,
+    CashInFacet__factory,
+    HederaReserveFacet,
+    HederaReserveFacet__factory,
+    ReserveFacet,
+    ReserveFacet__factory,
+} from '@typechain-types'
+import {
+    DEFAULT_TOKEN,
+    delay,
+    deployFullInfrastructure,
+    DeployFullInfrastructureCommand,
+    deployStableCoin,
+    DeployStableCoinCommand,
+    MESSAGES,
+    ValidateTxResponseCommand,
+} from '@scripts'
+import { GAS_LIMIT } from '@test/shared'
+import { BigNumber } from 'ethers'
 
-// const RESERVE_DECIMALS = 2
-// const ONE_TOKEN_FACTOR = BigNumber.from(10).pow(1)
-// const TWO_TOKEN_FACTOR = BigNumber.from(10).pow(2)
-// const THREE_TOKEN_FACTOR = BigNumber.from(10).pow(3)
-// const INIT_SUPPLY_ONE_DECIMALS = BigNumber.from(10).mul(ONE_TOKEN_FACTOR)
-// const MAX_SUPPLY_ONE_DECIMALS = BigNumber.from(1000).mul(ONE_TOKEN_FACTOR)
-// const INIT_SUPPLY_TWO_DECIMALS = BigNumber.from(100).mul(TWO_TOKEN_FACTOR)
-// const MAX_SUPPLY_TWO_DECIMALS = BigNumber.from(1000).mul(TWO_TOKEN_FACTOR)
-// const INIT_SUPPLY_THREE_DECIMALS = BigNumber.from(100).mul(THREE_TOKEN_FACTOR)
-// const MAX_SUPPLY_THREE_DECIMALS = BigNumber.from(1000).mul(THREE_TOKEN_FACTOR)
-// const TOKEN_MEMO = 'Hedera Accelerator Stablecoin'
-// const INIT_RESERVE_100 = BigNumber.from(10).pow(RESERVE_DECIMALS).mul(BigNumber.from(100))
-// const INIT_RESERVE_1000 = BigNumber.from(10).pow(RESERVE_DECIMALS).mul(BigNumber.from(1000))
+let operator: SignerWithAddress
+let businessLogicResolver: string
+let stableCoinFactoryProxy: string
 
-// describe('➡️ Reserve Tests', function () {
-//     // Contracts
-//     let proxyAddress: string
-//     let hederaReserveProxyAdminAddress: string
-//     let hederaTokenManager: HederaTokenManager
-//     // Accounts
-//     let operator: SignerWithAddress
+const RESERVE_DECIMALS = 2
+const ONE_TOKEN_FACTOR = BigNumber.from(10).pow(1)
+const TWO_TOKEN_FACTOR = BigNumber.from(10).pow(2)
+const THREE_TOKEN_FACTOR = BigNumber.from(10).pow(3)
+const INIT_SUPPLY_ONE_DECIMALS = BigNumber.from(10).mul(ONE_TOKEN_FACTOR)
+const MAX_SUPPLY_ONE_DECIMALS = BigNumber.from(1000).mul(ONE_TOKEN_FACTOR)
+const INIT_SUPPLY_TWO_DECIMALS = BigNumber.from(100).mul(TWO_TOKEN_FACTOR)
+const MAX_SUPPLY_TWO_DECIMALS = BigNumber.from(1000).mul(TWO_TOKEN_FACTOR)
+const INIT_SUPPLY_THREE_DECIMALS = BigNumber.from(100).mul(THREE_TOKEN_FACTOR)
+const MAX_SUPPLY_THREE_DECIMALS = BigNumber.from(1000).mul(THREE_TOKEN_FACTOR)
+const TOKEN_MEMO = 'Hedera Accelerator Stablecoin'
+const INIT_RESERVE_100 = BigNumber.from(10).pow(RESERVE_DECIMALS).mul(BigNumber.from(100))
+const INIT_RESERVE_1000 = BigNumber.from(10).pow(RESERVE_DECIMALS).mul(BigNumber.from(1000))
 
-//     before(async function () {
-//         // Disable | Mock console.log()
-//         console.log = () => {} // eslint-disable-line
-//         ;[operator] = await ethers.getSigners()
-//         // * Deploy StableCoin Token
-//         console.info(MESSAGES.deploy.info.deployFullInfrastructureInTests)
+before(async () => {
+    // mute | mock console.log
+    console.log = () => {} // eslint-disable-line
+    console.info(MESSAGES.deploy.info.deployFullInfrastructureInTests)
+    ;[operator] = await ethers.getSigners()
 
-//         // Deploy Full Infrastructure
-//         const deployCommand = await DeployFullInfrastructureCommand.newInstance({
-//             signer: operator,
-//             useDeployed: false,
-//             tokenInformation: {
-//                 name: TOKEN_NAME,
-//                 symbol: TOKEN_SYMBOL,
-//                 decimals: 3,
-//                 initialSupply: INIT_SUPPLY_THREE_DECIMALS.toString(),
-//                 maxSupply: MAX_SUPPLY_THREE_DECIMALS.toString(),
-//                 memo: TOKEN_MEMO,
-//                 freeze: false,
-//             },
-//             initialAmountDataFeed: INIT_RESERVE_100.toString(),
-//             createReserve: true,
-//         })
-//         const deployResult = await deployFullInfrastructure(deployCommand)
+    const { ...deployedContracts } = await deployFullInfrastructure(
+        await DeployFullInfrastructureCommand.newInstance({
+            signer: operator,
+            useDeployed: false,
+            useEnvironment: true,
+        })
+    )
+    businessLogicResolver = deployedContracts.businessLogicResolver.proxyAddress!
+    stableCoinFactoryProxy = deployedContracts.stableCoinFactoryFacet.proxyAddress!
+})
 
-//         proxyAddress = deployResult.stableCoinDeployment.proxyAddress
-//         hederaReserveProxyAdminAddress = deployResult.stableCoinDeployment.reserveProxyAdminAddress!
-//         hederaTokenManager = HederaTokenManager__factory.connect(proxyAddress, operator)
-//     })
+describe('➡️ Reserve Tests', function () {
+    // Contracts
+    let stableCoinProxyAddress: string
+    let reserveProxyAddress: string
+    let reserveFacet: ReserveFacet
+    let hederaReserveFacet: HederaReserveFacet
 
-//     it('Get getReserveAmount', async () => {
-//         const reserveAmount = await hederaTokenManager.getReserveAmount({
-//             gasLimit: GAS_LIMIT.hederaTokenManager.getReserveAmount,
-//         })
-//         expect(reserveAmount.toString()).to.equals(INIT_RESERVE_100.toString())
-//     })
+    async function setFacets(address: string) {
+        reserveFacet = ReserveFacet__factory.connect(address, operator)
+        hederaReserveFacet = HederaReserveFacet__factory.connect(address, operator)
+    }
 
-//     it('Get datafeed', async () => {
-//         const datafeed = await hederaTokenManager.getReserveAddress({
-//             gasLimit: GAS_LIMIT.hederaTokenManager.getReserveAddress,
-//         })
-//         expect(datafeed.toUpperCase()).not.to.equals(hederaReserveProxyAdminAddress.toUpperCase())
-//     })
+    before(async () => {
+        const deployCommand = await DeployStableCoinCommand.newInstance({
+            signer: operator,
+            tokenInformation: {
+                name: DEFAULT_TOKEN.name,
+                symbol: DEFAULT_TOKEN.symbol,
+                decimals: 3,
+                initialSupply: INIT_SUPPLY_THREE_DECIMALS,
+                maxSupply: MAX_SUPPLY_THREE_DECIMALS,
+                memo: TOKEN_MEMO,
+                freeze: false,
+            },
+            initialAmountDataFeed: INIT_RESERVE_100.toString(),
+            createReserve: true,
+            businessLogicResolverProxyAddress: businessLogicResolver,
+            stableCoinFactoryProxyAddress: stableCoinFactoryProxy,
+        })
+        const result = await deployStableCoin(deployCommand)
+        reserveProxyAddress = result.reserveProxyAddress!
+        stableCoinProxyAddress = result.stableCoinProxyAddress
 
-//     it('Update datafeed', async () => {
-//         const beforeReserve = hederaTokenManager.getReserveAmount({
-//             gasLimit: GAS_LIMIT.hederaTokenManager.getReserveAmount,
-//         })
-//         const beforeDataFeed = hederaTokenManager.getReserveAddress({
-//             gasLimit: GAS_LIMIT.hederaTokenManager.getReserveAddress,
-//         })
+        await setFacets(stableCoinProxyAddress)
+    })
 
-//         const newReserve = (await beforeReserve).add(BigNumber.from('100').mul(THREE_TOKEN_FACTOR))
+    it('Get getReserveAmount', async () => {
+        const reserveAmount = await reserveFacet.getReserveAmount({
+            gasLimit: GAS_LIMIT.hederaTokenManager.getReserveAmount,
+        })
+        expect(reserveAmount.toString()).to.equals(INIT_RESERVE_100.toString())
+    })
 
-//         // Deploy HederaReserve
-//         const { contract: newHederaReserve } = await deployContractWithFactory(
-//             new DeployContractWithFactoryCommand({
-//                 signer: operator,
-//                 factory: new HederaReserve__factory(),
-//                 withProxy: true,
-//             })
-//         )
+    it('Get datafeed', async () => {
+        const datafeed = await reserveFacet.getReserveAddress({
+            gasLimit: GAS_LIMIT.hederaTokenManager.getReserveAddress,
+        })
+        expect(datafeed.toUpperCase()).not.to.equals(reserveProxyAddress.toUpperCase())
+    })
 
-//         const updateResponse = await hederaTokenManager.updateReserveAddress(newHederaReserve.address, {
-//             gasLimit: GAS_LIMIT.hederaTokenManager.updateReserveAddress,
-//         })
-//         await new ValidateTxResponseCommand({ txResponse: updateResponse }).execute()
+    it('Update datafeed', async () => {
+        const beforeReserve = reserveFacet.getReserveAmount({
+            gasLimit: GAS_LIMIT.hederaTokenManager.getReserveAmount,
+        })
+        const beforeDataFeed = reserveFacet.getReserveAddress({
+            gasLimit: GAS_LIMIT.hederaTokenManager.getReserveAddress,
+        })
 
-//         const initHederaResponse = await newHederaReserve.initialize(BigNumber.from(newReserve), operator.address, {
-//             gasLimit: GAS_LIMIT.hederaReserve.initialize,
-//         })
-//         await new ValidateTxResponseCommand({ txResponse: initHederaResponse }).execute()
+        const newReserve = (await beforeReserve).add(BigNumber.from('100').mul(THREE_TOKEN_FACTOR))
 
-//         const afterReserve = hederaTokenManager.getReserveAmount({
-//             gasLimit: GAS_LIMIT.hederaTokenManager.getReserveAmount,
-//         })
-//         const afterDataFeed = hederaTokenManager.getReserveAddress({
-//             gasLimit: GAS_LIMIT.hederaTokenManager.getReserveAddress,
-//         })
+        const updateResponse = await reserveFacet.updateReserveAddress(reserveProxyAddress, {
+            gasLimit: GAS_LIMIT.hederaTokenManager.updateReserveAddress,
+        })
+        await new ValidateTxResponseCommand({ txResponse: updateResponse }).execute()
 
-//         expect(await beforeDataFeed).not.to.equals(await afterDataFeed)
-//         expect(await beforeReserve).not.to.equals(await afterReserve)
-//         expect(await afterReserve).to.equals(newReserve)
-//     })
-// })
+        const initHederaResponse = await hederaReserveFacet.initialize(BigNumber.from(newReserve), operator.address, {
+            gasLimit: GAS_LIMIT.hederaReserve.initialize,
+        })
+        await new ValidateTxResponseCommand({ txResponse: initHederaResponse }).execute()
 
-// describe('Reserve Tests with reserve and token with same Decimals', function () {
-//     // Contracts
-//     let proxyAddress: string
-//     let hederaTokenManager: HederaTokenManager
-//     // Accounts
-//     let operator: SignerWithAddress
+        const afterReserve = reserveFacet.getReserveAmount({
+            gasLimit: GAS_LIMIT.hederaTokenManager.getReserveAmount,
+        })
+        const afterDataFeed = reserveFacet.getReserveAddress({
+            gasLimit: GAS_LIMIT.hederaTokenManager.getReserveAddress,
+        })
 
-//     before(async function () {
-//         // Disable | Mock console.log()
-//         console.log = () => {} // eslint-disable-line
-//         // * Deploy StableCoin Token
-//         console.info(MESSAGES.deploy.info.deployFullInfrastructureInTests)
-//         ;[operator] = await ethers.getSigners()
+        expect(await beforeDataFeed).not.to.equals(await afterDataFeed)
+        expect(await beforeReserve).not.to.equals(await afterReserve)
+        expect(await afterReserve).to.equals(newReserve)
+    })
+})
 
-//         // Deploy Full Infrastructure
-//         const deployCommand = await DeployFullInfrastructureCommand.newInstance({
-//             signer: operator,
-//             useDeployed: false,
-//             tokenInformation: {
-//                 name: TOKEN_NAME,
-//                 symbol: TOKEN_SYMBOL,
-//                 decimals: 2,
-//                 initialSupply: INIT_SUPPLY_TWO_DECIMALS.toString(),
-//                 maxSupply: MAX_SUPPLY_TWO_DECIMALS.toString(),
-//                 memo: TOKEN_MEMO,
-//                 freeze: false,
-//             },
-//             initialAmountDataFeed: INIT_RESERVE_1000.toString(),
-//         })
-//         const deployResult = await deployFullInfrastructure(deployCommand)
+describe('Reserve Tests with reserve and token with same Decimals', function () {
+    // Contracts
+    let stableCoinProxyAddress: string
+    let reserveFacet: ReserveFacet
+    let cashInFacet: CashInFacet
 
-//         proxyAddress = deployResult.stableCoinDeployment.proxyAddress
-//         hederaTokenManager = HederaTokenManager__factory.connect(proxyAddress, operator)
-//     })
+    async function setFacets(address: string) {
+        reserveFacet = ReserveFacet__factory.connect(address, operator)
+        cashInFacet = CashInFacet__factory.connect(address, operator)
+    }
 
-//     it('Can Mint less tokens than reserve', async function () {
-//         const AmountToMint = BigNumber.from(10).mul(TWO_TOKEN_FACTOR)
+    before(async () => {
+        // mute | mock console.log
+        console.log = () => {} // eslint-disable-line
 
-//         // Get the initial reserve amount
-//         const initialReserve = await hederaTokenManager.getReserveAmount({
-//             gasLimit: GAS_LIMIT.hederaTokenManager.getReserveAmount,
-//         })
+        const deployCommand = await DeployStableCoinCommand.newInstance({
+            signer: operator,
+            tokenInformation: {
+                name: DEFAULT_TOKEN.name,
+                symbol: DEFAULT_TOKEN.symbol,
+                decimals: 2,
+                initialSupply: INIT_SUPPLY_TWO_DECIMALS,
+                maxSupply: MAX_SUPPLY_TWO_DECIMALS,
+                memo: TOKEN_MEMO,
+                freeze: false,
+            },
+            initialAmountDataFeed: INIT_RESERVE_1000.toString(),
+            businessLogicResolverProxyAddress: businessLogicResolver,
+            stableCoinFactoryProxyAddress: stableCoinFactoryProxy,
+        })
+        const result = await deployStableCoin(deployCommand)
+        stableCoinProxyAddress = result.stableCoinProxyAddress
 
-//         // Cashin tokens to previously associated account
-//         const mintResponse = await hederaTokenManager.mint(operator.address, AmountToMint, {
-//             gasLimit: GAS_LIMIT.hederaTokenManager.mint,
-//         })
-//         await new ValidateTxResponseCommand({ txResponse: mintResponse }).execute()
+        await setFacets(stableCoinProxyAddress)
+    })
 
-//         // Check the reserve account : success
-//         await delay({ time: 1, unit: 'sec' })
-//         const finalReserve = (
-//             await hederaTokenManager.getReserveAmount({
-//                 gasLimit: GAS_LIMIT.hederaTokenManager.getReserveAmount,
-//             })
-//         ).sub(AmountToMint)
-//         const expectedTotalReserve = initialReserve.sub(AmountToMint)
-//         expect(finalReserve.toString()).to.equals(expectedTotalReserve.toString())
-//     })
+    it('Can Mint less tokens than reserve', async function () {
+        const AmountToMint = BigNumber.from(10).mul(TWO_TOKEN_FACTOR)
 
-//     it('Can not mint more tokens than reserve', async function () {
-//         // Retrieve current reserve amount
-//         const totalReserve = await hederaTokenManager.getReserveAmount({
-//             gasLimit: GAS_LIMIT.hederaTokenManager.getReserveAmount,
-//         })
+        // Get the initial reserve amount
+        const initialReserve = await reserveFacet.getReserveAmount({
+            gasLimit: GAS_LIMIT.hederaTokenManager.getReserveAmount,
+        })
 
-//         // Cashin more tokens than reserve amount: fail
-//         const mintResponse = await hederaTokenManager.mint(operator.address, totalReserve.add(1), {
-//             gasLimit: GAS_LIMIT.hederaTokenManager.mint,
-//         })
-//         await expect(
-//             new ValidateTxResponseCommand({ txResponse: mintResponse }).execute()
-//         ).to.eventually.be.rejectedWith(Error)
-//     })
-// })
+        // Cashin tokens to previously associated account
+        const mintResponse = await cashInFacet.mint(operator.address, AmountToMint, {
+            gasLimit: GAS_LIMIT.hederaTokenManager.mint,
+        })
+        await new ValidateTxResponseCommand({ txResponse: mintResponse }).execute()
 
-// describe('Reserve Tests with reserve decimals higher than token decimals', function () {
-//     // Contracts
-//     let proxyAddress: string
-//     let hederaTokenManager: HederaTokenManager
-//     // Accounts
-//     let operator: SignerWithAddress
+        // Check the reserve account : success
+        await delay({ time: 1, unit: 'sec' })
+        const finalReserve = (
+            await reserveFacet.getReserveAmount({
+                gasLimit: GAS_LIMIT.hederaTokenManager.getReserveAmount,
+            })
+        ).sub(AmountToMint)
+        const expectedTotalReserve = initialReserve.sub(AmountToMint)
+        expect(finalReserve.toString()).to.equals(expectedTotalReserve.toString())
+    })
 
-//     before(async function () {
-//         // Disable | Mock console.log()
-//         console.log = () => {} // eslint-disable-line
-//         // * Deploy StableCoin Token
-//         console.info(MESSAGES.deploy.info.deployFullInfrastructureInTests)
-//         ;[operator] = await ethers.getSigners()
+    it('Can not mint more tokens than reserve', async function () {
+        // Retrieve current reserve amount
+        const totalReserve = await reserveFacet.getReserveAmount({
+            gasLimit: GAS_LIMIT.hederaTokenManager.getReserveAmount,
+        })
 
-//         // Deploy Full Infrastructure
-//         const deployCommand = await DeployFullInfrastructureCommand.newInstance({
-//             signer: operator,
-//             useDeployed: false,
-//             tokenInformation: {
-//                 name: TOKEN_NAME,
-//                 symbol: TOKEN_SYMBOL,
-//                 decimals: 1,
-//                 initialSupply: INIT_SUPPLY_ONE_DECIMALS.toString(),
-//                 maxSupply: MAX_SUPPLY_ONE_DECIMALS.toString(),
-//                 memo: TOKEN_MEMO,
-//                 freeze: false,
-//             },
-//             initialAmountDataFeed: INIT_RESERVE_100.toString(),
-//         })
-//         const deployResult = await deployFullInfrastructure(deployCommand)
+        // Cashin more tokens than reserve amount: fail
+        const mintResponse = await cashInFacet.mint(operator.address, totalReserve.add(1), {
+            gasLimit: GAS_LIMIT.hederaTokenManager.mint,
+        })
+        await expect(
+            new ValidateTxResponseCommand({ txResponse: mintResponse }).execute()
+        ).to.eventually.be.rejectedWith(Error)
+    })
+})
 
-//         proxyAddress = deployResult.stableCoinDeployment.proxyAddress
-//         hederaTokenManager = HederaTokenManager__factory.connect(proxyAddress, operator)
-//     })
+describe('Reserve Tests with reserve decimals higher than token decimals', function () {
+    // Contracts
+    let stableCoinProxyAddress: string
+    let reserveFacet: ReserveFacet
+    let cashInFacet: CashInFacet
 
-//     it('Can Mint less tokens than reserve', async function () {
-//         const AmountToMint = BigNumber.from(10).mul(ONE_TOKEN_FACTOR)
+    async function setFacets(address: string) {
+        reserveFacet = ReserveFacet__factory.connect(address, operator)
+        cashInFacet = CashInFacet__factory.connect(address, operator)
+    }
 
-//         // Get the initial reserve amount
-//         const initialReserve = await hederaTokenManager.getReserveAmount({
-//             gasLimit: GAS_LIMIT.hederaTokenManager.getReserveAmount,
-//         })
+    before(async () => {
+        // mute | mock console.log
+        console.log = () => {} // eslint-disable-line
 
-//         // Cashin tokens to previously associated account
-//         const mintResponse = await hederaTokenManager.mint(operator.address, AmountToMint, {
-//             gasLimit: GAS_LIMIT.hederaTokenManager.mint,
-//         })
-//         await new ValidateTxResponseCommand({ txResponse: mintResponse }).execute()
+        const deployCommand = await DeployStableCoinCommand.newInstance({
+            signer: operator,
+            tokenInformation: {
+                name: DEFAULT_TOKEN.name,
+                symbol: DEFAULT_TOKEN.symbol,
+                decimals: 1,
+                initialSupply: INIT_SUPPLY_ONE_DECIMALS,
+                maxSupply: MAX_SUPPLY_ONE_DECIMALS,
+                memo: TOKEN_MEMO,
+                freeze: false,
+            },
+            initialAmountDataFeed: INIT_RESERVE_1000.toString(),
+            businessLogicResolverProxyAddress: businessLogicResolver,
+            stableCoinFactoryProxyAddress: stableCoinFactoryProxy,
+        })
+        const result = await deployStableCoin(deployCommand)
+        stableCoinProxyAddress = result.stableCoinProxyAddress
 
-//         // Check the reserve account : success
-//         await delay({ time: 1, unit: 'sec' })
-//         const finalReserve = (
-//             await hederaTokenManager.getReserveAmount({
-//                 gasLimit: GAS_LIMIT.hederaTokenManager.getReserveAmount,
-//             })
-//         ).sub(AmountToMint)
-//         const expectedTotalReserve = initialReserve.sub(AmountToMint)
-//         expect(finalReserve.toString()).to.equals(expectedTotalReserve.toString())
-//     })
+        await setFacets(stableCoinProxyAddress)
+    })
 
-//     it('Can not mint more tokens than reserve', async function () {
-//         // Retrieve current reserve amount
-//         const totalReserve = await hederaTokenManager.getReserveAmount({
-//             gasLimit: GAS_LIMIT.hederaTokenManager.getReserveAmount,
-//         })
+    it('Can Mint less tokens than reserve', async function () {
+        const AmountToMint = BigNumber.from(10).mul(ONE_TOKEN_FACTOR)
 
-//         // Cashin more tokens than reserve amount: fail
-//         const mintResponse = await hederaTokenManager.mint(operator.address, totalReserve.add(1), {
-//             gasLimit: GAS_LIMIT.hederaTokenManager.mint,
-//         })
-//         await expect(new ValidateTxResponseCommand({ txResponse: mintResponse }).execute()).to.be.rejectedWith(Error)
-//     })
-// })
+        // Get the initial reserve amount
+        const initialReserve = await reserveFacet.getReserveAmount({
+            gasLimit: GAS_LIMIT.hederaTokenManager.getReserveAmount,
+        })
 
-// describe('Reserve Tests with reserve decimals lower than token decimals', function () {
-//     // Contracts
-//     let proxyAddress: string
-//     let hederaTokenManager: HederaTokenManager
-//     // Accounts
-//     let operator: SignerWithAddress
+        // Cashin tokens to previously associated account
+        const mintResponse = await cashInFacet.mint(operator.address, AmountToMint, {
+            gasLimit: GAS_LIMIT.hederaTokenManager.mint,
+        })
+        await new ValidateTxResponseCommand({ txResponse: mintResponse }).execute()
 
-//     before(async function () {
-//         // Disable | Mock console.log()
-//         console.log = () => {} // eslint-disable-line
-//         // * Deploy StableCoin Token
-//         console.info(MESSAGES.deploy.info.deployFullInfrastructureInTests)
-//         ;[operator] = await ethers.getSigners()
+        // Check the reserve account : success
+        await delay({ time: 1, unit: 'sec' })
+        const finalReserve = (
+            await reserveFacet.getReserveAmount({
+                gasLimit: GAS_LIMIT.hederaTokenManager.getReserveAmount,
+            })
+        ).sub(AmountToMint)
+        const expectedTotalReserve = initialReserve.sub(AmountToMint)
+        expect(finalReserve.toString()).to.equals(expectedTotalReserve.toString())
+    })
 
-//         // Deploy Full Infrastructure
-//         const deployCommand = await DeployFullInfrastructureCommand.newInstance({
-//             signer: operator,
-//             useDeployed: false,
-//             tokenInformation: {
-//                 name: TOKEN_NAME,
-//                 symbol: TOKEN_SYMBOL,
-//                 decimals: 3,
-//                 initialSupply: INIT_SUPPLY_THREE_DECIMALS.toString(),
-//                 maxSupply: MAX_SUPPLY_THREE_DECIMALS.toString(),
-//                 memo: TOKEN_MEMO,
-//                 freeze: false,
-//             },
-//             initialAmountDataFeed: INIT_RESERVE_1000.toString(),
-//         })
-//         const deployResult = await deployFullInfrastructure(deployCommand)
+    it('Can not mint more tokens than reserve', async function () {
+        // Retrieve current reserve amount
+        const totalReserve = await reserveFacet.getReserveAmount({
+            gasLimit: GAS_LIMIT.hederaTokenManager.getReserveAmount,
+        })
 
-//         proxyAddress = deployResult.stableCoinDeployment.proxyAddress
-//         hederaTokenManager = HederaTokenManager__factory.connect(proxyAddress, operator)
-//     })
+        // Cashin more tokens than reserve amount: fail
+        const mintResponse = await cashInFacet.mint(operator.address, totalReserve.add(1), {
+            gasLimit: GAS_LIMIT.hederaTokenManager.mint,
+        })
+        await expect(new ValidateTxResponseCommand({ txResponse: mintResponse }).execute()).to.be.rejectedWith(Error)
+    })
+})
 
-//     it('Can Mint less tokens than reserve', async function () {
-//         const AmountToMint = BigNumber.from(10).mul(THREE_TOKEN_FACTOR)
+describe('Reserve Tests with reserve decimals lower than token decimals', function () {
+    // Contracts
+    let stableCoinProxyAddress: string
+    let reserveFacet: ReserveFacet
+    let cashInFacet: CashInFacet
 
-//         // Get the initial reserve amount
-//         const initialReserve = await hederaTokenManager.getReserveAmount({
-//             gasLimit: GAS_LIMIT.hederaTokenManager.getReserveAmount,
-//         })
+    async function setFacets(address: string) {
+        reserveFacet = ReserveFacet__factory.connect(address, operator)
+        cashInFacet = CashInFacet__factory.connect(address, operator)
+    }
 
-//         // Cashin tokens to previously associated account
-//         const mintResponse = await hederaTokenManager.mint(operator.address, AmountToMint, {
-//             gasLimit: GAS_LIMIT.hederaTokenManager.mint,
-//         })
-//         await new ValidateTxResponseCommand({ txResponse: mintResponse }).execute()
+    before(async () => {
+        // mute | mock console.log
+        console.log = () => {} // eslint-disable-line
 
-//         // Check the reserve account : success
-//         await delay({ time: 1, unit: 'sec' })
-//         const finalReserve = (
-//             await hederaTokenManager.getReserveAmount({
-//                 gasLimit: GAS_LIMIT.hederaTokenManager.getReserveAmount,
-//             })
-//         ).sub(AmountToMint)
-//         const expectedTotalReserve = initialReserve.sub(AmountToMint)
-//         expect(finalReserve.toString()).to.equals(expectedTotalReserve.toString())
-//     })
+        const deployCommand = await DeployStableCoinCommand.newInstance({
+            signer: operator,
+            tokenInformation: {
+                name: DEFAULT_TOKEN.name,
+                symbol: DEFAULT_TOKEN.symbol,
+                decimals: 3,
+                initialSupply: INIT_SUPPLY_THREE_DECIMALS,
+                maxSupply: MAX_SUPPLY_THREE_DECIMALS,
+                memo: TOKEN_MEMO,
+                freeze: false,
+            },
+            initialAmountDataFeed: INIT_RESERVE_1000.toString(),
+            businessLogicResolverProxyAddress: businessLogicResolver,
+            stableCoinFactoryProxyAddress: stableCoinFactoryProxy,
+        })
+        const result = await deployStableCoin(deployCommand)
+        stableCoinProxyAddress = result.stableCoinProxyAddress
 
-//     it('Can not mint more tokens than reserve', async function () {
-//         // Retrieve current reserve amount
-//         const totalReserve = await hederaTokenManager.getReserveAmount({
-//             gasLimit: GAS_LIMIT.hederaTokenManager.getReserveAmount,
-//         })
+        await setFacets(stableCoinProxyAddress)
+    })
 
-//         // Cashin more tokens than reserve amount: fail
-//         const mintResponse = await hederaTokenManager.mint(operator.address, totalReserve.add(1), {
-//             gasLimit: GAS_LIMIT.hederaTokenManager.mint,
-//         })
-//         await expect(new ValidateTxResponseCommand({ txResponse: mintResponse }).execute()).to.be.rejectedWith(Error)
-//     })
-// })
+    it('Can Mint less tokens than reserve', async function () {
+        const AmountToMint = BigNumber.from(10).mul(THREE_TOKEN_FACTOR)
+
+        // Get the initial reserve amount
+        const initialReserve = await reserveFacet.getReserveAmount({
+            gasLimit: GAS_LIMIT.hederaTokenManager.getReserveAmount,
+        })
+
+        // Cashin tokens to previously associated account
+        const mintResponse = await cashInFacet.mint(operator.address, AmountToMint, {
+            gasLimit: GAS_LIMIT.hederaTokenManager.mint,
+        })
+        await new ValidateTxResponseCommand({ txResponse: mintResponse }).execute()
+
+        // Check the reserve account : success
+        await delay({ time: 1, unit: 'sec' })
+        const finalReserve = (
+            await reserveFacet.getReserveAmount({
+                gasLimit: GAS_LIMIT.hederaTokenManager.getReserveAmount,
+            })
+        ).sub(AmountToMint)
+        const expectedTotalReserve = initialReserve.sub(AmountToMint)
+        expect(finalReserve.toString()).to.equals(expectedTotalReserve.toString())
+    })
+
+    it('Can not mint more tokens than reserve', async function () {
+        // Retrieve current reserve amount
+        const totalReserve = await reserveFacet.getReserveAmount({
+            gasLimit: GAS_LIMIT.hederaTokenManager.getReserveAmount,
+        })
+
+        // Cashin more tokens than reserve amount: fail
+        const mintResponse = await cashInFacet.mint(operator.address, totalReserve.add(1), {
+            gasLimit: GAS_LIMIT.hederaTokenManager.mint,
+        })
+        await expect(new ValidateTxResponseCommand({ txResponse: mintResponse }).execute()).to.be.rejectedWith(Error)
+    })
+})
