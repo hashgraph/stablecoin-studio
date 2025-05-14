@@ -300,7 +300,6 @@ class StableCoinInPort implements IStableCoinInPort {
 					: {},
 			reserve: {
 				proxyAddress: createResponse.reserveProxy,
-				proxyAdminAddress: createResponse.reserveProxyAdmin,
 			},
 		};
 	}

@@ -89,7 +89,6 @@ import { GrantKycCommandHandler } from '../app/usecase/command/stablecoin/operat
 import { GetAccountTokenRelationshipQueryHandler } from '../app/usecase/query/account/tokenRelationship/GetAccountTokenRelationshipQueryHandler.js';
 import { SDK } from '../port/in/Common.js';
 import { SetConfigurationCommandHandler } from '../app/usecase/command/network/setConfiguration/SetConfigurationCommandHandler.js';
-import { GetTokenManagerListQueryHandler } from '../app/usecase/query/factory/getTokenManagerList/GetTokenManagerListQueryHandler.js';
 import { GetAccountsWithRolesQueryHandler } from '../app/usecase/query/stablecoin/roles/getAccountsWithRole/GetAccountsWithRolesQueryHandler.js';
 import { FireblocksTransactionAdapter } from '../port/out/hs/hts/custodial/FireblocksTransactionAdapter.js';
 import { DFNSTransactionAdapter } from '../port/out/hs/hts/custodial/DFNSTransactionAdapter.js';
@@ -354,10 +353,6 @@ const QUERY_HANDLERS = [
 	{
 		token: TOKENS.QUERY_HANDLER,
 		useClass: GetAccountTokenRelationshipQueryHandler,
-	},
-	{
-		token: TOKENS.QUERY_HANDLER,
-		useClass: GetTokenManagerListQueryHandler,
 	},
 	{
 		token: TOKENS.QUERY_HANDLER,

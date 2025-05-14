@@ -5,7 +5,7 @@ import {IBusinessLogicResolver} from '../../interfaces/IBusinessLogicResolver.so
 import {IDiamondLoupe} from '../../interfaces/resolverProxy/IDiamondLoupe.sol';
 import {RolesStorageWrapper} from '../../../extensions/RolesStorageWrapper.sol';
 import {_RESOLVER_PROXY_STORAGE_POSITION} from '../../../constants/storagePositions.sol';
-import {IHederaTokenManager} from '../../../Interfaces/IHederaTokenManager.sol';
+import {IHederaTokenManager, RolesStruct} from '../../../Interfaces/IHederaTokenManager.sol';
 
 // Remember to add the loupe functions from DiamondLoupeFacet.sol.sol to the resolverProxy.
 // The loupe functions are required by the EIP2535 ResolverProxys standard
@@ -25,7 +25,7 @@ abstract contract ResolverProxyUnstructured is RolesStorageWrapper {
         IBusinessLogicResolver _resolver,
         bytes32 _resolverProxyConfigurationId,
         uint256 _version,
-        IHederaTokenManager.RolesStruct[] memory _roles
+        RolesStruct[] memory _roles
     ) internal {
         _resolver.checkResolverProxyConfigurationRegistered(_resolverProxyConfigurationId, _version);
         ResolverProxyStorage storage ds = _resolverProxyStorage();
@@ -47,7 +47,7 @@ abstract contract ResolverProxyUnstructured is RolesStorageWrapper {
         _ds.version = _version;
     }
 
-    function _assignRoles(IHederaTokenManager.RolesStruct[] memory _roles) internal {
+    function _assignRoles(RolesStruct[] memory _roles) internal {
         for (uint256 roleIndex; roleIndex < _roles.length; roleIndex++) {
             _grantRole(_roles[roleIndex].role, _roles[roleIndex].account);
         }

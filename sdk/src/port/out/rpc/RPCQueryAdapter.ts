@@ -226,16 +226,6 @@ export class RPCQueryAdapter {
 		return await this.connect(Reserve, address.toString()).decimals();
 	}
 
-	async getTokenManagerList(factoryAddress: EvmAddress): Promise<string[]> {
-		LogService.logTrace(
-			`Requesting getTokenManagerList factoryAddress: ${factoryAddress.toString()}`,
-		);
-		return await this.connect(
-			FactoryFacet,
-			factoryAddress.toString(),
-		).getHederaTokenManagerAddress();
-	}
-
 	async getMetadata(address: EvmAddress): Promise<string> {
 		LogService.logTrace(`Requesting metadata: ${address.toString()}`);
 		return await this.connect(
