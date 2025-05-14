@@ -8,7 +8,7 @@ import {
     HederaTokenManager__factory,
     StableCoinFactory,
     StableCoinFactory__factory,
-} from '@typechain'
+} from '@typechain-types'
 import {
     ADDRESS_ZERO,
     delay,

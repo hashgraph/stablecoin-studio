@@ -55,8 +55,8 @@ import { TokenSupplyType } from '../../../src/port/in/StableCoin.js';
 import {
 	CLIENT_ACCOUNT_ECDSA,
 	FACTORY_ADDRESS,
-	HEDERA_TOKEN_MANAGER_ADDRESS,
 	MIRROR_NODE,
+	RESOLVER_ADDRESS,
 	RPC_NODE,
 } from '../../config.js';
 import Account from '../../../src/domain/context/account/Account.js';
@@ -83,6 +83,9 @@ const rpcNode: JsonRpcRelay = {
 const decimals = 6;
 const initSupply = 1000;
 const reserve = 100000000;
+const configId =
+	'0x0000000000000000000000000000000000000000000000000000000000000000';
+const configVersion = 0;
 
 describe('🧪 [ADAPTER] RPCTransactionAdapter', () => {
 	let stableCoinCapabilitiesSC: StableCoinCapabilities;
@@ -97,16 +100,17 @@ describe('🧪 [ADAPTER] RPCTransactionAdapter', () => {
 	const createToken = async (
 		stablecoin: StableCoin,
 		account: Account,
-		proxyAdminOwner: ContractId | undefined = undefined,
 	): Promise<StableCoinCapabilities> => {
 		const tr = await th.create(
 			stablecoin,
 			new ContractId(FACTORY_ADDRESS),
-			new ContractId(HEDERA_TOKEN_MANAGER_ADDRESS),
 			true,
+			new ContractId(RESOLVER_ADDRESS),
+			configId,
+			configVersion,
+			new ContractId(account.id.toString()),
 			undefined,
 			BigDecimal.fromString(reserve.toString(), RESERVE_DECIMALS),
-			proxyAdminOwner,
 		);
 
 		// proxyAdmin = tr.response[0][1];

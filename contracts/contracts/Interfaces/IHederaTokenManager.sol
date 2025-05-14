@@ -5,6 +5,11 @@ pragma solidity 0.8.18;
 import {IHederaTokenService} from '@hashgraph/smart-contracts/contracts/system-contracts/hedera-token-service/IHederaTokenService.sol';
 import {KeysStruct} from '../library/KeysLib.sol';
 
+struct RolesStruct {
+    bytes32 role;
+    address account;
+}
+
 interface IHederaTokenManager {
     struct InitializeStruct {
         IHederaTokenService.HederaToken token;
@@ -15,11 +20,6 @@ interface IHederaTokenManager {
         RolesStruct[] roles;
         CashinRoleStruct cashinRole;
         string tokenMetadataURI;
-    }
-
-    struct RolesStruct {
-        bytes32 role;
-        address account;
     }
 
     struct CashinRoleStruct {
@@ -35,17 +35,6 @@ interface IHederaTokenManager {
         int64 autoRenewPeriod;
         string tokenMetadataURI;
     }
-
-    /**
-    * @dev Emitted when tokens have been transfered from sender to receiver
-    *
-    * @param token Token address
-    * @param sender Sender address
-    * @param receiver Receiver address
-    * @param amount Transfered amount
-
-    */
-    event TokenTransfer(address indexed token, address indexed sender, address indexed receiver, int64 amount);
 
     /**
      * @dev Emitted when token updated

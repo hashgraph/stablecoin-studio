@@ -48,6 +48,7 @@ import {
 	CLIENT_ACCOUNT_ED25519,
 	DECIMALS,
 	FACTORY_ADDRESS,
+	RESOLVER_ADDRESS,
 } from '../../config.js';
 import BigDecimal from '../../../src/domain/context/shared/BigDecimal.js';
 import GetAccountsWithRolesRequest from '../../../src/port/in/request/GetAccountsWithRolesRequest.js';
@@ -89,6 +90,7 @@ describe('🧪 Role test', () => {
 				network: 'testnet',
 				configuration: {
 					factoryAddress: FACTORY_ADDRESS,
+					resolverAddress: RESOLVER_ADDRESS,
 				},
 				mirrorNode: mirrorNode,
 				rpcNode: rpcNode,

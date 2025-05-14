@@ -29,20 +29,6 @@ interface IHederaReserve is AggregatorV3Interface {
     event AmountChanged(int256 previousAmount, int256 newAmount);
 
     /**
-     * @dev Emitted when the provided `addr` is 0
-     *
-     * @param account The address to check
-     */
-    error AddressZero(address account);
-
-    /**
-     * @dev Emitted when the calling account is not the admin
-     *
-     * @param account The address that tried to change the reserve
-     */
-    error OnlyAdmin(address account);
-
-    /**
      * @dev Emitted when the function is not implemented
      */
     error NotImplemented();

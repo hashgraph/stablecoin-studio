@@ -43,14 +43,17 @@ import {
 	DECIMALS,
 	DFNS_SETTINGS,
 	FACTORY_ADDRESS,
-	HEDERA_TOKEN_MANAGER_ADDRESS,
 	MIRROR_NODE,
+	RESOLVER_ADDRESS,
 	RPC_NODE,
 } from '../../config';
 import Injectable from '../../../src/core/Injectable';
 import { Time } from '../../../src/core/Time';
 
 const initialSupply = 1000;
+const configId =
+	'0x0000000000000000000000000000000000000000000000000000000000000000';
+const configVersion = 0;
 
 describe('🧪 DFNSTransactionAdapter test', () => {
 	let stableCoinHTS: StableCoinViewModel;
@@ -96,6 +99,7 @@ describe('🧪 DFNSTransactionAdapter test', () => {
 				network: 'testnet',
 				configuration: {
 					factoryAddress: FACTORY_ADDRESS,
+					resolverAddress: RESOLVER_ADDRESS,
 				},
 				mirrorNode: mirrorNode,
 				rpcNode: rpcNode,
@@ -113,7 +117,6 @@ describe('🧪 DFNSTransactionAdapter test', () => {
 			pauseKey: requestPublicKey,
 			supplyType: TokenSupplyType.INFINITE,
 			stableCoinFactory: FACTORY_ADDRESS,
-			hederaTokenManager: HEDERA_TOKEN_MANAGER_ADDRESS,
 			reserveInitialAmount: '1000000',
 			createReserve: true,
 			grantKYCToOriginalSender: true,
@@ -121,8 +124,11 @@ describe('🧪 DFNSTransactionAdapter test', () => {
 			rescueRoleAccount: DFNS_SETTINGS.hederaAccountId,
 			deleteRoleAccount: DFNS_SETTINGS.hederaAccountId,
 			cashInRoleAccount: DFNS_SETTINGS.hederaAccountId,
+			proxyOwnerAccount: DFNS_SETTINGS.hederaAccountId,
 			cashInRoleAllowance: '0',
 			metadata: '',
+			configId: configId,
+			configVersion: configVersion,
 		});
 
 		stableCoinHTS = (await StableCoin.create(requestCreateStableCoin)).coin;

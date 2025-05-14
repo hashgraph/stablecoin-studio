@@ -1,7 +1,7 @@
 import { expect } from 'chai'
 import { ethers, network } from 'hardhat'
 import { NetworkName } from '@configuration'
-import { HederaTokenManager, HederaTokenManager__factory, IHederaTokenManager } from '@typechain'
+import { HederaTokenManager, HederaTokenManager__factory, IHederaTokenManager } from '@typechain-types'
 import {
     allTokenKeysToKey,
     AllTokenKeysToKeyCommand,

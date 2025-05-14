@@ -2,7 +2,7 @@ import { SignerWithAddress } from '@nomiclabs/hardhat-ethers/signers'
 import { expect } from 'chai'
 import { BigNumber } from 'ethers'
 import { TOKEN_FACTOR } from '@test/shared'
-import { HederaReserve, HederaReserve__factory } from '@typechain'
+import { HederaReserve, HederaReserve__factory } from '@typechain-types'
 import {
     delay,
     deployContractWithFactory,
