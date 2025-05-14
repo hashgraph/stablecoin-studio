@@ -2,7 +2,7 @@ import { expect } from 'chai'
 import { SignerWithAddress } from '@nomiclabs/hardhat-ethers/signers'
 import { ethers, network } from 'hardhat'
 import { NetworkName } from '@configuration'
-import { HederaTokenManager, HederaTokenManager__factory, IHRC__factory } from '@typechain'
+import { HederaTokenManager, HederaTokenManager__factory, IHRC__factory } from '@typechain-types'
 import { MESSAGES, ValidateTxResponseCommand } from '@scripts'
 import { deployFullInfrastructureInTests, GAS_LIMIT, INIT_SUPPLY } from '@test/shared'
 

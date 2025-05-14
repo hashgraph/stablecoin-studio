@@ -21,6 +21,7 @@
 - **[Upgrade](#upgrade)**<br>
     - [Upgrade factory](#upgrade-factory)<br>
     - [Upgrade stablecoins](#upgrade-stablecoins)<br>
+- **[v1 to v2 Migration](#v1-to-v2-migration)**<br>
 - **[Generate documentation](#generate-documentation)**<br>
 - **[Other scripts](#other-scripts)**<br>
 - **[Contributing](#contributing)**<br>
@@ -286,6 +287,26 @@ The factory's and the stablecoins's logic can be upgraded at any time using the 
 
 The _Transparent Proxy admin_ also allows to change the owner who can manage the proxy, like upgrading it, as explained above.
 Initially, the account deploying the factory contract will be the proxy admin owner of this contract, while the user creating the stablecoin will be able to select the account id (can be a contract id) during the stablecoin creation process, which will be the owner of the stablecoin proxy admin contract.
+
+# V1 to V2 Migration
+In order to migrate V1 Stablecoins to V2 you need to :
+
+- Enter the private key of the account set as `owner` in your Stablecoin's `Proxy admin` in the `MAINNET_PRIVATE_KEY_0` field of the `.env`file.
+- Then run the following hardhat task: 
+
+```
+npx hardhat migrateStableCoinToV2 --stablecoinconfigurationidkey CONFIG_ID --stablecoinconfigurationidversion CONFIG_VERSION --businesslogicresolverproxyaddress BLR --stablecoinaddress SC_PROXY --stablecoinproxyadminaddress SC_PROXY_ADMIN
+```
+
+Where
+
+    - CONFIG_ID: config id of the stablecoin  (bytes32)
+    - CONFIG_VERSION: config version of the stablecoin (integer)
+    - BLR: Business logic resolver address (evm address)
+    - SC_PROXY: address of the stablecoin's proxy (evm address)
+    - SC_PROXY_ADMIN: address of the stablecoin's admin proxy (evm address)
+
+
 
 # Generate documentation
 

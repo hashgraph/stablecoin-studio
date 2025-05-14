@@ -26,7 +26,7 @@ import {
     IStableCoinFactory,
     IHRC__factory,
     ResolverProxy__factory,
-} from '@typechain'
+} from '@typechain-types'
 import {
     MESSAGES,
     GAS_LIMIT,

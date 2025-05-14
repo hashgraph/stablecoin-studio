@@ -1,5 +1,5 @@
 import { DeployFullInfrastructureResult, DeployScsContractListResult } from '@scripts'
-import { BusinessLogicResolver } from '@typechain'
+import { BusinessLogicResolver } from '@typechain-types'
 
 interface NewEnvironmentParams {
     stableCoinFactoryFacetIdList?: string[]

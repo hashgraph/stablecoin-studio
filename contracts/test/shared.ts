@@ -9,7 +9,7 @@ import {
     TokenKeysToContractCommand,
 } from '@scripts'
 import { SignerWithAddress } from '@nomiclabs/hardhat-ethers/signers'
-import { IHederaTokenManager } from '@typechain'
+import { IHederaTokenManager } from '@typechain-types'
 import { HardhatRuntimeEnvironment } from 'hardhat/types'
 import { configuration } from 'hardhat.config'
 import { DeployedContract, NetworkName } from '@configuration'
