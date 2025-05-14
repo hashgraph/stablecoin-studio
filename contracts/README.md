@@ -72,11 +72,7 @@ The remaining smart contracts have been implemented for this project:
 
 ## Overall architecture
 
-TDB: diagram
-
-## Detailed architecture
-
-TDB: diagram
+![](./img/StableCoinArchitecture1.png)
 
 # Content
 
@@ -156,18 +152,9 @@ You need to create the `.env` file cloning the content of `.env.sample` and add 
 
 These accounts must be existing valid accounts in the **Hedera network** you are using to test the smart contracts, they must also have a **positive balance large enough** to run all the contract deployments, invocations and token creations executed in the tests.
 
-Accounts must be defined in this section:
+For each account you must provide the Private Key (7647657eerr65....878)
 
-> hedera -> networks -> **[network in which you want to run the tests]** -> accounts
-
-For each account you must provide the following information:
-
-- **account**: Account ID (0.0.XXXXXX)
-- **private Key**: Private Key associated to the account (7647657eerr65....878)
-- **public Key**: Public Key linked to the private key (c14er56...78)
-- **isEd25519Type**: _true/false_ indicate whether the private/public key is ED25519 (true) or ECSDA (false)
-
-Example for the Hedera testnet (_these are fake accounts/keys_):
+Example for the Hedera testnet (_fake data_):
 
 ```.env
     # * Accounts and Keys
@@ -180,30 +167,14 @@ Example for the Hedera testnet (_these are fake accounts/keys_):
     TESTNET_PRIVATE_KEY_1='0xEXAMPLEPRIVATEKEY5'
     # ... add more keys as needed
     
-    # * Hedera Network
-    # Local
-    LOCAL_JSON_RPC_ENDPOINT='http://localhost:7546'
-    LOCAL_MIRROR_NODE_ENDPOINT='http://localhost:5551'
-    # Testnet
-    TESTNET_JSON_RPC_ENDPOINT='https://testnet.hashio.io/api'
-    TESTNET_MIRROR_NODE_ENDPOINT='https://testnet.mirrornode.hedera.com'
-    
-    # * Deployed Contracts
-    TESTNET_TOKENMANAGER='0x0000000000000000000000000000000000000000'
-    TESTNET_FACTORY_PROXY='0x0000000000000000000000000000000000000000'
-    TESTNET_FACTORY_PROXY_ADMIN='0x0000000000000000000000000000000000000000'
-    TESTNET_FACTORY='0x0000000000000000000000000000000000000000'
 ```
 
 ### Operating accounts
 
 All tests will use the two above mentioned accounts.
 
-- `Operator Account`: This is the account that will deploy the stablecoin used for testing. It will have full rights.
-- `Non Operator Account`: This is the account that will NOT deploy the stablecoin used for testing. It will have no rights to the stablecoin unless explicitly granted during the test.
-
-You can change which account is the _operator_ and the _non-operator_ account by changing the **clientId** value at:
-scripts -> utils.ts -> const clientId
+- `Operator Account (PRIVATE_KEY_0)`: This is the account that will deploy the stablecoin used for testing. It will have full rights.
+- `Non Operator Account (PRIVATE_KEY_1)`: This is the account that will NOT deploy the stablecoin used for testing. It will have no rights to the stablecoin unless explicitly granted during the test.
 
 ### Pre-deployed factory & hederaTokenManager contracts
 
