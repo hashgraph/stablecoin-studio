@@ -115,16 +115,15 @@ describe('➡️ HederaTokenManager Tests', function () {
         )
     })
 
-    // TODO: review this test
-    it.skip('Admin can update token', async function () {
+    it('Admin can update token', async function () {
         const keys = tokenKeysToKey(new TokenKeysToKeyCommand({ publicKey: operator.publicKey, addKyc: false }))
         const updateTokenStruct = {
             tokenName: 'newName',
             tokenSymbol: 'newSymbol',
             keys: keys as IHederaTokenManager.UpdateTokenStructStructOutput['keys'],
-            second: BigNumber.from(getOneMonthFromNowInSeconds()),
-            autoRenewPeriod: OTHER_AUTO_RENEW_PERIOD,
-            tokenMetadataURI: DEFAULT_TOKEN.memo,
+            second: BigNumber.from(0),
+            autoRenewPeriod: BigNumber.from(0),
+            tokenMetadataURI: 'newMemo',
         } as IHederaTokenManager.UpdateTokenStructStructOutput
 
         const response = await hederaTokenManagerFacet.updateToken(updateTokenStruct, {
@@ -137,7 +136,7 @@ describe('➡️ HederaTokenManager Tests', function () {
         const newMetadata = await hederaTokenManagerFacet.getMetadata({
             gasLimit: GAS_LIMIT.hederaTokenManager.getMetadata,
         })
-        expect(newMetadata).to.equal(DEFAULT_TOKEN.memo)
+        expect(newMetadata).to.equal('newMemo')
 
         // Update back to initial values
         const defaultResponse = await hederaTokenManagerFacet.updateToken(DEFAULT_UPDATE_TOKEN_STRUCT, {
@@ -248,7 +247,7 @@ describe('➡️ HederaTokenManager Tests', function () {
         }
     })
 
-    it('input parmeters check', async function () {
+    it('input parameters check', async function () {
         // We retreive the Token basic params
         const [retrievedTokenName, retrievedTokenSymbol, retrievedTokenDecimals, retrievedTokenTotalSupply] =
             await Promise.all([
@@ -265,23 +264,54 @@ describe('➡️ HederaTokenManager Tests', function () {
         expect(retrievedTokenTotalSupply.toString()).to.equals(DEFAULT_TOKEN.initialSupply.toString())
     })
 
-    // TODO: init test before only pass the tokenAddress, this was never tested
-    it.skip('Check initialize can only be run once', async function () {
-        const initStruct = {
-            // eslint-disable-next-line @typescript-eslint/no-explicit-any
-            token: ethers.constants.HashZero as any, //! imposible to test...
-            initialTotalSupply: 0,
-            tokenDecimals: 0,
-            originalSender: operator.address,
-            reserveAddress: operator.address,
-            roles: [],
-            // eslint-disable-next-line @typescript-eslint/no-explicit-any
-            cashinRole: ethers.constants.HashZero as any,
-            tokenMetadataURI: '',
+    it('Check initialize can only be run once', async function () {
+        const dummyStruct = {
+            token: {
+                name: 'DummyToken',
+                symbol: 'DUM',
+                treasury: '0x000000000000000000000000000000000000dEaD',
+                memo: 'Test token memo',
+                tokenSupplyType: true,
+                maxSupply: 1_000_000,
+                freezeDefault: false,
+                tokenKeys: [
+                    {
+                        keyType: 1,
+                        key: {
+                            inheritAccountKey: false,
+                            contractId: '0x1111111111111111111111111111111111111111',
+                            ed25519: '0xabcdef',
+                            ECDSA_secp256k1: '0x123456',
+                            delegatableContractId: '0x2222222222222222222222222222222222222222',
+                        },
+                    },
+                ],
+                expiry: {
+                    second: 1680000000,
+                    autoRenewAccount: '0x3333333333333333333333333333333333333333',
+                    autoRenewPeriod: 7890000,
+                },
+            },
+            initialTotalSupply: 500_000,
+            tokenDecimals: 8,
+            originalSender: '0x4444444444444444444444444444444444444444',
+            reserveAddress: '0x5555555555555555555555555555555555555555',
+            roles: [
+                {
+                    account: '0x6666666666666666666666666666666666666666',
+                    allowance: 1_000,
+                    role: '0x53300d27a2268d3ff3ecb0ec8e628321ecfba1a08aed8b817e8acf589a52d25c',
+                },
+            ],
+            cashinRole: {
+                account: '0x7777777777777777777777777777777777777777',
+                allowance: 2_000,
+            },
+            tokenMetadataURI: 'https://example.com/metadata.json',
         }
 
         // Initiliaze : fail
-        const result = await hederaTokenManagerFacet.initialize(initStruct, {
+        const result = await hederaTokenManagerFacet.initialize(dummyStruct, {
             gasLimit: GAS_LIMIT.hederaTokenManager.initialize,
         })
         await expect(validateTxResponse(new ValidateTxResponseCommand({ txResponse: result }))).to.be.rejectedWith(
@@ -289,7 +319,7 @@ describe('➡️ HederaTokenManager Tests', function () {
         )
     })
 
-    it('Mint token throw error format number incorrrect', async () => {
+    it('Mint token throw error format number incorrect', async () => {
         const initialTotalSupply = await hederaTokenManagerFacet.totalSupply({
             gasLimit: GAS_LIMIT.hederaTokenManager.totalSupply,
         })

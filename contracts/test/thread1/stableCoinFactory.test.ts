@@ -248,7 +248,9 @@ describe('StableCoinFactory Tests', function () {
 
     it('Create StableCoin setting an initial supply over the reserve, when the reserve is provided and not deployed, expect it to fail', async function () {
         // first deploy Hedera Reserve
-        const reserve = await new HederaReserveFacet__factory(operator).deploy()
+        const reserve = await new HederaReserveFacet__factory(operator).deploy({
+            gasLimit: GAS_LIMIT.hederaTokenManager.facetDeploy,
+        })
         await reserve.deployed()
 
         const reserveAmount = BigNumber.from(1)

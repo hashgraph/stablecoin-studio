@@ -4,7 +4,6 @@ import { ethers } from 'hardhat'
 import {
     CashInFacet,
     CashInFacet__factory,
-    HederaReserveFacet,
     HederaReserveFacet__factory,
     ReserveFacet,
     ReserveFacet__factory,
@@ -62,11 +61,9 @@ describe('➡️ Reserve Tests', function () {
     let stableCoinProxyAddress: string
     let reserveProxyAddress: string
     let reserveFacet: ReserveFacet
-    let hederaReserveFacet: HederaReserveFacet
 
     async function setFacets(address: string) {
         reserveFacet = ReserveFacet__factory.connect(address, operator)
-        hederaReserveFacet = HederaReserveFacet__factory.connect(address, operator)
     }
 
     before(async () => {
@@ -104,7 +101,7 @@ describe('➡️ Reserve Tests', function () {
         const datafeed = await reserveFacet.getReserveAddress({
             gasLimit: GAS_LIMIT.hederaTokenManager.getReserveAddress,
         })
-        expect(datafeed.toUpperCase()).not.to.equals(reserveProxyAddress.toUpperCase())
+        expect(datafeed.toUpperCase()).to.equals(reserveProxyAddress.toUpperCase())
     })
 
     it('Update datafeed', async () => {
@@ -115,17 +112,15 @@ describe('➡️ Reserve Tests', function () {
             gasLimit: GAS_LIMIT.hederaTokenManager.getReserveAddress,
         })
 
-        const newReserve = (await beforeReserve).add(BigNumber.from('100').mul(THREE_TOKEN_FACTOR))
+        const hederaReserveFacet = await new HederaReserveFacet__factory(operator).deploy({
+            gasLimit: GAS_LIMIT.hederaTokenManager.facetDeploy,
+        })
+        await hederaReserveFacet.deployed()
 
-        const updateResponse = await reserveFacet.updateReserveAddress(reserveProxyAddress, {
+        const updateResponse = await reserveFacet.updateReserveAddress(hederaReserveFacet.address, {
             gasLimit: GAS_LIMIT.hederaTokenManager.updateReserveAddress,
         })
         await new ValidateTxResponseCommand({ txResponse: updateResponse }).execute()
-
-        const initHederaResponse = await hederaReserveFacet.initialize(BigNumber.from(newReserve), operator.address, {
-            gasLimit: GAS_LIMIT.hederaReserve.initialize,
-        })
-        await new ValidateTxResponseCommand({ txResponse: initHederaResponse }).execute()
 
         const afterReserve = reserveFacet.getReserveAmount({
             gasLimit: GAS_LIMIT.hederaTokenManager.getReserveAmount,
@@ -136,7 +131,7 @@ describe('➡️ Reserve Tests', function () {
 
         expect(await beforeDataFeed).not.to.equals(await afterDataFeed)
         expect(await beforeReserve).not.to.equals(await afterReserve)
-        expect(await afterReserve).to.equals(newReserve)
+        expect(await afterReserve).to.equals(0)
     })
 })
 

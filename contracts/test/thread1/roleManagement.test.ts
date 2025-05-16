@@ -115,6 +115,7 @@ describe('➡️ Role Management Tests', function () {
             ROLES.defaultAdmin.hash,
             ROLES.kyc.hash,
             ROLES.customFees.hash,
+            ROLES.hold.hash,
         ]
         const txResponse = await roleManagementFacet.grantRoles(
             rolesToGrant,
@@ -197,6 +198,7 @@ describe('➡️ Role Management Tests', function () {
             ROLES.defaultAdmin.hash,
             ROLES.kyc.hash,
             ROLES.customFees.hash,
+            ROLES.hold.hash,
         ]
         // Check initial roles for random accounts
         for (const account of randomAccountList) {

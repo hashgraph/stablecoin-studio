@@ -62,6 +62,10 @@ export const ROLES = {
         id: 9,
         hash: '0x6db8586688d24c6a6367d21f709d650b12a2a61dd75e834bd8cd90fd6afa794b',
     },
+    hold: {
+        id: 10,
+        hash: '0xa0edc074322e33cf8b82b4182ff2827f0fef9412190f0e8417c2669a1e8747e4',
+    },
     withoutRole: {
         id: -1,
         hash: '0xe11b25922c3ff9f0f0a34f0b8929ac96a1f215b99dcb08c2891c220cf3a7e8cc',
@@ -77,6 +81,7 @@ export const GAS_LIMIT = {
     },
     hederaTokenManager: {
         deploy: 5_000_000n,
+        facetDeploy: 800_000n,
         initialize: 60_000n,
         associate: 800_000n,
         dissociate: 800_000n,
@@ -95,7 +100,7 @@ export const GAS_LIMIT = {
         mint: 150_000n,
         freeze: 80_000n,
         unfreeze: 80_000n,
-        updateToken: 120_000n,
+        updateToken: 150_000n,
         pause: 80_000n,
         unpause: 80_000n,
         rescue: 100_000n,
@@ -103,11 +108,11 @@ export const GAS_LIMIT = {
         wipe: 150_000n,
         increaseSupplierAllowance: 100_000n,
         decreaseSupplierAllowance: 100_000n,
-        resetSupplierAllowance: 45_000n,
-        updateReserveAddress: 60_000n,
+        resetSupplierAllowance: 80_000n,
+        updateReserveAddress: 80_000n,
         // Read
-        getMetadata: 60_000n,
-        getRoles: 120_000n,
+        getMetadata: 80_000n,
+        getRoles: 150_000n,
         hasRole: 120_000n,
         getAccountsWithRole: 120_000n,
         isUnlimitedSupplierAllowance: 60_000n,
@@ -118,7 +123,7 @@ export const GAS_LIMIT = {
         getTokenAddress: 1_800_000n,
         balanceOf: 120_000n,
         getSupplierAllowance: 120_000n,
-        getReserveAmount: 60_000n,
+        getReserveAmount: 100_000n,
         getReserveAddress: 60_000n,
     },
     stableCoinFactory: {
@@ -138,7 +143,7 @@ export const GAS_LIMIT = {
         upgrade: 150_000n,
     },
     tup: {
-        deploy: 500_000n,
+        deploy: 2_000_000n,
         upgrade: 150_000n,
     },
     resolverProxy: {
@@ -146,7 +151,7 @@ export const GAS_LIMIT = {
         upgrade: 150_000n,
     },
     hederaReserve: {
-        initialize: 130_000n,
+        initialize: 180_000n,
         setAdmin: 1_800_000n,
         setAmount: 60_000n,
         // Read
