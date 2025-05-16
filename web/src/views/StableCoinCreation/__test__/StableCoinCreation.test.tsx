@@ -36,6 +36,7 @@ describe(`<${StableCoinCreation.name} />`, () => {
 			wallet: {
 				lastWallet: SupportedWallets.HASHPACK,
 				factoryId: '0.0.12345',
+				resolverId: '0.0.12346',
 				accountInfo: {
 					id: '0.0.12345',
 				},
@@ -59,7 +60,7 @@ describe(`<${StableCoinCreation.name} />`, () => {
 		}));
 
 		const contractId: ContractId = new ContractId('0.0.1234');
-		jest.spyOn(SDKService, 'getHederaTokenManagerList').mockResolvedValue([contractId]);
+		// jest.spyOn(SDKService, 'getHederaTokenManagerList').mockResolvedValue([contractId]);
 
 		const createResponse = {
 			coin: { tokenId: new HederaId('0.0.12345') },
@@ -75,7 +76,7 @@ describe(`<${StableCoinCreation.name} />`, () => {
 			expect(noProof).not.toBeInTheDocument();
 		});
 
-		//step 1
+		// step 1
 		const name = component.getByTestId('name');
 		await userEvent.type(name, 'name');
 
@@ -85,7 +86,7 @@ describe(`<${StableCoinCreation.name} />`, () => {
 		const next1 = component.getByTestId('stepper-step-panel-button-primary-1');
 		await userEvent.click(next1);
 
-		//step 2
+		// step 2
 		await waitFor(() => {
 			const initialSupply = component.getByTestId('initialSupply');
 			userEvent.type(initialSupply, '1000');
@@ -97,19 +98,19 @@ describe(`<${StableCoinCreation.name} />`, () => {
 		const next = component.getByTestId('stepper-step-panel-button-primary-2');
 		await userEvent.click(next);
 
-		//step 3
+		// step 3
 		await waitFor(() => {
 			const next = component.getByTestId('stepper-step-panel-button-primary-3');
 			userEvent.click(next);
 		});
 
-		//step 4
+		// step 4
 		await waitFor(() => {
 			const next = component.getByTestId('stepper-step-panel-button-primary-4');
 			userEvent.click(next);
 		});
 
-		//step 5
+		// step 5
 		await waitFor(() => {
 			const title = component.getByText('Create Stablecoin');
 			userEvent.click(title);

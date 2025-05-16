@@ -5,6 +5,7 @@
 		"createStableCoin": "Create stablecoin",
 		"createNewStableCoin": "Create new stablecoin",
 		"factoryId": "Factory Id : ",
+		"resolverId": "Resolver Id : ",
 		"cancel": "Cancel"
 	},
 	"tabs": {
@@ -20,6 +21,10 @@
 		"namePlaceholder": "Stablecoin Name",
 		"symbol": "Stablecoin Symbol",
 		"symbolPlaceholder": "Stablecoin Symbol",
+		"configId": "Config ID",
+		"configIdPlaceholder": "Config ID",
+		"configVersion": "Config Version",
+		"configVersionPlaceholder": "Config Version",
 		"title": "Stablecoin Creation",
 		"hederaERC20": "Select HederaTokenManager Smart Contract ID",
 		"hederaERC20Placeholder": "HederaTokenManager Smart Contract ID",

@@ -28,7 +28,6 @@ import {
 	IS_ACCEPT_OWNER,
 	IS_FACTORY_ACCEPT_OWNER,
 	IS_FACTORY_PENDING_OWNER,
-	SELECTED_NETWORK_FACTORY_PROXY_CONFIG,
 } from '../../store/slices/walletSlice';
 import { NamedRoutes } from './../../Router/NamedRoutes';
 import { RouterManager } from '../../Router/RouterManager';
@@ -46,7 +45,6 @@ const Settings = () => {
 	const isFactoryProxyOwner = useSelector(IS_FACTORY_PROXY_OWNER);
 	const isFactoryPendingOwner = useSelector(IS_FACTORY_PENDING_OWNER);
 	const isFactoryAcceptOwner = useSelector(IS_FACTORY_ACCEPT_OWNER);
-	const selectedNetworkFactoryProxyConfig = useSelector(SELECTED_NETWORK_FACTORY_PROXY_CONFIG);
 
 	const [showAlert, setShowAlert] = useState<boolean>(false);
 
@@ -89,12 +87,8 @@ const Settings = () => {
 		}
 
 		const areDisabled = {
-			stableCoin:
-				!selectedStableCoin ||
-				(selectedStableCoin &&
-					((isExternalToken && !isProxyOwner && !isAcceptOwner) ||
-						(!isProxyOwner && !isAcceptOwner))),
-			factory: !isFactoryProxyOwner && !isFactoryAcceptOwner,
+			stableCoin: !selectedStableCoin || (selectedStableCoin && isExternalToken),
+			factory: true,
 		};
 		setDisabledFeatures(areDisabled);
 	};
@@ -146,11 +140,7 @@ const Settings = () => {
 	}
 
 	const handleFactoryClick = async () => {
-		if (!selectedNetworkFactoryProxyConfig) {
-			setShowAlert(true);
-		} else {
-			RouterManager.to(navigate, NamedRoutes.FactorySettings);
-		}
+		RouterManager.to(navigate, NamedRoutes.FactorySettings);
 	};
 
 	const directAccesses: DirectAccessProps[] = [
