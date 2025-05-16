@@ -40,6 +40,11 @@ import SetResolverAndFactoryService from '../configuration/SetResolverAndFactory
 import AssociateStableCoinService from './AssociateStableCoinService.js';
 import KYCStableCoinService from './KYCStableCoinService.js';
 import { AccountType } from '../../../domain/configuration/interfaces/AccountType';
+import {
+  CONFIG_ID_SC,
+  DEFAULT_VERSION,
+  ZERO_ADDRESS,
+} from '../../../core/Constants.js';
 
 /**
  * Create Stablecoin Service
@@ -142,7 +147,7 @@ export default class CreateStableCoinService extends Service {
   public async wizardCreateStableCoin(): Promise<[CreateRequest, boolean]> {
     const currentAccount = utilsService.getCurrentAccount();
     // Call to create stablecoin sdk function
-    const tokenToCreate = new CreateRequest({
+    let tokenToCreate = new CreateRequest({
       name: '',
       symbol: '',
       decimals: 6,
@@ -174,28 +179,7 @@ export default class CreateStableCoinService extends Service {
       },
     );
 
-    // Resolver config
-    await utilsService.handleValidation(
-      () => tokenToCreate.validate('configId'),
-      async () => {
-        tokenToCreate.configId = await utilsService.defaultSingleAsk(
-          language.getText('stablecoin.askConfigId'),
-          tokenToCreate.configId ||
-            '0x0000000000000000000000000000000000000000000000000000000000000002',
-        );
-      },
-    );
-    await utilsService.handleValidation(
-      () => tokenToCreate.validate('configVersion'),
-      async () => {
-        tokenToCreate.configVersion = Number(
-          await utilsService.defaultSingleAsk(
-            language.getText('stablecoin.askConfigVersion'),
-            tokenToCreate.configVersion.toString() || '1',
-          ),
-        );
-      },
-    );
+    tokenToCreate = await this.selectResolverConfiguration(tokenToCreate);
 
     const optionalProps = await this.askForOptionalProps();
     let initialSupply = '';
@@ -331,46 +315,14 @@ export default class CreateStableCoinService extends Service {
         tokenToCreate.feeRoleAccount = currentAccount.accountId;
     }
 
-    // Proof of Reserve
-    let reserve = false;
+    const reserve = await this.askForReserve();
     let existingReserve = false;
-    reserve = await this.askForReserve();
-
     if (reserve) {
       existingReserve = await this.askForExistingReserve();
-      if (!existingReserve) {
-        tokenToCreate.createReserve = true;
-        await utilsService.handleValidation(
-          () => tokenToCreate.validate('reserveConfigId'),
-          async () => {
-            tokenToCreate.reserveConfigId = await this.askForReserveConfigId();
-          },
-        );
-        await utilsService.handleValidation(
-          () => tokenToCreate.validate('reserveConfigVersion'),
-          async () => {
-            tokenToCreate.reserveConfigVersion =
-              await this.askForReserveConfigVersion();
-          },
-        );
-        await utilsService.handleValidation(
-          () => tokenToCreate.validate('reserveInitialAmount'),
-          async () => {
-            tokenToCreate.reserveInitialAmount =
-              await this.askForReserveInitialAmount();
-          },
-        );
-      } else {
-        await utilsService.handleValidation(
-          () => tokenToCreate.validate('reserveAddress'),
-          async () => {
-            tokenToCreate.reserveAddress = await utilsService.defaultSingleAsk(
-              language.getText('stablecoin.askReserveAddress'),
-              tokenToCreate.reserveAddress || '0.0.0',
-            );
-          },
-        );
-      }
+      tokenToCreate = await this.configureReserve(
+        tokenToCreate,
+        existingReserve,
+      );
     }
 
     tokenToCreate.stableCoinFactory = utilsService.getCurrentFactory().id;
@@ -764,5 +716,72 @@ export default class CreateStableCoinService extends Service {
       default:
         throw new Error('Selected option not recognized : ' + answer);
     }
+  }
+
+  private async selectResolverConfiguration(
+    tokenToCreate: CreateRequest,
+  ): Promise<CreateRequest> {
+    await utilsService.handleValidation(
+      () => tokenToCreate.validate('configId'),
+      async () => {
+        tokenToCreate.configId = await utilsService.defaultSingleAsk(
+          language.getText('stablecoin.askConfigId'),
+          tokenToCreate.configId || CONFIG_ID_SC,
+        );
+      },
+    );
+    await utilsService.handleValidation(
+      () => tokenToCreate.validate('configVersion'),
+      async () => {
+        tokenToCreate.configVersion = Number(
+          await utilsService.defaultSingleAsk(
+            language.getText('stablecoin.askConfigVersion'),
+            tokenToCreate.configVersion.toString() || DEFAULT_VERSION,
+          ),
+        );
+      },
+    );
+
+    return tokenToCreate;
+  }
+
+  private async configureReserve(
+    tokenToCreate: CreateRequest,
+    existingReserve: boolean,
+  ): Promise<CreateRequest> {
+    if (!existingReserve) {
+      tokenToCreate.createReserve = true;
+      await utilsService.handleValidation(
+        () => tokenToCreate.validate('reserveConfigId'),
+        async () => {
+          tokenToCreate.reserveConfigId = await this.askForReserveConfigId();
+        },
+      );
+      await utilsService.handleValidation(
+        () => tokenToCreate.validate('reserveConfigVersion'),
+        async () => {
+          tokenToCreate.reserveConfigVersion =
+            await this.askForReserveConfigVersion();
+        },
+      );
+      await utilsService.handleValidation(
+        () => tokenToCreate.validate('reserveInitialAmount'),
+        async () => {
+          tokenToCreate.reserveInitialAmount =
+            await this.askForReserveInitialAmount();
+        },
+      );
+    } else {
+      await utilsService.handleValidation(
+        () => tokenToCreate.validate('reserveAddress'),
+        async () => {
+          tokenToCreate.reserveAddress = await utilsService.defaultSingleAsk(
+            language.getText('stablecoin.askReserveAddress'),
+            tokenToCreate.reserveAddress || ZERO_ADDRESS,
+          );
+        },
+      );
+    }
+    return tokenToCreate;
   }
 }

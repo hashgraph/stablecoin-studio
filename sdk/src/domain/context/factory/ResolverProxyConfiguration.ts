@@ -18,13 +18,15 @@
  *
  */
 
+import { BYTES_32_NULL } from '../../../core/Constants';
+
 export class ResolverProxyConfiguration {
 	public key: string;
 	public version: number;
 
 	static empty(): ResolverProxyConfiguration {
 		return {
-			key: '0x0000000000000000000000000000000000000000000000000000000000000000',
+			key: BYTES_32_NULL,
 			version: 0,
 		};
 	}
