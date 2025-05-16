@@ -62,51 +62,59 @@ describe('➡️ Supplier Admin Tests', function () {
         await setFacets(stableCoinProxyAddress)
     })
 
-    it('Admin account can grant and revoke supplier(s) role to an account', async function () {
-        const cashInLimit = BigNumber.from(1)
-
-        // Admin grants limited supplier role : success
-        let role = await rolesFacet.hasRole(ROLES.cashin.hash, nonOperator.address, {
+    it('should confirm nonOperator has no supplier role initially', async function () {
+        const role = await rolesFacet.hasRole(ROLES.cashin.hash, nonOperator.address, {
             gasLimit: GAS_LIMIT.hederaTokenManager.hasRole,
         })
-        expect(role).to.equals(false)
-        let result = await supplierAdminFacet.connect(nonOperator).getSupplierAllowance(nonOperator.address, {
+        expect(role).to.equal(false)
+
+        const result = await supplierAdminFacet.connect(nonOperator).getSupplierAllowance(nonOperator.address, {
             gasLimit: GAS_LIMIT.hederaTokenManager.getSupplierAllowance,
         })
         expect(result.toString()).to.eq('0')
+    })
 
-        const grantRoleResponse = await supplierAdminFacet.grantSupplierRole(nonOperator.address, cashInLimit, {
+    it('should allow admin to grant limited supplier role', async function () {
+        const cashInLimit = BigNumber.from(1)
+
+        const tx = await supplierAdminFacet.grantSupplierRole(nonOperator.address, cashInLimit, {
             gasLimit: GAS_LIMIT.hederaTokenManager.grantSupplierRole,
         })
-        await new ValidateTxResponseCommand({ txResponse: grantRoleResponse }).execute()
+        await new ValidateTxResponseCommand({ txResponse: tx }).execute()
 
         await delay({ time: 1, unit: 'sec' })
-        role = await rolesFacet.hasRole(ROLES.cashin.hash, nonOperator.address, {
+
+        const role = await rolesFacet.hasRole(ROLES.cashin.hash, nonOperator.address, {
             gasLimit: GAS_LIMIT.hederaTokenManager.hasRole,
         })
-        expect(role).to.equals(true)
-        result = await supplierAdminFacet.connect(nonOperator).getSupplierAllowance(nonOperator.address, {
+        expect(role).to.equal(true)
+
+        const result = await supplierAdminFacet.connect(nonOperator).getSupplierAllowance(nonOperator.address, {
             gasLimit: GAS_LIMIT.hederaTokenManager.getSupplierAllowance,
         })
         expect(result.toString()).to.eq(cashInLimit.toString())
+    })
 
-        // Admin revokes limited supplier role : success
-        const revokeRoleResponse = await supplierAdminFacet.revokeSupplierRole(nonOperator.address, {
+    it('should allow admin to revoke limited supplier role', async function () {
+        const tx = await supplierAdminFacet.revokeSupplierRole(nonOperator.address, {
             gasLimit: GAS_LIMIT.hederaTokenManager.revokeSupplierRole,
         })
-        await new ValidateTxResponseCommand({ txResponse: revokeRoleResponse }).execute()
+        await new ValidateTxResponseCommand({ txResponse: tx }).execute()
 
         await delay({ time: 1, unit: 'sec' })
-        role = await rolesFacet.hasRole(ROLES.cashin.hash, nonOperator.address, {
+
+        const role = await rolesFacet.hasRole(ROLES.cashin.hash, nonOperator.address, {
             gasLimit: GAS_LIMIT.hederaTokenManager.hasRole,
         })
-        expect(role).to.equals(false)
-        result = await supplierAdminFacet.connect(nonOperator).getSupplierAllowance(nonOperator.address, {
+        expect(role).to.equal(false)
+
+        const result = await supplierAdminFacet.connect(nonOperator).getSupplierAllowance(nonOperator.address, {
             gasLimit: GAS_LIMIT.hederaTokenManager.getSupplierAllowance,
         })
         expect(result.toString()).to.eq('0')
+    })
 
-        // Admin grants unlimited supplier role : success
+    it('should allow admin to grant unlimited supplier role', async function () {
         let isUnlimited = await supplierAdminFacet
             .connect(nonOperator)
             .isUnlimitedSupplierAllowance(nonOperator.address, {
@@ -114,205 +122,214 @@ describe('➡️ Supplier Admin Tests', function () {
             })
         expect(isUnlimited).to.eq(false)
 
-        const grantUnlimitedRoleResponse = await supplierAdminFacet.grantUnlimitedSupplierRole(nonOperator.address, {
+        const tx = await supplierAdminFacet.grantUnlimitedSupplierRole(nonOperator.address, {
             gasLimit: GAS_LIMIT.hederaTokenManager.grantUnlimitedSupplierRole,
         })
-        await new ValidateTxResponseCommand({ txResponse: grantUnlimitedRoleResponse }).execute()
+        await new ValidateTxResponseCommand({ txResponse: tx }).execute()
 
         await delay({ time: 1, unit: 'sec' })
+
         isUnlimited = await supplierAdminFacet.isUnlimitedSupplierAllowance(nonOperator.address, {
             gasLimit: GAS_LIMIT.hederaTokenManager.isUnlimitedSupplierAllowance,
         })
         expect(isUnlimited).to.eq(true)
-        role = await rolesFacet.hasRole(ROLES.cashin.hash, nonOperator.address, {
+
+        const role = await rolesFacet.hasRole(ROLES.cashin.hash, nonOperator.address, {
             gasLimit: GAS_LIMIT.hederaTokenManager.hasRole,
         })
-        expect(role).to.equals(true)
+        expect(role).to.equal(true)
+    })
 
-        // Admin revokes unlimited supplier role : success
-        const revokeUnlimitedRoleResponse = await supplierAdminFacet.revokeSupplierRole(nonOperator.address, {
+    it('should allow admin to revoke unlimited supplier role', async function () {
+        const tx = await supplierAdminFacet.revokeSupplierRole(nonOperator.address, {
             gasLimit: GAS_LIMIT.hederaTokenManager.revokeSupplierRole,
         })
-        await new ValidateTxResponseCommand({ txResponse: revokeUnlimitedRoleResponse }).execute()
+        await new ValidateTxResponseCommand({ txResponse: tx }).execute()
 
         await delay({ time: 1, unit: 'sec' })
-        isUnlimited = await supplierAdminFacet.isUnlimitedSupplierAllowance(nonOperator.address, {
+
+        const isUnlimited = await supplierAdminFacet.isUnlimitedSupplierAllowance(nonOperator.address, {
             gasLimit: GAS_LIMIT.hederaTokenManager.isUnlimitedSupplierAllowance,
         })
         expect(isUnlimited).to.eq(false)
-        role = await rolesFacet.hasRole(ROLES.cashin.hash, nonOperator.address, {
+
+        const role = await rolesFacet.hasRole(ROLES.cashin.hash, nonOperator.address, {
             gasLimit: GAS_LIMIT.hederaTokenManager.hasRole,
         })
-        expect(role).to.equals(false)
+        expect(role).to.equal(false)
     })
 
-    it('Admin account can increase, decrease and reset supplier(s) amount', async function () {
+    it('should allow admin to grant supplier role', async function () {
         const cashInLimit = BigNumber.from(1)
-        const amount = BigNumber.from(1)
 
-        // Admin increases supplier allowance : success
-        const grantRoleResponse = await supplierAdminFacet.grantSupplierRole(nonOperator.address, cashInLimit, {
+        const tx = await supplierAdminFacet.grantSupplierRole(nonOperator.address, cashInLimit, {
             gasLimit: GAS_LIMIT.hederaTokenManager.grantSupplierRole,
         })
-        await validateTxResponse(new ValidateTxResponseCommand({ txResponse: grantRoleResponse }))
+        await validateTxResponse(new ValidateTxResponseCommand({ txResponse: tx }))
+    })
+
+    it('should allow admin to increase supplier allowance', async function () {
+        const amount = BigNumber.from(1)
 
         await delay({ time: 1, unit: 'sec' })
-        const increaseAllowanceResponse = await supplierAdminFacet.increaseSupplierAllowance(
-            nonOperator.address,
-            amount,
-            {
-                gasLimit: GAS_LIMIT.hederaTokenManager.increaseSupplierAllowance,
-            }
-        )
-        await validateTxResponse(new ValidateTxResponseCommand({ txResponse: increaseAllowanceResponse }))
+
+        const tx = await supplierAdminFacet.increaseSupplierAllowance(nonOperator.address, amount, {
+            gasLimit: GAS_LIMIT.hederaTokenManager.increaseSupplierAllowance,
+        })
+        await validateTxResponse(new ValidateTxResponseCommand({ txResponse: tx }))
 
         await delay({ time: 1, unit: 'sec' })
-        let result = await supplierAdminFacet.getSupplierAllowance(nonOperator.address, {
+
+        const result = await supplierAdminFacet.getSupplierAllowance(nonOperator.address, {
             gasLimit: GAS_LIMIT.hederaTokenManager.getSupplierAllowance,
         })
-        let expectedAmount = cashInLimit.add(amount)
-        expect(result.toString()).to.eq(expectedAmount.toString())
 
-        // Admin decreases supplier allowance : success
-        const decreaseAllowanceResponse = await supplierAdminFacet.decreaseSupplierAllowance(
-            nonOperator.address,
-            amount,
-            {
-                gasLimit: GAS_LIMIT.hederaTokenManager.decreaseSupplierAllowance,
-            }
-        )
-        await validateTxResponse(new ValidateTxResponseCommand({ txResponse: decreaseAllowanceResponse }))
+        const expected = BigNumber.from(2) // 1 from initial + 1 added
+        expect(result.toString()).to.eq(expected.toString())
+    })
+
+    it('should allow admin to decrease supplier allowance', async function () {
+        const amount = BigNumber.from(1)
+
+        const tx = await supplierAdminFacet.decreaseSupplierAllowance(nonOperator.address, amount, {
+            gasLimit: GAS_LIMIT.hederaTokenManager.decreaseSupplierAllowance,
+        })
+        await validateTxResponse(new ValidateTxResponseCommand({ txResponse: tx }))
 
         await delay({ time: 1, unit: 'sec' })
-        result = await supplierAdminFacet.getSupplierAllowance(nonOperator.address, {
+
+        const result = await supplierAdminFacet.getSupplierAllowance(nonOperator.address, {
             gasLimit: GAS_LIMIT.hederaTokenManager.getSupplierAllowance,
         })
-        expectedAmount = cashInLimit
-        expect(result.toString()).to.eq(expectedAmount.toString())
 
-        // Admin resets supplier allowance : success
-        const resetAllowanceResponse = await supplierAdminFacet.resetSupplierAllowance(nonOperator.address, {
+        const expected = BigNumber.from(1) // back to initial value
+        expect(result.toString()).to.eq(expected.toString())
+    })
+
+    it('should allow admin to reset supplier allowance', async function () {
+        const tx = await supplierAdminFacet.resetSupplierAllowance(nonOperator.address, {
             gasLimit: GAS_LIMIT.hederaTokenManager.resetSupplierAllowance,
         })
-        await validateTxResponse(new ValidateTxResponseCommand({ txResponse: resetAllowanceResponse }))
+        await validateTxResponse(new ValidateTxResponseCommand({ txResponse: tx }))
 
         await delay({ time: 1, unit: 'sec' })
-        result = await supplierAdminFacet.getSupplierAllowance(nonOperator.address, {
+
+        const result = await supplierAdminFacet.getSupplierAllowance(nonOperator.address, {
             gasLimit: GAS_LIMIT.hederaTokenManager.getSupplierAllowance,
         })
-        expect(result.toString()).to.eq('0')
 
-        // Remove the supplier role for further testing.....
-        const revokeRoleResponse = await supplierAdminFacet.revokeSupplierRole(nonOperator.address, {
-            gasLimit: GAS_LIMIT.hederaTokenManager.revokeSupplierRole,
-        })
-        await validateTxResponse(new ValidateTxResponseCommand({ txResponse: revokeRoleResponse }))
+        expect(result.toString()).to.eq('0')
     })
 
-    it('Non Admin account can not grant nor revoke supplier(s) role to an account', async function () {
+    it('should allow admin to revoke supplier role', async function () {
+        const tx = await supplierAdminFacet.revokeSupplierRole(nonOperator.address, {
+            gasLimit: GAS_LIMIT.hederaTokenManager.revokeSupplierRole,
+        })
+
+        await validateTxResponse(new ValidateTxResponseCommand({ txResponse: tx }))
+    })
+
+    it('should not allow non-admin to grant limited supplier role', async function () {
         const cashInLimit = BigNumber.from(1)
 
-        // Non admin grants limited supplier role : fail
-        const grantRoleResponse = await supplierAdminFacet
-            .connect(nonOperator)
-            .grantSupplierRole(nonOperator.address, cashInLimit, {
-                gasLimit: GAS_LIMIT.hederaTokenManager.grantSupplierRole,
-            })
-        await expect(
-            validateTxResponse(new ValidateTxResponseCommand({ txResponse: grantRoleResponse }))
-        ).to.be.rejectedWith(Error)
-
-        // Non admin grants unlimited supplier role : fail
-        const grantUnlimitedRoleResponse = await supplierAdminFacet
-            .connect(nonOperator)
-            .grantUnlimitedSupplierRole(nonOperator.address, {
-                gasLimit: GAS_LIMIT.hederaTokenManager.grantUnlimitedSupplierRole,
-            })
-        await expect(
-            validateTxResponse(new ValidateTxResponseCommand({ txResponse: grantUnlimitedRoleResponse }))
-        ).to.be.rejectedWith(Error)
-
-        // Non admin revokes limited supplier role : fail
-        const grantRoleResponse2 = await supplierAdminFacet.grantSupplierRole(nonOperator.address, cashInLimit, {
+        const tx = await supplierAdminFacet.connect(nonOperator).grantSupplierRole(nonOperator.address, cashInLimit, {
             gasLimit: GAS_LIMIT.hederaTokenManager.grantSupplierRole,
         })
-        await validateTxResponse(new ValidateTxResponseCommand({ txResponse: grantRoleResponse2 }))
 
-        const revokeRoleResponse = await supplierAdminFacet
-            .connect(nonOperator)
-            .revokeSupplierRole(nonOperator.address, {
-                gasLimit: GAS_LIMIT.hederaTokenManager.revokeSupplierRole,
-            })
-        await expect(
-            validateTxResponse(new ValidateTxResponseCommand({ txResponse: revokeRoleResponse }))
-        ).to.be.rejectedWith(Error)
-
-        // Non admin revokes unlimited supplier role : fail
-        const grantUnlimitedRoleResponse2 = await supplierAdminFacet.grantUnlimitedSupplierRole(nonOperator.address, {
-            gasLimit: GAS_LIMIT.hederaTokenManager.grantUnlimitedSupplierRole,
-        })
-        await validateTxResponse(new ValidateTxResponseCommand({ txResponse: grantUnlimitedRoleResponse2 }))
-
-        const revokeUnlimitedRoleResponse = await supplierAdminFacet
-            .connect(nonOperator)
-            .revokeSupplierRole(nonOperator.address, {
-                gasLimit: GAS_LIMIT.hederaTokenManager.revokeSupplierRole,
-            })
-        await expect(
-            validateTxResponse(new ValidateTxResponseCommand({ txResponse: revokeUnlimitedRoleResponse }))
-        ).to.be.rejectedWith(Error)
-
-        // Remove the supplier role for further testing.....
-        const revokeRoleResponse2 = await supplierAdminFacet.revokeSupplierRole(nonOperator.address, {
-            gasLimit: GAS_LIMIT.hederaTokenManager.revokeSupplierRole,
-        })
-        await validateTxResponse(new ValidateTxResponseCommand({ txResponse: revokeRoleResponse2 }))
+        await expect(validateTxResponse(new ValidateTxResponseCommand({ txResponse: tx }))).to.be.rejectedWith(Error)
     })
 
-    it('Non Admin account can not increase, decrease and reset supplier(s) amount', async function () {
-        const cashInLimit = BigNumber.from(10)
-        const amount = BigNumber.from(1)
+    it('should not allow non-admin to grant unlimited supplier role', async function () {
+        const tx = await supplierAdminFacet.connect(nonOperator).grantUnlimitedSupplierRole(nonOperator.address, {
+            gasLimit: GAS_LIMIT.hederaTokenManager.grantUnlimitedSupplierRole,
+        })
 
-        // Non Admin increases supplier allowance : fail
-        const grantRoleResponse = await supplierAdminFacet.grantSupplierRole(nonOperator.address, cashInLimit, {
+        await expect(validateTxResponse(new ValidateTxResponseCommand({ txResponse: tx }))).to.be.rejectedWith(Error)
+    })
+
+    it('should not allow non-admin to revoke limited supplier role', async function () {
+        const cashInLimit = BigNumber.from(1)
+
+        const grantTx = await supplierAdminFacet.grantSupplierRole(nonOperator.address, cashInLimit, {
             gasLimit: GAS_LIMIT.hederaTokenManager.grantSupplierRole,
         })
-        await validateTxResponse(new ValidateTxResponseCommand({ txResponse: grantRoleResponse }))
+        await validateTxResponse(new ValidateTxResponseCommand({ txResponse: grantTx }))
 
-        const increaseAllowanceResponse = await supplierAdminFacet
+        const revokeTx = await supplierAdminFacet.connect(nonOperator).revokeSupplierRole(nonOperator.address, {
+            gasLimit: GAS_LIMIT.hederaTokenManager.revokeSupplierRole,
+        })
+
+        await expect(validateTxResponse(new ValidateTxResponseCommand({ txResponse: revokeTx }))).to.be.rejectedWith(
+            Error
+        )
+    })
+
+    it('should not allow non-admin to revoke unlimited supplier role', async function () {
+        const grantTx = await supplierAdminFacet.grantUnlimitedSupplierRole(nonOperator.address, {
+            gasLimit: GAS_LIMIT.hederaTokenManager.grantUnlimitedSupplierRole,
+        })
+        await validateTxResponse(new ValidateTxResponseCommand({ txResponse: grantTx }))
+
+        const revokeTx = await supplierAdminFacet.connect(nonOperator).revokeSupplierRole(nonOperator.address, {
+            gasLimit: GAS_LIMIT.hederaTokenManager.revokeSupplierRole,
+        })
+
+        await expect(validateTxResponse(new ValidateTxResponseCommand({ txResponse: revokeTx }))).to.be.rejectedWith(
+            Error
+        )
+    })
+
+    it('should allow admin to clean up supplier role after tests', async function () {
+        const tx = await supplierAdminFacet.revokeSupplierRole(nonOperator.address, {
+            gasLimit: GAS_LIMIT.hederaTokenManager.revokeSupplierRole,
+        })
+
+        await validateTxResponse(new ValidateTxResponseCommand({ txResponse: tx }))
+    })
+
+    it('should allow admin to grant limited supplier role to nonOperator', async function () {
+        const cashInLimit = BigNumber.from(10)
+        const tx = await supplierAdminFacet.grantSupplierRole(nonOperator.address, cashInLimit, {
+            gasLimit: GAS_LIMIT.hederaTokenManager.grantSupplierRole,
+        })
+        await validateTxResponse(new ValidateTxResponseCommand({ txResponse: tx }))
+    })
+
+    it('should not allow non-admin to increase supplier allowance', async function () {
+        const amount = BigNumber.from(1)
+        const tx = await supplierAdminFacet
             .connect(nonOperator)
             .increaseSupplierAllowance(nonOperator.address, amount, {
                 gasLimit: GAS_LIMIT.hederaTokenManager.increaseSupplierAllowance,
             })
-        await expect(
-            validateTxResponse(new ValidateTxResponseCommand({ txResponse: increaseAllowanceResponse }))
-        ).to.be.rejectedWith(Error)
 
-        // non Admin decreases supplier allowance : fail
-        const decreaseAllowanceResponse = await supplierAdminFacet
+        await expect(validateTxResponse(new ValidateTxResponseCommand({ txResponse: tx }))).to.be.rejectedWith(Error)
+    })
+
+    it('should not allow non-admin to decrease supplier allowance', async function () {
+        const amount = BigNumber.from(1)
+        const tx = await supplierAdminFacet
             .connect(nonOperator)
             .decreaseSupplierAllowance(nonOperator.address, amount, {
                 gasLimit: GAS_LIMIT.hederaTokenManager.decreaseSupplierAllowance,
             })
-        await expect(
-            validateTxResponse(new ValidateTxResponseCommand({ txResponse: decreaseAllowanceResponse }))
-        ).to.be.rejectedWith(Error)
 
-        // Non Admin resets supplier allowance : fail
-        const resetAllowanceResponse = await supplierAdminFacet
-            .connect(nonOperator)
-            .resetSupplierAllowance(nonOperator.address, {
-                gasLimit: GAS_LIMIT.hederaTokenManager.resetSupplierAllowance,
-            })
-        await expect(
-            validateTxResponse(new ValidateTxResponseCommand({ txResponse: resetAllowanceResponse }))
-        ).to.be.rejectedWith(Error)
+        await expect(validateTxResponse(new ValidateTxResponseCommand({ txResponse: tx }))).to.be.rejectedWith(Error)
+    })
 
-        // Remove the supplier role for further testing.....
-        const revokeRoleResponse = await supplierAdminFacet.revokeSupplierRole(nonOperator.address, {
+    it('should not allow non-admin to reset supplier allowance', async function () {
+        const tx = await supplierAdminFacet.connect(nonOperator).resetSupplierAllowance(nonOperator.address, {
+            gasLimit: GAS_LIMIT.hederaTokenManager.resetSupplierAllowance,
+        })
+
+        await expect(validateTxResponse(new ValidateTxResponseCommand({ txResponse: tx }))).to.be.rejectedWith(Error)
+    })
+
+    it('should allow admin to revoke the supplier role for cleanup', async function () {
+        const tx = await supplierAdminFacet.revokeSupplierRole(nonOperator.address, {
             gasLimit: GAS_LIMIT.hederaTokenManager.revokeSupplierRole,
         })
-        await validateTxResponse(new ValidateTxResponseCommand({ txResponse: revokeRoleResponse }))
+        await validateTxResponse(new ValidateTxResponseCommand({ txResponse: tx }))
     })
 })
 
