@@ -25,6 +25,8 @@ const request = new CreateRequest({
 	symbol: '',
 	decimals: 6,
 	createReserve: false,
+	configId: '',
+	configVersion: 0,
 });
 
 describe(`<${ProofOfReserve.name} />`, () => {

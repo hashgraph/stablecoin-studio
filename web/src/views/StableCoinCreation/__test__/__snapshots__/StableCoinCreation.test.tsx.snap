@@ -14,12 +14,22 @@ exports[`<StableCoinCreation /> should render correctly 1`] = `
       >
         Create new stablecoin
       </p>
-      <i
-        class="chakra-text css-zcexcl"
-        data-testid="creation-subtitle"
+      <div
+        class="chakra-stack css-b1sb84"
       >
-        Factory Id : undefined
-      </i>
+        <i
+          class="chakra-text css-zcexcl"
+          data-testid="creation-subtitle"
+        >
+          Factory Id : undefined
+        </i>
+        <i
+          class="chakra-text css-zcexcl"
+          data-testid="creation-subtitle"
+        >
+          Resolver Id : undefined
+        </i>
+      </div>
     </div>
     <div
       class="chakra-stack css-16oka5y"
@@ -182,40 +192,210 @@ exports[`<StableCoinCreation /> should render correctly 1`] = `
                     class="chakra-stack css-1f6llri"
                   >
                     <div
-                      class="css-10opskl"
-                      data-testid="no-proof-of-reserve-container"
+                      class="chakra-stack css-aqhwku"
                     >
-                      <div
-                        class="css-mnqf94"
+                      <h2
+                        class="chakra-heading css-p7jgmy"
+                        data-testid="title"
                       >
-                        <svg
-                          viewBox="0 0 2500 2500"
-                          width="48px"
-                          xmlns="http://www.w3.org/2000/svg"
+                        Stablecoin Creation
+                      </h2>
+                      <form
+                        class="chakra-stack css-b5leqj"
+                      >
+                        <div
+                          class="chakra-stack css-1h0sumw"
                         >
-                          <g
-                            data-name="Layer 2"
+                          <div
+                            class="chakra-form-control css-1kxonj9"
+                            role="group"
                           >
-                            <g
-                              data-name="Layer 1"
+                            <div
+                              class="css-gg4vpm"
                             >
-                              <path
-                                d="M1250 0C559.64 0 0 559.64 0 1250s559.64 1250 1250 1250 1250-559.64 1250-1250S1940.36 0 1250 0"
+                              <label
+                                class="chakra-form__label css-1hfoxt1"
+                                for="field-:r2:"
+                                id="field-:r2:-label"
+                              >
+                                <div
+                                  class="chakra-stack css-84zodg"
+                                >
+                                  <p
+                                    class="chakra-text css-mgupmj"
+                                  >
+                                    Stablecoin Name
+                                  </p>
+                                  <p
+                                    class="chakra-text css-ftb7fv"
+                                    data-testid="required"
+                                  >
+                                    *
+                                  </p>
+                                </div>
+                              </label>
+                            </div>
+                            <div
+                              class="chakra-input__group css-bx0blc"
+                              data-group="true"
+                            >
+                              <input
+                                autocomplete="off"
+                                class="chakra-input css-l1kxkf"
+                                data-testid="name"
+                                id="field-:r2:"
+                                name="name"
+                                placeholder="Stablecoin Name"
+                                value=""
                               />
-                              <path
-                                d="M1758.12 1790.62h-158.74v-337.49H900.62v337.49H741.87V696.25h158.75v329.37h698.76V696.25h158.75zm-850-463.75h698.75V1152.5H908.12z"
-                                fill="#fff"
+                            </div>
+                          </div>
+                        </div>
+                        <div
+                          class="chakra-stack css-1h0sumw"
+                        >
+                          <div
+                            class="chakra-form-control css-1kxonj9"
+                            role="group"
+                          >
+                            <div
+                              class="css-gg4vpm"
+                            >
+                              <label
+                                class="chakra-form__label css-1hfoxt1"
+                                for="field-:r3:"
+                                id="field-:r3:-label"
+                              >
+                                <div
+                                  class="chakra-stack css-84zodg"
+                                >
+                                  <p
+                                    class="chakra-text css-mgupmj"
+                                  >
+                                    Stablecoin Symbol
+                                  </p>
+                                  <p
+                                    class="chakra-text css-ftb7fv"
+                                    data-testid="required"
+                                  >
+                                    *
+                                  </p>
+                                </div>
+                              </label>
+                            </div>
+                            <div
+                              class="chakra-input__group css-bx0blc"
+                              data-group="true"
+                            >
+                              <input
+                                autocomplete="off"
+                                class="chakra-input css-l1kxkf"
+                                data-testid="symbol"
+                                id="field-:r3:"
+                                name="symbol"
+                                placeholder="Stablecoin Symbol"
+                                value=""
                               />
-                            </g>
-                          </g>
-                        </svg>
-                      </div>
-                      <p
-                        class="chakra-text css-e8j0ix"
-                        data-testid="no-proof-of-reserve-title"
-                      >
-                        Loading data
-                      </p>
+                            </div>
+                          </div>
+                        </div>
+                        <div
+                          class="chakra-stack css-1h0sumw"
+                        >
+                          <div
+                            class="chakra-form-control css-1kxonj9"
+                            role="group"
+                          >
+                            <div
+                              class="css-gg4vpm"
+                            >
+                              <label
+                                class="chakra-form__label css-1hfoxt1"
+                                for="field-:r4:"
+                                id="field-:r4:-label"
+                              >
+                                <div
+                                  class="chakra-stack css-84zodg"
+                                >
+                                  <p
+                                    class="chakra-text css-mgupmj"
+                                  >
+                                    Config ID
+                                  </p>
+                                  <p
+                                    class="chakra-text css-ftb7fv"
+                                    data-testid="required"
+                                  >
+                                    *
+                                  </p>
+                                </div>
+                              </label>
+                            </div>
+                            <div
+                              class="chakra-input__group css-bx0blc"
+                              data-group="true"
+                            >
+                              <input
+                                autocomplete="off"
+                                class="chakra-input css-l1kxkf"
+                                data-testid="configId"
+                                id="field-:r4:"
+                                name="configId"
+                                placeholder="Config ID"
+                                value=""
+                              />
+                            </div>
+                          </div>
+                        </div>
+                        <div
+                          class="chakra-stack css-1h0sumw"
+                        >
+                          <div
+                            class="chakra-form-control css-1kxonj9"
+                            role="group"
+                          >
+                            <div
+                              class="css-gg4vpm"
+                            >
+                              <label
+                                class="chakra-form__label css-1hfoxt1"
+                                for="field-:r5:"
+                                id="field-:r5:-label"
+                              >
+                                <div
+                                  class="chakra-stack css-84zodg"
+                                >
+                                  <p
+                                    class="chakra-text css-mgupmj"
+                                  >
+                                    Config Version
+                                  </p>
+                                  <p
+                                    class="chakra-text css-ftb7fv"
+                                    data-testid="required"
+                                  >
+                                    *
+                                  </p>
+                                </div>
+                              </label>
+                            </div>
+                            <div
+                              class="chakra-input__group css-bx0blc"
+                              data-group="true"
+                            >
+                              <input
+                                autocomplete="off"
+                                class="chakra-input css-l1kxkf"
+                                data-testid="configVersion"
+                                id="field-:r5:"
+                                name="configVersion"
+                                placeholder="Config Version"
+                                value=""
+                              />
+                            </div>
+                          </div>
+                        </div>
+                      </form>
                     </div>
                   </div>
                 </div>
