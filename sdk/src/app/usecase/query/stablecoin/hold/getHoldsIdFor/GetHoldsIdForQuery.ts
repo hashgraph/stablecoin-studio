@@ -22,14 +22,16 @@ import { HederaId } from '../../../../../../port/in/StableCoin.js';
 import { Query } from '../../../../../../core/query/Query.js';
 import { QueryResponse } from '../../../../../../core/query/QueryResponse.js';
 
-export class GetHoldCountForQueryResponse implements QueryResponse {
-	constructor(public readonly payload: number) {}
+export class GetHoldsIdForQueryResponse implements QueryResponse {
+	constructor(public readonly payload: number[]) {}
 }
 
-export class GetHoldCountForQuery extends Query<GetHoldCountForQueryResponse> {
+export class GetHoldsIdForQuery extends Query<GetHoldsIdForQueryResponse> {
 	constructor(
 		public readonly tokenId: HederaId,
 		public readonly targetId: HederaId,
+		public readonly start: number,
+		public readonly end: number,
 	) {
 		super();
 	}

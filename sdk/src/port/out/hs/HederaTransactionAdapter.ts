@@ -57,6 +57,7 @@ import {
 	KYCFacet__factory,
 	CustomFeesFacet__factory,
 	DiamondFacet__factory,
+	HoldManagementFacet__factory,
 } from '@hashgraph/stablecoin-npm-contracts';
 import BigDecimal from '../../../domain/context/shared/BigDecimal.js';
 import { TransactionType } from '../TransactionResponseEnums.js';
@@ -103,6 +104,9 @@ import {
 	UPDATE_CONFIG_GAS,
 	UPDATE_RESOLVER_GAS,
 	CREATE_HOLD_GAS,
+	EXECUTE_HOLD_GAS,
+	RELEASE_HOLD_GAS,
+	RECLAIM_HOLD_GAS,
 } from '../../../core/Constants.js';
 import LogService from '../../../app/service/LogService.js';
 import { RESERVE_DECIMALS } from '../../../domain/context/reserve/Reserve.js';
@@ -117,6 +121,7 @@ import {
 	SC_FractionalFee,
 } from '../../../domain/context/fee/CustomFee.js';
 import { ResolverProxyConfiguration } from '../../../domain/context/factory/ResolverProxyConfiguration';
+import { Hold, HoldIdentifier } from 'domain/context/hold/Hold';
 
 export abstract class HederaTransactionAdapter extends TransactionAdapter {
 	private web3 = new Web3();
@@ -1038,20 +1043,132 @@ export abstract class HederaTransactionAdapter extends TransactionAdapter {
 		expirationDate: string,
 		targetId?: HederaId,
 	): Promise<TransactionResponse> {
-		const params = new Params({
-			amount,
-			escrow,
+		targetId = targetId ?? HederaId.NULL;
+		const hold = new Hold(
+			amount.toBigNumber(),
 			expirationDate,
-			targetId: targetId ?? HederaId.NULL,
+			escrow.toString(),
+			targetId.toString(),
+			'0x',
+		);
+		const params = new Params({
+			hold: hold,
 		});
 		return this.performOperation(
 			coin,
-			Operation.HOLD_MANAGEMENT,
+			Operation.CREATE_HOLD,
 			'createHold',
 			CREATE_HOLD_GAS,
 			params,
 			TransactionType.RECEIPT,
-			HoldFacet__factory.abi,
+			HoldManagementFacet__factory.abi,
+		);
+	}
+
+	public async createHoldByController(
+		coin: StableCoinCapabilities,
+		amount: BigDecimal,
+		escrow: HederaId,
+		expirationDate: string,
+		sourceId: HederaId,
+		targetId?: HederaId,
+	): Promise<TransactionResponse> {
+		targetId = targetId ?? HederaId.NULL;
+		const hold = new Hold(
+			amount.toBigNumber(),
+			expirationDate,
+			escrow.toString(),
+			targetId.toString(),
+			'0x',
+		);
+		const params = new Params({
+			hold: hold,
+			sourceId: sourceId,
+		});
+		return this.performOperation(
+			coin,
+			Operation.CREATE_HOLD,
+			'createHoldByController',
+			CREATE_HOLD_GAS,
+			params,
+			TransactionType.RECEIPT,
+			HoldManagementFacet__factory.abi,
+		);
+	}
+
+	public async executeHold(
+		coin: StableCoinCapabilities,
+		amount: BigDecimal,
+		sourceId: HederaId,
+		holdId: number,
+		targetId?: HederaId,
+	): Promise<TransactionResponse> {
+		targetId = targetId ?? HederaId.NULL;
+		const holdIdentifier: HoldIdentifier = {
+			holdId: holdId,
+			tokenHolder: sourceId.toString(),
+		};
+		const params = new Params({
+			amount,
+			holdIdentifier,
+			targetId,
+		});
+		return this.performOperation(
+			coin,
+			Operation.EXECUTE_HOLD,
+			'executeHold',
+			EXECUTE_HOLD_GAS,
+			params,
+			TransactionType.RECEIPT,
+			HoldManagementFacet__factory.abi,
+		);
+	}
+
+	public async releaseHold(
+		coin: StableCoinCapabilities,
+		amount: BigDecimal,
+		sourceId: HederaId,
+		holdId: number,
+	): Promise<TransactionResponse> {
+		const holdIdentifier: HoldIdentifier = {
+			holdId: holdId,
+			tokenHolder: sourceId.toString(),
+		};
+		const params = new Params({
+			amount,
+			holdIdentifier,
+		});
+		return this.performOperation(
+			coin,
+			Operation.RELEASE_HOLD,
+			'releaseHold',
+			RELEASE_HOLD_GAS,
+			params,
+			TransactionType.RECEIPT,
+			HoldManagementFacet__factory.abi,
+		);
+	}
+
+	public async reclaimHold(
+		coin: StableCoinCapabilities,
+		sourceId: HederaId,
+		holdId: number,
+	): Promise<TransactionResponse> {
+		const holdIdentifier: HoldIdentifier = {
+			holdId: holdId,
+			tokenHolder: sourceId.toString(),
+		};
+		const params = new Params({
+			holdIdentifier,
+		});
+		return this.performOperation(
+			coin,
+			Operation.RECLAIM_HOLD,
+			'reclaimHold',
+			RECLAIM_HOLD_GAS,
+			params,
+			TransactionType.RECEIPT,
+			HoldManagementFacet__factory.abi,
 		);
 	}
 
@@ -1565,6 +1682,7 @@ class Params {
 	proxy?: HederaId;
 	role?: string;
 	targetId?: HederaId;
+	sourceId?: HederaId;
 	amount?: BigDecimal;
 	reserveAddress?: ContractId;
 	customFees?: HCustomFee[];
@@ -1585,13 +1703,14 @@ class Params {
 	resolver?: ContractId;
 	configId?: string;
 	configVersion?: number;
-	expirationDate?: string;
-	escrow?: HederaId;
+	hold?: Hold;
+	holdIdentifier?: HoldIdentifier;
 
 	constructor({
 		proxy,
 		role,
 		targetId,
+		sourceId,
 		amount,
 		reserveAddress,
 		customFees,
@@ -1612,12 +1731,13 @@ class Params {
 		resolver,
 		configId,
 		configVersion,
-		expirationDate,
-		escrow,
+		hold,
+		holdIdentifier,
 	}: {
 		proxy?: HederaId;
 		role?: string;
 		targetId?: HederaId;
+		sourceId?: HederaId;
 		amount?: BigDecimal;
 		reserveAddress?: ContractId;
 		customFees?: HCustomFee[];
@@ -1638,12 +1758,13 @@ class Params {
 		resolver?: ContractId;
 		configId?: string;
 		configVersion?: number;
-		expirationDate?: string;
-		escrow?: HederaId;
+		hold?: Hold;
+		holdIdentifier?: HoldIdentifier;
 	}) {
 		this.proxy = proxy;
 		this.role = role;
 		this.targetId = targetId;
+		this.sourceId = sourceId;
 		this.amount = amount;
 		this.reserveAddress = reserveAddress;
 		this.customFees = customFees;
@@ -1664,7 +1785,7 @@ class Params {
 		this.resolver = resolver;
 		this.configId = configId;
 		this.configVersion = configVersion;
-		this.expirationDate = expirationDate;
-		this.escrow = escrow;
+		this.hold = hold;
+		this.holdIdentifier = holdIdentifier;
 	}
 }

@@ -112,7 +112,7 @@ export class FactoryStableCoin {
 	/**
 	 * Business Logic Resolver address
 	 */
-	public businessLogicResolverProxyAddress: string;
+	public businessLogicResolverAddress: string;
 
 	/**
 	 * StableCoin Configuration Id
@@ -142,7 +142,7 @@ export class FactoryStableCoin {
 		roles: FactoryRole[],
 		cashinRole: FactoryCashinRole,
 		metadata: string,
-		businessLogicResolverProxyAddress: string,
+		businessLogicResolverAddress: string,
 		stableCoinConfigurationId: ResolverProxyConfiguration,
 		reserveConfigurationId: ResolverProxyConfiguration,
 	) {
@@ -163,8 +163,7 @@ export class FactoryStableCoin {
 		this.roles = roles;
 		this.cashinRole = cashinRole;
 		this.metadata = metadata;
-		this.businessLogicResolverProxyAddress =
-			businessLogicResolverProxyAddress;
+		this.businessLogicResolverAddress = businessLogicResolverAddress;
 		this.stableCoinConfigurationId = stableCoinConfigurationId;
 		this.reserveConfigurationId = reserveConfigurationId;
 	}

@@ -18,17 +18,21 @@
  *
  */
 
-import { GetHoldForQuery, GetHoldForQueryResponse } from './GetHoldForQuery.js';
+import {
+	GetHoldsIdForQuery,
+	GetHoldsIdForQueryResponse,
+} from './GetHoldsIdForQuery.js';
 import { QueryHandler } from '../../../../../../core/decorator/QueryHandlerDecorator.js';
 import { IQueryHandler } from '../../../../../../core/query/QueryHandler.js';
 import { RPCQueryAdapter } from '../../../../../../port/out/rpc/RPCQueryAdapter.js';
 import { lazyInject } from '../../../../../../core/decorator/LazyInjectDecorator.js';
-import StableCoinService from 'app/service/StableCoinService.js';
-import { BigDecimal } from 'port/in/StableCoin.js';
-import { MirrorNodeAdapter } from 'port/out/mirror/MirrorNodeAdapter.js';
+import StableCoinService from '../../../../../service/StableCoinService.js';
+import { MirrorNodeAdapter } from '../../../../../../port/out/mirror/MirrorNodeAdapter.js';
 
-@QueryHandler(GetHoldForQuery)
-export class GetHoldForQueryHandler implements IQueryHandler<GetHoldForQuery> {
+@QueryHandler(GetHoldsIdForQuery)
+export class GetHoldsIdForQueryHandler
+	implements IQueryHandler<GetHoldsIdForQuery>
+{
 	constructor(
 		@lazyInject(StableCoinService)
 		private readonly stableCoinService: StableCoinService,
@@ -38,24 +42,22 @@ export class GetHoldForQueryHandler implements IQueryHandler<GetHoldForQuery> {
 		private readonly mirrorNode: MirrorNodeAdapter,
 	) {}
 
-	async execute(command: GetHoldForQuery): Promise<GetHoldForQueryResponse> {
-		const { tokenId, sourceId, holdId } = command;
+	async execute(
+		command: GetHoldsIdForQuery,
+	): Promise<GetHoldsIdForQueryResponse> {
+		const { tokenId, targetId, start, end } = command;
 
 		const coin = await this.stableCoinService.get(tokenId);
 
 		if (!coin.evmProxyAddress) throw new Error('Invalid token id');
 
-		const holdDetail = await this.queryAdapter.getHoldFor(
+		const res = await this.queryAdapter.getHoldsIdFor(
 			coin.evmProxyAddress,
-			await this.mirrorNode.accountToEvmAddress(sourceId),
-			holdId,
+			await this.mirrorNode.accountToEvmAddress(targetId),
+			start,
+			end,
 		);
 
-		holdDetail.amount = BigDecimal.fromStringFixed(
-			holdDetail.amount.toString(),
-			coin.decimals,
-		);
-
-		return Promise.resolve(new GetHoldForQueryResponse(holdDetail));
+		return Promise.resolve(new GetHoldsIdForQueryResponse(res));
 	}
 }

@@ -40,9 +40,10 @@ import { AccountFreeze } from '../../../error/AccountFreeze.js';
 import CheckNums from 'core/checks/numbers/CheckNums.js';
 import { DecimalsOverRange } from '../../../error/DecimalsOverRange.js';
 import ValidationService from 'app/service/ValidationService.js';
+import { StableCoinNotAssociated } from '../../../error/StableCoinNotAssociated.js';
 
 @CommandHandler(ExecuteHoldCommand)
-export class ExecuteHoldCommandHander
+export class ExecuteHoldCommandHandler
 	implements ICommandHandler<ExecuteHoldCommand>
 {
 	constructor(
@@ -61,7 +62,7 @@ export class ExecuteHoldCommandHander
 	async execute(
 		command: ExecuteHoldCommand,
 	): Promise<ExecuteHoldCommandResponse> {
-		const { tokenId, holdId, sourceId, amount } = command;
+		const { tokenId, holdId, sourceId, amount, targetId } = command;
 		const handler = this.transactionService.getHandler();
 		const account = this.accountService.getCurrentAccount();
 		const capabilities = await this.stableCoinService.getCapabilities(
@@ -70,17 +71,47 @@ export class ExecuteHoldCommandHander
 		);
 		const coin = capabilities.coin;
 
-		let tokenRelationship = (
+		const tokenRelationshipSource = (
 			await this.queryBus.execute(
-				new GetAccountTokenRelationshipQuery(account.id, tokenId),
+				new GetAccountTokenRelationshipQuery(sourceId, tokenId),
 			)
 		).payload;
 
-		if (tokenRelationship?.kycStatus == KycStatus.REVOKED) {
+		if (!tokenRelationshipSource) {
+			throw new StableCoinNotAssociated(
+				sourceId.toString(),
+				tokenId.toString(),
+			);
+		}
+
+		if (targetId) {
+			const tokenRelationshipTarget = (
+				await this.queryBus.execute(
+					new GetAccountTokenRelationshipQuery(targetId, tokenId),
+				)
+			).payload;
+
+			if (!tokenRelationshipTarget) {
+				throw new StableCoinNotAssociated(
+					targetId.toString(),
+					tokenId.toString(),
+				);
+			}
+
+			if (tokenRelationshipTarget.kycStatus == KycStatus.REVOKED) {
+				throw new AccountNotKyc(targetId);
+			}
+
+			if (tokenRelationshipTarget.freezeStatus == FreezeStatus.FROZEN) {
+				throw new AccountFreeze(targetId);
+			}
+		}
+
+		if (tokenRelationshipSource.kycStatus == KycStatus.REVOKED) {
 			throw new AccountNotKyc(sourceId);
 		}
 
-		if (tokenRelationship?.freezeStatus == FreezeStatus.FROZEN) {
+		if (tokenRelationshipSource.freezeStatus == FreezeStatus.FROZEN) {
 			throw new AccountFreeze(sourceId);
 		}
 
@@ -96,10 +127,21 @@ export class ExecuteHoldCommandHander
 			holdId,
 			amountBd,
 		);
-
 		await this.validationService.checkEscrow(tokenId, sourceId, holdId);
+		await this.validationService.checkHoldTarget(
+			tokenId,
+			sourceId,
+			holdId,
+			targetId,
+		);
 
-		const res = await handler.executeHold(capabilities, amountBd, sourceId);
+		const res = await handler.executeHold(
+			capabilities,
+			amountBd,
+			sourceId,
+			holdId,
+			targetId,
+		);
 
 		return Promise.resolve(
 			new ExecuteHoldCommandResponse(res.error === undefined),

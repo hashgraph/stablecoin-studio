@@ -26,6 +26,11 @@ import { InsufficientHoldBalance } from 'app/usecase/command/stablecoin/operatio
 import AccountService from './AccountService';
 import { NotEscrow } from 'app/usecase/command/stablecoin/operations/hold/error/NotEscrow';
 import { GetHoldForQuery } from 'app/usecase/query/stablecoin/hold/getHoldFor/GetHoldForQuery';
+import { EVM_ZERO_ADDRESS } from 'core/Constants';
+import { InvalidHoldDestination } from 'app/usecase/command/stablecoin/operations/hold/error/InvalidHoldDestination';
+import { MirrorNodeAdapter } from 'port/out/mirror/MirrorNodeAdapter';
+import { InvalidHoldId } from 'app/usecase/command/stablecoin/operations/hold/error/InvalidHoldId';
+import { GetHoldsIdForQuery } from 'app/usecase/query/stablecoin/hold/getHoldsIdFor/GetHoldsIdForQuery';
 
 export default class ValidationService extends Service {
 	constructor(
@@ -34,6 +39,9 @@ export default class ValidationService extends Service {
 		),
 		public readonly accountService: AccountService = Injectable.resolve<AccountService>(
 			AccountService,
+		),
+		public readonly mirrorNodeAdapter: MirrorNodeAdapter = Injectable.resolve<MirrorNodeAdapter>(
+			MirrorNodeAdapter,
 		),
 	) {
 		super();
@@ -53,6 +61,19 @@ export default class ValidationService extends Service {
 		}
 	}
 
+	async checkValidHoldId(
+		tokenId: HederaId,
+		sourceId: HederaId,
+		holdId: number,
+	): Promise<void> {
+		const holdIds = await this.queryBus.execute(
+			new GetHoldsIdForQuery(tokenId, sourceId, 0, 100),
+		);
+		if (!holdIds.payload.includes(holdId)) {
+			throw new InvalidHoldId();
+		}
+	}
+
 	async checkEscrow(
 		tokenId: HederaId,
 		sourceId: HederaId,
@@ -66,6 +87,34 @@ export default class ValidationService extends Service {
 			this.accountService.getCurrentAccount().evmAddress?.toLowerCase()
 		) {
 			throw new NotEscrow();
+		}
+	}
+
+	async checkHoldTarget(
+		tokenId: HederaId,
+		sourceId: HederaId,
+		holdId: number,
+		targetId?: HederaId,
+	): Promise<void> {
+		const holdDetails = await this.queryBus.execute(
+			new GetHoldForQuery(tokenId, sourceId, holdId),
+		);
+		const destinationAddress =
+			holdDetails.payload.destinationAddress.toLowerCase();
+
+		if (destinationAddress == EVM_ZERO_ADDRESS && !targetId) {
+			throw new InvalidHoldDestination();
+		}
+
+		if (targetId) {
+			const targetEvmAddress =
+				await this.mirrorNodeAdapter.accountToEvmAddress(targetId);
+
+			if (
+				destinationAddress != targetEvmAddress.toString().toLowerCase()
+			) {
+				throw new InvalidHoldDestination();
+			}
 		}
 	}
 }

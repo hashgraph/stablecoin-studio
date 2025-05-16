@@ -36,9 +36,11 @@ import {
 } from './ReclaimHoldCommand.js';
 import { AccountNotKyc } from '../../../error/AccountNotKyc.js';
 import { AccountFreeze } from '../../../error/AccountFreeze.js';
+import { StableCoinNotAssociated } from '../../../error/StableCoinNotAssociated.js';
+import ValidationService from 'app/service/ValidationService.js';
 
 @CommandHandler(ReclaimHoldCommand)
-export class ExecuteHoldCommandHander
+export class ReclaimHoldCommandHandler
 	implements ICommandHandler<ReclaimHoldCommand>
 {
 	constructor(
@@ -50,6 +52,8 @@ export class ExecuteHoldCommandHander
 		private readonly accountService: AccountService,
 		@lazyInject(TransactionService)
 		private readonly transactionService: TransactionService,
+		@lazyInject(ValidationService)
+		private readonly validationService: ValidationService,
 	) {}
 
 	async execute(
@@ -62,21 +66,33 @@ export class ExecuteHoldCommandHander
 			account,
 			tokenId,
 		);
-		const coin = capabilities.coin;
 
-		let tokenRelationship = (
+		const tokenRelationship = (
 			await this.queryBus.execute(
 				new GetAccountTokenRelationshipQuery(account.id, tokenId),
 			)
 		).payload;
 
-		if (tokenRelationship?.kycStatus == KycStatus.REVOKED) {
+		if (!tokenRelationship) {
+			throw new StableCoinNotAssociated(
+				sourceId.toString(),
+				tokenId.toString(),
+			);
+		}
+
+		if (tokenRelationship.kycStatus == KycStatus.REVOKED) {
 			throw new AccountNotKyc(sourceId);
 		}
 
-		if (tokenRelationship?.freezeStatus == FreezeStatus.FROZEN) {
+		if (tokenRelationship.freezeStatus == FreezeStatus.FROZEN) {
 			throw new AccountFreeze(sourceId);
 		}
+
+		await this.validationService.checkValidHoldId(
+			tokenId,
+			sourceId,
+			holdId,
+		);
 
 		const res = await handler.reclaimHold(capabilities, sourceId, holdId);
 

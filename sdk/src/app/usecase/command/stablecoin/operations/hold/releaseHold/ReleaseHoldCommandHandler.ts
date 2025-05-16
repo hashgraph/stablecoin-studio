@@ -40,6 +40,7 @@ import { AccountFreeze } from '../../../error/AccountFreeze.js';
 import CheckNums from 'core/checks/numbers/CheckNums.js';
 import { DecimalsOverRange } from '../../../error/DecimalsOverRange.js';
 import ValidationService from 'app/service/ValidationService.js';
+import { StableCoinNotAssociated } from '../../../error/StableCoinNotAssociated.js';
 
 @CommandHandler(ReleaseHoldCommand)
 export class ReleaseHoldCommandHandler
@@ -70,17 +71,24 @@ export class ReleaseHoldCommandHandler
 		);
 		const coin = capabilities.coin;
 
-		let tokenRelationship = (
+		const tokenRelationship = (
 			await this.queryBus.execute(
-				new GetAccountTokenRelationshipQuery(account.id, tokenId),
+				new GetAccountTokenRelationshipQuery(sourceId, tokenId),
 			)
 		).payload;
 
-		if (tokenRelationship?.kycStatus == KycStatus.REVOKED) {
+		if (!tokenRelationship) {
+			throw new StableCoinNotAssociated(
+				sourceId.toString(),
+				tokenId.toString(),
+			);
+		}
+
+		if (tokenRelationship.kycStatus == KycStatus.REVOKED) {
 			throw new AccountNotKyc(sourceId);
 		}
 
-		if (tokenRelationship?.freezeStatus == FreezeStatus.FROZEN) {
+		if (tokenRelationship.freezeStatus == FreezeStatus.FROZEN) {
 			throw new AccountFreeze(sourceId);
 		}
 
@@ -96,10 +104,14 @@ export class ReleaseHoldCommandHandler
 			holdId,
 			amountBd,
 		);
-
 		await this.validationService.checkEscrow(tokenId, sourceId, holdId);
 
-		const res = await handler.releaseHold(capabilities, amountBd, sourceId);
+		const res = await handler.releaseHold(
+			capabilities,
+			amountBd,
+			sourceId,
+			holdId,
+		);
 
 		return Promise.resolve(
 			new ReleaseHoldCommandResponse(res.error === undefined),

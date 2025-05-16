@@ -51,6 +51,8 @@ export enum ErrorCode {
 	MissingProxyWipeKey = '20009',
 	InsufficientHoldBalance = '20010',
 	NotEscrow = '20011',
+	InvalidHoldDestination = '20012',
+	InvalidHoldId = '20012',
 	ReceiptNotReceived = '30001',
 	ContractNotFound = '30002',
 	Unexpected = '30003',

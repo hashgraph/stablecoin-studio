@@ -28,5 +28,4 @@ export default interface HoldViewModel extends QueryResponse {
 	escrowAddress: string;
 	destinationAddress: string;
 	data: string;
-	operatorData: string;
 }

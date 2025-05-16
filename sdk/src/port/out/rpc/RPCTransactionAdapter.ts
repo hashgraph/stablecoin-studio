@@ -26,8 +26,6 @@ import TransactionResponse from '../../../domain/context/transaction/Transaction
 import {
 	ContractId as HContractId,
 	CustomFee as HCustomFee,
-	CustomFixedFee as HCustomFixedFee,
-	CustomFractionalFee as HCustomFractionalFee,
 } from '@hashgraph/sdk';
 import {
 	BurnableFacet__factory,
@@ -107,6 +105,10 @@ import {
 	UPDATE_RESOLVER_GAS,
 	EVM_ZERO_ADDRESS,
 	CREATE_HOLD_GAS,
+	EXECUTE_HOLD_GAS,
+	RELEASE_HOLD_GAS,
+	RECLAIM_HOLD_GAS,
+	CONTROLLER_CREATE_HOLD_GAS,
 } from '../../../core/Constants.js';
 import { MetaMaskInpageProvider } from '@metamask/providers';
 import { WalletConnectError } from '../../../domain/context/network/error/WalletConnectError.js';
@@ -157,7 +159,7 @@ import {
 	EnvironmentResolver,
 	Resolvers,
 } from '../../../domain/context/factory/Resolvers.js';
-import { Hold } from 'domain/context/hold/Hold.js';
+import { Hold, HoldIdentifier } from '../../../domain/context/hold/Hold.js';
 
 // eslint-disable-next-line no-var
 declare var ethereum: MetaMaskInpageProvider;
@@ -579,15 +581,96 @@ export default class RPCTransactionAdapter extends TransactionAdapter {
 		expirationDate: string,
 		targetId?: HederaId,
 	): Promise<TransactionResponse> {
+		const hold = new Hold(
+			amount.toBigNumber(),
+			expirationDate!,
+			await this.getEVMAddress(escrow),
+			targetId ? await this.getEVMAddress(targetId) : EVM_ZERO_ADDRESS,
+			'0x',
+		);
+		const params = new Params({
+			hold,
+		});
+		return this.performOperation(coin, Operation.CREATE_HOLD, params);
+	}
+
+	public async createHoldByController(
+		coin: StableCoinCapabilities,
+		amount: BigDecimal,
+		escrow: HederaId,
+		expirationDate: string,
+		sourceId: HederaId,
+		targetId?: HederaId,
+	): Promise<TransactionResponse> {
+		const hold = new Hold(
+			amount.toBigNumber(),
+			expirationDate!,
+			await this.getEVMAddress(escrow),
+			targetId ? await this.getEVMAddress(targetId) : EVM_ZERO_ADDRESS,
+			'0x',
+		);
+		const params = new Params({
+			hold,
+			sourceId: await this.getEVMAddress(sourceId),
+		});
+		return this.performOperation(
+			coin,
+			Operation.CONTROLLER_CREATE_HOLD,
+			params,
+		);
+	}
+
+	public async executeHold(
+		coin: StableCoinCapabilities,
+		amount: BigDecimal,
+		sourceId: HederaId,
+		holdId: number,
+		targetId?: HederaId,
+	): Promise<TransactionResponse> {
+		const holdIdentifier: HoldIdentifier = {
+			tokenHolder: await this.getEVMAddress(sourceId),
+			holdId: holdId,
+		};
 		const params = new Params({
 			amount,
-			escrow: await this.getEVMAddress(escrow),
-			expirationDate,
+			holdIdentifier,
 			targetId: targetId
 				? await this.getEVMAddress(targetId)
 				: EVM_ZERO_ADDRESS,
 		});
-		return this.performOperation(coin, Operation.CREATE_HOLD, params);
+		return this.performOperation(coin, Operation.EXECUTE_HOLD, params);
+	}
+
+	public async releaseHold(
+		coin: StableCoinCapabilities,
+		amount: BigDecimal,
+		sourceId: HederaId,
+		holdId: number,
+	): Promise<TransactionResponse> {
+		const holdIdentifier: HoldIdentifier = {
+			tokenHolder: await this.getEVMAddress(sourceId),
+			holdId: holdId,
+		};
+		const params = new Params({
+			amount,
+			holdIdentifier,
+		});
+		return this.performOperation(coin, Operation.RELEASE_HOLD, params);
+	}
+
+	public async reclaimHold(
+		coin: StableCoinCapabilities,
+		sourceId: HederaId,
+		holdId: number,
+	): Promise<TransactionResponse> {
+		const holdIdentifier: HoldIdentifier = {
+			tokenHolder: await this.getEVMAddress(sourceId),
+			holdId: holdId,
+		};
+		const params = new Params({
+			holdIdentifier,
+		});
+		return this.performOperation(coin, Operation.RECLAIM_HOLD, params);
 	}
 
 	public async getReserveAddress(
@@ -1909,20 +1992,66 @@ export default class RPCTransactionAdapter extends TransactionAdapter {
 					this.networkService.environment,
 				);
 			case Operation.CREATE_HOLD:
-				const hold = new Hold(
-					params!.amount!.toBigNumber(),
-					params!.expirationDate!,
-					params!.escrow!,
-					params!.targetId ? params!.targetId : EVM_ZERO_ADDRESS,
-					'0x',
-				);
-
 				return RPCTransactionResponseAdapter.manageResponse(
 					await HoldManagementFacet__factory.connect(
 						evmProxy,
 						this.signerOrProvider,
-					).createHold(hold, {
+					).createHold(params!.hold!, {
 						gasLimit: CREATE_HOLD_GAS,
+					}),
+					this.networkService.environment,
+				);
+			case Operation.CONTROLLER_CREATE_HOLD:
+				return RPCTransactionResponseAdapter.manageResponse(
+					await HoldManagementFacet__factory.connect(
+						evmProxy,
+						this.signerOrProvider,
+					).createHoldByController(
+						params!.sourceId!,
+						params!.hold!,
+						'0x',
+						{
+							gasLimit: CONTROLLER_CREATE_HOLD_GAS,
+						},
+					),
+					this.networkService.environment,
+				);
+			case Operation.EXECUTE_HOLD:
+				return RPCTransactionResponseAdapter.manageResponse(
+					await HoldManagementFacet__factory.connect(
+						evmProxy,
+						this.signerOrProvider,
+					).executeHold(
+						params!.holdIdentifier!,
+						params!.targetId!,
+						params!.amount!.toBigNumber(),
+						{
+							gasLimit: EXECUTE_HOLD_GAS,
+						},
+					),
+					this.networkService.environment,
+				);
+			case Operation.RELEASE_HOLD:
+				return RPCTransactionResponseAdapter.manageResponse(
+					await HoldManagementFacet__factory.connect(
+						evmProxy,
+						this.signerOrProvider,
+					).releaseHold(
+						params!.holdIdentifier!,
+						params!.amount!.toBigNumber(),
+						{
+							gasLimit: RELEASE_HOLD_GAS,
+						},
+					),
+					this.networkService.environment,
+				);
+			case Operation.RECLAIM_HOLD:
+				return RPCTransactionResponseAdapter.manageResponse(
+					await HoldManagementFacet__factory.connect(
+						evmProxy,
+						this.signerOrProvider,
+					).reclaimHold(params!.holdIdentifier!, {
+						gasLimit: RECLAIM_HOLD_GAS,
 					}),
 					this.networkService.environment,
 				);
@@ -2135,6 +2264,7 @@ export default class RPCTransactionAdapter extends TransactionAdapter {
 class Params {
 	role?: string;
 	targetId?: string;
+	sourceId?: string;
 	amount?: BigDecimal;
 	name?: string;
 	symbol?: string;
@@ -2152,12 +2282,13 @@ class Params {
 	configId?: string;
 	configVersion?: number;
 	resolver?: string;
-	expirationDate?: string;
-	escrow?: string;
+	hold?: Hold;
+	holdIdentifier?: HoldIdentifier;
 
 	constructor({
 		role,
 		targetId,
+		sourceId,
 		amount,
 		name,
 		symbol,
@@ -2175,11 +2306,12 @@ class Params {
 		configId,
 		configVersion,
 		resolver,
-		expirationDate,
-		escrow,
+		hold,
+		holdIdentifier,
 	}: {
 		role?: string;
 		targetId?: string;
+		sourceId?: string;
 		amount?: BigDecimal;
 		name?: string;
 		symbol?: string;
@@ -2197,11 +2329,12 @@ class Params {
 		configId?: string;
 		configVersion?: number;
 		resolver?: string;
-		expirationDate?: string;
-		escrow?: string;
+		hold?: Hold;
+		holdIdentifier?: HoldIdentifier;
 	}) {
 		this.role = role;
 		this.targetId = targetId;
+		this.sourceId = sourceId;
 		this.amount = amount;
 		this.name = name;
 		this.symbol = symbol;
@@ -2219,7 +2352,7 @@ class Params {
 		this.configId = configId;
 		this.configVersion = configVersion;
 		this.resolver = resolver;
-		this.expirationDate = expirationDate;
-		this.escrow = escrow;
+		this.hold = hold;
+		this.holdIdentifier = holdIdentifier;
 	}
 }

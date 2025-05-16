@@ -23,11 +23,12 @@ import ValidatedRequest from './validation/ValidatedRequest.js';
 import Validation from './validation/Validation.js';
 import { Hold } from '../../../domain/context/hold/Hold.js';
 
-export default class CreateHoldRequest extends ValidatedRequest<CreateHoldRequest> {
+export default class CreateHoldByControllerRequest extends ValidatedRequest<CreateHoldByControllerRequest> {
 	amount: string;
 	escrow: string;
 	tokenId: string;
 	expirationDate: string;
+	sourceId: string;
 
 	@OptionalField()
 	targetId?: string;
@@ -37,12 +38,14 @@ export default class CreateHoldRequest extends ValidatedRequest<CreateHoldReques
 		amount,
 		escrow,
 		expirationDate,
+		sourceId,
 		targetId,
 	}: {
 		tokenId: string;
 		amount: string;
 		escrow: string;
 		expirationDate: string;
+		sourceId: string;
 		targetId?: string;
 	}) {
 		super({
@@ -56,11 +59,13 @@ export default class CreateHoldRequest extends ValidatedRequest<CreateHoldReques
 					Math.ceil(new Date().getTime() / 1000),
 				);
 			},
+			sourceId: Validation.checkHederaIdFormat(),
 		});
 		this.tokenId = tokenId;
 		this.amount = amount;
 		this.escrow = escrow;
 		this.expirationDate = expirationDate;
+		this.sourceId = sourceId;
 		this.targetId = targetId;
 	}
 }

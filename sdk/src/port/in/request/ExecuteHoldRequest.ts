@@ -21,13 +21,12 @@
 import { OptionalField } from '../../../core/decorator/OptionalDecorator.js';
 import ValidatedRequest from './validation/ValidatedRequest.js';
 import Validation from './validation/Validation.js';
-import { Hold } from '../../../domain/context/hold/Hold.js';
 
-export default class CreateHoldRequest extends ValidatedRequest<CreateHoldRequest> {
+export default class ExecuteHoldRequest extends ValidatedRequest<ExecuteHoldRequest> {
 	amount: string;
-	escrow: string;
 	tokenId: string;
-	expirationDate: string;
+	sourceId: string;
+	holdId: number;
 
 	@OptionalField()
 	targetId?: string;
@@ -35,32 +34,27 @@ export default class CreateHoldRequest extends ValidatedRequest<CreateHoldReques
 	constructor({
 		tokenId,
 		amount,
-		escrow,
-		expirationDate,
+		sourceId,
+		holdId,
 		targetId,
 	}: {
 		tokenId: string;
 		amount: string;
-		escrow: string;
-		expirationDate: string;
+		sourceId: string;
+		holdId: number;
 		targetId?: string;
 	}) {
 		super({
 			tokenId: Validation.checkHederaIdFormat(),
 			amount: Validation.checkAmount(),
-			escrow: Validation.checkHederaIdFormat(),
+			sourceId: Validation.checkHederaIdFormat(),
+			holdId: Validation.checkNumber({ min: 0 }),
 			targetId: Validation.checkHederaIdFormat(),
-			expirationDate: (val) => {
-				return Hold.checkExpirationTimestamp(
-					parseInt(val),
-					Math.ceil(new Date().getTime() / 1000),
-				);
-			},
 		});
 		this.tokenId = tokenId;
 		this.amount = amount;
-		this.escrow = escrow;
-		this.expirationDate = expirationDate;
+		this.sourceId = sourceId;
+		this.holdId = holdId;
 		this.targetId = targetId;
 	}
 }

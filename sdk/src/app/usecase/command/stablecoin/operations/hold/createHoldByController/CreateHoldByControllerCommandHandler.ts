@@ -39,13 +39,13 @@ import { BalanceOfQuery } from 'app/usecase/query/stablecoin/balanceof/BalanceOf
 import CheckNums from 'core/checks/numbers/CheckNums.js';
 import { DecimalsOverRange } from '../../../error/DecimalsOverRange.js';
 import {
-	ControllerCreateHoldCommand,
-	ControllerCreateHoldCommandResponse,
-} from './ControllerCreateHoldCommand.js';
+	CreateHoldByControllerCommand,
+	CreateHoldByControllerCommandResponse,
+} from './CreateHoldByControllerCommand.js';
 
-@CommandHandler(ControllerCreateHoldCommand)
-export class ControllerCreateHoldCommandHandler
-	implements ICommandHandler<ControllerCreateHoldCommand>
+@CommandHandler(CreateHoldByControllerCommand)
+export class CreateHoldByControllerCommandHandler
+	implements ICommandHandler<CreateHoldByControllerCommand>
 {
 	constructor(
 		@lazyInject(StableCoinService)
@@ -59,8 +59,8 @@ export class ControllerCreateHoldCommandHandler
 	) {}
 
 	async execute(
-		command: ControllerCreateHoldCommand,
-	): Promise<ControllerCreateHoldCommandResponse> {
+		command: CreateHoldByControllerCommand,
+	): Promise<CreateHoldByControllerCommandResponse> {
 		const { tokenId, sourceId, amount, escrow, expirationDate, targetId } =
 			command;
 		const handler = this.transactionService.getHandler();
@@ -75,7 +75,7 @@ export class ControllerCreateHoldCommandHandler
 			throw new MissingProxySupplyKey();
 		}
 
-		let tokenRelationship = (
+		const tokenRelationship = (
 			await this.queryBus.execute(
 				new GetAccountTokenRelationshipQuery(sourceId, tokenId),
 			)
@@ -105,24 +105,25 @@ export class ControllerCreateHoldCommandHandler
 			);
 		}
 
-		const res = await handler.createHold(
+		const res = await handler.createHoldByController(
 			capabilities,
 			amountBd,
 			escrow,
 			expirationDate,
+			sourceId,
 			targetId,
 		);
 
 		const holdId = await this.transactionService.getTransactionResult({
 			res,
 			result: res.response?.holdId,
-			className: ControllerCreateHoldCommandHandler.name,
+			className: CreateHoldByControllerCommandHandler.name,
 			position: 1,
 			numberOfResultsItems: 2,
 		});
 
 		return Promise.resolve(
-			new ControllerCreateHoldCommandResponse(
+			new CreateHoldByControllerCommandResponse(
 				parseInt(holdId, 16),
 				res.error == undefined,
 			),

@@ -39,6 +39,7 @@ export enum Operation {
 	CONTROLLER_CREATE_HOLD = 'Controller_Create_Hold',
 	RELEASE_HOLD = 'Release_Hold',
 	EXECUTE_HOLD = 'Execute_Hold',
+	RECLAIM_HOLD = 'Reclaim_Hold',
 	GRANT_KYC = 'Grant_KYC',
 	REVOKE_KYC = 'Revoke_KYC',
 	CREATE_CUSTOM_FEE = 'Create_Custom_Fee',

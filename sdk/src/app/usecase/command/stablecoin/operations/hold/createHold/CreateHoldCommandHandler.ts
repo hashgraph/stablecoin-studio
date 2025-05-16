@@ -79,7 +79,7 @@ export class CreateHoldCommandHandler
 			throw new MissingProxyWipeKey();
 		}
 
-		let tokenRelationship = (
+		const tokenRelationship = (
 			await this.queryBus.execute(
 				new GetAccountTokenRelationshipQuery(account.id, tokenId),
 			)

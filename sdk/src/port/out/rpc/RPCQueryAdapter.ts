@@ -251,12 +251,12 @@ export class RPCQueryAdapter {
 
 	async getHoldFor(
 		address: EvmAddress,
-		targetId: EvmAddress,
+		target: EvmAddress,
 		holdId: number,
 	): Promise<HoldDetails> {
-		LogService.logTrace(`Getting config info for ${targetId.toString()}`);
+		LogService.logTrace(`Getting hold details for ${target.toString()}`);
 		const holdIdentifier: HoldIdentifier = {
-			tokenHolder: targetId.toString(),
+			tokenHolder: target.toString(),
 			holdId,
 		};
 		const hold = await this.connect(
@@ -268,7 +268,7 @@ export class RPCQueryAdapter {
 			hold.expirationTimestamp_.toNumber(),
 			new BigDecimal(hold.amount_.toString()),
 			hold.escrow_,
-			targetId.toString(),
+			target.toString(),
 			hold.destination_,
 			hold.data_,
 		);
@@ -281,7 +281,7 @@ export class RPCQueryAdapter {
 		end: number,
 	): Promise<number[]> {
 		LogService.logTrace(
-			`Getting hold IDs for ${target} from ${start} to ${end}`,
+			`Getting hold IDs for ${target.toString()} from ${start} to ${end}`,
 		);
 
 		const holdsIdFor = await this.connect(
@@ -294,28 +294,28 @@ export class RPCQueryAdapter {
 
 	async getHeldAmountFor(
 		address: EvmAddress,
-		targetId: EvmAddress,
+		target: EvmAddress,
 	): Promise<BigDecimal> {
-		LogService.logTrace(`Getting held amount for ${targetId.toString()}`);
+		LogService.logTrace(`Getting held amount for ${target.toString()}`);
 
 		const heldAmountFor = await this.connect(
 			HoldManagementFacet__factory,
 			address.toString(),
-		).getHeldAmountFor(targetId.toString());
+		).getHeldAmountFor(target.toString());
 
 		return new BigDecimal(heldAmountFor.toString());
 	}
 
 	async getHoldCountFor(
 		address: EvmAddress,
-		targetId: EvmAddress,
+		target: EvmAddress,
 	): Promise<number> {
-		LogService.logTrace(`Getting hold count for ${targetId.toString()}`);
+		LogService.logTrace(`Getting hold count for ${target.toString()}`);
 
 		const holdCountFor = await this.connect(
 			HoldManagementFacet__factory,
 			address.toString(),
-		).getHoldCountFor(targetId.toString());
+		).getHoldCountFor(target.toString());
 
 		return holdCountFor.toNumber();
 	}

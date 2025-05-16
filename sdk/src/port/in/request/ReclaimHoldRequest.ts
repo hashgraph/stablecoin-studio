@@ -18,19 +18,30 @@
  *
  */
 
-import { HederaId } from '../../../../../../port/in/StableCoin.js';
-import { Query } from '../../../../../../core/query/Query.js';
-import { QueryResponse } from '../../../../../../core/query/QueryResponse.js';
+import ValidatedRequest from './validation/ValidatedRequest.js';
+import Validation from './validation/Validation.js';
 
-export class GetHoldCountForQueryResponse implements QueryResponse {
-	constructor(public readonly payload: number) {}
-}
+export default class ReclaimHoldRequest extends ValidatedRequest<ReclaimHoldRequest> {
+	tokenId: string;
+	sourceId: string;
+	holdId: number;
 
-export class GetHoldCountForQuery extends Query<GetHoldCountForQueryResponse> {
-	constructor(
-		public readonly tokenId: HederaId,
-		public readonly targetId: HederaId,
-	) {
-		super();
+	constructor({
+		tokenId,
+		sourceId,
+		holdId,
+	}: {
+		tokenId: string;
+		sourceId: string;
+		holdId: number;
+	}) {
+		super({
+			tokenId: Validation.checkHederaIdFormat(),
+			sourceId: Validation.checkHederaIdFormat(),
+			holdId: Validation.checkNumber({ min: 0 }),
+		});
+		this.tokenId = tokenId;
+		this.sourceId = sourceId;
+		this.holdId = holdId;
 	}
 }

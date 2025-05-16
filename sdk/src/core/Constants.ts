@@ -52,7 +52,11 @@ export const UPDATE_CUSTOM_FEES_GAS = 9000000;
 export const UPDATE_CONFIG_VERSION_GAS = 9000000;
 export const UPDATE_CONFIG_GAS = 9000000;
 export const UPDATE_RESOLVER_GAS = 9000000;
-export const CREATE_HOLD_GAS = 9000000;
+export const CREATE_HOLD_GAS = 7000000;
+export const CONTROLLER_CREATE_HOLD_GAS = 7000000;
+export const EXECUTE_HOLD_GAS = 7000000;
+export const RELEASE_HOLD_GAS = 7000000;
+export const RECLAIM_HOLD_GAS = 7000000;
 
 export const BALANCE_OF_GAS = 120000;
 export const GET_RESERVE_ADDRESS_GAS = 120000;
@@ -64,3 +68,5 @@ export const IS_UNLIMITED_ALLOWANCE_GAS = 120000;
 export const BYTES_32_LENGTH = 64;
 export const ADDRESS_LENGTH = 40;
 export const TOPICS_IN_FACTORY_RESULT = 3;
+
+export const ONE_THOUSAND = 1000;
