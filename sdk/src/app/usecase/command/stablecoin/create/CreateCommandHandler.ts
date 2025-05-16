@@ -68,6 +68,8 @@ export class CreateCommandHandler implements ICommandHandler<CreateCommand> {
 			resolver,
 			configId,
 			configVersion,
+			reserveConfigId,
+			reserveConfigVersion,
 		} = command;
 
 		if (!factory) {
@@ -90,6 +92,12 @@ export class CreateCommandHandler implements ICommandHandler<CreateCommand> {
 
 		if (configVersion === undefined) {
 			throw new InvalidRequest('Config Version not found in request');
+		}
+
+		if (createReserve && (!reserveConfigId || !reserveConfigVersion)) {
+			throw new InvalidRequest(
+				'Cannot create reserve without reserve config id and version',
+			);
 		}
 
 		const handler = this.transactionService.getHandler();
@@ -158,6 +166,8 @@ export class CreateCommandHandler implements ICommandHandler<CreateCommand> {
 			proxyOwnerAccount,
 			reserveAddress,
 			reserveInitialAmount,
+			reserveConfigId,
+			reserveConfigVersion,
 		);
 
 		if (!res.id)

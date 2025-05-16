@@ -26,7 +26,7 @@ import {
   utilsService,
 } from '../../../index.js';
 import SetConfigurationService from '../configuration/SetConfigurationService.js';
-import SetFactoryService from '../configuration/SetFactoryService.js';
+import SetResolverAndFactoryService from '../configuration/SetResolverAndFactoryService.js';
 import Service from '../Service.js';
 import CreateStableCoinService from '../stablecoin/CreateStableCoinService.js';
 import OperationStableCoinService from '../stablecoin/OperationStableCoinService.js';
@@ -48,12 +48,12 @@ import ManageMultiSigTxService from '../stablecoin/ManageMultiSigTxService.js';
  */
 export default class WizardService extends Service {
   private setConfigurationService: SetConfigurationService;
-  private setFactoryService: SetFactoryService;
+  private setResolverAndFactoryService: SetResolverAndFactoryService;
 
   constructor() {
     super('Wizard');
     this.setConfigurationService = new SetConfigurationService();
-    this.setFactoryService = new SetFactoryService();
+    this.setResolverAndFactoryService = new SetResolverAndFactoryService();
   }
 
   /**
@@ -95,19 +95,28 @@ export default class WizardService extends Service {
             utilsService.showWarning(
               language.getText('stablecoin.noFactories'),
             );
-            const configFactories = await utilsService.defaultConfirmAsk(
-              language.getText('configuration.askConfigurateFactories'),
-              true,
-            );
-            if (configFactories) {
-              await this.setFactoryService.configureFactories();
+            const configResolverAndFactories =
+              await utilsService.defaultConfirmAsk(
+                language.getText(
+                  'configuration.askConfigurateResolverAndFactories',
+                ),
+                true,
+              );
+            if (configResolverAndFactories) {
+              await this.setResolverAndFactoryService.configureResolversAndFactories();
               configuration = configurationService.getConfiguration();
-              const { factories } = configuration;
+              const { factories, resolvers } = configuration;
               const currentFactory = factories.find(
                 (factory) => currentAccount.network === factory.network,
               );
+              const currentResolver = resolvers.find(
+                (resolver) => currentAccount.network === resolver.network,
+              );
 
-              utilsService.setCurrentFactory(currentFactory);
+              utilsService.setCurrentResolverAndFactory(
+                currentFactory,
+                currentResolver,
+              );
             } else {
               break;
             }
@@ -232,9 +241,9 @@ export default class WizardService extends Service {
         });
         break;
 
-      case language.getText('wizard.changeOptions.ManageFactory'):
+      case language.getText('wizard.changeOptions.ManageFactoryAndResolver'):
         await utilsService.cleanAndShowBanner();
-        await this.setFactoryService.manageFactoryMenu();
+        await this.setResolverAndFactoryService.configureResolversAndFactories();
         break;
 
       default:
@@ -294,7 +303,8 @@ export default class WizardService extends Service {
     account: string | IAccountConfig,
   ): Promise<void> {
     const configuration = configurationService.getConfiguration();
-    const { networks, accounts, mirrors, rpcs, factories } = configuration;
+    const { networks, accounts, mirrors, rpcs, factories, resolvers } =
+      configuration;
 
     const currentAccount =
       typeof account === 'string'
@@ -323,7 +333,11 @@ export default class WizardService extends Service {
       (factory) => currentAccount.network === factory.network,
     );
 
-    utilsService.setCurrentFactory(currentFactory);
+    const currentResolver = resolvers.find(
+      (resolver) => currentAccount.network === resolver.network,
+    );
+
+    utilsService.setCurrentResolverAndFactory(currentFactory, currentResolver);
 
     await Network.setNetwork(
       new SetNetworkRequest({

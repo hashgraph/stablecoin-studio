@@ -158,18 +158,23 @@ A config file can be manually created using the [sample file (hsca-config.sample
   - **logs** :
     - **path** : log file path. Typically './logs'
     - **level** : log level ERROR, TRACE, ...
+  - **resolvers** : list of resolvers, at most one per network.
+    - **id** : Resolver Id.
+    - **network** : Network where the resolver exists, choose between mainnet, testnet and previewnet.
   - **factories** : list of factories, at most one per network.
     - **id** : Factory Id.
     - **network** : Network where the factory exists, choose between mainnet, testnet and previewnet.
 
-## Factories 
+## Factories and resolvers
 
-We provide default addresses for the factories that we have deployed for anyone to use that are updated whenever a new version is released.
+We provide default addresses for the factories and resolvers that we have deployed for anyone to use that are updated whenever a new version is released.
 
-| Contract name  | Address      | Network    |
-| -------------- | ------------ | ---------- |
-| FactoryAddress | 0.0.14455068 | Testnet    |
-| FactoryAddress | 0.0.XXXXXX   | Previewnet |
+| Contract name   | Address     | Network    |
+| --------------- | ----------- | ---------- |
+| FactoryAddress  | 0.0.5992081 | Testnet    |
+| FactoryAddress  | 0.0.XXXXXX  | Previewnet |
+| ResolverAddress | 0.0.5992033 | Testnet    |
+| ResolverAddress | 0.0.XXXXXX  | Previewnet |
 
 ## CLI flow
 
@@ -188,7 +193,7 @@ When your configuration file is set up and at least one account is added and sel
 In order to use this option you must set a factory first.
 You can check our factories deployed in [our documentation](https://github.com/hashgraph/stablecoin-studio#deploying-the-stable-coin-factories).
 
-With this option you are able to create a new stablecoin adding the mandatory details like name and symbol.
+With this option you are able to create a new stablecoin adding the mandatory details like name, symbol or the resolver configuration.
 
 > The auto-renew account is not requested since is automatically set to be the user's current account, otherwise the stablecoin creation will not work, this is due to the fact that the auto-renew account must sign the underlying token's creation transaction, and currently we do not support multi-signatures transactions.
 
@@ -263,11 +268,13 @@ https://user-images.githubusercontent.com/102601367/205074235-32145a1b-4ce0-4913
 
 https://github.com/hashgraph/stablecoin-studio/assets/108128685/e09a9389-8f29-4869-a696-58b25d99a6f3
 
+- **Resolver management**: administrators of a stablecoin can manage the resolver from this menu, they will have the possibility to update the configuration ID, version and the business logic resolver address.
+
 - **Freeze Management**: freezes/unfreezes an account for a token or checks if an account is frozen/unfrozen. If an account is frozen, it will not be able to transfer any tokens.
 
 https://user-images.githubusercontent.com/114951681/228851899-8a63b255-8e97-4705-8765-f59c01fc928b.mp4
 
-- **FeeS Management**: creats/removes custom fees for a token or lists existing ones. Fees are applied when the token is transferred.
+- **Fees Management**: creats/removes custom fees for a token or lists existing ones. Fees are applied when the token is transferred.
 
 https://github.com/hashgraph/stablecoin-studio/assets/108128685/a18f8723-d161-4283-a867-81d0d204e015
 
@@ -334,7 +341,7 @@ This last option allows the user to display the current configuration file, modi
 - **Accounts**: Allows the user to change the current account, see all configured accounts and also add new accounts and remove existing ones.
 - **Mirror nodes**: Allows the user to change the current mirror node, see all configured mirror nodes for the selected Hedera network, add new mirror nodes and remove existing ones except for the one that is being used.
 - **JSON-RPC-Relay services**: Allows the user to change the current JSON-RPC-Relay service, see all configured services for the selected Hedera network, add new JSON-RPC-Relay servies and remove existing ones except for the one that is being used. You can check the available JSON-RPC relays [here](https://github.com/hashgraph/stablecoin-studio/blob/main/README.md#JSON-RPC-Relays)
-- **Factory**: Allows the user to change the factory id of the selected Hedera network in the configuration file, to upgrade the factory's proxy, to change the factory's proxy admin owner account and, finally, to view de current factory implementation contract address as well as the factory owner account previously commented.
+- **Factory and resolver**: Allows the user to change the factory and resolver id of the selected Hedera network in the configuration file.
 - **Backend**: Allows the user to update the backend configuration and remove it.
 
 # Testing
