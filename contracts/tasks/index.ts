@@ -42,5 +42,8 @@ export * from './businessLogicResolver'
 // * Resolver Diamond Cut
 export * from './resolverDiamondCut'
 
+// * Migrate v2
+export * from './migration/v2/migrate'
+
 // * Upgrades
 // export * from './upgrade'
