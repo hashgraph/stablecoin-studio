@@ -2,39 +2,64 @@ import { expect } from 'chai'
 import { SignerWithAddress } from '@nomiclabs/hardhat-ethers/signers'
 import { ethers, network } from 'hardhat'
 import { TransactionRequest } from '@ethersproject/abstract-provider'
-import { WEIBARS_PER_TINYBAR, NetworkName } from '@configuration'
-import { HederaTokenManager, HederaTokenManager__factory } from '@typechain-types'
-import { delay, MESSAGES, ValidateTxResponseCommand } from '@scripts'
-import { deployFullInfrastructureInTests, GAS_LIMIT, ONE_HBAR, ONE_TOKEN, TEN_TOKENS, TWO_HBAR } from '@test/shared'
+import { WEIBARS_PER_TINYBAR } from '@configuration'
+import {
+    HederaTokenManagerFacet,
+    HederaTokenManagerFacet__factory,
+    RescuableFacet,
+    RescuableFacet__factory,
+} from '@typechain-types'
+import {
+    delay,
+    deployFullInfrastructure,
+    DeployFullInfrastructureCommand,
+    MESSAGES,
+    ONE_HBAR,
+    ONE_TOKEN,
+    TEN_TOKENS,
+    TWO_HBAR,
+    ValidateTxResponseCommand,
+} from '@scripts'
+import { deployStableCoinInTests, GAS_LIMIT } from '@test/shared'
 
 describe('➡️ Rescue Tests', function () {
     // Contracts
-    let proxyAddress: string
-    let hederaTokenManager: HederaTokenManager
-    let hederaTokenManagerNonOperator: HederaTokenManager
+    let stableCoinProxyAddress: string
+    let hederaTokenManagerFacet: HederaTokenManagerFacet
+    let rescuableFacet: RescuableFacet
     // Accounts
     let operator: SignerWithAddress
     let nonOperator: SignerWithAddress
 
-    before(async function () {
-        // Disable | Mock console.log()
+    async function setFacets(address: string) {
+        hederaTokenManagerFacet = HederaTokenManagerFacet__factory.connect(address, operator)
+        rescuableFacet = RescuableFacet__factory.connect(address, operator)
+    }
+
+    before(async () => {
+        // mute | mock console.log
         console.log = () => {} // eslint-disable-line
-        // * Deploy StableCoin Token
         console.info(MESSAGES.deploy.info.deployFullInfrastructureInTests)
         ;[operator, nonOperator] = await ethers.getSigners()
-        // if ((network.name as NetworkName) === NETWORK_LIST.name[0]) {
-        //     await deployPrecompiledHederaTokenServiceMock(hre, signer)
-        // }
-        ;({ proxyAddress } = await deployFullInfrastructureInTests({
+
+        const { ...deployedContracts } = await deployFullInfrastructure(
+            await DeployFullInfrastructureCommand.newInstance({
+                signer: operator,
+                useDeployed: false,
+                useEnvironment: true,
+            })
+        )
+        ;({ stableCoinProxyAddress } = await deployStableCoinInTests({
             signer: operator,
-            network: network.name as NetworkName,
+            businessLogicResolverProxyAddress: deployedContracts.businessLogicResolver.proxyAddress!,
+            stableCoinFactoryProxyAddress: deployedContracts.stableCoinFactoryFacet.proxyAddress!,
         }))
-        hederaTokenManager = HederaTokenManager__factory.connect(proxyAddress, operator)
-        hederaTokenManagerNonOperator = HederaTokenManager__factory.connect(proxyAddress, nonOperator)
+
+        await setFacets(stableCoinProxyAddress)
 
         // HBAR Transfer
         const transferTx = {
-            to: proxyAddress,
+            to: stableCoinProxyAddress,
             value: TWO_HBAR,
             gasLimit: GAS_LIMIT.transfer,
             chainId: network.config.chainId,
@@ -45,25 +70,25 @@ describe('➡️ Rescue Tests', function () {
 
     it('Account with RESCUE role can rescue 10 tokens', async function () {
         // Get the initial balance of the token owner and client
-        const initialTokenOwnerBalance = await hederaTokenManager.balanceOf(proxyAddress, {
+        const initialTokenOwnerBalance = await hederaTokenManagerFacet.balanceOf(stableCoinProxyAddress, {
             gasLimit: GAS_LIMIT.hederaTokenManager.balanceOf,
         })
-        const initialClientBalance = await hederaTokenManager.balanceOf(operator.address, {
+        const initialClientBalance = await hederaTokenManagerFacet.balanceOf(operator.address, {
             gasLimit: GAS_LIMIT.hederaTokenManager.balanceOf,
         })
 
         // rescue some tokens
-        const response = await hederaTokenManager.rescue(TEN_TOKENS, {
+        const response = await rescuableFacet.rescue(TEN_TOKENS, {
             gasLimit: GAS_LIMIT.hederaTokenManager.rescue,
         })
         await new ValidateTxResponseCommand({ txResponse: response, confirmationEvent: 'TokenRescued' }).execute()
 
         await delay({ time: 1, unit: 'sec' })
         // check new balances : success
-        const finalTokenOwnerBalance = await hederaTokenManager.balanceOf(proxyAddress, {
+        const finalTokenOwnerBalance = await hederaTokenManagerFacet.balanceOf(stableCoinProxyAddress, {
             gasLimit: GAS_LIMIT.hederaTokenManager.balanceOf,
         })
-        const finalClientBalance = await hederaTokenManager.balanceOf(operator.address, {
+        const finalClientBalance = await hederaTokenManagerFacet.balanceOf(operator.address, {
             gasLimit: GAS_LIMIT.hederaTokenManager.balanceOf,
         })
 
@@ -76,18 +101,18 @@ describe('➡️ Rescue Tests', function () {
 
     it('Account with RESCUE role cannot rescue more tokens than the token owner balance', async function () {
         // Get the initial balance of the token owner
-        const TokenOwnerBalance = await hederaTokenManager.balanceOf(proxyAddress, {
+        const TokenOwnerBalance = await hederaTokenManagerFacet.balanceOf(stableCoinProxyAddress, {
             gasLimit: GAS_LIMIT.hederaTokenManager.balanceOf,
         })
         // Rescue TokenOwnerBalance + 1 : fail
-        const txResponse = await hederaTokenManager.rescue(TokenOwnerBalance.add(1), {
+        const txResponse = await rescuableFacet.rescue(TokenOwnerBalance.add(1), {
             gasLimit: GAS_LIMIT.hederaTokenManager.rescue,
         })
         await expect(new ValidateTxResponseCommand({ txResponse }).execute()).to.be.rejectedWith(Error)
     })
 
     it('Account without RESCUE role cannot rescue tokens', async function () {
-        const txResponse = await hederaTokenManagerNonOperator.rescue(ONE_TOKEN, {
+        const txResponse = await rescuableFacet.connect(nonOperator).rescue(ONE_TOKEN, {
             gasLimit: GAS_LIMIT.hederaTokenManager.rescue,
         })
         // Account without rescue role, rescues tokens : fail
@@ -97,12 +122,12 @@ describe('➡️ Rescue Tests', function () {
     it('Account with RESCUE role can rescue 1 HBAR', async function () {
         // Get the initial balance of the token owner and client
         const amountToRescue = ONE_HBAR
-        const initialTokenOwnerBalance = await ethers.provider.getBalance(proxyAddress)
+        const initialTokenOwnerBalance = await ethers.provider.getBalance(stableCoinProxyAddress)
         // By https://docs.hedera.com/hedera/tutorials/smart-contracts/hscs-workshop/hardhat#tinybars-vs-weibars
         const amountToRescueInEvm = ONE_HBAR.div(WEIBARS_PER_TINYBAR)
 
         // rescue some tokens
-        const response = await hederaTokenManager.rescueHBAR(amountToRescueInEvm, {
+        const response = await rescuableFacet.rescueHBAR(amountToRescueInEvm, {
             gasLimit: GAS_LIMIT.hederaTokenManager.rescueHBAR,
         })
 
@@ -111,7 +136,7 @@ describe('➡️ Rescue Tests', function () {
         await delay({ time: 1, unit: 'sec' })
 
         // check new balances : success
-        const finalTokenOwnerBalance = await ethers.provider.getBalance(proxyAddress)
+        const finalTokenOwnerBalance = await ethers.provider.getBalance(stableCoinProxyAddress)
 
         const expectedTokenOwnerBalance = initialTokenOwnerBalance.sub(amountToRescue)
         expect(finalTokenOwnerBalance.toString()).to.equals(expectedTokenOwnerBalance.toString())
@@ -119,10 +144,10 @@ describe('➡️ Rescue Tests', function () {
 
     it('Account with RESCUE role cannot rescue more HBAR than the owner balance', async function () {
         // Get the initial balance of the token owner
-        const TokenOwnerBalance = await ethers.provider.getBalance(proxyAddress)
+        const TokenOwnerBalance = await ethers.provider.getBalance(stableCoinProxyAddress)
 
         // Rescue TokenOwnerBalance + 1 : fail
-        const txResponse = await hederaTokenManager.rescueHBAR(TokenOwnerBalance.add(1), {
+        const txResponse = await rescuableFacet.rescueHBAR(TokenOwnerBalance.add(1), {
             gasLimit: GAS_LIMIT.hederaTokenManager.rescueHBAR,
         })
         await expect(new ValidateTxResponseCommand({ txResponse }).execute()).to.be.rejectedWith(Error)
@@ -130,7 +155,7 @@ describe('➡️ Rescue Tests', function () {
 
     it('Account without RESCUE role cannot rescue HBAR', async function () {
         // Account without rescue role, rescues HBAR : fail
-        const txResponse = await hederaTokenManager.connect(nonOperator).rescueHBAR(ONE_TOKEN, {
+        const txResponse = await rescuableFacet.connect(nonOperator).rescueHBAR(ONE_TOKEN, {
             gasLimit: GAS_LIMIT.hederaTokenManager.rescueHBAR,
         })
         await expect(new ValidateTxResponseCommand({ txResponse }).execute()).to.be.rejectedWith(Error)

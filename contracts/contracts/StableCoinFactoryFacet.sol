@@ -136,13 +136,6 @@ contract StableCoinFactoryFacet is IStaticFunctionSelectors, IStableCoinFactory,
         }
 
         if (createReserve) {
-            HederaReserveFacet reserveContract = new HederaReserveFacet();
-            _validationReserveInitialAmount(
-                reserveContract.decimals(),
-                requestedToken.reserveInitialAmount,
-                requestedToken.tokenDecimals,
-                requestedToken.tokenInitialSupply
-            );
             reserveProxy = address(
                 new ResolverProxy(
                     requestedToken.businessLogicResolverAddress,
@@ -150,6 +143,12 @@ contract StableCoinFactoryFacet is IStaticFunctionSelectors, IStableCoinFactory,
                     requestedToken.reserveConfigurationId.version,
                     requestedToken.roles
                 )
+            );
+            _validationReserveInitialAmount(
+                HederaReserveFacet(reserveProxy).decimals(),
+                requestedToken.reserveInitialAmount,
+                requestedToken.tokenDecimals,
+                requestedToken.tokenInitialSupply
             );
             HederaReserveFacet(reserveProxy).initialize(requestedToken.reserveInitialAmount, msg.sender);
             return reserveProxy;

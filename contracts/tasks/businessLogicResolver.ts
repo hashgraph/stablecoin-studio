@@ -3,7 +3,12 @@ import { task, types } from 'hardhat/config'
 import { GetConfigurationInfoQuery, GetResolverBusinessLogicsQuery, UpdateBusinessLogicKeysCommand } from '@tasks'
 
 task('getConfigurationInfo', 'Get all info for a given configuration')
-    .addPositionalParam('resolver', 'The resolver proxy admin address', undefined, types.string)
+    .addPositionalParam(
+        'businessLogicResolverProxyAddress',
+        'The resolver proxy admin address',
+        undefined,
+        types.string
+    )
     .addPositionalParam('configurationId', 'The config ID', undefined, types.string)
     .setAction(async (args: GetConfigurationInfoQuery, hre) => {
         console.log(`Executing getConfigurationInfo on ${hre.network.name} ...`)
@@ -20,8 +25,7 @@ task('getConfigurationInfo', 'Get all info for a given configuration')
 
         const { facetListRecord } = await getFacetsByConfigurationIdAndVersion(query)
 
-        Object.entries(facetListRecord).forEach(([version, facetList]) => {
-            console.log(`Number of Facets for Config ${facetList[0].id} and Version ${version}: ${facetList.length}`)
+        Object.entries(facetListRecord).forEach(([, facetList]) => {
             facetList.forEach((facet, index) => {
                 console.log(`Facet ${index + 1}:`)
                 console.log(`  ID: ${facet.id}`)
