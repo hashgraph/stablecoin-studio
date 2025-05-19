@@ -170,6 +170,15 @@ export const GAS_LIMIT = {
         deploy: 2_000_000n,
         upgrade: 150_000n,
     },
+    diamondCutManager: {
+        createConfiguration: 100_000n,
+    },
+    diamondFacet: {
+        deploy: 2_000_000n,
+        updateConfigVersion: 80_000n,
+        updateConfig: 80_000n,
+        updateResolver: 80_000n,
+    },
 }
 
 // * Values (Payable Amounts)
