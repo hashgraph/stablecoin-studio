@@ -1,37 +1,56 @@
 import { expect } from 'chai'
 import { SignerWithAddress } from '@nomiclabs/hardhat-ethers/signers'
-import { ethers, network } from 'hardhat'
-import { NetworkName } from '@configuration'
-import { HederaTokenManager, HederaTokenManager__factory } from '@typechain-types'
-import { ADDRESS_ZERO, MESSAGES, ValidateTxResponseCommand } from '@scripts'
-import { deployFullInfrastructureInTests, GAS_LIMIT, ONE_TOKEN } from '@test/shared'
+import { ethers } from 'hardhat'
+import { CashInFacet, CashInFacet__factory, KYCFacet, KYCFacet__factory } from '@typechain-types'
+import {
+    ADDRESS_ZERO,
+    deployFullInfrastructure,
+    DeployFullInfrastructureCommand,
+    MESSAGES,
+    ONE_TOKEN,
+    ValidateTxResponseCommand,
+} from '@scripts'
+import { deployStableCoinInTests, GAS_LIMIT } from '@test/shared'
 
 describe('➡️ KYC Tests', function () {
     // Contracts
-    let proxyAddress: string
-    let hederaTokenManager: HederaTokenManager
+    let stableCoinProxyAddress: string
+    let kycFacet: KYCFacet
+    let cashInFacet: CashInFacet
     // Accounts
     let operator: SignerWithAddress
     let nonOperator: SignerWithAddress
 
-    before(async function () {
-        // Disable | Mock console.log()
+    async function setFacets(address: string) {
+        kycFacet = KYCFacet__factory.connect(address, operator)
+        cashInFacet = CashInFacet__factory.connect(address, operator)
+    }
+
+    before(async () => {
+        // mute | mock console.log
         console.log = () => {} // eslint-disable-line
-        // Get Signers
-        ;[operator, nonOperator] = await ethers.getSigners()
-        // * Deploy StableCoin Token
         console.info(MESSAGES.deploy.info.deployFullInfrastructureInTests)
-        ;({ proxyAddress } = await deployFullInfrastructureInTests({
+        ;[operator, nonOperator] = await ethers.getSigners()
+
+        const { ...deployedContracts } = await deployFullInfrastructure(
+            await DeployFullInfrastructureCommand.newInstance({
+                signer: operator,
+                useDeployed: false,
+                useEnvironment: true,
+            })
+        )
+        ;({ stableCoinProxyAddress } = await deployStableCoinInTests({
             signer: operator,
-            network: network.name as NetworkName,
+            businessLogicResolverProxyAddress: deployedContracts.businessLogicResolver.proxyAddress!,
+            stableCoinFactoryProxyAddress: deployedContracts.stableCoinFactoryFacet.proxyAddress!,
             addKyc: true,
             grantKYCToOriginalSender: true,
         }))
-        hederaTokenManager = HederaTokenManager__factory.connect(proxyAddress, operator)
+        await setFacets(stableCoinProxyAddress)
     })
 
     it("An account without KYC role can't grant kyc to an account for a token", async function () {
-        const response = await hederaTokenManager
+        const response = await kycFacet
             .connect(nonOperator)
             .grantKyc(operator.address, { gasLimit: GAS_LIMIT.hederaTokenManager.grantKyc })
         await expect(
@@ -44,13 +63,13 @@ describe('➡️ KYC Tests', function () {
 
     it("An account with KYC role can grant and revoke kyc to an account for a token + An account without KYC role can't revoke kyc to an account for a token", async function () {
         // Should be able to mint tokens before granting KYC
-        const mintResponse = await hederaTokenManager.mint(operator.address, ONE_TOKEN, {
+        const mintResponse = await cashInFacet.mint(operator.address, ONE_TOKEN, {
             gasLimit: GAS_LIMIT.hederaTokenManager.mint,
         })
         await new ValidateTxResponseCommand({ txResponse: mintResponse, confirmationEvent: 'TokensMinted' }).execute()
 
         // Should not be able to revoke KYC from an account without KYC role
-        const nonOperatorRevokeResponse = await hederaTokenManager.connect(nonOperator).revokeKyc(operator.address, {
+        const nonOperatorRevokeResponse = await kycFacet.connect(nonOperator).revokeKyc(operator.address, {
             gasLimit: GAS_LIMIT.hederaTokenManager.revokeKyc,
         })
         await expect(
@@ -60,7 +79,7 @@ describe('➡️ KYC Tests', function () {
         ).to.be.rejectedWith(Error)
 
         // Should be able to revoke KYC from an account with KYC role
-        const revokeResponse = await hederaTokenManager.revokeKyc(operator.address, {
+        const revokeResponse = await kycFacet.revokeKyc(operator.address, {
             gasLimit: GAS_LIMIT.hederaTokenManager.revokeKyc,
         })
         await new ValidateTxResponseCommand({
@@ -69,7 +88,7 @@ describe('➡️ KYC Tests', function () {
         }).execute()
 
         // Should NOT be able to mint more tokens
-        const revokedMintResponse = await hederaTokenManager.mint(operator.address, ONE_TOKEN, {
+        const revokedMintResponse = await cashInFacet.mint(operator.address, ONE_TOKEN, {
             gasLimit: GAS_LIMIT.hederaTokenManager.mint,
         })
         await expect(new ValidateTxResponseCommand({ txResponse: revokedMintResponse }).execute()).to.be.rejectedWith(
@@ -77,7 +96,7 @@ describe('➡️ KYC Tests', function () {
         )
 
         // Should be able to grant KYC to an account with KYC role
-        const grantResponse = await hederaTokenManager.grantKyc(operator.address, {
+        const grantResponse = await kycFacet.grantKyc(operator.address, {
             gasLimit: GAS_LIMIT.hederaTokenManager.grantKyc,
         })
         await new ValidateTxResponseCommand({
@@ -86,7 +105,7 @@ describe('➡️ KYC Tests', function () {
         }).execute()
 
         // Should be able to mint more tokens again
-        const grantedMintResponse = await hederaTokenManager.mint(operator.address, ONE_TOKEN, {
+        const grantedMintResponse = await cashInFacet.mint(operator.address, ONE_TOKEN, {
             gasLimit: GAS_LIMIT.hederaTokenManager.mint,
         })
         await new ValidateTxResponseCommand({
@@ -96,12 +115,12 @@ describe('➡️ KYC Tests', function () {
     })
 
     it('An account with KYC role can`t grant and revoke kyc to the zero account for a token', async function () {
-        const grantResponse = await hederaTokenManager.grantKyc(ADDRESS_ZERO, {
+        const grantResponse = await kycFacet.grantKyc(ADDRESS_ZERO, {
             gasLimit: GAS_LIMIT.hederaTokenManager.grantKyc,
         })
         await expect(new ValidateTxResponseCommand({ txResponse: grantResponse }).execute()).to.be.rejectedWith(Error)
 
-        const revokeResponse = await hederaTokenManager.revokeKyc(ADDRESS_ZERO, {
+        const revokeResponse = await kycFacet.revokeKyc(ADDRESS_ZERO, {
             gasLimit: GAS_LIMIT.hederaTokenManager.revokeKyc,
         })
         await expect(new ValidateTxResponseCommand({ txResponse: revokeResponse }).execute()).to.be.rejectedWith(Error)

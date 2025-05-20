@@ -43,9 +43,10 @@ contract ReserveFacet is IReserve, IStaticFunctionSelectors, ReserveStorageWrapp
 
     function getStaticFunctionSelectors() external pure override returns (bytes4[] memory staticFunctionSelectors_) {
         uint256 selectorIndex;
-        staticFunctionSelectors_ = new bytes4[](2);
+        staticFunctionSelectors_ = new bytes4[](3);
         staticFunctionSelectors_[selectorIndex++] = this.getReserveAmount.selector;
         staticFunctionSelectors_[selectorIndex++] = this.updateReserveAddress.selector;
+        staticFunctionSelectors_[selectorIndex++] = this.getReserveAddress.selector;
     }
 
     function getStaticInterfaceIds() external pure override returns (bytes4[] memory staticInterfaceIds_) {
