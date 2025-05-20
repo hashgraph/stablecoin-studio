@@ -211,25 +211,26 @@ This includes:
 - Deployment of a ResolverProxy for the StableCoinFactory.
 
 ```shell
-npx hardhat deployInfrastructure --network <network>
+npx hardhat deployAll --network <network>
 ```
 
 ### What Does This Do?
 This deployment process:
 
-1. Deploys All Contracts: Includes facets such as HederaTokenManagerFacet, ReserveFacet, KYCFacet, and others using the appropriate deploy factories. 
-2. Initializes BusinessLogicResolver: Prepares it to manage logic configuration versions.
-3. Registers All Deployed Facets:Links the logic into the resolver to enable version control and upgrades.
-4. Creates Configurations: Assigns configuration IDs and versions to each facet (for StableCoin, Reserve, Factory, etc.).
-5. Deploys ResolverProxy for Factory :Binds the StableCoinFactory logic to a proxy, managed by the resolver.
-6. Saves Environment (optional):If the --useEnvironment flag is passed, deployment metadata is stored in the project's Environment.ts for reusability in later tasks.
+1. **Deploys All Contracts**: Deploys all facets using their respective factories, such as `HederaTokenManagerFacet`, `ReserveFacet`, `KYCFacet`, `BurnableFacet`, `RolesFacet`, and more.
+2. **Deploys & Initializes the BusinessLogicResolver**: The resolver is deployed and initialized to manage configuration keys and versioned logic.
+3. **Registers Facets in the Resolver**: All deployed facets are registered under their appropriate configuration key (e.g., `stableCoin`, `reserve`, `factory`), including selectors and interface IDs.
+4. **Creates Logic Configurations**: Each configuration (e.g., for stablecoin logic) is assigned a unique key and version, enabling future upgrades.
+5. **Deploys ResolverProxy for Factory**: A `ResolverProxy` is deployed and linked to the `StableCoinFactory`, allowing it to dynamically use the registered logic.
+6. **Displays All Deployed Contract Addresses**: Includes proxy addresses, base contract addresses, and Hedera IDs for convenient reference.
 
 ### Optional flags
-| Flag                   | Description                                              |
-| ---------------------- | -------------------------------------------------------- |
-| `--useDeployed`        | Reuse already deployed contracts if addresses are known. |
-| `--useEnvironment`     | Load or save config using `Environment.ts`.              |
-| `--partialBatchDeploy` | Enables partial config creation logic per token type.    |
+| Flag                   | Description                                                                        |
+| ---------------------- | ---------------------------------------------------------------------------------- |
+| `--useDeployed`        | Reuse already deployed contracts if their addresses are known (default: `true`).   |
+| `--privateKey`         | Use a raw private key as signer instead of local Hardhat account.                  |
+| `--signerAddress`      | Specify signer by address from Hardhat signers array.                              |
+| `--signerPosition`     | Specify signer by index in Hardhat signers array.                                  |
 
 
 ## Deploy a new Stablecoin
