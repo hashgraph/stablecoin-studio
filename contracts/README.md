@@ -268,41 +268,43 @@ npx hardhat deployStableCoin \
   --network testnet
 ```
 
-## Upgrade Logic
-The system supports upgradeable contract logic using a Diamond + Resolver Pattern. Logic is versioned and registered through a centralized contract: the BusinessLogicResolver. Upgrades happen by associating new logic (facets) with a specific configuration key and version.
+## Upgrade Logic (via BusinessLogicResolver)
+This system uses a modular Diamond + Resolver pattern for managing upgradeable logic. Smart contracts delegate calls through a ResolverProxy, which dynamically fetches the latest logic version for a given component (e.g., stablecoin, reserve) from a centralized BusinessLogicResolver.
 
 ### How it works?
-The BusinessLogicResolver holds:
+The BusinessLogicResolver:
 
-- A mapping of keys (e.g., stableCoin, reserve, factory) to configuration versions. 
-- Each version links to a list of facets and function selectors (diamond cut). 
-- Contracts like StableCoinFactory or StableCoin retrieve the logic via a ResolverProxy that queries the resolver dynamically.
+- Maps configuration keys (like stableCoin, reserve, factory) to facet contract addresses. 
+- Tracks versioned logic by assigning each registered contract a role in the system (defined by selectors and interfaces). 
+- Allows updating logic without redeploying proxies, by using version-aware resolver lookups.
 
 ### Register new logic version
-To register a new version of logic (e.g., a new implementation of HederaTokenManagerFacet), use the custom task:
+To register a new list of logic contracts (facets) for any configuration key, use the following Hardhat task:
+
 ```shell
-npx hardhat resolverDiamondCut \
-  --businessLogicResolverProxyAddress <resolverAddress> \
-  --configIdKey stableCoin \
-  --configIdVersion 2 \
-  --facetAddress <newFacetAddress> \
-  --selectors <selectorsCommaSeparated> \
+npx hardhat updateBusinessLogicKeys \
+  --resolverAddress <businessLogicResolverAddress> \
+  --implementationAddressList <commaSeparatedFacetAddresses> \
+  --privateKey <yourPrivateKey> \
   --network <network>
+
 ```
 #### Required parameters:
-| Flag                                  | Description                                                              |
-| ------------------------------------- | ------------------------------------------------------------------------ |
-| `--businessLogicResolverProxyAddress` | Proxy address of the deployed `BusinessLogicResolver`                    |
-| `--configIdKey`                       | The key identifying the logic type (e.g., `stableCoin`, `reserve`, etc.) |
-| `--configIdVersion`                   | The new version number to assign                                         |
-| `--facetAddress`                      | Address of the new logic (facet) contract                                |
-| `--selectors`                         | Comma-separated list of method selectors (e.g., `0xa9059cbb,0x095ea7b3`) |
+| Flag                          | Description                                                        |
+| ----------------------------- | ------------------------------------------------------------------ |
+| `--resolverAddress`           | Address of the `BusinessLogicResolver` contract                    |
+| `--implementationAddressList` | Comma-separated list of facet contract addresses                   |
+| `--privateKey`                | Private key of the account with permissions to update the resolver |
+| `--network`                   | Hardhat network to use                                             |
 
 ### When to use this?
 
 Use this approach whenever:
-- A bug fix or feature needs to be added to any facet (e.g., KYC, Fees). 
-- You want to deploy a new version of a stablecoin using improved logic. 
+- You deploy new or upgraded logic contracts (facets).
+- You want the resolver to expose new logic for proxies using ResolverProxy.
+- You’re rotating logic or deploying stablecoins with a new configuration.
+
+>For this to work, the BusinessLogicResolver must be initialized. If it's not yet initialized, use the initializeBusinessLogicResolver task first.
 
 # V1 to V2 Migration
 In order to migrate V1 Stablecoins to V2 you need to :
