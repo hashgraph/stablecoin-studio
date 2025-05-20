@@ -7,6 +7,7 @@ import {IStaticFunctionSelectors} from '../interfaces/resolverProxy/IStaticFunct
 import {IDiamondLoupe} from '../interfaces/resolverProxy/IDiamondLoupe.sol';
 import {BusinessLogicResolverWrapper} from '../BusinessLogicResolverWrapper.sol';
 import {_DIAMOND_CUT_MANAGER_STORAGE_POSITION} from '../../constants/storagePositions.sol';
+import {EnumerableSetBytes4} from '../../core/EnumerableSetBytes4.sol';
 
 abstract contract DiamondCutManagerWrapper is IDiamondCutManager, BusinessLogicResolverWrapper {
     struct DiamondCutManagerStorage {
@@ -407,6 +408,7 @@ abstract contract DiamondCutManagerWrapper is IDiamondCutManager, BusinessLogicR
     ) private {
         address selectorAddress = address(_static);
         bytes4[] memory selectors = _static.getStaticFunctionSelectors();
+        _checkSelectorsBlacklist(_configurationId, selectors);
         _dcms.selectors[_configVersionFacetHash] = selectors;
         uint256 length = selectors.length;
         for (uint256 index; index < length; ) {
@@ -445,6 +447,23 @@ abstract contract DiamondCutManagerWrapper is IDiamondCutManager, BusinessLogicR
         uint256 _version
     ) private view returns (uint256 version_) {
         version_ = _version > 0 ? _version : _dcms.latestVersion[_configurationId];
+    }
+
+    function _checkSelectorsBlacklist(bytes32 _configurationId, bytes4[] memory _selectors) private view {
+        EnumerableSetBytes4.Bytes4Set storage selectorBlacklist = _businessLogicResolverStorage().selectorBlacklist[
+            _configurationId
+        ];
+
+        uint256 length = _selectors.length;
+        for (uint256 index; index < length; ) {
+            bytes4 selector = _selectors[index];
+            if (EnumerableSetBytes4.contains(selectorBlacklist, selector)) {
+                revert SelectorBlacklisted(selector);
+            }
+            unchecked {
+                ++index;
+            }
+        }
     }
 
     // TODO: Move to a separate file.

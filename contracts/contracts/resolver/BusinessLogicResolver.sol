@@ -9,6 +9,7 @@ import {_BUSINESS_LOGIC_RESOLVER_KEY} from '../constants/resolverKeys.sol';
 
 contract BusinessLogicResolver is IBusinessLogicResolver, DiamondCutManager, Initializable {
     error Unimplemented();
+
     // solhint-disable-next-line func-name-mixedcase
     function initialize_BusinessLogicResolver()
         external
@@ -26,6 +27,20 @@ contract BusinessLogicResolver is IBusinessLogicResolver, DiamondCutManager, Ini
         uint256 latestVersion = _registerBusinessLogics(_businessLogics);
 
         emit BusinessLogicsRegistered(_businessLogics, latestVersion);
+    }
+
+    function addSelectorsToBlacklist(
+        bytes32 _configurationId,
+        bytes4[] calldata _selectors
+    ) external override onlyRole(ADMIN_ROLE) {
+        _addSelectorsToBlacklist(_configurationId, _selectors);
+    }
+
+    function removeSelectorsFromBlacklist(
+        bytes32 _configurationId,
+        bytes4[] calldata _selectors
+    ) external override onlyRole(ADMIN_ROLE) {
+        _removeSelectorsFromBlacklist(_configurationId, _selectors);
     }
 
     function getVersionStatus(
@@ -60,5 +75,13 @@ contract BusinessLogicResolver is IBusinessLogicResolver, DiamondCutManager, Ini
         uint256 _pageLength
     ) external view override returns (bytes32[] memory businessLogicKeys_) {
         businessLogicKeys_ = _getBusinessLogicKeys(_pageIndex, _pageLength);
+    }
+
+    function getSelectorsBlacklist(
+        bytes32 _configurationId,
+        uint256 _pageIndex,
+        uint256 _pageLength
+    ) external view override returns (bytes4[] memory selectors_) {
+        return _getSelectorsBlacklist(_configurationId, _pageIndex, _pageLength);
     }
 }
