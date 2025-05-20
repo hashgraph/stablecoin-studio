@@ -50,10 +50,6 @@ describe(`<${StableCoinSettings.name} />`, () => {
 
 		jest.spyOn(Network, 'getFactoryAddress').mockReturnValue('0.0.12345');
 
-		// jest
-		// 	.spyOn(SDKService, 'getHederaTokenManagerList')
-		// 	.mockImplementation(() => Promise.resolve([new ContractId('0.0.3')]));
-
 		const component = render(<StableCoinSettings />, store);
 		const stableCoin = await component.findByTestId('address-label');
 		expect(stableCoin).toBeInTheDocument();
@@ -102,10 +98,6 @@ describe(`<${StableCoinSettings.name} />`, () => {
 			}),
 		}));
 
-		// jest
-		// 	.spyOn(SDKService, 'getHederaTokenManagerList')
-		// 	.mockImplementation(() => Promise.resolve([new ContractId('0.0.3')]));
-
 		const component = render(<StableCoinSettings />, store);
 
 		const acceptOwnerButton = await component.findByTestId('accept-owner-button');
@@ -139,10 +131,6 @@ describe(`<${StableCoinSettings.name} />`, () => {
 		}));
 
 		jest.spyOn(Network, 'getFactoryAddress').mockReturnValue('0.0.12345');
-
-		// jest
-		// 	.spyOn(SDKService, 'getHederaTokenManagerList')
-		// 	.mockImplementation(() => Promise.resolve([new ContractId('0.0.3')]));
 
 		const component = render(<StableCoinSettings />, store);
 		const stableCoin = await component.findByTestId('address-label');

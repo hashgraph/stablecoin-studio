@@ -68,30 +68,7 @@ export const useRefreshCoinInfo = () => {
 				customFees: resp?.customFees && JSON.parse(JSON.stringify(resp.customFees)),
 			}),
 		);
-		// dispatch(
-		// 	walletActions.setSelectedStableCoinProxyConfig({
-		// 		owner: proxyConfig?.owner?.toString(),
-		// 		implementationAddress: proxyConfig?.implementationAddress?.toString(),
-		// 		pendingOwner: proxyConfig?.pendingOwner?.toString(),
-		// 	}),
-		// );
-		// dispatch(
-		// 	walletActions.setIsProxyOwner(proxyConfig?.owner?.toString() === accountInfo?.id?.toString()),
-		// );
-		// dispatch(
-		// 	walletActions.setIsPendingOwner(
-		// 		proxyConfig?.pendingOwner?.toString() !== proxyConfig?.owner?.toString() &&
-		// 			proxyConfig?.pendingOwner?.toString() !== accountInfo?.id?.toString() &&
-		// 			proxyConfig?.pendingOwner?.toString() !== '0.0.0' &&
-		// 			proxyConfig?.pendingOwner?.toString() !== '' &&
-		// 			proxyConfig?.pendingOwner?.toString() !== undefined,
-		// 	),
-		// );
-		// dispatch(
-		// 	walletActions.setIsAcceptOwner(
-		// 		proxyConfig?.pendingOwner?.toString() === accountInfo?.id?.toString(),
-		// 	),
-		// );
+
 		setIsLoading(false);
 	};
 
