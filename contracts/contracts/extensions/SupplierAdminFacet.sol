@@ -153,7 +153,7 @@ contract SupplierAdminFacet is ISupplierAdmin, IStaticFunctionSelectors, Supplie
 
     function getStaticFunctionSelectors() external pure override returns (bytes4[] memory staticFunctionSelectors_) {
         uint256 selectorIndex;
-        staticFunctionSelectors_ = new bytes4[](7);
+        staticFunctionSelectors_ = new bytes4[](8);
         staticFunctionSelectors_[selectorIndex++] = this.getSupplierAllowance.selector;
         staticFunctionSelectors_[selectorIndex++] = this.isUnlimitedSupplierAllowance.selector;
         staticFunctionSelectors_[selectorIndex++] = this.grantSupplierRole.selector;
@@ -161,6 +161,7 @@ contract SupplierAdminFacet is ISupplierAdmin, IStaticFunctionSelectors, Supplie
         staticFunctionSelectors_[selectorIndex++] = this.revokeSupplierRole.selector;
         staticFunctionSelectors_[selectorIndex++] = this.resetSupplierAllowance.selector;
         staticFunctionSelectors_[selectorIndex++] = this.increaseSupplierAllowance.selector;
+        staticFunctionSelectors_[selectorIndex++] = this.decreaseSupplierAllowance.selector;
     }
 
     function getStaticInterfaceIds() external pure override returns (bytes4[] memory staticInterfaceIds_) {
