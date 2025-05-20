@@ -26,8 +26,8 @@ describe(`<${StableCoinCreation.name} />`, () => {
 	test('should has subtitle', () => {
 		const component = render(<StableCoinCreation />);
 
-		const subtitle = component.getByTestId('creation-subtitle');
-		expect(subtitle).toHaveTextContent(translations.common.factoryId);
+		const subtitleFactory = component.getByTestId('creation-subtitle-factory');
+		expect(subtitleFactory).toHaveTextContent(translations.common.factoryId);
 	});
 
 	test('should have options', async () => {
@@ -59,22 +59,14 @@ describe(`<${StableCoinCreation.name} />`, () => {
 			}),
 		}));
 
-		const contractId: ContractId = new ContractId('0.0.1234');
-		// jest.spyOn(SDKService, 'getHederaTokenManagerList').mockResolvedValue([contractId]);
-
 		const createResponse = {
 			coin: { tokenId: new HederaId('0.0.12345') },
 			reserve: { proxyAddress: new ContractId('0.0.1234') },
 		};
-		const createResponse2 = {};
+
 		jest.spyOn(SDKService, 'createStableCoin').mockResolvedValue(createResponse);
 
 		const component = render(<StableCoinCreation />, store);
-
-		const noProof = component.getByTestId('no-proof-of-reserve-title');
-		await waitFor(() => {
-			expect(noProof).not.toBeInTheDocument();
-		});
 
 		// step 1
 		const name = component.getByTestId('name');
@@ -82,6 +74,15 @@ describe(`<${StableCoinCreation.name} />`, () => {
 
 		const symbol = component.getByTestId('symbol');
 		await userEvent.type(symbol, 'symbol');
+
+		const configId = component.getByTestId('configId');
+		await userEvent.type(
+			configId,
+			'0x0000000000000000000000000000000000000000000000000000000000000001',
+		);
+
+		const configVersion = component.getByTestId('configVersion');
+		await userEvent.type(configVersion, '1');
 
 		const next1 = component.getByTestId('stepper-step-panel-button-primary-1');
 		await userEvent.click(next1);

@@ -414,7 +414,7 @@ const StableCoinCreation = () => {
 						align='right'
 						w='full'
 						as='i'
-						data-testid='creation-subtitle'
+						data-testid='creation-subtitle-factory'
 					>
 						{t('common.factoryId') + factoryId}
 					</Text>
@@ -425,7 +425,7 @@ const StableCoinCreation = () => {
 						align='right'
 						w='full'
 						as='i'
-						data-testid='creation-subtitle'
+						data-testid='creation-subtitle-resolver'
 					>
 						{t('common.resolverId') + resolverId}
 					</Text>

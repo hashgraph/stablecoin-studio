@@ -19,13 +19,13 @@ exports[`<StableCoinCreation /> should render correctly 1`] = `
       >
         <i
           class="chakra-text css-zcexcl"
-          data-testid="creation-subtitle"
+          data-testid="creation-subtitle-factory"
         >
           Factory Id : undefined
         </i>
         <i
           class="chakra-text css-zcexcl"
-          data-testid="creation-subtitle"
+          data-testid="creation-subtitle-resolver"
         >
           Resolver Id : undefined
         </i>
