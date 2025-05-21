@@ -49,12 +49,12 @@ import {
 } from '../../config';
 import Injectable from '../../../src/core/Injectable';
 import { Time } from '../../../src/core/Time';
+import { CONFIG_SC, DEFAULT_VERSION } from '../../../src/core/Constants';
 
 const initialSupply = 1000;
 const apiSecretKey = FIREBLOCKS_SETTINGS.apiSecretKeyPath;
-const configId =
-	'0x0000000000000000000000000000000000000000000000000000000000000000';
-const configVersion = 0;
+const configId = CONFIG_SC;
+const configVersion = DEFAULT_VERSION;
 
 describe('🧪 FireblocksTransactionAdapter test', () => {
 	let stableCoinHTS: StableCoinViewModel;
@@ -116,7 +116,7 @@ describe('🧪 FireblocksTransactionAdapter test', () => {
 			supplyType: TokenSupplyType.INFINITE,
 			stableCoinFactory: FACTORY_ADDRESS,
 			reserveInitialAmount: '1000000',
-			createReserve: true,
+			createReserve: false,
 			grantKYCToOriginalSender: true,
 			burnRoleAccount: FIREBLOCKS_SETTINGS.hederaAccountId,
 			rescueRoleAccount: FIREBLOCKS_SETTINGS.hederaAccountId,

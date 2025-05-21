@@ -296,8 +296,7 @@ export default class RPCTransactionAdapter extends TransactionAdapter {
 					? coin.initialSupply.toFixedNumber()
 					: BigDecimal.ZERO.toFixedNumber(),
 				coin.decimals,
-				reserveAddress == undefined ||
-				reserveAddress.toString() == '0.0.0'
+				reserveAddress?.toString?.() === '0.0.0' || !reserveAddress
 					? '0x0000000000000000000000000000000000000000'
 					: HContractId.fromString(
 							(
