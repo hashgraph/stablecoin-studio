@@ -113,7 +113,7 @@ describe('🧪 AWSKMSTransactionAdapter test', () => {
 			supplyType: TokenSupplyType.INFINITE,
 			stableCoinFactory: FACTORY_ADDRESS,
 			reserveInitialAmount: '1000000',
-			createReserve: true,
+			createReserve: false,
 			grantKYCToOriginalSender: true,
 			burnRoleAccount: AWS_KMS_SETTINGS.hederaAccountId,
 			rescueRoleAccount: AWS_KMS_SETTINGS.hederaAccountId,

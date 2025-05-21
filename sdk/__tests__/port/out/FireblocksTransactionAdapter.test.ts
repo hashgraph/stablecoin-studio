@@ -116,7 +116,7 @@ describe('🧪 FireblocksTransactionAdapter test', () => {
 			supplyType: TokenSupplyType.INFINITE,
 			stableCoinFactory: FACTORY_ADDRESS,
 			reserveInitialAmount: '1000000',
-			createReserve: true,
+			createReserve: false,
 			grantKYCToOriginalSender: true,
 			burnRoleAccount: FIREBLOCKS_SETTINGS.hederaAccountId,
 			rescueRoleAccount: FIREBLOCKS_SETTINGS.hederaAccountId,
