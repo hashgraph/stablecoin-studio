@@ -18,7 +18,14 @@
  *
  */
 
-import ConfigInfoViewModel from './ConfigInfoViewModel';
-import HoldViewModel from './HoldViewModel';
+import { QueryResponse } from '../../../core/query/QueryResponse';
 
-export { ConfigInfoViewModel, HoldViewModel };
+export default interface HoldViewModel extends QueryResponse {
+	id: number;
+	amount: string;
+	expirationDate: Date;
+	tokenHolderAddress: string;
+	escrowAddress: string;
+	destinationAddress: string;
+	data: string;
+}

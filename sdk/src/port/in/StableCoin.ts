@@ -121,7 +121,7 @@ import { ExecuteHoldCommand } from '../../app/usecase/command/stablecoin/operati
 import { ReleaseHoldCommand } from '../../app/usecase/command/stablecoin/operations/hold/releaseHold/ReleaseHoldCommand.js';
 import { ReclaimHoldCommand } from '../../app/usecase/command/stablecoin/operations/hold/reclaimHold/ReclaimHoldCommand.js';
 import { GetHoldForQuery } from '../../app/usecase/query/stablecoin/hold/getHoldFor/GetHoldForQuery.js';
-import HoldViewModel from '../../port/out/rpc/response/HoldViewModel.js';
+import HoldViewModel from '../../port/in/response/HoldViewModel.js';
 import { ONE_THOUSAND } from '../../core/Constants.js';
 import { GetHoldCountForQuery } from '../../app/usecase/query/stablecoin/hold/getHoldCountFor/GetHoldCountForQuery.js';
 import { GetHoldsIdForQuery } from '../../app/usecase/query/stablecoin/hold/getHoldsIdFor/GetHoldsIdForQuery.js';
@@ -286,6 +286,9 @@ class StableCoinInPort implements IStableCoinInPort {
 			kycRoleAccount: new HederaId(req.kycRoleAccount ?? '0.0.0'),
 			cashInRoleAccount: new HederaId(req.cashInRoleAccount ?? '0.0.0'),
 			feeRoleAccount: new HederaId(req.feeRoleAccount ?? '0.0.0'),
+			holdCreatorRoleAccount: new HederaId(
+				req.holdCreatorRoleAccount ?? '0.0.0',
+			),
 			cashInRoleAllowance: BigDecimal.fromString(
 				req.cashInRoleAllowance ?? '0',
 				req.decimals,

@@ -283,14 +283,14 @@ interface IHoldTransactionAdapter {
 		coin: StableCoinCapabilities,
 		amount: BigDecimal,
 		escrow: HederaId,
-		expirationDate: string,
+		expirationDate: BigDecimal,
 		targetId?: HederaId,
 	): Promise<TransactionResponse>;
 	createHoldByController(
 		coin: StableCoinCapabilities,
 		amount: BigDecimal,
 		escrow: HederaId,
-		expirationDate: string,
+		expirationDate: BigDecimal,
 		sourceId: HederaId,
 		targetId?: HederaId,
 	): Promise<TransactionResponse>;
@@ -629,7 +629,7 @@ export default abstract class TransactionAdapter
 		coin: StableCoinCapabilities,
 		amount: BigDecimal,
 		escrow: HederaId,
-		expirationDate: string,
+		expirationDate: BigDecimal,
 		targetId?: HederaId,
 	): Promise<TransactionResponse> {
 		throw new Error('Method not implemented.');
@@ -638,7 +638,7 @@ export default abstract class TransactionAdapter
 		coin: StableCoinCapabilities,
 		amount: BigDecimal,
 		escrow: HederaId,
-		expirationDate: string,
+		expirationDate: BigDecimal,
 		sourceId: HederaId,
 		targetId?: HederaId,
 	): Promise<TransactionResponse> {

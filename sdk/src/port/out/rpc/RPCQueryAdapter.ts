@@ -44,8 +44,11 @@ import ContractId from '../../../domain/context/contract/ContractId.js';
 import EvmAddress from '../../../domain/context/contract/EvmAddress.js';
 import { MirrorNodeAdapter } from '../mirror/MirrorNodeAdapter.js';
 import { ContractId as HContractId } from '@hashgraph/sdk';
-import { HoldDetails, HoldIdentifier } from 'domain/context/hold/Hold.js';
-import { BigDecimal } from 'port/in/StableCoin.js';
+import {
+	HoldDetails,
+	HoldIdentifier,
+} from '../../../domain/context/hold/Hold.js';
+import BigDecimal from '../../../domain/context/shared/BigDecimal';
 
 const LOCAL_JSON_RPC_RELAY_URL = 'http://127.0.0.1:7546/api';
 

@@ -37,7 +37,7 @@ import {
 import { AccountNotKyc } from '../../../error/AccountNotKyc.js';
 import { AccountFreeze } from '../../../error/AccountFreeze.js';
 import { StableCoinNotAssociated } from '../../../error/StableCoinNotAssociated.js';
-import ValidationService from 'app/service/ValidationService.js';
+import ValidationService from '../../../../../../service/ValidationService.js';
 
 @CommandHandler(ReclaimHoldCommand)
 export class ReclaimHoldCommandHandler
@@ -92,6 +92,12 @@ export class ReclaimHoldCommandHandler
 			tokenId,
 			sourceId,
 			holdId,
+		);
+		await this.validationService.checkHoldExpiration(
+			tokenId,
+			sourceId,
+			holdId,
+			true,
 		);
 
 		const res = await handler.reclaimHold(capabilities, sourceId, holdId);

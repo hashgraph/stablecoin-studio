@@ -34,7 +34,6 @@ export default class GetHoldsIdForRequest extends ValidatedRequest<GetHoldsIdFor
 		end,
 	}: {
 		tokenId: string;
-		amount: string;
 		sourceId: string;
 		start: number;
 		end: number;

@@ -107,6 +107,7 @@ import {
 	EXECUTE_HOLD_GAS,
 	RELEASE_HOLD_GAS,
 	RECLAIM_HOLD_GAS,
+	CONTROLLER_CREATE_HOLD_GAS,
 } from '../../../core/Constants.js';
 import LogService from '../../../app/service/LogService.js';
 import { RESERVE_DECIMALS } from '../../../domain/context/reserve/Reserve.js';
@@ -121,7 +122,7 @@ import {
 	SC_FractionalFee,
 } from '../../../domain/context/fee/CustomFee.js';
 import { ResolverProxyConfiguration } from '../../../domain/context/factory/ResolverProxyConfiguration';
-import { Hold, HoldIdentifier } from 'domain/context/hold/Hold';
+import { Hold, HoldIdentifier } from '../../../domain/context/hold/Hold';
 
 export abstract class HederaTransactionAdapter extends TransactionAdapter {
 	private web3 = new Web3();
@@ -201,6 +202,10 @@ export abstract class HederaTransactionAdapter extends TransactionAdapter {
 				{
 					account: coin.feeRoleAccount,
 					role: StableCoinRole.CUSTOM_FEES_ROLE,
+				},
+				{
+					account: coin.holdCreatorRoleAccount,
+					role: StableCoinRole.HOLD_CREATOR_ROLE,
 				},
 			];
 
@@ -1040,15 +1045,15 @@ export abstract class HederaTransactionAdapter extends TransactionAdapter {
 		coin: StableCoinCapabilities,
 		amount: BigDecimal,
 		escrow: HederaId,
-		expirationDate: string,
+		expirationDate: BigDecimal,
 		targetId?: HederaId,
 	): Promise<TransactionResponse> {
 		targetId = targetId ?? HederaId.NULL;
 		const hold = new Hold(
 			amount.toBigNumber(),
-			expirationDate,
-			escrow.toString(),
-			targetId.toString(),
+			expirationDate.toBigNumber(),
+			escrow,
+			targetId,
 			'0x',
 		);
 		const params = new Params({
@@ -1069,27 +1074,28 @@ export abstract class HederaTransactionAdapter extends TransactionAdapter {
 		coin: StableCoinCapabilities,
 		amount: BigDecimal,
 		escrow: HederaId,
-		expirationDate: string,
+		expirationDate: BigDecimal,
 		sourceId: HederaId,
 		targetId?: HederaId,
 	): Promise<TransactionResponse> {
 		targetId = targetId ?? HederaId.NULL;
 		const hold = new Hold(
 			amount.toBigNumber(),
-			expirationDate,
-			escrow.toString(),
-			targetId.toString(),
+			expirationDate.toBigNumber(),
+			escrow,
+			targetId,
 			'0x',
 		);
 		const params = new Params({
 			hold: hold,
 			sourceId: sourceId,
+			operatorData: '0x',
 		});
 		return this.performOperation(
 			coin,
-			Operation.CREATE_HOLD,
+			Operation.CONTROLLER_CREATE_HOLD,
 			'createHoldByController',
-			CREATE_HOLD_GAS,
+			CONTROLLER_CREATE_HOLD_GAS,
 			params,
 			TransactionType.RECEIPT,
 			HoldManagementFacet__factory.abi,
@@ -1105,14 +1111,14 @@ export abstract class HederaTransactionAdapter extends TransactionAdapter {
 	): Promise<TransactionResponse> {
 		targetId = targetId ?? HederaId.NULL;
 		const holdIdentifier: HoldIdentifier = {
+			tokenHolder: await this.getEVMAddress(sourceId),
 			holdId: holdId,
-			tokenHolder: sourceId.toString(),
 		};
-		const params = new Params({
-			amount,
+		const params: Params = {
 			holdIdentifier,
 			targetId,
-		});
+			amount,
+		};
 		return this.performOperation(
 			coin,
 			Operation.EXECUTE_HOLD,
@@ -1131,13 +1137,13 @@ export abstract class HederaTransactionAdapter extends TransactionAdapter {
 		holdId: number,
 	): Promise<TransactionResponse> {
 		const holdIdentifier: HoldIdentifier = {
+			tokenHolder: await this.getEVMAddress(sourceId),
 			holdId: holdId,
-			tokenHolder: sourceId.toString(),
 		};
-		const params = new Params({
-			amount,
+		const params: Params = {
 			holdIdentifier,
-		});
+			amount,
+		};
 		return this.performOperation(
 			coin,
 			Operation.RELEASE_HOLD,
@@ -1155,12 +1161,12 @@ export abstract class HederaTransactionAdapter extends TransactionAdapter {
 		holdId: number,
 	): Promise<TransactionResponse> {
 		const holdIdentifier: HoldIdentifier = {
+			tokenHolder: await this.getEVMAddress(sourceId),
 			holdId: holdId,
-			tokenHolder: sourceId.toString(),
 		};
-		const params = new Params({
+		const params: Params = {
 			holdIdentifier,
-		});
+		};
 		return this.performOperation(
 			coin,
 			Operation.RECLAIM_HOLD,
@@ -1358,6 +1364,14 @@ export abstract class HederaTransactionAdapter extends TransactionAdapter {
 								await this.getEVMAddress(
 									filteredContractParams[i][j],
 								);
+						}
+					}
+					if (typeof filteredContractParams[i] == 'object') {
+						for (const [key, value] of Object.entries(
+							filteredContractParams[i],
+						)) {
+							filteredContractParams[i][key] =
+								await this.getEVMAddress(value);
 						}
 					}
 					filteredContractParams[i] = await this.getEVMAddress(
@@ -1703,8 +1717,9 @@ class Params {
 	resolver?: ContractId;
 	configId?: string;
 	configVersion?: number;
-	hold?: Hold;
 	holdIdentifier?: HoldIdentifier;
+	hold?: Hold;
+	operatorData?: string;
 
 	constructor({
 		proxy,
@@ -1733,6 +1748,7 @@ class Params {
 		configVersion,
 		hold,
 		holdIdentifier,
+		operatorData,
 	}: {
 		proxy?: HederaId;
 		role?: string;
@@ -1760,6 +1776,7 @@ class Params {
 		configVersion?: number;
 		hold?: Hold;
 		holdIdentifier?: HoldIdentifier;
+		operatorData?: string;
 	}) {
 		this.proxy = proxy;
 		this.role = role;
@@ -1787,5 +1804,6 @@ class Params {
 		this.configVersion = configVersion;
 		this.hold = hold;
 		this.holdIdentifier = holdIdentifier;
+		this.operatorData = operatorData;
 	}
 }

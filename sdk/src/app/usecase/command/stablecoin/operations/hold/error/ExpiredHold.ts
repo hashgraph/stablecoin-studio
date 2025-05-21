@@ -18,7 +18,12 @@
  *
  */
 
-import ConfigInfoViewModel from './ConfigInfoViewModel';
-import HoldViewModel from './HoldViewModel';
+import BaseError, {
+	ErrorCode,
+} from '../../../../../../../core/error/BaseError.js';
 
-export { ConfigInfoViewModel, HoldViewModel };
+export class ExpiredHold extends BaseError {
+	constructor() {
+		super(ErrorCode.ExpiredHold, `The hold has expired`);
+	}
+}

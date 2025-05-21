@@ -18,19 +18,21 @@
  *
  */
 
-import { QueryBus } from 'core/query/QueryBus';
+import { QueryBus } from '../../core/query/QueryBus';
 import Service from './Service';
-import { BigDecimal, HederaId } from 'port/in';
-import Injectable from 'core/Injectable';
-import { InsufficientHoldBalance } from 'app/usecase/command/stablecoin/operations/hold/error/InsufficientHoldBalance';
+import { BigDecimal, HederaId } from '../../port/in';
+import Injectable from '../../core/Injectable';
+import { InsufficientHoldBalance } from '../../app/usecase/command/stablecoin/operations/hold/error/InsufficientHoldBalance';
 import AccountService from './AccountService';
-import { NotEscrow } from 'app/usecase/command/stablecoin/operations/hold/error/NotEscrow';
-import { GetHoldForQuery } from 'app/usecase/query/stablecoin/hold/getHoldFor/GetHoldForQuery';
-import { EVM_ZERO_ADDRESS } from 'core/Constants';
-import { InvalidHoldDestination } from 'app/usecase/command/stablecoin/operations/hold/error/InvalidHoldDestination';
-import { MirrorNodeAdapter } from 'port/out/mirror/MirrorNodeAdapter';
-import { InvalidHoldId } from 'app/usecase/command/stablecoin/operations/hold/error/InvalidHoldId';
-import { GetHoldsIdForQuery } from 'app/usecase/query/stablecoin/hold/getHoldsIdFor/GetHoldsIdForQuery';
+import { NotEscrow } from '../../app/usecase/command/stablecoin/operations/hold/error/NotEscrow';
+import { GetHoldForQuery } from '../../app/usecase/query/stablecoin/hold/getHoldFor/GetHoldForQuery';
+import { EVM_ZERO_ADDRESS } from '../../core/Constants';
+import { InvalidHoldDestination } from '../../app/usecase/command/stablecoin/operations/hold/error/InvalidHoldDestination';
+import { MirrorNodeAdapter } from '../../port/out/mirror/MirrorNodeAdapter';
+import { InvalidHoldId } from '../../app/usecase/command/stablecoin/operations/hold/error/InvalidHoldId';
+import { GetHoldsIdForQuery } from '../../app/usecase/query/stablecoin/hold/getHoldsIdFor/GetHoldsIdForQuery';
+import { ExpiredHold } from '../../app/usecase/command/stablecoin/operations/hold/error/ExpiredHold';
+import { HoldNotExpired } from '../../app/usecase/command/stablecoin/operations/hold/error/HoldNotExpired';
 
 export default class ValidationService extends Service {
 	constructor(
@@ -114,6 +116,33 @@ export default class ValidationService extends Service {
 				destinationAddress != targetEvmAddress.toString().toLowerCase()
 			) {
 				throw new InvalidHoldDestination();
+			}
+		}
+	}
+
+	async checkHoldExpiration(
+		tokenId: HederaId,
+		sourceId: HederaId,
+		holdId: number,
+		isReclaim = false,
+	): Promise<void> {
+		const holdDetails = await this.queryBus.execute(
+			new GetHoldForQuery(tokenId, sourceId, holdId),
+		);
+
+		if (!isReclaim) {
+			if (
+				holdDetails.payload.expirationTimeStamp <
+				Math.floor(Date.now() / 1000)
+			) {
+				throw new ExpiredHold();
+			}
+		} else {
+			if (
+				holdDetails.payload.expirationTimeStamp >
+				Math.floor(Date.now() / 1000)
+			) {
+				throw new HoldNotExpired();
 			}
 		}
 	}

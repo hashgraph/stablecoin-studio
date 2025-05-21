@@ -105,7 +105,7 @@ import { UpdateConfigVersionCommandHandler } from '../app/usecase/command/stable
 import { UpdateConfigCommandHandler } from '../app/usecase/command/stablecoin/management/updateConfig/updateConfigCommandHandler.js';
 import { UpdateResolverCommandHandler } from '../app/usecase/command/stablecoin/management/updateResolver/updateResolverCommandHandler.js';
 import { CreateHoldCommandHandler } from '../app/usecase/command/stablecoin/operations/hold/createHold/CreateHoldCommandHandler.js';
-import { CreateHoldByControllerCommandHandler } from 'app/usecase/command/stablecoin/operations/hold/createHoldByController/CreateHoldByControllerCommandHandler.js';
+import { CreateHoldByControllerCommandHandler } from '../app/usecase/command/stablecoin/operations/hold/createHoldByController/CreateHoldByControllerCommandHandler.js';
 import { ExecuteHoldCommandHandler } from '../app/usecase/command/stablecoin/operations/hold/executeHold/ExecuteHoldCommandHander.js';
 import { ReleaseHoldCommandHandler } from '../app/usecase/command/stablecoin/operations/hold/releaseHold/ReleaseHoldCommandHandler.js';
 import { ReclaimHoldCommandHandler } from '../app/usecase/command/stablecoin/operations/hold/reclaimHold/ReclaimHoldCommandHandler.js';

@@ -30,6 +30,7 @@ export enum StableCoinRole {
 	WITHOUT_ROLE = '0xe11b25922c3ff9f0f0a34f0b8929ac96a1f215b99dcb08c2891c220cf3a7e8cc',
 	KYC_ROLE = '0xdb11624602202c396fa347735a55e345a3aeb3e60f8885e1a71f1bf8d5886db7',
 	CUSTOM_FEES_ROLE = '0x6db8586688d24c6a6367d21f709d650b12a2a61dd75e834bd8cd90fd6afa794b',
+	HOLD_CREATOR_ROLE = '0xa0edc074322e33cf8b82b4182ff2827f0fef9412190f0e8417c2669a1e8747e4',
 }
 
 export const MAX_ACCOUNTS_ROLES = 10;
@@ -46,4 +47,5 @@ export const StableCoinRoleLabel = new Map<StableCoinRole, string>([
 	[StableCoinRole.WITHOUT_ROLE, 'Without'],
 	[StableCoinRole.KYC_ROLE, 'KYC'],
 	[StableCoinRole.CUSTOM_FEES_ROLE, 'Custom Fees'],
+	[StableCoinRole.HOLD_CREATOR_ROLE, 'Hold'],
 ]);

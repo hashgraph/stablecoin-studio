@@ -20,15 +20,17 @@
 
 import BaseError from '../../../core/error/BaseError';
 import InvalidExpirationTimestamp from '../stablecoin/error/InvalidExpirationTimestamp';
-import { BigDecimal } from '../../../port/in';
+import BigDecimal from '../shared/BigDecimal.js';
 import { BigNumber } from 'ethers';
+import { HederaId } from '../shared/HederaId.js';
+import { EVM_ZERO_ADDRESS } from '../../../core/Constants';
 
 export class Hold {
 	constructor(
 		public readonly amount: BigNumber,
-		public readonly expirationTimestamp: string,
-		public readonly escrow: string,
-		public readonly to: string,
+		public readonly expirationTimestamp: BigNumber,
+		public readonly escrow: HederaId,
+		public readonly to: HederaId,
 		public readonly data: string,
 	) {}
 
@@ -81,5 +83,16 @@ export class HoldDetails {
 		this.tokenHolderAddress = tokenHolderAddress;
 		this.destinationAddress = destinationAddress;
 		this.data = data;
+	}
+
+	public static empty(): HoldDetails {
+		return new HoldDetails(
+			0,
+			BigDecimal.ZERO,
+			EVM_ZERO_ADDRESS,
+			EVM_ZERO_ADDRESS,
+			EVM_ZERO_ADDRESS,
+			'0x',
+		);
 	}
 }

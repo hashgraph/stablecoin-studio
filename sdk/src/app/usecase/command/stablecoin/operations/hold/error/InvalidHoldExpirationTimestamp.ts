@@ -18,14 +18,17 @@
  *
  */
 
-import { QueryResponse } from '../../../../core/query/QueryResponse.js';
+import BaseError, {
+	ErrorCode,
+} from '../../../../../../../core/error/BaseError.js';
 
-export default interface HoldViewModel extends QueryResponse {
-	id: number;
-	amount: string;
-	expirationDate: Date;
-	tokenHolderAddress: string;
-	escrowAddress: string;
-	destinationAddress: string;
-	data: string;
+export default class InvalidHoldExpirationTimestamp extends BaseError {
+	constructor(val: Date, min: Date, max?: Date) {
+		super(
+			ErrorCode.InvalidRange,
+			`Invalid hold expiration period ${val}, outside range ${
+				max !== undefined ? `[${min}, ${max}]` : min
+			}`,
+		);
+	}
 }

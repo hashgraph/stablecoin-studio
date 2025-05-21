@@ -18,7 +18,7 @@
  *
  */
 
-import { BigDecimal } from '../../../../../../../port/in/StableCoin.js';
+import BigDecimal from '../../../../../../../domain/context/shared/BigDecimal.js';
 import { ICommandHandler } from '../../../../../../../core/command/CommandHandler.js';
 import { CommandHandler } from '../../../../../../../core/decorator/CommandHandlerDecorator.js';
 import { lazyInject } from '../../../../../../../core/decorator/LazyInjectDecorator.js';
@@ -37,9 +37,9 @@ import {
 } from './ExecuteHoldCommand.js';
 import { AccountNotKyc } from '../../../error/AccountNotKyc.js';
 import { AccountFreeze } from '../../../error/AccountFreeze.js';
-import CheckNums from 'core/checks/numbers/CheckNums.js';
+import CheckNums from '../../../../../../../core/checks/numbers/CheckNums.js';
 import { DecimalsOverRange } from '../../../error/DecimalsOverRange.js';
-import ValidationService from 'app/service/ValidationService.js';
+import ValidationService from '../../../../../../service/ValidationService.js';
 import { StableCoinNotAssociated } from '../../../error/StableCoinNotAssociated.js';
 
 @CommandHandler(ExecuteHoldCommand)
@@ -133,6 +133,11 @@ export class ExecuteHoldCommandHandler
 			sourceId,
 			holdId,
 			targetId,
+		);
+		await this.validationService.checkHoldExpiration(
+			tokenId,
+			sourceId,
+			holdId,
 		);
 
 		const res = await handler.executeHold(

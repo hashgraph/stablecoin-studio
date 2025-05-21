@@ -258,6 +258,10 @@ export default class RPCTransactionAdapter extends TransactionAdapter {
 					account: coin.feeRoleAccount,
 					role: StableCoinRole.CUSTOM_FEES_ROLE,
 				},
+				{
+					account: coin.holdCreatorRoleAccount,
+					role: StableCoinRole.HOLD_CREATOR_ROLE,
+				},
 			];
 
 			const stableCoinConfigurationId: ResolverProxyConfiguration = {
@@ -578,14 +582,14 @@ export default class RPCTransactionAdapter extends TransactionAdapter {
 		coin: StableCoinCapabilities,
 		amount: BigDecimal,
 		escrow: HederaId,
-		expirationDate: string,
+		expirationDate: BigDecimal,
 		targetId?: HederaId,
 	): Promise<TransactionResponse> {
 		const hold = new Hold(
 			amount.toBigNumber(),
-			expirationDate!,
-			await this.getEVMAddress(escrow),
-			targetId ? await this.getEVMAddress(targetId) : EVM_ZERO_ADDRESS,
+			expirationDate.toBigNumber(),
+			escrow,
+			targetId ? targetId : HederaId.NULL,
 			'0x',
 		);
 		const params = new Params({
@@ -598,15 +602,15 @@ export default class RPCTransactionAdapter extends TransactionAdapter {
 		coin: StableCoinCapabilities,
 		amount: BigDecimal,
 		escrow: HederaId,
-		expirationDate: string,
+		expirationDate: BigDecimal,
 		sourceId: HederaId,
 		targetId?: HederaId,
 	): Promise<TransactionResponse> {
 		const hold = new Hold(
 			amount.toBigNumber(),
-			expirationDate!,
-			await this.getEVMAddress(escrow),
-			targetId ? await this.getEVMAddress(targetId) : EVM_ZERO_ADDRESS,
+			expirationDate.toBigNumber(),
+			escrow,
+			targetId ? targetId : HederaId.NULL,
 			'0x',
 		);
 		const params = new Params({
@@ -1784,6 +1788,7 @@ export default class RPCTransactionAdapter extends TransactionAdapter {
 		params?: Params,
 	): Promise<TransactionResponse> {
 		const evmProxy = coin.coin.evmProxyAddress?.toString() ?? '';
+		let formattedHold;
 		switch (operation) {
 			case Operation.CASH_IN:
 				const targetEvm = await this.getEVMAddress(
@@ -1992,23 +1997,39 @@ export default class RPCTransactionAdapter extends TransactionAdapter {
 					this.networkService.environment,
 				);
 			case Operation.CREATE_HOLD:
+				formattedHold = {
+					...params!.hold!,
+					escrow: await this.getEVMAddress(params!.hold!.escrow),
+					to:
+						params!.hold!.to == HederaId.NULL
+							? EVM_ZERO_ADDRESS
+							: await this.getEVMAddress(params!.hold!.to),
+				};
 				return RPCTransactionResponseAdapter.manageResponse(
 					await HoldManagementFacet__factory.connect(
 						evmProxy,
 						this.signerOrProvider,
-					).createHold(params!.hold!, {
+					).createHold(formattedHold, {
 						gasLimit: CREATE_HOLD_GAS,
 					}),
 					this.networkService.environment,
 				);
 			case Operation.CONTROLLER_CREATE_HOLD:
+				formattedHold = {
+					...params!.hold!,
+					escrow: await this.getEVMAddress(params!.hold!.escrow),
+					to:
+						params!.hold!.to == HederaId.NULL
+							? EVM_ZERO_ADDRESS
+							: await this.getEVMAddress(params!.hold!.to),
+				};
 				return RPCTransactionResponseAdapter.manageResponse(
 					await HoldManagementFacet__factory.connect(
 						evmProxy,
 						this.signerOrProvider,
 					).createHoldByController(
 						params!.sourceId!,
-						params!.hold!,
+						formattedHold,
 						'0x',
 						{
 							gasLimit: CONTROLLER_CREATE_HOLD_GAS,

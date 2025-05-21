@@ -18,7 +18,7 @@
  *
  */
 
-import { BigDecimal } from '../../../../../../../port/in/StableCoin.js';
+import BigDecimal from '../../../../../../../domain/context/shared/BigDecimal.js';
 import { ICommandHandler } from '../../../../../../../core/command/CommandHandler.js';
 import { CommandHandler } from '../../../../../../../core/decorator/CommandHandlerDecorator.js';
 import { lazyInject } from '../../../../../../../core/decorator/LazyInjectDecorator.js';
@@ -35,13 +35,14 @@ import { MissingProxySupplyKey } from '../../../error/MissingProxySupplyKey.js';
 import { OperationNotAllowed } from '../../../error/OperationNotAllowed.js';
 import { AccountNotKyc } from '../../../error/AccountNotKyc.js';
 import { AccountFreeze } from '../../../error/AccountFreeze.js';
-import { BalanceOfQuery } from 'app/usecase/query/stablecoin/balanceof/BalanceOfQuery.js';
-import CheckNums from 'core/checks/numbers/CheckNums.js';
+import { BalanceOfQuery } from '../../../../../query/stablecoin/balanceof/BalanceOfQuery.js';
+import CheckNums from '../../../../../../../core/checks/numbers/CheckNums.js';
 import { DecimalsOverRange } from '../../../error/DecimalsOverRange.js';
 import {
 	CreateHoldByControllerCommand,
 	CreateHoldByControllerCommandResponse,
 } from './CreateHoldByControllerCommand.js';
+import { MissingProxyWipeKey } from '../../../error/MissingProxyWipeKey.js';
 
 @CommandHandler(CreateHoldByControllerCommand)
 export class CreateHoldByControllerCommandHandler
@@ -71,8 +72,18 @@ export class CreateHoldByControllerCommandHandler
 		);
 		const coin = capabilities.coin;
 
-		if (coin.supplyKey != coin.evmProxyAddress) {
+		if (
+			coin.supplyKey?.toString().toUpperCase() !=
+			coin.proxyAddress?.toString().toUpperCase()
+		) {
 			throw new MissingProxySupplyKey();
+		}
+
+		if (
+			coin.wipeKey?.toString().toUpperCase() !=
+			coin.proxyAddress?.toString().toUpperCase()
+		) {
+			throw new MissingProxyWipeKey();
 		}
 
 		const tokenRelationship = (
@@ -109,7 +120,7 @@ export class CreateHoldByControllerCommandHandler
 			capabilities,
 			amountBd,
 			escrow,
-			expirationDate,
+			BigDecimal.fromString(expirationDate),
 			sourceId,
 			targetId,
 		);

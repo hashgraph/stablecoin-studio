@@ -104,6 +104,9 @@ export default class CreateRequest extends ValidatedRequest<CreateRequest> {
 	kycRoleAccount?: string | undefined;
 
 	@OptionalField()
+	holdCreatorRoleAccount?: string | undefined;
+
+	@OptionalField()
 	cashInRoleAccount?: string | undefined;
 
 	@OptionalField()
@@ -149,6 +152,7 @@ export default class CreateRequest extends ValidatedRequest<CreateRequest> {
 		cashInRoleAccount,
 		feeRoleAccount,
 		cashInRoleAllowance,
+		holdCreatorRoleAccount,
 		metadata,
 		proxyOwnerAccount,
 		configId,
@@ -180,6 +184,7 @@ export default class CreateRequest extends ValidatedRequest<CreateRequest> {
 		kycRoleAccount?: string;
 		cashInRoleAccount?: string;
 		feeRoleAccount?: string;
+		holdCreatorRoleAccount?: string;
 		cashInRoleAllowance?: string;
 		metadata?: string;
 		proxyOwnerAccount?: string;
@@ -363,6 +368,7 @@ export default class CreateRequest extends ValidatedRequest<CreateRequest> {
 		this.kycRoleAccount = kycRoleAccount;
 		this.cashInRoleAccount = cashInRoleAccount;
 		this.feeRoleAccount = feeRoleAccount;
+		this.holdCreatorRoleAccount = holdCreatorRoleAccount;
 		this.cashInRoleAllowance = cashInRoleAllowance;
 		this.metadata = metadata;
 		this.proxyOwnerAccount = proxyOwnerAccount;
