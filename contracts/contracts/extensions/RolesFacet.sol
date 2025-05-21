@@ -86,13 +86,14 @@ contract RolesFacet is IRoles, IStaticFunctionSelectors, RolesStorageWrapper {
 
     function getStaticFunctionSelectors() external pure override returns (bytes4[] memory staticFunctionSelectors_) {
         uint256 selectorIndex;
-        staticFunctionSelectors_ = new bytes4[](6);
+        staticFunctionSelectors_ = new bytes4[](7);
         staticFunctionSelectors_[selectorIndex++] = this.hasRole.selector;
         staticFunctionSelectors_[selectorIndex++] = this.getAccountsWithRole.selector;
         staticFunctionSelectors_[selectorIndex++] = this.getNumberOfAccountsWithRole.selector;
         staticFunctionSelectors_[selectorIndex++] = this.grantRole.selector;
         staticFunctionSelectors_[selectorIndex++] = this.revokeRole.selector;
         staticFunctionSelectors_[selectorIndex++] = this.getRoles.selector;
+        staticFunctionSelectors_[selectorIndex++] = this.getRoleId.selector;
     }
 
     function getStaticInterfaceIds() external pure override returns (bytes4[] memory staticInterfaceIds_) {

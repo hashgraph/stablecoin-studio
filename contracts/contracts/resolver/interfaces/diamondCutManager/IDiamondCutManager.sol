@@ -53,6 +53,9 @@ interface IDiamondCutManager {
     /// @notice error that occurs when try to create a configuration and the configuration key doesn't exists
     error ResolverProxyConfigurationNoRegistered(bytes32 resolverProxyConfigurationId, uint256 version);
 
+    /// @notice error that occurs when try to add a selector and the selector is blacklisted
+    error SelectorBlacklisted(bytes4 selector);
+
     /// @notice Create a new configuration to the latest version of all facets.
     /// @param _configurationId unused identifier to the configuration.
     /// @param _facetConfigurations.id list of business logics to be registered.

@@ -4,6 +4,7 @@ import { useTranslation } from 'react-i18next';
 import DetailsReview from '../../components/DetailsReview';
 import { OTHER_KEY_VALUE } from './components/KeySelector';
 import { OTHER_ACCOUNT_VALUE } from './components/RoleSelector';
+import { formatBytes32 } from '../../utils/format';
 
 interface ReviewProps {
 	form: UseFormReturn;
@@ -15,9 +16,10 @@ const Review = (props: ReviewProps) => {
 
 	const { getValues } = form;
 	const {
-		hederaTokenManagerId,
 		name,
 		symbol,
+		configId,
+		configVersion,
 		initialSupply,
 		supplyType,
 		maxSupply,
@@ -45,8 +47,6 @@ const Review = (props: ReviewProps) => {
 		feeScheduleKey,
 		reserveAddress,
 		reserveInitialAmount,
-		currentAccountAsProxyAdminOwner,
-		proxyAdminOwnerAccount,
 	} = getValues();
 
 	const getKey = (keySelected: { value: number; label: string }, nameOtherKey: string) => {
@@ -162,16 +162,20 @@ const Review = (props: ReviewProps) => {
 						titleProps={{ fontWeight: 700, color: 'brand.secondary' }}
 						details={[
 							{
-								label: t('stableCoinCreation:basicDetails.hederaTokenManager'),
-								value: hederaTokenManagerId.value || '',
-							},
-							{
 								label: t('stableCoinCreation:basicDetails.name'),
 								value: name || '',
 							},
 							{
 								label: t('stableCoinCreation:basicDetails.symbol'),
 								value: symbol || '',
+							},
+							{
+								label: t('stableCoinCreation:basicDetails.configId'),
+								value: formatBytes32(configId, 8) || '',
+							},
+							{
+								label: t('stableCoinCreation:basicDetails.configVersion'),
+								value: configVersion || '',
 							},
 						]}
 					/>
@@ -296,19 +300,6 @@ const Review = (props: ReviewProps) => {
 							]}
 						/>
 					)}
-
-					<DetailsReview
-						title={t('stableCoinCreation:proxyAdmin.title')}
-						titleProps={{ fontWeight: 700, color: 'brand.secondary' }}
-						details={[
-							{
-								label: t('stableCoinCreation:proxyAdmin.ownerAccount'),
-								value: currentAccountAsProxyAdminOwner
-									? t('stableCoinCreation:managementPermissions.currentUserAccount')
-									: proxyAdminOwnerAccount,
-							},
-						]}
-					/>
 				</Stack>
 			</Stack>
 		</VStack>

@@ -88,7 +88,7 @@ export async function createConfigurationsForDeployedContracts(
         result.stableCoinFactoryFacetVersionList,
         businessLogicResolverProxyAddress,
         signer,
-        partialBatchDeploy
+        false
     )
     // * StableCoin
     await processFacetLists(

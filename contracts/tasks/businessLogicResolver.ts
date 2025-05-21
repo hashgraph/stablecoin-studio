@@ -96,7 +96,7 @@ task('updateBusinessLogicKeys', 'Update the address of a business logic key')
         console.log(`Business logic keys updated successfully on ${hre.network.name} for resolver: ${resolverAddress}`)
     })
 
-task('initializeBuisnessLogicResolver', 'Initialize the business logic resolver')
+task('initializeBusinessLogicResolver', 'Initialize the business logic resolver')
     .addPositionalParam('resolverAddress', 'The BusinessLogicResolver contract address', undefined, types.string)
     .addParam('privateKey', 'The private key of the account in raw hexadecimal format', undefined, types.string)
     .addOptionalParam(
