@@ -98,30 +98,15 @@ describe(`<${walletSlice.name} />`, () => {
 			expect(store.getState().selectedStableCoin?.tokenId).toEqual(tokenId);
 		});
 
-		it('Should be able to setSelectedStableCoinProxyConfig', async () => {
-			const implementationAddress = 'tokenId';
-			const owner = '';
+		it('Should be able to setSelectedStableCoinConfigInfo', async () => {
+			const configId = '0x4e3b6d3e5a3b6e5d4c9f9d5b8a9b4e5d4e3b6d3e5a3b6e5d4c9f9d5b8a9b4e5d';
+			const configVersion = 0;
 			store.dispatch(
-				walletSlice.actions.setSelectedStableCoinProxyConfig({ implementationAddress, owner }),
+				walletSlice.actions.setSelectedStableCoinConfigInfo({ configId, configVersion }),
 			);
 
-			expect(store.getState().selectedStableCoinProxyConfig?.implementationAddress).toEqual(
-				implementationAddress,
-			);
-			expect(store.getState().selectedStableCoinProxyConfig?.owner).toEqual(owner);
-		});
-
-		it('Should be able to setSelectedNetworkFactoryProxyConfig', async () => {
-			const implementationAddress = 'tokenId';
-			const owner = '';
-			store.dispatch(
-				walletSlice.actions.setSelectedNetworkFactoryProxyConfig({ implementationAddress, owner }),
-			);
-
-			expect(store.getState().selectedNetworkFactoryProxyConfig?.implementationAddress).toEqual(
-				implementationAddress,
-			);
-			expect(store.getState().selectedNetworkFactoryProxyConfig?.owner).toEqual(owner);
+			expect(store.getState().selectedStableCoinConfigInfo?.configId).toEqual(configId);
+			expect(store.getState().selectedStableCoinConfigInfo?.configVersion).toEqual(configVersion);
 		});
 
 		it('Should be able to setSelectingStableCoin', async () => {
@@ -281,22 +266,12 @@ describe(`<${walletSlice.name} />`, () => {
 			expect(store.getState().isProxyOwner).toEqual(initialState.isProxyOwner);
 		});
 
-		it('Should be able to clearSelectedStableCoinProxyConfig', async () => {
-			store.dispatch(walletSlice.actions.clearSelectedStableCoinProxyConfig());
+		it('Should be able to clearSelectedStableCoinConfigInfo', async () => {
+			store.dispatch(walletSlice.actions.clearSelectedStableCoinConfigInfo());
 
-			expect(store.getState().selectedStableCoinProxyConfig).toEqual(
-				initialState.selectedStableCoinProxyConfig,
+			expect(store.getState().selectedStableCoinConfigInfo).toEqual(
+				initialState.selectedStableCoinConfigInfo,
 			);
-			expect(store.getState().isProxyOwner).toEqual(initialState.isProxyOwner);
-		});
-
-		it('Should be able to clearSelectedNetworkFactoryProxyConfig', async () => {
-			store.dispatch(walletSlice.actions.clearSelectedNetworkFactoryProxyConfig());
-
-			expect(store.getState().selectedNetworkFactoryProxyConfig).toEqual(
-				initialState.selectedNetworkFactoryProxyConfig,
-			);
-			expect(store.getState().isProxyOwner).toEqual(initialState.isProxyOwner);
 		});
 
 		it('Should be able to reset', async () => {

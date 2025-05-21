@@ -50,7 +50,7 @@ const CheckKycOperation = () => {
 	}) => {
 		try {
 			onLoading();
-			if (!selectedStableCoin?.proxyAddress || !selectedStableCoin?.tokenId?.toString()) {
+			if (!selectedStableCoin?.tokenId?.toString()) {
 				onError();
 				return;
 			}

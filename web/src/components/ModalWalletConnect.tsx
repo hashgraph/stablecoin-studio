@@ -15,12 +15,7 @@ import {
 	useDisclosure,
 	VStack,
 } from '@chakra-ui/react';
-import type { StableCoinListViewModel } from '@hashgraph/stablecoin-npm-sdk';
-import {
-	GetFactoryProxyConfigRequest,
-	Network,
-	SupportedWallets,
-} from '@hashgraph/stablecoin-npm-sdk';
+import { SupportedWallets } from '@hashgraph/stablecoin-npm-sdk';
 import type { FC, ReactNode } from 'react';
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -111,8 +106,7 @@ const ModalWalletConnect = () => {
 		dispatch(walletActions.setLastWallet(wallet));
 		dispatch(walletActions.setNetwork(network));
 		dispatch(walletActions.setSelectedStableCoin(undefined));
-		dispatch(walletActions.setSelectedStableCoinProxyConfig(undefined));
-		dispatch(walletActions.setSelectedNetworkFactoryProxyConfig(undefined));
+		dispatch(walletActions.setSelectedStableCoinConfigInfo(undefined));
 		dispatch(walletActions.setIsProxyOwner(false));
 		dispatch(walletActions.setIsPendingOwner(false));
 		dispatch(walletActions.setIsAcceptOwner(false));
@@ -167,12 +161,6 @@ const ModalWalletConnect = () => {
 
 			dispatch(walletActions.setSelectedRPCs(newselectedRPCs));
 
-			const factoryId = await Network.getFactoryAddress();
-
-			if (factoryId) {
-				const factoryProxyConfig: StableCoinListViewModel = await getFactoryProxyConfig(factoryId);
-				dispatch(walletActions.setSelectedNetworkFactoryProxyConfig(factoryProxyConfig));
-			}
 			dispatch(walletActions.setIsFactoryProxyOwner(false));
 			dispatch(walletActions.setIsFactoryPendingOwner(false));
 			dispatch(walletActions.setIsFactoryAcceptOwner(false));
@@ -184,27 +172,6 @@ const ModalWalletConnect = () => {
 			}
 			setLoading(undefined);
 		}
-	};
-
-	const getFactoryProxyConfig = async (factoryId: string): Promise<StableCoinListViewModel> => {
-		const factoryProxyConfig: any = await Promise.race([
-			SDKService.getFactoryProxyConfig(
-				new GetFactoryProxyConfigRequest({
-					factoryId,
-				}),
-			),
-			new Promise((resolve, reject) => {
-				setTimeout(() => {
-					reject(new Error("Stablecoin details couldn't be obtained in a reasonable time."));
-				}, 10000);
-			}),
-		]).catch((e) => {
-			if (e.code === 'NETWORK_ERROR') {
-				throw new Error('The RPC service is not working as expected');
-			}
-			throw e;
-		});
-		return factoryProxyConfig;
 	};
 
 	const networkOptions = [{ value: 'testnet', label: 'Testnet' }];

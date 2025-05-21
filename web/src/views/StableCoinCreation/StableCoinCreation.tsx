@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { HStack, Stack, Text, useDisclosure } from '@chakra-ui/react';
+import { HStack, Stack, Text, useDisclosure, VStack } from '@chakra-ui/react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import type { FieldValues } from 'react-hook-form';
@@ -17,6 +17,7 @@ import { OTHER_KEY_VALUE } from './components/KeySelector';
 import {
 	getStableCoinList,
 	SELECTED_FACTORY_ID,
+	SELECTED_RESOLVER_ID,
 	SELECTED_WALLET_ACCOUNT_INFO,
 } from '../../store/slices/walletSlice';
 import SDKService from '../../services/SDKService';
@@ -41,6 +42,7 @@ const StableCoinCreation = () => {
 	const account = useSelector(SELECTED_WALLET_PAIRED_ACCOUNT);
 	const accountInfo = useSelector(SELECTED_WALLET_ACCOUNT_INFO);
 	const factoryId = useSelector(SELECTED_FACTORY_ID);
+	const resolverId = useSelector(SELECTED_RESOLVER_ID);
 
 	const form = useForm<FieldValues>({
 		mode: 'onChange',
@@ -64,6 +66,8 @@ const StableCoinCreation = () => {
 			symbol: '',
 			decimals: 6,
 			createReserve: false,
+			configId: '',
+			configVersion: 0,
 		}),
 	);
 
@@ -123,7 +127,8 @@ const StableCoinCreation = () => {
 
 		if (currentStep === 0) {
 			// @ts-ignore
-			fieldsStep = watch(['hederaTokenManagerId', 'name', 'symbol']);
+			fieldsStep = watch(['name', 'symbol', 'configId', 'configVersion']);
+			keys = ['configId', 'configVersion'];
 		}
 
 		if (currentStep === 1) {
@@ -265,9 +270,8 @@ const StableCoinCreation = () => {
 			feeRoleAccount,
 			cashInAllowanceType,
 			cashInAllowance,
-			hederaTokenManagerId,
-			proxyAdminOwner,
-			proxyAdminOwnerAccount,
+			configId,
+			configVersion,
 		} = getValues();
 
 		if (!reserveInitialAmount) {
@@ -297,7 +301,7 @@ const StableCoinCreation = () => {
 			request.grantKYCToOriginalSender = false;
 		}
 
-		request.proxyAdminOwnerAccount = proxyAdminOwner ? undefined : proxyAdminOwnerAccount;
+		request.proxyOwnerAccount = accountInfo.id;
 
 		request.feeScheduleKey = manageCustomFees
 			? formatKey(feeScheduleKey.label, 'feeScheduleKey')
@@ -334,7 +338,9 @@ const StableCoinCreation = () => {
 			'feeSchedule',
 		);
 
-		request.hederaTokenManager = hederaTokenManagerId.value;
+		request.configId = configId;
+		request.configVersion = configVersion;
+
 		try {
 			onOpen();
 			setLoading(true);
@@ -400,17 +406,30 @@ const StableCoinCreation = () => {
 				>
 					{t('common.createNewStableCoin')}
 				</Text>
-				<Text
-					fontSize='16px'
-					color='brand.secondary'
-					fontWeight={700}
-					align='right'
-					w='full'
-					as='i'
-					data-testid='creation-subtitle'
-				>
-					{t('common.factoryId') + factoryId}
-				</Text>
+				<VStack w={'full'}>
+					<Text
+						fontSize='16px'
+						color='brand.secondary'
+						fontWeight={700}
+						align='right'
+						w='full'
+						as='i'
+						data-testid='creation-subtitle-factory'
+					>
+						{t('common.factoryId') + factoryId}
+					</Text>
+					<Text
+						fontSize='16px'
+						color='brand.secondary'
+						fontWeight={700}
+						align='right'
+						w='full'
+						as='i'
+						data-testid='creation-subtitle-resolver'
+					>
+						{t('common.resolverId') + resolverId}
+					</Text>
+				</VStack>
 			</HStack>
 			<BaseContainer title=''>
 				<Stepper {...stepperProps} />

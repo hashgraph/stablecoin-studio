@@ -67,7 +67,6 @@ const ManagementPermissions = ({
 
 	const cashInRoleAccount = watch('cashInRoleAccount');
 	const infinity: boolean = watch('cashInAllowanceType');
-	const currentAccountAsProxyAdminOwner: boolean = watch('currentAccountAsProxyAdminOwner');
 
 	useEffect(() => {
 		if (watch('kycKey')?.value !== 2 || watch('supplyKey')?.value === 1) {
@@ -430,55 +429,6 @@ const ManagementPermissions = ({
 									request={request}
 								/>
 							)}
-						</AccordionPanel>
-					</AccordionItem>
-				</Accordion>
-			</Stack>
-			<Stack minW={400} maxW={400}>
-				<Accordion defaultIndex={[1]} allowMultiple>
-					<AccordionItem>
-						<AccordionButton>
-							<Box as='span' flex='1' textAlign='left' fontSize='16px' fontWeight='600'>
-								{t('stableCoinCreation:managementPermissions.proxyAdminTitle')}
-							</Box>
-							<AccordionIcon />
-						</AccordionButton>
-						<AccordionPanel pb={4} marginBottom='106px'>
-							<Box data-testid='supplier-quantity'>
-								<HStack mt='20px'>
-									<Text mr='10px'>
-										{t('stableCoinCreation:managementPermissions.proxyAdminOwner')}
-									</Text>
-									<SwitchController control={control} name={'currentAccountAsProxyAdminOwner'} />
-								</HStack>
-								{currentAccountAsProxyAdminOwner === false && (
-									<Box mt='20px'>
-										<Text maxW={'252px'} fontSize='14px' fontWeight='400' lineHeight='17px'>
-											{t('stableCoinCreation:managementPermissions.proxyAdminOwnerAccount')}
-										</Text>
-										<InputController
-											data-testid='input-supplier-quantity'
-											rules={{
-												required: t(`global:validations.required`) ?? propertyNotFound,
-												validate: {
-													validation: (value: string) => {
-														if (request) {
-															request.proxyAdminOwnerAccount = value;
-															const res = handleRequestValidation(
-																request.validate('proxyAdminOwnerAccount'),
-															);
-															return res;
-														}
-													},
-												},
-											}}
-											isRequired
-											control={control}
-											name={'proxyAdminOwnerAccount'}
-										/>
-									</Box>
-								)}
-							</Box>
 						</AccordionPanel>
 					</AccordionItem>
 				</Accordion>

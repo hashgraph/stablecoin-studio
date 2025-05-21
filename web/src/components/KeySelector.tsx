@@ -84,6 +84,8 @@ export const KeySelector = ({ control, name, label, labelPlaceholder }: KeySelec
 		symbol: '',
 		decimals: 6,
 		createReserve: false,
+		configId: '',
+		configVersion: 0,
 	});
 
 	const nameValidation = toCamelCase(name);
