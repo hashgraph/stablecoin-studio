@@ -626,10 +626,10 @@ function signAndSendTransaction(
 // * Jest Mocks
 
 //* Mock console.log() and console.info() methods
-global.console.log = jest.fn();
-global.console.info = jest.fn();
-LogService.log = jest.fn();
-LogService.logInfo = jest.fn();
+// global.console.log = jest.fn();
+// global.console.info = jest.fn();
+// LogService.log = jest.fn();
+// LogService.logInfo = jest.fn();
 
 jest.mock('../src/port/out/mirror/MirrorNodeAdapter', () => {
 	const actual = jest.requireActual(

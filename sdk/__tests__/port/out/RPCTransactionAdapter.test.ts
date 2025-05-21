@@ -69,6 +69,7 @@ import { RPCQueryAdapter } from '../../../src/port/out/rpc/RPCQueryAdapter.js';
 import { MirrorNode } from '../../../src/domain/context/network/MirrorNode.js';
 import { JsonRpcRelay } from '../../../src/domain/context/network/JsonRpcRelay.js';
 import { Time } from '../../../src/core/Time';
+import { CONFIG_SC, DEFAULT_VERSION } from '../../../src/core/Constants.js';
 
 SDK.log = { level: 'ERROR', transports: new LoggerTransports.Console() };
 const mirrorNode: MirrorNode = {
@@ -83,9 +84,8 @@ const rpcNode: JsonRpcRelay = {
 const decimals = 6;
 const initSupply = 1000;
 const reserve = 100000000;
-const configId =
-	'0x0000000000000000000000000000000000000000000000000000000000000000';
-const configVersion = 0;
+const configId = CONFIG_SC;
+const configVersion = DEFAULT_VERSION;
 
 describe('🧪 [ADAPTER] RPCTransactionAdapter', () => {
 	let stableCoinCapabilitiesSC: StableCoinCapabilities;
@@ -104,20 +104,17 @@ describe('🧪 [ADAPTER] RPCTransactionAdapter', () => {
 		const tr = await th.create(
 			stablecoin,
 			new ContractId(FACTORY_ADDRESS),
-			true,
+			false,
 			new ContractId(RESOLVER_ADDRESS),
 			configId,
 			configVersion,
-			new ContractId(account.id.toString()),
+			account.id,
 			undefined,
 			BigDecimal.fromString(reserve.toString(), RESERVE_DECIMALS),
 		);
 
-		// proxyAdmin = tr.response[0][1];
-		// proxy = tr.response[0][0];
-
 		const tokenIdSC = ContractId.fromHederaContractId(
-			HContractId.fromSolidityAddress(tr.response[0][3]),
+			HContractId.fromEvmAddress(0, 0, tr.response[0][1]),
 		);
 		return await stableCoinService.getCapabilities(account, tokenIdSC);
 	};
