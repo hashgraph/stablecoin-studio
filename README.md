@@ -26,6 +26,7 @@
 - **[Recommendations](#recommendations)**<br>
 - **[Testnet reset procedure](#testnet-reset-procedure)**<br>
 - **[Deploying the stablecoin factories](#deploying-the-stablecoin-factories)**<br>
+- **[v1 to v2 Migration](#v1-to-v2-migration)**<br>
 - **[Development manifesto](#development-manifesto)**<br>
 - **[Support](#support)**<br>
 - **[Contributing](#contributing)**<br>
@@ -270,6 +271,11 @@ We provide default addresses for the factories that we have deployed for anyone 
 (You can check the factorys associated to each version [here](./FACTORY_VERSION.md))
 
 Follow the steps in the [contracts docs](https://github.com/hashgraph/stablecoin-studio/tree/main/contracts#deploy-factory) to learn how to deploy the factories.
+
+# V1 to V2 Migration
+V2 smart contracts are not compatible with V1.
+
+If you have deployed Stablecoins in V1 and want to migrate them to V2 please follow the procedure described in the `contracts/README`document `V1 to V2 migration` section.
 
 # Testnet reset procedure
 

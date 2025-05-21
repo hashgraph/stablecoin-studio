@@ -65,7 +65,6 @@ import {
 	BACKEND_NODE,
 	CLIENT_ACCOUNT_ED25519,
 	FACTORY_ADDRESS,
-	HEDERA_TOKEN_MANAGER_ADDRESS,
 	DECIMALS,
 	PROXY_CONTRACT_ID,
 	MAX_SUPPLY,
@@ -74,14 +73,19 @@ import {
 	AUTO_RENEW_ACCOUNT,
 	RESERVE_AMOUNT,
 	RESERVE_ADDRESS,
+	RESOLVER_ADDRESS,
 } from '../../config.js';
 import { MirrorNode } from '../../../src/domain/context/network/MirrorNode.js';
 import { JsonRpcRelay } from '../../../src/domain/context/network/JsonRpcRelay.js';
 import BackendEndpoint from '../../../src/domain/context/network/BackendEndpoint.js';
 import Injectable from '../../../src/core/Injectable.js';
+import { CONFIG_SC, DEFAULT_VERSION } from '../../../src/core/Constants.js';
 
 const initialSupply = parseInt(INITIAL_SUPPLY);
 const maxSupply = parseInt(MAX_SUPPLY);
+const configId = CONFIG_SC;
+const configVersion = DEFAULT_VERSION;
+
 // const multisigAccountId = MULTISIG_ACCOUNT_ADDRESS;
 
 // let multiSigTransaction: MultiSigTransaction;
@@ -138,10 +142,9 @@ describe('🧪 Stablecoin test', () => {
 		pauseKey: Account.NullPublicKey,
 		supplyType: TokenSupplyType.FINITE,
 		stableCoinFactory: FACTORY_ADDRESS,
-		hederaTokenManager: HEDERA_TOKEN_MANAGER_ADDRESS,
 		reserveInitialAmount: RESERVE_AMOUNT,
 		reserveAddress: RESERVE_ADDRESS,
-		createReserve: true,
+		createReserve: false,
 		grantKYCToOriginalSender: true,
 		burnRoleAccount: CLIENT_ACCOUNT_ED25519.id.toString(),
 		freezeRoleAccount: CLIENT_ACCOUNT_ED25519.id.toString(),
@@ -154,6 +157,9 @@ describe('🧪 Stablecoin test', () => {
 		feeRoleAccount: CLIENT_ACCOUNT_ED25519.id.toString(),
 		cashInRoleAllowance: '0',
 		metadata: '',
+		proxyOwnerAccount: CLIENT_ACCOUNT_ED25519.id.toString(),
+		configId: configId,
+		configVersion: configVersion,
 	});
 	const requestHTS = new CreateRequest({
 		name: 'TEST_ACCELERATOR_HTS',
@@ -166,18 +172,20 @@ describe('🧪 Stablecoin test', () => {
 		pauseKey: CLIENT_ACCOUNT_ED25519.publicKey,
 		supplyType: TokenSupplyType.INFINITE,
 		stableCoinFactory: FACTORY_ADDRESS,
-		hederaTokenManager: HEDERA_TOKEN_MANAGER_ADDRESS,
 		reserveInitialAmount: RESERVE_AMOUNT,
 		reserveAddress: RESERVE_ADDRESS,
-		createReserve: true,
+		createReserve: false,
 		grantKYCToOriginalSender: true,
 		burnRoleAccount: CLIENT_ACCOUNT_ED25519.id.toString(),
 		rescueRoleAccount: CLIENT_ACCOUNT_ED25519.id.toString(),
 		deleteRoleAccount: CLIENT_ACCOUNT_ED25519.id.toString(),
 		cashInRoleAccount: CLIENT_ACCOUNT_ED25519.id.toString(),
 		feeRoleAccount: CLIENT_ACCOUNT_ED25519.id.toString(),
+		proxyOwnerAccount: CLIENT_ACCOUNT_ED25519.id.toString(),
 		cashInRoleAllowance: '0',
 		metadata: '',
+		configId: configId,
+		configVersion: configVersion,
 	});
 
 	beforeAll(async () => {
@@ -198,6 +206,7 @@ describe('🧪 Stablecoin test', () => {
 				network: 'testnet',
 				configuration: {
 					factoryAddress: FACTORY_ADDRESS,
+					resolverAddress: RESOLVER_ADDRESS,
 				},
 				mirrorNode: mirrorNode,
 				rpcNode: rpcNode,

@@ -35,6 +35,7 @@ import ValidatedRequest from './validation/ValidatedRequest.js';
 import { Factories } from '../../../domain/context/factory/Factories.js';
 import BackendEndpoint from '../../../domain/context/network/BackendEndpoint.js';
 import { ConsensusNode } from '../../../domain/context/network/ConsensusNodes.js';
+import { Resolvers } from '../../../domain/context/factory/Resolvers.js';
 
 export { SupportedWallets };
 
@@ -51,6 +52,7 @@ export default class InitializationRequest
 	mirrorNodes?: MirrorNodes;
 	jsonRpcRelays?: JsonRpcRelays;
 	factories?: Factories;
+	resolvers?: Resolvers;
 	backend?: BackendEndpoint;
 
 	constructor({
@@ -63,6 +65,7 @@ export default class InitializationRequest
 		mirrorNodes,
 		jsonRpcRelays,
 		factories,
+		resolvers,
 		backend,
 	}: {
 		network: Environment;
@@ -74,6 +77,7 @@ export default class InitializationRequest
 		mirrorNodes?: MirrorNodes;
 		jsonRpcRelays?: JsonRpcRelays;
 		factories?: Factories;
+		resolvers?: Resolvers;
 		backend?: BackendEndpoint;
 	}) {
 		super({});
@@ -86,6 +90,7 @@ export default class InitializationRequest
 		this.mirrorNodes = mirrorNodes;
 		this.jsonRpcRelays = jsonRpcRelays;
 		this.factories = factories;
+		this.resolvers = resolvers;
 		this.backend = backend;
 	}
 }

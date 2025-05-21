@@ -26,9 +26,9 @@ import UtilitiesService from './app/service/utilities/UtilitiesService.js';
 import CommanderService from './app/service/commander/CommanderService.js';
 import SetMirrorNodeService from './app/service/configuration/SetMirrorNodeService.js';
 import SetRPCService from './app/service/configuration/SetRPCService.js';
-import SetFactoryService from './app/service/configuration/SetFactoryService.js';
 import BackendConfigurationService from './app/service/configuration/BackendConfigurationService.js';
 import SetConfigurationService from './app/service/configuration/SetConfigurationService.js';
+import SetResolverAndFactoryService from './app/service/configuration/SetResolverAndFactoryService.js';
 
 export const language: Language = new Language();
 export const wizardService: WizardService = new WizardService();
@@ -41,7 +41,8 @@ export const commanderService: CommanderService = new CommanderService();
 export const setMirrorNodeService: SetMirrorNodeService =
   new SetMirrorNodeService();
 export const setRPCService: SetRPCService = new SetRPCService();
-export const setFactoryService: SetFactoryService = new SetFactoryService();
+export const setResolverAndFactoryService: SetResolverAndFactoryService =
+  new SetResolverAndFactoryService();
 export const backendConfigurationService: BackendConfigurationService =
   new BackendConfigurationService();
 export const setConfigurationService: SetConfigurationService =

@@ -1,0 +1,58 @@
+@startuml
+' Define the classes
+class BusinessLogicResolver {
+    +registerBusinessLogics({bytes32,address}[])
+    -resolveLatestBusinessLogic(bytes32):address
+    -resolveBusinessLogicByVersion(bytes32,uint256):address
+}
+
+class DiamondCutManager {
+    +createConfiguration(bytes32,{bytes32,uint256}[])
+    -resolveDiamondProxyCall(bytes32,uint256,bytes4):address
+    -resolveInterfaceId(bytes32,uint256,bytes4):bool
+}
+
+abstract class Roles {
+    *onlyRole(bytes32)
+}
+
+class ResolverProxy {
+    +fallback()
+}
+
+interface IStaticFunctionSelectors {
+    -getStaticResolverKey():bytes32
+    -getStaticFunctionSelectors():bytes4[]
+    -getStaticInterfaceIds():bytes4[]
+}
+
+class DiamondCutFacet {
+     +updateConfigVersion(uint256)
+     +updateConfig(bytes32,uint256)
+     +updateResolver(BusinessLogicResolver,bytes32,newVersion)
+}
+
+class DiamondLoupeFacet {
+    -getFacets():{bytes32,address,bytes4[],bytes4[]}[]
+    -getFacetSelectors(bytes32):bytes4[]
+    -getFacetIds():bytes32[]
+    -getFacetAddresses():address[]
+    -getFacetIdBySelector(bytes4):bytes32
+    -getFacet(bytes32):address
+}
+
+' Define the relationships
+BusinessLogicResolver <|-- DiamondCutManager
+DiamondCutManager <|-- Roles
+ResolverProxy --> DiamondCutManager
+ResolverProxy ..> DiamondCutFacet
+ResolverProxy ..> DiamondLoupeFacet
+ResolverProxy ..> DiamondFacet
+DiamondFacet <|-- DiamondCutFacet
+DiamondFacet <|-- DiamondLoupeFacet
+IStaticFunctionSelectors -u-|> DiamondCutFacet
+IStaticFunctionSelectors -u-|> DiamondLoupeFacet
+RolesBase -l-|> ResolverProxy
+
+' Show the diagram
+@enduml
