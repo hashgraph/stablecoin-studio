@@ -79,12 +79,13 @@ import { MirrorNode } from '../../../src/domain/context/network/MirrorNode.js';
 import { JsonRpcRelay } from '../../../src/domain/context/network/JsonRpcRelay.js';
 import BackendEndpoint from '../../../src/domain/context/network/BackendEndpoint.js';
 import Injectable from '../../../src/core/Injectable.js';
+import { CONFIG_SC, DEFAULT_VERSION } from '../../../src/core/Constants.js';
 
 const initialSupply = parseInt(INITIAL_SUPPLY);
 const maxSupply = parseInt(MAX_SUPPLY);
-const configId =
-	'0x0000000000000000000000000000000000000000000000000000000000000000';
-const configVersion = 0;
+const configId = CONFIG_SC;
+const configVersion = DEFAULT_VERSION;
+
 // const multisigAccountId = MULTISIG_ACCOUNT_ADDRESS;
 
 // let multiSigTransaction: MultiSigTransaction;
@@ -143,7 +144,7 @@ describe('🧪 Stablecoin test', () => {
 		stableCoinFactory: FACTORY_ADDRESS,
 		reserveInitialAmount: RESERVE_AMOUNT,
 		reserveAddress: RESERVE_ADDRESS,
-		createReserve: true,
+		createReserve: false,
 		grantKYCToOriginalSender: true,
 		burnRoleAccount: CLIENT_ACCOUNT_ED25519.id.toString(),
 		freezeRoleAccount: CLIENT_ACCOUNT_ED25519.id.toString(),
@@ -173,7 +174,7 @@ describe('🧪 Stablecoin test', () => {
 		stableCoinFactory: FACTORY_ADDRESS,
 		reserveInitialAmount: RESERVE_AMOUNT,
 		reserveAddress: RESERVE_ADDRESS,
-		createReserve: true,
+		createReserve: false,
 		grantKYCToOriginalSender: true,
 		burnRoleAccount: CLIENT_ACCOUNT_ED25519.id.toString(),
 		rescueRoleAccount: CLIENT_ACCOUNT_ED25519.id.toString(),

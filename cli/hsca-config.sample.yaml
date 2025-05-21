@@ -74,3 +74,8 @@ logs:
 factories:
   - id: <Factory contract Hedera Id>
     network: <mainnet-testnet-previewnet>
+resolvers:
+  - id: 0.0.XXXXXX
+    network: testnet
+  - id: 0.0.XXXXXX
+    network: previewnet

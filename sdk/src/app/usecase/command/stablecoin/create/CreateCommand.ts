@@ -52,6 +52,8 @@ export class CreateCommand extends Command<CreateCommandResponse> {
 		public readonly resolver?: ContractId,
 		public readonly configId?: string,
 		public readonly configVersion?: number,
+		public readonly reserveConfigVersion?: number,
+		public readonly reserveConfigId?: string,
 	) {
 		super();
 	}
