@@ -64,7 +64,6 @@ import {
 	RESERVE_ADDRESS,
 	CLIENT_PRIVATE_KEY_ECDSA_2,
 	CLIENT_ACCOUNT_ED25519,
-	HEDERA_TOKEN_MANAGER_ADDRESS,
 } from './config.js';
 import {
 	AccountViewModel,
@@ -1272,16 +1271,6 @@ jest.mock('../src/port/out/rpc/RPCQueryAdapter', () => {
 	singletonInstance.getReserveDecimals = jest.fn((address: EvmAddress) => {
 		return DECIMALS;
 	});
-	singletonInstance.getTokenManagerList = jest.fn(
-		(factoryAddress: EvmAddress) => {
-			return [
-				'0x' +
-					identifiers(HederaId.from(HEDERA_TOKEN_MANAGER_ADDRESS))[1]
-						.toUpperCase()
-						.substring(2),
-			];
-		},
-	);
 	singletonInstance.getMetadata = jest.fn((address: EvmAddress) => {
 		return metadata;
 	});

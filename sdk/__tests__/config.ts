@@ -117,8 +117,6 @@ export const HEDERA_ID_ACCOUNT_ECDSA_2 = HederaId.from(
 );
 
 //* Smart Contracts
-export const HEDERA_TOKEN_MANAGER_ADDRESS =
-	process.env.HEDERA_TOKEN_MANAGER_ADDRESS ?? '';
 export const FACTORY_ADDRESS = process.env.FACTORY_ADDRESS ?? '';
 export const RESOLVER_ADDRESS = process.env.RESOLVER_ADDRESS ?? '';
 
