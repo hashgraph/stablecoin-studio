@@ -18,12 +18,19 @@
  *
  */
 
-import { QueryResponse } from '../../../../core/query/QueryResponse.js';
-import ContractId from '../../../../domain/context/contract/ContractId.js';
-import { HederaId } from '../../../../domain/context/shared/HederaId.js';
+import { HederaId } from '../../../../../../port/in/StableCoin.js';
+import { Query } from '../../../../../../core/query/Query.js';
+import { QueryResponse } from '../../../../../../core/query/QueryResponse.js';
 
-export default interface ProxyConfigurationViewModel extends QueryResponse {
-	implementationAddress: ContractId;
-	owner: HederaId;
-	pendingOwner: HederaId;
+export class GetHoldCountForQueryResponse implements QueryResponse {
+	constructor(public readonly payload: number) {}
+}
+
+export class GetHoldCountForQuery extends Query<GetHoldCountForQueryResponse> {
+	constructor(
+		public readonly tokenId: HederaId,
+		public readonly targetId: HederaId,
+	) {
+		super();
+	}
 }

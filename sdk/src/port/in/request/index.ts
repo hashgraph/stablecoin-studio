@@ -72,6 +72,15 @@ import UpdateConfigRequest from './UpdateConfigRequest.js';
 import UpdateConfigVersionRequest from './UpdateConfigVersionRequest.js';
 import UpdateResolverRequest from './UpdateResolverRequest.js';
 import GetConfigInfoRequest from './GetConfigInfoRequest.js';
+import CreateHoldRequest from './CreateHoldRequest.js';
+import ExecuteHoldRequest from './ExecuteHoldRequest.js';
+import CreateHoldByControllerRequest from './CreateHoldByControllerRequest.js';
+import ReleaseHoldRequest from './ReleaseHoldRequest.js';
+import ReclaimHoldRequest from './ReclaimHoldRequest.js';
+import GetHoldsIdForRequest from './GetHoldsIdForRequest.js';
+import GetHoldForRequest from './GetHoldForRequest.js';
+import GetHoldCountForRequest from './GetHoldCountForRequest.js';
+import GetHeldAmountForRequest from './GetHeldAmountForRequest.js';
 
 export * from './ConnectRequest.js';
 export * from './BaseRequest.js';
@@ -130,4 +139,13 @@ export {
 	UpdateConfigVersionRequest,
 	UpdateResolverRequest,
 	GetConfigInfoRequest,
+	CreateHoldRequest,
+	CreateHoldByControllerRequest,
+	ExecuteHoldRequest,
+	ReleaseHoldRequest,
+	ReclaimHoldRequest,
+	GetHoldsIdForRequest,
+	GetHoldForRequest,
+	GetHoldCountForRequest,
+	GetHeldAmountForRequest,
 };

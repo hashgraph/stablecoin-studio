@@ -33,7 +33,7 @@ describe('➡️ DiamondCutManager Tests', () => {
 
     before(async () => {
         // mute | mock console.log
-        console.log = () => {}
+        console.log = () => {} // eslint-disable-line
         console.info(MESSAGES.deploy.info.deployFullInfrastructureInTests)
         // eslint-disable-next-line no-extra-semi
         ;[operator, nonOperator] = await ethers.getSigners()

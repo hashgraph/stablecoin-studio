@@ -278,8 +278,47 @@ interface RoleTransactionAdapter {
 	): Promise<TransactionResponse<string[], Error>>;
 }
 
+interface IHoldTransactionAdapter {
+	createHold(
+		coin: StableCoinCapabilities,
+		amount: BigDecimal,
+		escrow: HederaId,
+		expirationDate: BigDecimal,
+		targetId?: HederaId,
+	): Promise<TransactionResponse>;
+	createHoldByController(
+		coin: StableCoinCapabilities,
+		amount: BigDecimal,
+		escrow: HederaId,
+		expirationDate: BigDecimal,
+		sourceId: HederaId,
+		targetId?: HederaId,
+	): Promise<TransactionResponse>;
+	executeHold(
+		coin: StableCoinCapabilities,
+		amount: BigDecimal,
+		sourceId: HederaId,
+		holdId: number,
+		targetId?: HederaId,
+	): Promise<TransactionResponse>;
+	releaseHold(
+		coin: StableCoinCapabilities,
+		amount: BigDecimal,
+		sourceId: HederaId,
+		holdId: number,
+	): Promise<TransactionResponse>;
+	reclaimHold(
+		coin: StableCoinCapabilities,
+		sourceId: HederaId,
+		holdId: number,
+	): Promise<TransactionResponse>;
+}
+
 export default abstract class TransactionAdapter
-	implements ITransactionAdapter, RoleTransactionAdapter
+	implements
+		ITransactionAdapter,
+		RoleTransactionAdapter,
+		IHoldTransactionAdapter
 {
 	transfers(
 		coin: StableCoinCapabilities,
@@ -585,6 +624,49 @@ export default abstract class TransactionAdapter
 		coin: StableCoinCapabilities,
 		configId: string,
 		configVersion: number,
+	): Promise<TransactionResponse> {
+		throw new Error('Method not implemented.');
+	}
+	createHold(
+		coin: StableCoinCapabilities,
+		amount: BigDecimal,
+		escrow: HederaId,
+		expirationDate: BigDecimal,
+		targetId?: HederaId,
+	): Promise<TransactionResponse> {
+		throw new Error('Method not implemented.');
+	}
+	createHoldByController(
+		coin: StableCoinCapabilities,
+		amount: BigDecimal,
+		escrow: HederaId,
+		expirationDate: BigDecimal,
+		sourceId: HederaId,
+		targetId?: HederaId,
+	): Promise<TransactionResponse> {
+		throw new Error('Method not implemented.');
+	}
+	executeHold(
+		coin: StableCoinCapabilities,
+		amount: BigDecimal,
+		sourceId: HederaId,
+		holdId: number,
+		targetId?: HederaId,
+	): Promise<TransactionResponse> {
+		throw new Error('Method not implemented.');
+	}
+	releaseHold(
+		coin: StableCoinCapabilities,
+		amount: BigDecimal,
+		sourceId: HederaId,
+		holdId: number,
+	): Promise<TransactionResponse> {
+		throw new Error('Method not implemented.');
+	}
+	reclaimHold(
+		coin: StableCoinCapabilities,
+		sourceId: HederaId,
+		holdId: number,
 	): Promise<TransactionResponse> {
 		throw new Error('Method not implemented.');
 	}

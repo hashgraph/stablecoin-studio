@@ -56,6 +56,10 @@ import { ethers } from 'ethers';
 import Hex from '../../core/Hex.js';
 import { AWSKMSTransactionAdapter } from '../../port/out/hs/hts/custodial/AWSKMSTransactionAdapter';
 import { HederaWalletConnectTransactionAdapter } from '../../port/out/hs/walletconnect/HederaWalletConnectTransactionAdapter.js';
+import TransactionResponse from '../../domain/context/transaction/TransactionResponse';
+import { Response } from '../../domain/context/transaction/Response';
+import { EmptyResponse } from './error/EmptyResponse.js';
+import { InvalidResponse } from '../../port/out/mirror/error/InvalidResponse.js';
 
 export const EVM_ADDRESS_REGEX = /0x[a-fA-F0-9]{40}$/;
 
@@ -317,5 +321,36 @@ export default class TransactionService extends Service {
 		} catch (e) {
 			return undefined;
 		}
+	}
+
+	async getTransactionResult({
+		res,
+		result,
+		className,
+		position,
+		numberOfResultsItems,
+	}: {
+		res: TransactionResponse;
+		result?: Response;
+		className: string;
+		position: number;
+		numberOfResultsItems: number;
+	}): Promise<string> {
+		if (!res.id) throw new EmptyResponse(className);
+
+		if (res.response && result) {
+			return result;
+		}
+
+		const results = await this.mirrorNodeAdapter.getContractResults(
+			res.id.toString(),
+			numberOfResultsItems,
+		);
+
+		if (!results || results.length !== numberOfResultsItems) {
+			throw new InvalidResponse(results);
+		}
+
+		return results[position];
 	}
 }
