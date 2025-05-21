@@ -224,6 +224,8 @@ class StableCoinInPort implements IStableCoinInPort {
 			proxyOwnerAccount,
 			configId,
 			configVersion,
+			reserveConfigVersion,
+			reserveConfigId,
 		} = req;
 
 		const stableCoinFactory =
@@ -322,6 +324,8 @@ class StableCoinInPort implements IStableCoinInPort {
 				resolver ? new ContractId(resolver) : undefined,
 				configId,
 				configVersion,
+				reserveConfigVersion,
+				reserveConfigId,
 			),
 		);
 

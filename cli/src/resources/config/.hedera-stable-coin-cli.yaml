@@ -20,3 +20,4 @@ logs:
   path: './logs'
   level: 'ERROR'
 factories: [{ id: '', network: '' }]
+resolvers: [{ id: '', network: '' }]

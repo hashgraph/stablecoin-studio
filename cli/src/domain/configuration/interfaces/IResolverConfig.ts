@@ -1,6 +1,6 @@
 /*
  *
- * Hedera Stablecoin SDK
+ * Hedera Stablecoin CLI
  *
  * Copyright (C) 2023 Hedera Hashgraph, LLC
  *
@@ -18,16 +18,7 @@
  *
  */
 
-import { BYTES_32_NULL } from '../../../core/Constants';
-
-export class ResolverProxyConfiguration {
-	public key: string;
-	public version: number;
-
-	static empty(): ResolverProxyConfiguration {
-		return {
-			key: BYTES_32_NULL,
-			version: 0,
-		};
-	}
+export interface IResolversConfig {
+  network: string;
+  id: string;
 }

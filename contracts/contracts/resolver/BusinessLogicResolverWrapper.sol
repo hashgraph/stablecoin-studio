@@ -6,6 +6,7 @@ import {LibCommon} from '../core/LibCommon.sol';
 import {IBusinessLogicResolverWrapper} from './interfaces/IBusinessLogicResolverWrapper.sol';
 import {IBusinessLogicResolver} from './interfaces/IBusinessLogicResolver.sol';
 import {_BUSINESS_LOGIC_RESOLVER_STORAGE_POSITION} from '../constants/storagePositions.sol';
+import {EnumerableSetBytes4} from '../core/EnumerableSetBytes4.sol';
 
 abstract contract BusinessLogicResolverWrapper is IBusinessLogicResolverWrapper {
     struct BusinessLogicResolverDataStorage {
@@ -20,6 +21,7 @@ abstract contract BusinessLogicResolverWrapper is IBusinessLogicResolverWrapper 
         mapping(bytes32 => uint256) businessLogicVersionIndex;
         // version to status
         mapping(uint256 => IBusinessLogicResolver.VersionStatus) versionStatuses;
+        mapping(bytes32 => EnumerableSetBytes4.Bytes4Set) selectorBlacklist;
     }
 
     modifier validVersion(uint256 _version) {
@@ -80,6 +82,38 @@ abstract contract BusinessLogicResolverWrapper is IBusinessLogicResolverWrapper 
         return businessLogicResolverDataStorage.latestVersion;
     }
 
+    function _addSelectorsToBlacklist(bytes32 _configurationId, bytes4[] calldata _selectors) internal {
+        EnumerableSetBytes4.Bytes4Set storage selectorBlacklist = _businessLogicResolverStorage().selectorBlacklist[
+            _configurationId
+        ];
+        uint256 length = _selectors.length;
+        for (uint256 index; index < length; ) {
+            bytes4 selector = _selectors[index];
+            if (!EnumerableSetBytes4.contains(selectorBlacklist, selector)) {
+                EnumerableSetBytes4.add(selectorBlacklist, selector);
+            }
+            unchecked {
+                ++index;
+            }
+        }
+    }
+
+    function _removeSelectorsFromBlacklist(bytes32 _configurationId, bytes4[] calldata _selectors) internal {
+        EnumerableSetBytes4.Bytes4Set storage selectorBlacklist = _businessLogicResolverStorage().selectorBlacklist[
+            _configurationId
+        ];
+        uint256 length = _selectors.length;
+        for (uint256 index; index < length; ) {
+            bytes4 selector = _selectors[index];
+            if (EnumerableSetBytes4.contains(selectorBlacklist, selector)) {
+                EnumerableSetBytes4.remove(selectorBlacklist, selector);
+            }
+            unchecked {
+                ++index;
+            }
+        }
+    }
+
     function _getVersionStatus(uint256 _version) internal view returns (IBusinessLogicResolver.VersionStatus status_) {
         status_ = _businessLogicResolverStorage().versionStatuses[_version];
     }
@@ -132,6 +166,17 @@ abstract contract BusinessLogicResolverWrapper is IBusinessLogicResolverWrapper 
         IBusinessLogicResolver.BusinessLogicVersion memory businessLogicVersion = businessLogicResolverDataStorage
             .businessLogics[_businessLogicKey][position];
         return businessLogicVersion.businessLogicAddress;
+    }
+
+    function _getSelectorsBlacklist(
+        bytes32 _configurationId,
+        uint256 _pageIndex,
+        uint256 _pageLength
+    ) internal view returns (bytes4[] memory page_) {
+        EnumerableSetBytes4.Bytes4Set storage selectorBlacklist = _businessLogicResolverStorage().selectorBlacklist[
+            _configurationId
+        ];
+        page_ = LibCommon.getFromSet(selectorBlacklist, _pageIndex, _pageLength);
     }
 
     function _businessLogicResolverStorage()

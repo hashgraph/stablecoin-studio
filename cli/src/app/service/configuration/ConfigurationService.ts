@@ -85,6 +85,9 @@ export default class ConfigurationService extends Service {
       if (overrides.factories) {
         this.configuration.factories = overrides.factories;
       }
+      if (overrides.resolvers) {
+        this.configuration.resolvers = overrides.resolvers;
+      }
     }
   }
 

@@ -22,28 +22,27 @@ import { language } from '../../../index.js';
 import { utilsService } from '../../../index.js';
 import Service from '../Service.js';
 import {
-  AcceptProxyOwnerRequest,
-  ChangeProxyOwnerRequest,
-  Proxy,
+  UpdateConfigVersionRequest,
+  Management,
+  UpdateConfigRequest,
+  UpdateResolverRequest,
 } from '@hashgraph/stablecoin-npm-sdk';
 
 /**
- * Proxy Owner
+ * Resolver Stablecoin Service
  */
-export default class OwnerProxyService extends Service {
+export default class ResolverStableCoinService extends Service {
   constructor() {
-    super('Proxy Owner');
+    super('Fee Stablecoin');
   }
 
-  /**
-   * change the proxy's owner
-   */
-  public async changeProxyOwner(
-    request: ChangeProxyOwnerRequest,
+  public async updateConfigVersion(
+    req: UpdateConfigVersionRequest,
   ): Promise<void> {
-    await utilsService.showSpinner(Proxy.changeProxyOwner(request), {
+    await utilsService.showSpinner(Management.updateConfigVersion(req), {
       text: language.getText('state.loading'),
-      successText: language.getText('state.changeOwnerCompleted') + '\n',
+      successText:
+        language.getText('state.resolverConfigVersionUpdated') + '\n',
     });
 
     console.log(language.getText('operation.success'));
@@ -51,15 +50,10 @@ export default class OwnerProxyService extends Service {
     utilsService.breakLine();
   }
 
-  /**
-   * accept the proxy's owner
-   */
-  public async acceptProxyOwner(
-    request: AcceptProxyOwnerRequest,
-  ): Promise<void> {
-    await utilsService.showSpinner(Proxy.acceptProxyOwner(request), {
+  public async updateConfig(req: UpdateConfigRequest): Promise<void> {
+    await utilsService.showSpinner(Management.updateConfig(req), {
       text: language.getText('state.loading'),
-      successText: language.getText('state.acceptOwnerCompleted') + '\n',
+      successText: language.getText('state.resolverConfigUpdated') + '\n',
     });
 
     console.log(language.getText('operation.success'));
@@ -67,23 +61,14 @@ export default class OwnerProxyService extends Service {
     utilsService.breakLine();
   }
 
-  /**
-   * cancel the proxy's owner
-   */
-  public async cancelProxyOwner(tokenId: string): Promise<void> {
-    const targetId = utilsService.getCurrentAccount().accountId;
-
-    const changeProxyOwnerRequest = new ChangeProxyOwnerRequest({
-      tokenId,
-      targetId,
+  public async updateResolver(req: UpdateResolverRequest): Promise<void> {
+    await utilsService.showSpinner(Management.updateResolver(req), {
+      text: language.getText('state.loading'),
+      successText: language.getText('state.resolverUpdated') + '\n',
     });
 
-    await this.changeProxyOwner(changeProxyOwnerRequest);
+    console.log(language.getText('operation.success'));
 
-    const acceptProxyOwnerRequest = new AcceptProxyOwnerRequest({
-      tokenId,
-    });
-
-    await this.acceptProxyOwner(acceptProxyOwnerRequest);
+    utilsService.breakLine();
   }
 }

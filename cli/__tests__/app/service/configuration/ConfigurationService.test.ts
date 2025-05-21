@@ -136,6 +136,16 @@ const CONFIG_MOCK: IConfiguration = {
       network: NETWORKS.preview,
     },
   ],
+  resolvers: [
+    {
+      id: '0.0.13579',
+      network: 'testnet',
+    },
+    {
+      id: '0.0.02468',
+      network: 'previewnet',
+    },
+  ],
   mirrors: [
     {
       name: 'HEDERA',

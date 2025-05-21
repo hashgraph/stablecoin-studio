@@ -33,7 +33,7 @@ describe('➡️ DiamondCutManager Tests', () => {
 
     before(async () => {
         // mute | mock console.log
-        console.log = () => {}
+        console.log = () => {} // eslint-disable-line
         console.info(MESSAGES.deploy.info.deployFullInfrastructureInTests)
         // eslint-disable-next-line no-extra-semi
         ;[operator, nonOperator] = await ethers.getSigners()
@@ -450,5 +450,23 @@ describe('➡️ DiamondCutManager Tests', () => {
             }
         )
         await expect(new ValidateTxResponseCommand({ txResponse: response }).execute()).to.be.rejectedWith(Error)
+    })
+    it('GIVEN a resolver WHEN a selector is blacklisted THEN transaction fails with SelectorBlacklisted', async () => {
+        const blackListedSelectors = ['0x8456cb59'] // pause() selector
+
+        await businessLogicResolver.addSelectorsToBlacklist(CONFIG_ID.stableCoin, blackListedSelectors)
+
+        diamondCutManager = diamondCutManager.connect(operator)
+        const facetConfigurations: IDiamondCutManager.FacetConfigurationStruct[] = []
+        stableCoinFacetIdList.forEach((id, index) =>
+            facetConfigurations.push({
+                id,
+                version: stableCoinFacetIdList[index],
+            })
+        )
+
+        await expect(diamondCutManager.createConfiguration(CONFIG_ID.stableCoin, facetConfigurations))
+            .to.be.revertedWithCustomError(diamondCutManager, 'SelectorBlacklisted')
+            .withArgs(blackListedSelectors[0])
     })
 })
