@@ -26,7 +26,95 @@ exports[`<Settings /> should render correctly 1`] = `
         </h2>
         <div
           class="css-nxcc5s"
-        />
+        >
+          <div
+            class="css-180e663"
+          >
+            <button
+              class="css-3aphhy"
+              data-testid="direct-access-stableCoinSettings"
+            >
+              <div
+                class="css-1i763ui"
+              >
+                <svg
+                  class="chakra-icon css-1f9qa95"
+                  data-testid="direct-access-CoinVertical"
+                  fill="currentColor"
+                  focusable="false"
+                  height="1em"
+                  viewBox="0 0 256 256"
+                  width="1em"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <rect
+                    fill="none"
+                    height="256"
+                    width="256"
+                  />
+                  <ellipse
+                    cx="104"
+                    cy="128"
+                    fill="none"
+                    rx="56"
+                    ry="96"
+                    stroke="currentColor"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="16"
+                  />
+                  <path
+                    d="M104,32h48c30.9,0,56,43,56,96s-25.1,96-56,96H104"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="16"
+                  />
+                  <line
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="16"
+                    x1="145.7"
+                    x2="193.7"
+                    y1="64"
+                    y2="64"
+                  />
+                  <line
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="16"
+                    x1="160"
+                    x2="208"
+                    y1="128"
+                    y2="128"
+                  />
+                  <line
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="16"
+                    x1="145.7"
+                    x2="193.7"
+                    y1="192"
+                    y2="192"
+                  />
+                </svg>
+              </div>
+              <p
+                class="chakra-text css-o5z2l9"
+                data-testid="direct-access-Stablecoin Setting"
+              >
+                Stablecoin Setting
+              </p>
+            </button>
+          </div>
+        </div>
       </div>
     </div>
   </div>

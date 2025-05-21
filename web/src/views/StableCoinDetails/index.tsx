@@ -11,15 +11,16 @@ import {
 	SELECTED_WALLET_ACCOUNT_INFO,
 	SELECTED_WALLET_COIN,
 	SELECTED_TOKEN_ROLES,
-	SELECTED_WALLET_COIN_PROXY_CONFIG,
+	SELECTED_WALLET_COIN_CONFIG_INFO,
 } from '../../store/slices/walletSlice';
 import { formatShortKey } from '../../utils/inputHelper';
+import { formatBytes32 } from '../../utils/format';
 
 const StableCoinDetails = () => {
 	const { t } = useTranslation('stableCoinDetails');
 
 	const selectedStableCoin = useSelector(SELECTED_WALLET_COIN);
-	const selectedStableCoinConfigProxy = useSelector(SELECTED_WALLET_COIN_PROXY_CONFIG);
+	const selectedStableCoinConfigInfo = useSelector(SELECTED_WALLET_COIN_CONFIG_INFO);
 	const account = useSelector(SELECTED_WALLET_ACCOUNT_INFO);
 	const network = useSelector(SELECTED_NETWORK);
 	const roles = useSelector(SELECTED_TOKEN_ROLES)! || [];
@@ -36,15 +37,6 @@ const StableCoinDetails = () => {
 		const text = isSmartContract
 			? `${t('smartContract').toUpperCase()} - ${key.value}`
 			: formatShortKey({ key: key.key });
-		return text;
-	};
-
-	const getLabelFromAccount = ({ account, proxyAddress }: { account: any; proxyAddress: any }) => {
-		if (!account) return t('none').toUpperCase();
-		const text =
-			proxyAddress && proxyAddress === account
-				? `${t('smartContract').toUpperCase()} - ${account}`
-				: account;
 		return text;
 	};
 
@@ -109,19 +101,13 @@ const StableCoinDetails = () => {
 		},
 		{
 			label: t('treasury'),
-			value: getLabelFromAccount({
-				account: selectedStableCoin?.treasury as any,
-				proxyAddress: selectedStableCoin?.proxyAddress as any,
-			}),
+			value: selectedStableCoin?.treasury,
 			copyButton: true,
 			hashScanURL: `${hashScanURL}/contract/${selectedStableCoin?.treasury}`,
 		},
 		{
 			label: t('autoRenewAccount'),
-			value: getLabelFromAccount({
-				account: selectedStableCoin?.autoRenewAccount as any,
-				proxyAddress: selectedStableCoin?.proxyAddress as any,
-			}),
+			value: selectedStableCoin?.autoRenewAccount,
 			copyButton: true,
 			hashScanURL: `${hashScanURL}/account/${selectedStableCoin?.autoRenewAccount}`,
 		},
@@ -138,29 +124,17 @@ const StableCoinDetails = () => {
 				: '-',
 		},
 		{
-			label: t('proxyAddress'),
-			value: selectedStableCoin?.proxyAddress,
-			hashScanURL: `${hashScanURL}/contract/${selectedStableCoin?.proxyAddress}`,
+			label: t('configId'),
+			value: formatBytes32(selectedStableCoinConfigInfo?.configId ?? ''),
 		},
 		{
-			label: t('proxyAdminAddress'),
-			value: selectedStableCoin?.proxyAdminAddress,
-			hashScanURL: `${hashScanURL}/contract/${selectedStableCoin?.proxyAdminAddress}`,
+			label: t('configVersion'),
+			value: selectedStableCoinConfigInfo?.configVersion,
 		},
 		{
-			label: t('proxyOwner'),
-			value: selectedStableCoinConfigProxy?.owner,
-			hashScanURL: `${hashScanURL}/account/${selectedStableCoinConfigProxy?.owner}`,
-		},
-		{
-			label: t('proxyImplementation'),
-			value: selectedStableCoinConfigProxy?.implementationAddress,
-			hashScanURL: `${hashScanURL}/contract/${selectedStableCoinConfigProxy?.implementationAddress}`,
-		},
-		{
-			label: t('pendingOwner'),
-			value: selectedStableCoinConfigProxy?.pendingOwner,
-			hashScanURL: `${hashScanURL}/contract/${selectedStableCoinConfigProxy?.pendingOwner}`,
+			label: t('resolverAddress'),
+			value: selectedStableCoinConfigInfo?.resolverAddress,
+			hashScanURL: `${hashScanURL}/contract/${selectedStableCoinConfigInfo?.resolverAddress}`,
 		},
 		{
 			label: t('paused'),

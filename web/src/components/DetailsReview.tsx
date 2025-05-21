@@ -270,11 +270,7 @@ const DetailsReview = ({
 	}) => {
 		try {
 			onLoading();
-			if (
-				!selectedStableCoin?.proxyAddress ||
-				!selectedStableCoin?.proxyAdminAddress ||
-				!selectedStableCoin?.tokenId
-			) {
+			if (!selectedStableCoin?.tokenId) {
 				onError();
 				return;
 			}

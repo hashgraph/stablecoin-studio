@@ -44,16 +44,14 @@ exports[`<Review /> should render correctly 1`] = `
                 <p
                   class="chakra-text css-9s6br4"
                 >
-                  HederaTokenManager impl.
+                  Stablecoin Name
                 </p>
                 <div
                   class="chakra-stack css-1c8ysgd"
                 >
                   <p
                     class="chakra-text css-mgupmj"
-                  >
-                    2
-                  </p>
+                  />
                 </div>
               </div>
               <hr
@@ -72,7 +70,7 @@ exports[`<Review /> should render correctly 1`] = `
                 <p
                   class="chakra-text css-9s6br4"
                 >
-                  Stablecoin Name
+                  Stablecoin Symbol
                 </p>
                 <div
                   class="chakra-stack css-1c8ysgd"
@@ -98,7 +96,33 @@ exports[`<Review /> should render correctly 1`] = `
                 <p
                   class="chakra-text css-9s6br4"
                 >
-                  Stablecoin Symbol
+                  Config ID
+                </p>
+                <div
+                  class="chakra-stack css-1c8ysgd"
+                >
+                  <p
+                    class="chakra-text css-mgupmj"
+                  />
+                </div>
+              </div>
+              <hr
+                aria-orientation="horizontal"
+                class="chakra-divider css-zaaihy"
+                title="divider"
+              />
+            </div>
+            <div
+              class="css-0"
+            >
+              <div
+                class="css-gg4vpm"
+                data-testid="details-review-detail-3"
+              >
+                <p
+                  class="chakra-text css-9s6br4"
+                >
+                  Config Version
                 </p>
                 <div
                   class="chakra-stack css-1c8ysgd"
@@ -666,39 +690,6 @@ exports[`<Review /> should render correctly 1`] = `
                     False
                   </p>
                 </div>
-              </div>
-            </div>
-          </div>
-        </div>
-        <div
-          class="css-13brihr"
-          data-testid="button-box"
-        >
-          <div
-            class="css-1i64jsd"
-          >
-            <p
-              class="chakra-text css-ol2bzi"
-              data-testid="details-review-title"
-            >
-              Proxy Admin
-            </p>
-          </div>
-          <div
-            class="css-0"
-          >
-            <div
-              class="css-0"
-            >
-              <div
-                class="css-gg4vpm"
-                data-testid="details-review-detail-0"
-              >
-                <p
-                  class="chakra-text css-9s6br4"
-                >
-                  Owner account
-                </p>
               </div>
             </div>
           </div>
