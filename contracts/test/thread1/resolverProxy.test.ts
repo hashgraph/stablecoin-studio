@@ -23,6 +23,10 @@ describe('➡️ ResolverProxy Tests', () => {
     let roleImpl: RolesFacet
     let pauseImpl: PausableFacet
     let signer_A: SignerWithAddress
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    let businessLogicsRegistryDatas: any
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    let businessLogicsRegistryDatas_2: any
 
     let account_A: string
 
@@ -50,6 +54,8 @@ describe('➡️ ResolverProxy Tests', () => {
 
     async function deployContracts() {
         resolver = await deployResolver()
+        resolver_2 = await deployResolver()
+
         diamondFacet = await new DiamondFacet__factory(signer_A).deploy({
             gasLimit: GAS_LIMIT.diamondFacet.deploy,
         })
@@ -59,6 +65,33 @@ describe('➡️ ResolverProxy Tests', () => {
         pauseImpl = await new PausableFacet__factory(signer_A).deploy({
             gasLimit: GAS_LIMIT.hederaTokenManager.facetDeploy,
         })
+        businessLogicsRegistryDatas = [
+            {
+                businessLogicKey: await diamondFacet.getStaticResolverKey(),
+                businessLogicAddress: diamondFacet.address,
+            },
+            {
+                businessLogicKey: await roleImpl.getStaticResolverKey(),
+                businessLogicAddress: roleImpl.address,
+            },
+        ]
+        businessLogicsRegistryDatas_2 = [
+            {
+                businessLogicKey: await diamondFacet.getStaticResolverKey(),
+                businessLogicAddress: diamondFacet.address,
+            },
+            {
+                businessLogicKey: await roleImpl.getStaticResolverKey(),
+                businessLogicAddress: roleImpl.address,
+            },
+            {
+                businessLogicKey: await pauseImpl.getStaticResolverKey(),
+                businessLogicAddress: pauseImpl.address,
+            },
+        ]
+        await setUpResolver(businessLogicsRegistryDatas, undefined, resolver)
+        await setUpResolver(businessLogicsRegistryDatas, undefined, resolver_2)
+        await setUpResolver(businessLogicsRegistryDatas, CONFIG_ID_2, resolver_2)
     }
 
     async function setUpResolver(
@@ -76,9 +109,13 @@ describe('➡️ ResolverProxy Tests', () => {
         const facetConfigurations: FacetConfiguration[] = []
         facetIds.forEach((id, index) => facetConfigurations.push({ id, version: facetVersions[index] }))
 
-        await resolverContract.registerBusinessLogics(businessLogicsRegistryDatas)
+        await resolverContract.registerBusinessLogics(businessLogicsRegistryDatas, {
+            gasLimit: GAS_LIMIT.businessLogicResolver.registerBusinessLogics,
+        })
 
-        await resolverContract.createConfiguration(configID, facetConfigurations)
+        await resolverContract.createConfiguration(configID, facetConfigurations, {
+            gasLimit: GAS_LIMIT.businessLogicResolver.createConfiguration,
+        })
     }
 
     async function deployResolver(): Promise<BusinessLogicResolver> {
@@ -132,7 +169,7 @@ describe('➡️ ResolverProxy Tests', () => {
         expect(await diamondLoupe.getFacetAddresses()).to.deep.equal(expectedFacetAddresses)
     }
 
-    beforeEach(async () => {
+    before(async () => {
         // eslint-disable-next-line no-extra-semi
         ;[signer_A] = await ethers.getSigners()
         account_A = signer_A.address
@@ -141,18 +178,6 @@ describe('➡️ ResolverProxy Tests', () => {
     })
 
     it('GIVEN deployed facets WHEN deploy a new resolverProxy with correct configuration THEN a new resolverProxy proxy was deployed', async () => {
-        const businessLogicsRegistryDatas = [
-            {
-                businessLogicKey: await diamondFacet.getStaticResolverKey(),
-                businessLogicAddress: diamondFacet.address,
-            },
-            {
-                businessLogicKey: await roleImpl.getStaticResolverKey(),
-                businessLogicAddress: roleImpl.address,
-            },
-        ]
-        await setUpResolver(businessLogicsRegistryDatas)
-
         const resolverProxy = await (
             await ethers.getContractFactory('ResolverProxy')
         ).deploy(resolver.address, CONFIG_ID, 1, [], { gasLimit: GAS_LIMIT.resolverProxy.deploy })
@@ -171,58 +196,21 @@ describe('➡️ ResolverProxy Tests', () => {
     })
 
     it('GIVEN deployed facets WHEN deploying a resolverProxy and registering Facets to use a non exposed signature THEN raise FunctionNotFound and it is not recognized by supportsInterface', async () => {
-        const businessLogicsRegistryDatas = [
-            {
-                businessLogicKey: await diamondFacet.getStaticResolverKey(),
-                businessLogicAddress: diamondFacet.address,
-            },
-        ]
-
-        await setUpResolver(businessLogicsRegistryDatas)
-
         const resolverProxy = await (
             await ethers.getContractFactory('ResolverProxy')
         ).deploy(resolver.address, CONFIG_ID, 1, [], { gasLimit: GAS_LIMIT.resolverProxy.deploy })
 
-        const rolesFacet = await ethers.getContractAt('RolesFacet', resolverProxy.address)
+        const burnableFacet = await ethers.getContractAt('BurnableFacet', resolverProxy.address)
         const diamondLoupe = await ethers.getContractAt('DiamondLoupeFacet', resolverProxy.address)
 
-        const GRANT_ROLE_SIGNATURE = '0x2f2ff15d'
-        await expect(rolesFacet.grantRole(ROLES.defaultAdmin.hash, account_A))
+        const BURN_SIGNATURE = '0x5cd3a608'
+        await expect(burnableFacet.burn(10))
             .to.be.revertedWithCustomError(resolverProxy, 'FunctionNotFound')
-            .withArgs(GRANT_ROLE_SIGNATURE)
-        expect(await diamondLoupe.supportsInterface(GRANT_ROLE_SIGNATURE)).to.be.false
+            .withArgs(BURN_SIGNATURE)
+        expect(await diamondLoupe.supportsInterface(BURN_SIGNATURE)).to.be.false
     })
 
     it('GIVEN deployed facets WHEN deploy a diamond to latestVersion and one to a specific version THEN only the latest version one will get updated', async () => {
-        const businessLogicsRegistryDatas_1 = [
-            {
-                businessLogicKey: await diamondFacet.getStaticResolverKey(),
-                businessLogicAddress: diamondFacet.address,
-            },
-            {
-                businessLogicKey: await roleImpl.getStaticResolverKey(),
-                businessLogicAddress: roleImpl.address,
-            },
-        ]
-
-        const businessLogicsRegistryDatas_2 = [
-            {
-                businessLogicKey: await diamondFacet.getStaticResolverKey(),
-                businessLogicAddress: diamondFacet.address,
-            },
-            {
-                businessLogicKey: await roleImpl.getStaticResolverKey(),
-                businessLogicAddress: roleImpl.address,
-            },
-            {
-                businessLogicKey: await pauseImpl.getStaticResolverKey(),
-                businessLogicAddress: pauseImpl.address,
-            },
-        ]
-
-        await setUpResolver(businessLogicsRegistryDatas_1)
-
         const resolverProxy_v1 = await (
             await ethers.getContractFactory('ResolverProxy')
         ).deploy(resolver.address, CONFIG_ID, 1, [], { gasLimit: GAS_LIMIT.resolverProxy.deploy })
@@ -235,29 +223,16 @@ describe('➡️ ResolverProxy Tests', () => {
 
         const diamondFacet_latest = await ethers.getContractAt('DiamondFacet', resolverProxy_latest.address)
 
-        await checkFacets(businessLogicsRegistryDatas_1, diamondFacet_v1)
-        await checkFacets(businessLogicsRegistryDatas_1, diamondFacet_latest)
+        await checkFacets(businessLogicsRegistryDatas, diamondFacet_v1)
+        await checkFacets(businessLogicsRegistryDatas, diamondFacet_latest)
 
         await setUpResolver(businessLogicsRegistryDatas_2)
 
-        await checkFacets(businessLogicsRegistryDatas_1, diamondFacet_v1)
+        await checkFacets(businessLogicsRegistryDatas, diamondFacet_v1)
         await checkFacets(businessLogicsRegistryDatas_2, diamondFacet_latest)
     })
 
     it('GIVEN resolverProxy and non-admin user WHEN updating version THEN fails with AccountHasNoRole', async () => {
-        const businessLogicsRegistryDatas = [
-            {
-                businessLogicKey: await diamondFacet.getStaticResolverKey(),
-                businessLogicAddress: diamondFacet.address,
-            },
-            {
-                businessLogicKey: await roleImpl.getStaticResolverKey(),
-                businessLogicAddress: roleImpl.address,
-            },
-        ]
-
-        await setUpResolver(businessLogicsRegistryDatas)
-
         const resolverProxy = await (
             await ethers.getContractFactory('ResolverProxy')
         ).deploy(resolver.address, CONFIG_ID, 1, [], { gasLimit: GAS_LIMIT.resolverProxy.deploy })
@@ -268,19 +243,6 @@ describe('➡️ ResolverProxy Tests', () => {
     })
 
     it('GIVEN resolverProxy and admin user WHEN updating to non existing version THEN fails with ResolverProxyConfigurationNoRegistered', async () => {
-        const businessLogicsRegistryDatas = [
-            {
-                businessLogicKey: await diamondFacet.getStaticResolverKey(),
-                businessLogicAddress: diamondFacet.address,
-            },
-            {
-                businessLogicKey: await roleImpl.getStaticResolverKey(),
-                businessLogicAddress: roleImpl.address,
-            },
-        ]
-
-        await setUpResolver(businessLogicsRegistryDatas)
-
         const roles = [
             {
                 role: ROLES.defaultAdmin.hash,
@@ -303,19 +265,6 @@ describe('➡️ ResolverProxy Tests', () => {
     })
 
     it('GIVEN resolverProxy and admin user WHEN updating version THEN succeeds', async () => {
-        const businessLogicsRegistryDatas = [
-            {
-                businessLogicKey: await diamondFacet.getStaticResolverKey(),
-                businessLogicAddress: diamondFacet.address,
-            },
-            {
-                businessLogicKey: await roleImpl.getStaticResolverKey(),
-                businessLogicAddress: roleImpl.address,
-            },
-        ]
-
-        await setUpResolver(businessLogicsRegistryDatas)
-
         const roles = [
             {
                 role: ROLES.defaultAdmin.hash,
@@ -351,19 +300,6 @@ describe('➡️ ResolverProxy Tests', () => {
     })
 
     it('GIVEN resolverProxy and non-admin user WHEN updating configID THEN fails with AccountHasNoRole', async () => {
-        const businessLogicsRegistryDatas = [
-            {
-                businessLogicKey: await diamondFacet.getStaticResolverKey(),
-                businessLogicAddress: diamondFacet.address,
-            },
-            {
-                businessLogicKey: await roleImpl.getStaticResolverKey(),
-                businessLogicAddress: roleImpl.address,
-            },
-        ]
-
-        await setUpResolver(businessLogicsRegistryDatas)
-
         const resolverProxy = await (
             await ethers.getContractFactory('ResolverProxy')
         ).deploy(resolver.address, CONFIG_ID, 1, [], { gasLimit: GAS_LIMIT.resolverProxy.deploy })
@@ -377,19 +313,6 @@ describe('➡️ ResolverProxy Tests', () => {
     })
 
     it('GIVEN resolverProxy and admin user WHEN updating to non existing configID THEN fails with ResolverProxyConfigurationNoRegistered', async () => {
-        const businessLogicsRegistryDatas = [
-            {
-                businessLogicKey: await diamondFacet.getStaticResolverKey(),
-                businessLogicAddress: diamondFacet.address,
-            },
-            {
-                businessLogicKey: await roleImpl.getStaticResolverKey(),
-                businessLogicAddress: roleImpl.address,
-            },
-        ]
-
-        await setUpResolver(businessLogicsRegistryDatas)
-
         const roles = [
             {
                 role: ROLES.defaultAdmin.hash,
@@ -413,18 +336,6 @@ describe('➡️ ResolverProxy Tests', () => {
     })
 
     it('GIVEN resolverProxy and admin user WHEN updating configID THEN succeeds', async () => {
-        const businessLogicsRegistryDatas = [
-            {
-                businessLogicKey: await diamondFacet.getStaticResolverKey(),
-                businessLogicAddress: diamondFacet.address,
-            },
-            {
-                businessLogicKey: await roleImpl.getStaticResolverKey(),
-                businessLogicAddress: roleImpl.address,
-            },
-        ]
-
-        await setUpResolver(businessLogicsRegistryDatas)
         await setUpResolver(businessLogicsRegistryDatas, CONFIG_ID_2)
 
         const roles = [
@@ -462,21 +373,6 @@ describe('➡️ ResolverProxy Tests', () => {
     })
 
     it('GIVEN resolverProxy and non-admin user WHEN updating resolver THEN fails with AccountHasNoRole', async () => {
-        resolver_2 = await deployResolver()
-
-        const businessLogicsRegistryDatas = [
-            {
-                businessLogicKey: await diamondFacet.getStaticResolverKey(),
-                businessLogicAddress: diamondFacet.address,
-            },
-            {
-                businessLogicKey: await roleImpl.getStaticResolverKey(),
-                businessLogicAddress: roleImpl.address,
-            },
-        ]
-
-        await setUpResolver(businessLogicsRegistryDatas)
-
         const resolverProxy = await (
             await ethers.getContractFactory('ResolverProxy')
         ).deploy(resolver.address, CONFIG_ID, 1, [], { gasLimit: GAS_LIMIT.resolverProxy.deploy })
@@ -490,21 +386,6 @@ describe('➡️ ResolverProxy Tests', () => {
     })
 
     it('GIVEN resolverProxy and admin user WHEN updating to non existing resolver THEN fails with ResolverProxyConfigurationNoRegistered', async () => {
-        resolver_2 = await deployResolver()
-
-        const businessLogicsRegistryDatas = [
-            {
-                businessLogicKey: await diamondFacet.getStaticResolverKey(),
-                businessLogicAddress: diamondFacet.address,
-            },
-            {
-                businessLogicKey: await roleImpl.getStaticResolverKey(),
-                businessLogicAddress: roleImpl.address,
-            },
-        ]
-
-        await setUpResolver(businessLogicsRegistryDatas, CONFIG_ID)
-
         const roles = [
             {
                 role: ROLES.defaultAdmin.hash,
@@ -520,7 +401,7 @@ describe('➡️ ResolverProxy Tests', () => {
 
         diamondCut = diamondCut.connect(signer_A)
 
-        const response = await diamondCut.updateResolver(resolver_2.address, CONFIG_ID_2, 1, {
+        const response = await diamondCut.updateResolver(resolver_2.address, CONFIG_ID_2, 2, {
             gasLimit: GAS_LIMIT.diamondFacet.updateResolver,
         })
 
@@ -528,22 +409,6 @@ describe('➡️ ResolverProxy Tests', () => {
     })
 
     it('GIVEN resolverProxy and admin user WHEN updating resolver THEN succeeds', async () => {
-        resolver_2 = await deployResolver()
-
-        const businessLogicsRegistryDatas = [
-            {
-                businessLogicKey: await diamondFacet.getStaticResolverKey(),
-                businessLogicAddress: diamondFacet.address,
-            },
-            {
-                businessLogicKey: await roleImpl.getStaticResolverKey(),
-                businessLogicAddress: roleImpl.address,
-            },
-        ]
-
-        await setUpResolver(businessLogicsRegistryDatas)
-        await setUpResolver(businessLogicsRegistryDatas, CONFIG_ID_2, resolver_2)
-
         const roles = [
             {
                 role: ROLES.defaultAdmin.hash,
