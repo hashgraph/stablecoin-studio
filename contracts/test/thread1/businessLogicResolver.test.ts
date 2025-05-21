@@ -2,7 +2,7 @@ import { ethers } from 'hardhat'
 import { expect } from 'chai'
 import { SignerWithAddress } from '@nomiclabs/hardhat-ethers/signers.js'
 import { BusinessLogicResolver } from '@typechain-types'
-import { GAS_LIMIT, ValidateTxResponseCommand } from '@scripts'
+import { CONFIG_ID, GAS_LIMIT, ValidateTxResponseCommand } from '@scripts'
 
 describe('➡️ BusinessLogicResolver Tests', () => {
     let operator: SignerWithAddress
@@ -210,6 +210,18 @@ describe('➡️ BusinessLogicResolver Tests', () => {
             expect(await businessLogicResolver.getBusinessLogicKeys(0, 10)).is.deep.equal(
                 BUSINESS_LOGICS_TO_REGISTER.map((businessLogic) => businessLogic.businessLogicKey)
             )
+        })
+        it('GIVEN a configuration add a selector to the blacklist THEN queries respond with correct values', async () => {
+            const blackListedSelectors = ['0x8456cb59'] // pause() selector
+
+            await businessLogicResolver.addSelectorsToBlacklist(CONFIG_ID.stableCoin, blackListedSelectors)
+
+            expect(await businessLogicResolver.getSelectorsBlacklist(CONFIG_ID.stableCoin, 0, 100)).to.deep.equal(
+                blackListedSelectors
+            )
+
+            await businessLogicResolver.removeSelectorsFromBlacklist(CONFIG_ID.stableCoin, blackListedSelectors)
+            expect(await businessLogicResolver.getSelectorsBlacklist(CONFIG_ID.stableCoin, 0, 100)).to.deep.equal([])
         })
     })
 })
