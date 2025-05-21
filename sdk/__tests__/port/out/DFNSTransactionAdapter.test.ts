@@ -49,11 +49,11 @@ import {
 } from '../../config';
 import Injectable from '../../../src/core/Injectable';
 import { Time } from '../../../src/core/Time';
+import { CONFIG_SC, DEFAULT_VERSION } from '../../../src/core/Constants';
 
 const initialSupply = 1000;
-const configId =
-	'0x0000000000000000000000000000000000000000000000000000000000000000';
-const configVersion = 0;
+const configId = CONFIG_SC;
+const configVersion = DEFAULT_VERSION;
 
 describe('🧪 DFNSTransactionAdapter test', () => {
 	let stableCoinHTS: StableCoinViewModel;
