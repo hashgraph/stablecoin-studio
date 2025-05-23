@@ -51,7 +51,15 @@ export class GetFactoryProxyConfigQueryHandler
 	): Promise<GetFactoryProxyConfigQueryResponse> {
 		const { factoryProxyId } = command;
 
-		const evmFactoryProxyAdminAddress: string =
+		return Promise.resolve(
+			new GetFactoryProxyConfigQueryResponse({
+				implementationAddress: new ContractId('0.0.0'),
+				owner: HederaId.NULL,
+				pendingOwner: HederaId.NULL,
+			}),
+		);
+
+		/*const evmFactoryProxyAdminAddress: string =
 			await this.mirrorNode.getContractMemo(factoryProxyId);
 
 		if (!evmFactoryProxyAdminAddress)
@@ -100,6 +108,6 @@ export class GetFactoryProxyConfigQueryHandler
 				owner: factoryProxyOwnerHederaId,
 				pendingOwner: factoryProxyPendingOwnerHederaId,
 			}),
-		);
+		);*/
 	}
 }
