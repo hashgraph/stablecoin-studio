@@ -3,7 +3,7 @@
 	"operationTitle": "Operation details",
 	"accountLabel": "Enter the account",
 	"accountPlaceholder": "0.0.0",
-	"modalSuccessBalance": "The account {{ account }} balance is {{ balance }}.",
+	"modalSuccessBalance": "The account {{ account }} balance is {{ balance }} and held balance {{ heldBalance }}.",
 	"modalAction": {
 		"subtitle": "Operation details review",
 		"account": "Account",

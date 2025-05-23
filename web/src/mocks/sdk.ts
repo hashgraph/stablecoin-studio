@@ -37,6 +37,13 @@ export const mockedSelectedStableCoin = {
 	supplyKey: ContractId.from('0.0.49319785'),
 	pauseKey: ContractId.from('0.0.49319785'),
 };
+
+export const mockedSelectedStableCoinConfigInfo = {
+	configId: '0x4e3b6d3e5a3b6e5d4c9f9d5b8a9b4e5d4e3b6d3e5a3b6e5d4c9f9d5b8a9b4e5d',
+	configVersion: '1',
+	resolverAddress: '0.0.1',
+};
+
 export const mockedStableCoinCapabilities = {
 	coin: mockedSelectedStableCoin,
 	capabilities: [

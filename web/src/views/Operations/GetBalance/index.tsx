@@ -11,7 +11,7 @@ import type { ModalsHandlerActionsProps } from '../../../components/ModalsHandle
 import { handleRequestValidation } from '../../../utils/validationsHelper';
 import SDKService from '../../../services/SDKService';
 import { SELECTED_WALLET_COIN } from '../../../store/slices/walletSlice';
-import { GetAccountBalanceRequest } from '@hashgraph/stablecoin-npm-sdk';
+import { GetAccountBalanceRequest, GetHeldAmountForRequest } from '@hashgraph/stablecoin-npm-sdk';
 import { useRefreshCoinInfo } from '../../../hooks/useRefreshCoinInfo';
 import { propertyNotFound } from '../../../constant';
 
@@ -25,12 +25,19 @@ const GetBalanceOperation = () => {
 	const selectedStableCoin = useSelector(SELECTED_WALLET_COIN);
 
 	const [balance, setBalance] = useState<string | null>();
+	const [heldBalance, setHeldBalance] = useState<string | null>();
 	const [errorOperation, setErrorOperation] = useState();
 	const [errorTransactionUrl, setErrorTransactionUrl] = useState();
 	const [request] = useState(
 		new GetAccountBalanceRequest({
 			tokenId: selectedStableCoin?.tokenId?.toString() ?? '',
 			targetId: '',
+		}),
+	);
+	const [heldRequest] = useState(
+		new GetHeldAmountForRequest({
+			tokenId: selectedStableCoin?.tokenId?.toString() ?? '',
+			sourceId: '',
 		}),
 	);
 
@@ -65,7 +72,23 @@ const GetBalanceOperation = () => {
 				onOpenModalAction();
 				throw e;
 			});
+
+			const heldBalance: any = await Promise.race([
+				SDKService.getHeldAmountFor(heldRequest),
+				new Promise((resolve, reject) => {
+					setTimeout(() => {
+						reject(new Error("Account held balance couldn't be obtained in a reasonable time."));
+					}, 10000);
+				}),
+			]).catch((e) => {
+				console.log(e.message);
+				onOpenModalAction();
+				throw e;
+			});
+
 			setBalance(balance.value.toString());
+			setHeldBalance(heldBalance.toString());
+
 			onSuccess();
 		} catch (error: any) {
 			setErrorTransactionUrl(error.transactionUrl);
@@ -92,6 +115,8 @@ const GetBalanceOperation = () => {
 									validate: {
 										validation: (value: string) => {
 											request.targetId = value;
+											heldRequest.sourceId = value;
+
 											const res = handleRequestValidation(request.validate('targetId'));
 											return res;
 										},
@@ -135,6 +160,7 @@ const GetBalanceOperation = () => {
 				successNotificationDescription={t('getBalance:modalSuccessBalance', {
 					account: getValues().targetAccount,
 					balance,
+					heldBalance,
 				})}
 			/>
 		</>

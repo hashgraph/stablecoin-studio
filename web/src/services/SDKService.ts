@@ -67,6 +67,14 @@ import {
 	SubmitTransactionRequest,
 	SupportedWallets,
 	RemoveTransactionRequest,
+	GetHoldCountForRequest,
+	GetHoldsIdForRequest,
+	GetHoldForRequest,
+	CreateHoldRequest,
+	ExecuteHoldRequest,
+	ReleaseHoldRequest,
+	ReclaimHoldRequest,
+	GetHeldAmountForRequest,
 } from '@hashgraph/stablecoin-npm-sdk';
 import { type IMirrorRPCNode } from '../interfaces/IMirrorRPCNode';
 import type { IConsensusNodes } from '../interfaces/IConsensusNodes';
@@ -649,6 +657,39 @@ export class SDKService {
 				transactionId: multiSigTransactionId,
 			}),
 		);
+	}
+
+	// HOLD OPERATION
+	public static async getHeldAmountFor(req: GetHeldAmountForRequest) {
+		return StableCoin.getHeldAmountFor(new GetHeldAmountForRequest(req));
+	}
+
+	public static async getHoldsIdFor(req: GetHoldsIdForRequest) {
+		return StableCoin.getHoldsIdFor(new GetHoldsIdForRequest(req));
+	}
+
+	public static async getHoldCountFor(req: GetHoldCountForRequest) {
+		return StableCoin.getHoldCountFor(new GetHoldCountForRequest(req));
+	}
+
+	public static async getHoldFor(req: GetHoldForRequest) {
+		return StableCoin.getHoldFor(new GetHoldForRequest(req));
+	}
+
+	public static async createHold(req: CreateHoldRequest) {
+		return StableCoin.createHold(new CreateHoldRequest(req));
+	}
+
+	public static async executeHold(req: ExecuteHoldRequest) {
+		return StableCoin.executeHold(new ExecuteHoldRequest(req));
+	}
+
+	public static async releaseHold(req: ReleaseHoldRequest) {
+		return StableCoin.releaseHold(new ReleaseHoldRequest(req));
+	}
+
+	public static async reclaimHold(req: ReclaimHoldRequest) {
+		return StableCoin.reclaimHold(new ReclaimHoldRequest(req));
 	}
 }
 

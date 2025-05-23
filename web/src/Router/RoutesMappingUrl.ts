@@ -37,4 +37,10 @@ export const RoutesMappingUrl: Record<NamedRoutes, string> = {
 	[NamedRoutes.StableCoinSettings]: '/settings/stableCoin',
 	[NamedRoutes.FactorySettings]: '/settings/factory',
 	[NamedRoutes.MultiSigTransactions]: '/multisig/transactions',
+	[NamedRoutes.Hold]: '/operations/hold',
+	[NamedRoutes.HoldList]: '/operations/hold/list',
+	[NamedRoutes.HoldCreate]: '/operations/hold/create',
+	[NamedRoutes.HoldExecute]: '/operations/hold/execute',
+	[NamedRoutes.HoldReclaim]: '/operations/hold/reclaim',
+	[NamedRoutes.HoldRelease]: '/operations/hold/release',
 };
