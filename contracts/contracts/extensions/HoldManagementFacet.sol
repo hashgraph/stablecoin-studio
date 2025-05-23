@@ -69,20 +69,6 @@ contract HoldManagementFacet is
     }
 
     /**
-     * @dev Modifier to check if the contract has the admin key for the token
-     */
-    modifier hasContractAdminKey() {
-        _checkHasContractAdminKey();
-        _;
-    }
-
-    function _checkHasContractAdminKey() private {
-        address token = _getTokenAddress();
-        (int64 responseCode, ) = IHederaTokenService(_PRECOMPILED_ADDRESS).getTokenKey(token, 1); // adminKey
-        _checkResponse(responseCode);
-    }
-
-    /**
      * @dev Modifier to check if the contract has the wipe key for the token
      */
     modifier hasContractWipeKey() {
@@ -133,7 +119,6 @@ contract HoldManagementFacet is
     )
         external
         override
-        hasContractAdminKey
         hasContractSupplyKey
         hasContractWipeKey
         validExpiration(_hold.expirationTimestamp)
@@ -159,7 +144,6 @@ contract HoldManagementFacet is
         bytes calldata _operatorData
     )
         external
-        hasContractAdminKey
         hasContractSupplyKey
         hasContractWipeKey
         validExpiration(_hold.expirationTimestamp)
