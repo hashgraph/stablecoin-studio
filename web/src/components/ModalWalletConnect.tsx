@@ -187,7 +187,6 @@ const ModalWalletConnect = () => {
 	};
 
 	const handleMultiSigMode = () => {
-		console.log('MultiSig Mode');
 		setMultiSigSelected(true);
 	};
 

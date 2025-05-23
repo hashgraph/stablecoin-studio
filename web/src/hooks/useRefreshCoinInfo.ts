@@ -4,18 +4,16 @@ import { GetConfigInfoRequest, GetStableCoinDetailsRequest } from '@hashgraph/st
 import { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import SDKService from '../services/SDKService';
-import {
-	SELECTED_WALLET_ACCOUNT_INFO,
-	SELECTED_WALLET_COIN,
-	walletActions,
-} from '../store/slices/walletSlice';
+import { SELECTED_WALLET_COIN, walletActions } from '../store/slices/walletSlice';
 
 export const useRefreshCoinInfo = () => {
 	const selectedStableCoin = useSelector(SELECTED_WALLET_COIN);
-	const accountInfo = useSelector(SELECTED_WALLET_ACCOUNT_INFO);
+
 	const [lastId, setLastId] = useState<string>();
 	const [isLoading, setIsLoading] = useState<boolean>(false);
+
 	const dispatch = useDispatch();
+
 	useEffect(() => {
 		if (!lastId || lastId !== selectedStableCoin?.tokenId?.toString()) {
 			getStableCoinDetails();
@@ -25,19 +23,24 @@ export const useRefreshCoinInfo = () => {
 		selectedStableCoin?.paused,
 		selectedStableCoin?.tokenId?.toString(),
 	]);
+
 	const getStableCoinDetails = async () => {
 		setIsLoading(true);
+
 		const resp = await SDKService.getStableCoinDetails(
 			new GetStableCoinDetailsRequest({
 				id: selectedStableCoin?.tokenId?.toString() ?? '',
 			}),
 		);
-		const configInfo = await SDKService.getConfigInfo(
+
+		const stableCoinConfigInfo = await SDKService.getConfigInfo(
 			new GetConfigInfoRequest({
 				tokenId: selectedStableCoin?.tokenId?.toString() ?? '',
 			}),
 		);
+
 		setLastId(resp?.tokenId?.toString());
+
 		dispatch(
 			walletActions.setSelectedStableCoin({
 				tokenId: resp?.tokenId?.toString(),
@@ -66,6 +69,14 @@ export const useRefreshCoinInfo = () => {
 				reserveAmount: resp?.reserveAmount?.toString(),
 				reserveAddress: resp?.reserveAddress?.toString(),
 				customFees: resp?.customFees && JSON.parse(JSON.stringify(resp.customFees)),
+			}),
+		);
+
+		dispatch(
+			walletActions.setSelectedStableCoinConfigInfo({
+				configId: stableCoinConfigInfo?.configId,
+				configVersion: stableCoinConfigInfo?.configVersion,
+				resolverAddress: stableCoinConfigInfo?.resolverAddress,
 			}),
 		);
 

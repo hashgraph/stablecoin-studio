@@ -31,6 +31,8 @@ describe(`<${StableCoinSettings.name} />`, () => {
 				selectedStableCoin: {
 					tokenId: '0.0.1',
 					proxyAdminAddress: '0.0.2',
+					configId: '',
+					configVersion: '1',
 				},
 				isAcceptOwner: false,
 				isPendingOwner: false,

@@ -12,12 +12,18 @@ import type { MockStoreEnhanced } from 'redux-mock-store';
 import configureMockStore from 'redux-mock-store';
 import thunk from 'redux-thunk';
 import { initialState as walletInitialState } from '../store/slices/walletSlice';
-import { mockedSelectedStableCoin, mockedStableCoinsList, mockedWalletData } from '../mocks/sdk';
+import {
+	mockedSelectedStableCoin,
+	mockedSelectedStableCoinConfigInfo,
+	mockedStableCoinsList,
+	mockedWalletData,
+} from '../mocks/sdk';
 
 const walletInitial = {
 	...walletInitialState,
 	data: mockedWalletData,
 	selectedStableCoin: mockedSelectedStableCoin,
+	selectedStableCoinConfigInfo: mockedSelectedStableCoinConfigInfo,
 	stableCoinList: mockedStableCoinsList,
 };
 
@@ -37,7 +43,6 @@ const defaultStore = mockStore({
 const customRender = (
 	ui: React.ReactElement,
 	store: MockStoreEnhanced<unknown, {}> = defaultStore,
-
 	options?: RenderOptions,
 ) =>
 	render(ui, {
