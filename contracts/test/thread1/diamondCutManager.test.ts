@@ -33,6 +33,7 @@ describe('➡️ DiamondCutManager Tests', () => {
 
     before(async () => {
         // mute | mock console.log
+        // eslint-disable-next-line @typescript-eslint/no-empty-function
         console.log = () => {}
         console.info(MESSAGES.deploy.info.deployFullInfrastructureInTests)
         // eslint-disable-next-line no-extra-semi

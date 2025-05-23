@@ -31,19 +31,6 @@ interface IHoldManagement {
     /// @param provided The provided destination address
     error InvalidDestination(address expected, address provided);
 
-    /// @notice Thrown when a token transfer operation fails
-    error TransferFailed();
-
-    /// @notice Thrown when a token wipe operation fails
-    error WipeFailed();
-
-    /// @notice Thrown when a token mint operation fails
-    error MintFailed();
-
-    /// @notice Thrown when a required token key is missing
-    /// @param keyType The type of key that is missing
-    error TokenKeyMissing(string keyType);
-
     /// @notice Thrown when attempting an operation that requires no active holds
     error HoldActive();
 

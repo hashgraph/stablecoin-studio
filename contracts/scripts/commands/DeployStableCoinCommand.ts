@@ -46,6 +46,8 @@ export interface DeployStableCoinCommandNewParams extends DeployStableCoinComman
     proxyAdminOwnerAccount?: string
     stableCoinConfigurationId?: IStableCoinFactory.ResolverProxyConfigurationStruct
     reserveConfigurationId?: IStableCoinFactory.ResolverProxyConfigurationStruct
+    addSupply?: boolean
+    addWipe?: boolean
 }
 
 interface DeployStableCoinCommandParams extends DeployStableCoinCommandParamsCommon {
@@ -95,6 +97,8 @@ export default class DeployStableCoinCommand {
         initialMetadata = 'test',
         stableCoinConfigurationId,
         reserveConfigurationId,
+        addSupply,
+        addWipe,
     }: DeployStableCoinCommandNewParams) {
         if (!signer.provider) {
             throw new SignerWithoutProviderError()
@@ -103,7 +107,7 @@ export default class DeployStableCoinCommand {
         const wallet = await getFullWalletFromSigner(signer)
 
         const keys = allToContract
-            ? tokenKeysToContract({ addKyc, addFeeSchedule })
+            ? tokenKeysToContract({ addKyc, addFeeSchedule, addSupply, addWipe })
             : tokenKeysToKey(new TokenKeysToKeyCommand({ publicKey: wallet.publicKey, isEd25519: false }))
 
         const tokenStruct: IStableCoinFactory.TokenStructStruct = {
