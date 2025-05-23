@@ -47,6 +47,15 @@ import {
   UpdateResolverRequest,
   UpdateCustomFeesRequest,
   WipeRequest,
+  CreateHoldRequest,
+  ExecuteHoldRequest,
+  ReleaseHoldRequest,
+  ReclaimHoldRequest,
+  GetHeldAmountForRequest,
+  GetHoldCountForRequest,
+  GetHoldForRequest,
+  GetHoldsIdForRequest,
+  CreateHoldByControllerRequest,
 } from '@hashgraph/stablecoin-npm-sdk';
 import FreezeStableCoinService from '../../../../src/app/service/stablecoin/FreezeStableCoinService.js';
 import BalanceOfStableCoinsService from '../../../../src/app/service/stablecoin/BalanceOfStableCoinService.js';
@@ -66,6 +75,8 @@ import DeleteStableCoinService from '../../../../src/app/service/stablecoin/Dele
 import ListStableCoinService from '../../../../src/app/service/stablecoin/ListStableCoinService.js';
 import { AccountType } from '../../../../src/domain/configuration/interfaces/AccountType';
 import ResolverStableCoinService from '../../../../src/app/service/stablecoin/ResolverStableCoinService.js';
+import HoldStableCoinService from '../../../../src/app/service/stablecoin/HoldStableCoinService.js';
+import { ZERO } from '../../../../src/core/Constants.js';
 
 const tokenId = '0.0.5555555';
 const tokenMemo = 'memo';
@@ -1703,9 +1714,6 @@ describe(`Testing OperationStableCoinService class`, () => {
           expect(request.configVersion).toEqual(1);
         },
       );
-    jest
-      .spyOn(utilsService, 'defaultMultipleAsk')
-      .mockResolvedValueOnce('Go back');
 
     const keepFlow = (OperationStableCoinService.prototype as any)
       .resolverManagementFlow;
@@ -1750,9 +1758,6 @@ describe(`Testing OperationStableCoinService class`, () => {
           );
         },
       );
-    jest
-      .spyOn(utilsService, 'defaultMultipleAsk')
-      .mockResolvedValueOnce('Go back');
 
     const keepFlow = (OperationStableCoinService.prototype as any)
       .resolverManagementFlow;
@@ -1799,10 +1804,6 @@ describe(`Testing OperationStableCoinService class`, () => {
           expect(request.resolver).toEqual('0.0.12345');
         },
       );
-    jest
-      .spyOn(utilsService, 'defaultMultipleAsk')
-      .mockResolvedValueOnce('Go back');
-
     const keepFlow = (OperationStableCoinService.prototype as any)
       .resolverManagementFlow;
     jest
@@ -1810,6 +1811,414 @@ describe(`Testing OperationStableCoinService class`, () => {
         OperationStableCoinService.prototype as any,
         'resolverManagementFlow',
       )
+      .mockImplementationOnce(keepFlow)
+      .mockImplementation(jest.fn());
+    await service.start();
+
+    expect(service).not.toBeNull();
+    expect(utilsService.cleanAndShowBanner).toHaveBeenCalled();
+  });
+
+  it('Should show all options in hold menu options', async () => {
+    jest
+      .spyOn(service as any, 'getRolesAccount')
+      .mockResolvedValue([StableCoinRole.HOLD_CREATOR_ROLE]);
+
+    const multipleAskMock = jest
+      .spyOn(utilsService, 'defaultMultipleAsk')
+      .mockResolvedValueOnce(
+        language.getText('wizard.stableCoinOptions.HoldMgmt'),
+      )
+      .mockResolvedValueOnce(language.getText('backOption'));
+
+    const keepFlow = (OperationStableCoinService.prototype as any)
+      .holdManagementFlow;
+
+    jest
+      .spyOn(OperationStableCoinService.prototype as any, 'holdManagementFlow')
+      .mockImplementationOnce(keepFlow)
+      .mockImplementationOnce(jest.fn());
+
+    await service.start();
+
+    expect(multipleAskMock.mock.calls[1][1]).toEqual(
+      language.getArrayFromObject('holdManagement.options'),
+    );
+  });
+
+  it('Should filter out CreateHoldByController in hold menu options', async () => {
+    jest.spyOn(service as any, 'getRolesAccount').mockResolvedValue([]);
+
+    const multipleAskMock = jest
+      .spyOn(utilsService, 'defaultMultipleAsk')
+      .mockResolvedValueOnce(
+        language.getText('wizard.stableCoinOptions.HoldMgmt'),
+      )
+      .mockResolvedValueOnce(language.getText('backOption'));
+
+    const keepFlow = (OperationStableCoinService.prototype as any)
+      .holdManagementFlow;
+
+    jest
+      .spyOn(OperationStableCoinService.prototype as any, 'holdManagementFlow')
+      .mockImplementationOnce(keepFlow)
+      .mockImplementationOnce(jest.fn());
+
+    await service.start();
+
+    expect(multipleAskMock.mock.calls[1][1]).toEqual(
+      language
+        .getArrayFromObject('holdManagement.options')
+        .filter(
+          (item) =>
+            item !=
+            language.getText('holdManagement.options.CreateHoldByController'),
+        ),
+    );
+  });
+
+  it('Should instance start with Hold Management CreateHold', async () => {
+    jest
+      .spyOn(utilsService, 'defaultMultipleAsk')
+      .mockResolvedValueOnce(
+        language.getText('wizard.stableCoinOptions.HoldMgmt'),
+      )
+      .mockResolvedValueOnce(
+        language.getText('holdManagement.options.CreateHold'),
+      );
+
+    jest
+      .spyOn(utilsService, 'defaultSingleAsk')
+      .mockResolvedValueOnce('1')
+      .mockResolvedValueOnce(currentAccount.accountId)
+      .mockResolvedValueOnce(currentAccount.accountId)
+      .mockResolvedValueOnce('7');
+
+    jest.spyOn(utilsService, 'defaultConfirmAsk').mockResolvedValueOnce(true);
+
+    jest
+      .spyOn(HoldStableCoinService.prototype as any, 'createHold')
+      .mockImplementation(async (request: CreateHoldRequest): Promise<void> => {
+        expect(request.tokenId).toEqual(tokenId);
+        expect(request.amount).toEqual('1');
+        expect(request.escrow).toEqual(currentAccount.accountId);
+        expect(request.targetId).toEqual(currentAccount.accountId);
+        expect(request.expirationDate).toEqual(
+          Math.floor(Math.floor(Date.now() / 1000) + 7 * 24 * 3600).toString(),
+        );
+      });
+
+    const keepFlow = (OperationStableCoinService.prototype as any)
+      .holdManagementFlow;
+    jest
+      .spyOn(OperationStableCoinService.prototype as any, 'holdManagementFlow')
+      .mockImplementationOnce(keepFlow)
+      .mockImplementation(jest.fn());
+    await service.start();
+
+    expect(service).not.toBeNull();
+    expect(utilsService.cleanAndShowBanner).toHaveBeenCalled();
+  });
+
+  it('Should instance start with Hold Management CreateHoldByController', async () => {
+    jest
+      .spyOn(utilsService, 'defaultMultipleAsk')
+      .mockResolvedValueOnce(
+        language.getText('wizard.stableCoinOptions.HoldMgmt'),
+      )
+      .mockResolvedValueOnce(
+        language.getText('holdManagement.options.CreateHoldByController'),
+      );
+
+    jest
+      .spyOn(utilsService, 'defaultSingleAsk')
+      .mockResolvedValueOnce('1')
+      .mockResolvedValueOnce(currentAccount.accountId)
+      .mockResolvedValueOnce(currentAccount.accountId)
+      .mockResolvedValueOnce(currentAccount.accountId)
+      .mockResolvedValueOnce('7');
+
+    jest.spyOn(utilsService, 'defaultConfirmAsk').mockResolvedValueOnce(true);
+
+    jest
+      .spyOn(HoldStableCoinService.prototype as any, 'createHoldByController')
+      .mockImplementation(
+        async (request: CreateHoldByControllerRequest): Promise<void> => {
+          expect(request.tokenId).toEqual(tokenId);
+          expect(request.amount).toEqual('1');
+          expect(request.escrow).toEqual(currentAccount.accountId);
+          expect(request.targetId).toEqual(currentAccount.accountId);
+          expect(request.sourceId).toEqual(currentAccount.accountId);
+          expect(request.expirationDate).toEqual(
+            Math.floor(
+              Math.floor(Date.now() / 1000) + 7 * 24 * 3600,
+            ).toString(),
+          );
+        },
+      );
+
+    const keepFlow = (OperationStableCoinService.prototype as any)
+      .holdManagementFlow;
+    jest
+      .spyOn(OperationStableCoinService.prototype as any, 'holdManagementFlow')
+      .mockImplementationOnce(keepFlow)
+      .mockImplementation(jest.fn());
+    await service.start();
+
+    expect(service).not.toBeNull();
+    expect(utilsService.cleanAndShowBanner).toHaveBeenCalled();
+  });
+
+  it('Should instance start with Hold Management ExecuteHold', async () => {
+    jest
+      .spyOn(utilsService, 'defaultMultipleAsk')
+      .mockResolvedValueOnce(
+        language.getText('wizard.stableCoinOptions.HoldMgmt'),
+      )
+      .mockResolvedValueOnce(
+        language.getText('holdManagement.options.ExecuteHold'),
+      );
+
+    jest
+      .spyOn(utilsService, 'defaultSingleAsk')
+      .mockResolvedValueOnce('1')
+      .mockResolvedValueOnce(currentAccount.accountId)
+      .mockResolvedValueOnce(ZERO)
+      .mockResolvedValueOnce(currentAccount.accountId);
+
+    jest.spyOn(utilsService, 'defaultConfirmAsk').mockResolvedValueOnce(true);
+
+    jest
+      .spyOn(HoldStableCoinService.prototype as any, 'executeHold')
+      .mockImplementation(
+        async (request: ExecuteHoldRequest): Promise<void> => {
+          expect(request.tokenId).toEqual(tokenId);
+          expect(request.amount).toEqual('1');
+          expect(request.targetId).toEqual(currentAccount.accountId);
+          expect(request.holdId).toEqual(Number(ZERO));
+          expect(request.sourceId).toEqual(currentAccount.accountId);
+        },
+      );
+
+    const keepFlow = (OperationStableCoinService.prototype as any)
+      .holdManagementFlow;
+    jest
+      .spyOn(OperationStableCoinService.prototype as any, 'holdManagementFlow')
+      .mockImplementationOnce(keepFlow)
+      .mockImplementation(jest.fn());
+    await service.start();
+
+    expect(service).not.toBeNull();
+    expect(utilsService.cleanAndShowBanner).toHaveBeenCalled();
+  });
+
+  it('Should instance start with Hold Management ReleaseHold', async () => {
+    jest
+      .spyOn(utilsService, 'defaultMultipleAsk')
+      .mockResolvedValueOnce(
+        language.getText('wizard.stableCoinOptions.HoldMgmt'),
+      )
+      .mockResolvedValueOnce(
+        language.getText('holdManagement.options.ReleaseHold'),
+      );
+
+    jest
+      .spyOn(utilsService, 'defaultSingleAsk')
+      .mockResolvedValueOnce('1')
+      .mockResolvedValueOnce(currentAccount.accountId)
+      .mockResolvedValueOnce(ZERO);
+
+    jest
+      .spyOn(HoldStableCoinService.prototype as any, 'releaseHold')
+      .mockImplementation(
+        async (request: ReleaseHoldRequest): Promise<void> => {
+          expect(request.tokenId).toEqual(tokenId);
+          expect(request.amount).toEqual('1');
+          expect(request.holdId).toEqual(Number(ZERO));
+          expect(request.sourceId).toEqual(currentAccount.accountId);
+        },
+      );
+
+    const keepFlow = (OperationStableCoinService.prototype as any)
+      .holdManagementFlow;
+    jest
+      .spyOn(OperationStableCoinService.prototype as any, 'holdManagementFlow')
+      .mockImplementationOnce(keepFlow)
+      .mockImplementation(jest.fn());
+    await service.start();
+
+    expect(service).not.toBeNull();
+    expect(utilsService.cleanAndShowBanner).toHaveBeenCalled();
+  });
+
+  it('Should instance start with Hold Management ReclaimHold', async () => {
+    jest
+      .spyOn(utilsService, 'defaultMultipleAsk')
+      .mockResolvedValueOnce(
+        language.getText('wizard.stableCoinOptions.HoldMgmt'),
+      )
+      .mockResolvedValueOnce(
+        language.getText('holdManagement.options.ReclaimHold'),
+      );
+
+    jest
+      .spyOn(utilsService, 'defaultSingleAsk')
+      .mockResolvedValueOnce(currentAccount.accountId)
+      .mockResolvedValueOnce(ZERO);
+
+    jest
+      .spyOn(HoldStableCoinService.prototype as any, 'reclaimHold')
+      .mockImplementation(
+        async (request: ReclaimHoldRequest): Promise<void> => {
+          expect(request.tokenId).toEqual(tokenId);
+          expect(request.holdId).toEqual(Number(ZERO));
+        },
+      );
+
+    const keepFlow = (OperationStableCoinService.prototype as any)
+      .holdManagementFlow;
+    jest
+      .spyOn(OperationStableCoinService.prototype as any, 'holdManagementFlow')
+      .mockImplementationOnce(keepFlow)
+      .mockImplementation(jest.fn());
+    await service.start();
+
+    expect(service).not.toBeNull();
+    expect(utilsService.cleanAndShowBanner).toHaveBeenCalled();
+  });
+
+  it('Should instance start with Hold Management HeldBalance', async () => {
+    jest
+      .spyOn(utilsService, 'defaultMultipleAsk')
+      .mockResolvedValueOnce(
+        language.getText('wizard.stableCoinOptions.HoldMgmt'),
+      )
+      .mockResolvedValueOnce(
+        language.getText('holdManagement.options.HeldBalance'),
+      );
+
+    jest
+      .spyOn(utilsService, 'defaultSingleAsk')
+      .mockResolvedValueOnce(currentAccount.accountId);
+
+    jest
+      .spyOn(HoldStableCoinService.prototype as any, 'getHeldAmountFor')
+      .mockImplementation(
+        async (request: GetHeldAmountForRequest): Promise<void> => {
+          expect(request.tokenId).toEqual(tokenId);
+          expect(request.sourceId).toEqual(currentAccount.accountId);
+        },
+      );
+
+    const keepFlow = (OperationStableCoinService.prototype as any)
+      .holdManagementFlow;
+    jest
+      .spyOn(OperationStableCoinService.prototype as any, 'holdManagementFlow')
+      .mockImplementationOnce(keepFlow)
+      .mockImplementation(jest.fn());
+    await service.start();
+
+    expect(service).not.toBeNull();
+    expect(utilsService.cleanAndShowBanner).toHaveBeenCalled();
+  });
+
+  it('Should instance start with Hold Management HoldCount', async () => {
+    jest
+      .spyOn(utilsService, 'defaultMultipleAsk')
+      .mockResolvedValueOnce(
+        language.getText('wizard.stableCoinOptions.HoldMgmt'),
+      )
+      .mockResolvedValueOnce(
+        language.getText('holdManagement.options.HoldCount'),
+      );
+
+    jest
+      .spyOn(utilsService, 'defaultSingleAsk')
+      .mockResolvedValueOnce(currentAccount.accountId);
+
+    jest
+      .spyOn(HoldStableCoinService.prototype as any, 'getHoldCount')
+      .mockImplementation(
+        async (request: GetHoldCountForRequest): Promise<void> => {
+          expect(request.tokenId).toEqual(tokenId);
+          expect(request.sourceId).toEqual(currentAccount.accountId);
+        },
+      );
+
+    const keepFlow = (OperationStableCoinService.prototype as any)
+      .holdManagementFlow;
+    jest
+      .spyOn(OperationStableCoinService.prototype as any, 'holdManagementFlow')
+      .mockImplementationOnce(keepFlow)
+      .mockImplementation(jest.fn());
+    await service.start();
+
+    expect(service).not.toBeNull();
+    expect(utilsService.cleanAndShowBanner).toHaveBeenCalled();
+  });
+
+  it('Should instance start with Hold Management HoldDetails', async () => {
+    jest
+      .spyOn(utilsService, 'defaultMultipleAsk')
+      .mockResolvedValueOnce(
+        language.getText('wizard.stableCoinOptions.HoldMgmt'),
+      )
+      .mockResolvedValueOnce(
+        language.getText('holdManagement.options.HoldDetails'),
+      );
+
+    jest
+      .spyOn(utilsService, 'defaultSingleAsk')
+      .mockResolvedValueOnce(currentAccount.accountId)
+      .mockResolvedValueOnce(ZERO);
+
+    jest
+      .spyOn(HoldStableCoinService.prototype as any, 'getHoldFor')
+      .mockImplementation(async (request: GetHoldForRequest): Promise<void> => {
+        expect(request.tokenId).toEqual(tokenId);
+        expect(request.sourceId).toEqual(currentAccount.accountId);
+        expect(request.holdId).toEqual(Number(ZERO));
+      });
+
+    const keepFlow = (OperationStableCoinService.prototype as any)
+      .holdManagementFlow;
+    jest
+      .spyOn(OperationStableCoinService.prototype as any, 'holdManagementFlow')
+      .mockImplementationOnce(keepFlow)
+      .mockImplementation(jest.fn());
+    await service.start();
+
+    expect(service).not.toBeNull();
+    expect(utilsService.cleanAndShowBanner).toHaveBeenCalled();
+  });
+
+  it('Should instance start with Hold Management HoldsId', async () => {
+    jest
+      .spyOn(utilsService, 'defaultMultipleAsk')
+      .mockResolvedValueOnce(
+        language.getText('wizard.stableCoinOptions.HoldMgmt'),
+      )
+      .mockResolvedValueOnce(
+        language.getText('holdManagement.options.HoldsId'),
+      );
+
+    jest
+      .spyOn(utilsService, 'defaultSingleAsk')
+      .mockResolvedValueOnce(currentAccount.accountId);
+
+    jest
+      .spyOn(HoldStableCoinService.prototype as any, 'getHoldsIdFor')
+      .mockImplementation(
+        async (request: GetHoldsIdForRequest): Promise<void> => {
+          expect(request.tokenId).toEqual(tokenId);
+          expect(request.sourceId).toEqual(currentAccount.accountId);
+        },
+      );
+
+    const keepFlow = (OperationStableCoinService.prototype as any)
+      .holdManagementFlow;
+    jest
+      .spyOn(OperationStableCoinService.prototype as any, 'holdManagementFlow')
       .mockImplementationOnce(keepFlow)
       .mockImplementation(jest.fn());
     await service.start();

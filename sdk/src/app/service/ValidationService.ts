@@ -84,11 +84,20 @@ export default class ValidationService extends Service {
 		const holdDetails = await this.queryBus.execute(
 			new GetHoldForQuery(tokenId, sourceId, holdId),
 		);
-		if (
-			holdDetails.payload.escrowAddress.toLowerCase() !=
-			this.accountService.getCurrentAccount().evmAddress?.toLowerCase()
-		) {
-			throw new NotEscrow();
+		const callerAccount = this.accountService.getCurrentAccount();
+		const caller =
+			callerAccount.evmAddress !== undefined
+				? callerAccount.evmAddress.toLowerCase()
+				: (
+						await this.accountService.getAccountInfo(
+							callerAccount.id,
+						)
+				  ).evmAddress
+						?.toString()
+						.toLowerCase();
+		const escrow = holdDetails.payload.escrowAddress.toLowerCase();
+		if (caller != escrow) {
+			throw new NotEscrow(caller ?? EVM_ZERO_ADDRESS, escrow);
 		}
 	}
 
@@ -108,7 +117,7 @@ export default class ValidationService extends Service {
 			throw new InvalidHoldDestination();
 		}
 
-		if (targetId) {
+		if (targetId && destinationAddress != EVM_ZERO_ADDRESS) {
 			const targetEvmAddress =
 				await this.mirrorNodeAdapter.accountToEvmAddress(targetId);
 

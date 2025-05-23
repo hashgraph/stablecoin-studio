@@ -43,6 +43,7 @@ import { Transaction } from '@hashgraph/sdk';
 import AWSKMSSettings from '../../domain/context/custodialwalletsettings/AWSKMSSettings';
 import HWCSettings from '../../domain/context/hwalletconnectsettings/HWCSettings.js';
 import { BigNumber } from 'ethers';
+import { EVM_ZERO_ADDRESS } from '../../core/Constants.js';
 
 export interface InitializationData {
 	account?: Account;
@@ -675,6 +676,9 @@ export default abstract class TransactionAdapter
 	}
 
 	async getEVMAddress(parameter: any): Promise<any> {
+		if (parameter == HederaId.NULL) {
+			return EVM_ZERO_ADDRESS;
+		}
 		if (parameter instanceof ContractId) {
 			const test = (
 				await this.getMirrorNodeAdapter().getContractInfo(

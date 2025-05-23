@@ -1370,18 +1370,21 @@ export abstract class HederaTransactionAdapter extends TransactionAdapter {
 									filteredContractParams[i][j],
 								);
 						}
-					}
-					if (typeof filteredContractParams[i] == 'object') {
+					} else if (
+						typeof filteredContractParams[i] == 'object' &&
+						!(filteredContractParams[i] instanceof HederaId)
+					) {
 						for (const [key, value] of Object.entries(
 							filteredContractParams[i],
 						)) {
 							filteredContractParams[i][key] =
 								await this.getEVMAddress(value);
 						}
+					} else {
+						filteredContractParams[i] = await this.getEVMAddress(
+							filteredContractParams[i],
+						);
 					}
-					filteredContractParams[i] = await this.getEVMAddress(
-						filteredContractParams[i],
-					);
 				}
 		}
 		return await this.contractCall(

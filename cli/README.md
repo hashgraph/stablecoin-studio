@@ -171,9 +171,9 @@ We provide default addresses for the factories and resolvers that we have deploy
 
 | Contract name   | Address     | Network    |
 | --------------- | ----------- | ---------- |
-| FactoryAddress  | 0.0.5992081 | Testnet    |
+| FactoryAddress  | 0.0.6040747 | Testnet    |
 | FactoryAddress  | 0.0.XXXXXX  | Previewnet |
-| ResolverAddress | 0.0.5992033 | Testnet    |
+| ResolverAddress | 0.0.6040716 | Testnet    |
 | ResolverAddress | 0.0.XXXXXX  | Previewnet |
 
 ## CLI flow
