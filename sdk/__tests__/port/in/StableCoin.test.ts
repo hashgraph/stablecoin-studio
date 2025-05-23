@@ -1314,10 +1314,11 @@ describe('🧪 Stablecoin test', () => {
 		amount: string,
 		sourceId?: string,
 		holdId?: number,
-	) {
+	): Promise<void> {
 		if (sourceId) {
 			await StableCoin.executeHold(
 				new ExecuteHoldRequest({
+					// eslint-disable-next-line @typescript-eslint/no-non-null-assertion
 					holdId: holdId!,
 					tokenId: stableCoin?.tokenId?.toString() ?? '0.0.0',
 					amount,
