@@ -13,8 +13,8 @@ interface IRoles {
         DELETE,
         KYC,
         CUSTOM_FEES,
-        DEFAULT_ADMIN_ROLE,
-        HOLD_CREATOR_ROLE
+        HOLD_CREATOR,
+        DEFAULT_ADMIN_ROLE
     }
 
     /**
