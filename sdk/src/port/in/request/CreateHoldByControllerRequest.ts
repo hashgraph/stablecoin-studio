@@ -52,7 +52,7 @@ export default class CreateHoldByControllerRequest extends ValidatedRequest<Crea
 			tokenId: Validation.checkHederaIdFormat(),
 			amount: Validation.checkAmount(),
 			escrow: Validation.checkHederaIdFormat(true),
-			targetId: Validation.checkHederaIdFormat(),
+			targetId: Validation.checkHederaIdFormat(true),
 			expirationDate: (val) => {
 				return Hold.checkExpirationTimestamp(
 					parseInt(val),

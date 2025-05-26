@@ -49,7 +49,7 @@ export default class ExecuteHoldRequest extends ValidatedRequest<ExecuteHoldRequ
 			amount: Validation.checkAmount(),
 			sourceId: Validation.checkHederaIdFormat(),
 			holdId: Validation.checkNumber({ min: 0 }),
-			targetId: Validation.checkHederaIdFormat(),
+			targetId: Validation.checkHederaIdFormat(true),
 		});
 		this.tokenId = tokenId;
 		this.amount = amount;
