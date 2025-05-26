@@ -270,7 +270,7 @@ contract HoldManagementFacet is
         ];
 
         if (holdData.expirationTimestamp > block.timestamp) {
-            revert HoldExpired(holdData.expirationTimestamp);
+            revert HoldNotExpired(holdData.expirationTimestamp);
         }
 
         int64 amount = holdData.amount;

@@ -22,9 +22,13 @@ interface IHoldManagement {
     /// @param escrow The address of the authorized escrow
     error UnauthorizedEscrow(address caller, address escrow);
 
-    /// @notice Thrown when trying to reclaim a hold that has not yet expired
+    /// @notice Thrown when trying to execute/release a hold that has expired
     /// @param expirationTime The expiration timestamp of the hold
     error HoldExpired(uint256 expirationTime);
+
+    /// @notice Thrown when trying to reclaim a hold that has not yet expired
+    /// @param expirationTime The expiration timestamp of the hold
+    error HoldNotExpired(uint256 expirationTime);
 
     /// @notice Thrown when trying to execute a hold to an invalid destination
     /// @param expected The expected destination address

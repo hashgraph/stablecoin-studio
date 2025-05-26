@@ -423,11 +423,11 @@ describe('➡️ Hold Management Tests', () => {
                 holdManagementFacet.connect(operator).reclaimHold(holdIdentifier)
             ).to.be.revertedWithCustomError(holdManagementFacet, 'HoldNotFound')
         })
-        it('GIVEN hold WHEN reclaimHold before expiration date THEN transaction fails with HoldExpired', async () => {
+        it('GIVEN hold WHEN reclaimHold before expiration date THEN transaction fails with HoldNotExpired', async () => {
             await expect(holdManagementFacet.createHold(hold)).to.emit(holdManagementFacet, 'HoldCreated')
             await expect(
                 holdManagementFacet.connect(operator).reclaimHold(holdIdentifier)
-            ).to.be.revertedWithCustomError(holdManagementFacet, 'HoldExpired')
+            ).to.be.revertedWithCustomError(holdManagementFacet, 'HoldNotExpired')
         })
     })
     describe('Execute OK', () => {
