@@ -24,7 +24,7 @@ interface IHoldManagement {
 
     /// @notice Thrown when trying to reclaim a hold that has not yet expired
     /// @param expirationTime The expiration timestamp of the hold
-    error HoldNotExpired(uint256 expirationTime);
+    error HoldExpired(uint256 expirationTime);
 
     /// @notice Thrown when trying to execute a hold to an invalid destination
     /// @param expected The expected destination address

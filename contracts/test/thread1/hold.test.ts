@@ -341,7 +341,7 @@ describe('➡️ Hold Management Tests', () => {
                 holdManagementFacet.connect(operator).executeHold(holdIdentifier, account_nonOperator, 1000)
             ).to.be.revertedWithCustomError(holdManagementFacet, 'InsufficientHoldAmount')
         })
-        it('GIVEN an expire hold WHEN executeHold THEN transaction fails with HoldNotExpired', async () => {
+        it('GIVEN an expire hold WHEN executeHold THEN transaction fails with HoldExpired', async () => {
             const currentTimestamp = (await ethers.provider.getBlock('latest')).timestamp
             const expirationTimestamp = currentTimestamp + 5
             const hold = {
@@ -359,7 +359,7 @@ describe('➡️ Hold Management Tests', () => {
             await delay({ time: 6, unit: 'sec' })
             await expect(
                 holdManagementFacet.connect(operator).executeHold(holdIdentifier, account_nonOperator, 1)
-            ).to.be.revertedWithCustomError(holdManagementFacet, 'HoldNotExpired')
+            ).to.be.revertedWithCustomError(holdManagementFacet, 'HoldExpired')
         })
     })
     describe('Release with wrong input arguments', () => {
@@ -388,7 +388,7 @@ describe('➡️ Hold Management Tests', () => {
                 holdManagementFacet.connect(operator).releaseHold(holdIdentifier, 1)
             ).to.be.revertedWithCustomError(holdManagementFacet, 'HoldNotFound')
         })
-        it('GIVEN an expire hold WHEN releaseHold THEN transaction fails with HoldNotExpired', async () => {
+        it('GIVEN an expire hold WHEN releaseHold THEN transaction fails with HoldExpired', async () => {
             const currentTimestamp = (await ethers.provider.getBlock('latest')).timestamp
             const expirationTimestamp = currentTimestamp + 5
             const hold = {
@@ -406,7 +406,7 @@ describe('➡️ Hold Management Tests', () => {
             await delay({ time: 6, unit: 'sec' })
             await expect(
                 holdManagementFacet.connect(operator).releaseHold(holdIdentifier, 1)
-            ).to.be.revertedWithCustomError(holdManagementFacet, 'HoldNotExpired')
+            ).to.be.revertedWithCustomError(holdManagementFacet, 'HoldExpired')
         })
     })
     describe('Reclaim with wrong input arguments', () => {
@@ -423,11 +423,11 @@ describe('➡️ Hold Management Tests', () => {
                 holdManagementFacet.connect(operator).reclaimHold(holdIdentifier)
             ).to.be.revertedWithCustomError(holdManagementFacet, 'HoldNotFound')
         })
-        it('GIVEN hold WHEN reclaimHold before expiration date THEN transaction fails with HoldNotExpired', async () => {
+        it('GIVEN hold WHEN reclaimHold before expiration date THEN transaction fails with HoldExpired', async () => {
             await expect(holdManagementFacet.createHold(hold)).to.emit(holdManagementFacet, 'HoldCreated')
             await expect(
                 holdManagementFacet.connect(operator).reclaimHold(holdIdentifier)
-            ).to.be.revertedWithCustomError(holdManagementFacet, 'HoldNotExpired')
+            ).to.be.revertedWithCustomError(holdManagementFacet, 'HoldExpired')
         })
     })
     describe('Execute OK', () => {

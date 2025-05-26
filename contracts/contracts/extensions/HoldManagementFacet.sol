@@ -52,7 +52,7 @@ contract HoldManagementFacet is
      */
     modifier nonExpired(uint256 expirationTimestamp) {
         if (expirationTimestamp < block.timestamp) {
-            revert HoldNotExpired(expirationTimestamp);
+            revert HoldExpired(expirationTimestamp);
         }
         _;
     }
@@ -270,17 +270,15 @@ contract HoldManagementFacet is
         ];
 
         if (holdData.expirationTimestamp > block.timestamp) {
-            revert HoldNotExpired(holdData.expirationTimestamp);
+            revert HoldExpired(holdData.expirationTimestamp);
         }
 
         int64 amount = holdData.amount;
-        uint256 holdId = holdData.id;
-
         _decreaseHoldAmount(_holdIdentifier.tokenHolder, _holdIdentifier.holdId, amount);
 
         _transferTokens(address(this), _holdIdentifier.tokenHolder, amount);
 
-        emit HoldReclaimed(msg.sender, _holdIdentifier.tokenHolder, holdId, amount);
+        emit HoldReclaimed(msg.sender, _holdIdentifier.tokenHolder, _holdIdentifier.holdId, amount);
         return true;
     }
 
