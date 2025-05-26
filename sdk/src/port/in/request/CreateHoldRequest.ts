@@ -49,7 +49,7 @@ export default class CreateHoldRequest extends ValidatedRequest<CreateHoldReques
 			tokenId: Validation.checkHederaIdFormat(),
 			amount: Validation.checkAmount(),
 			escrow: Validation.checkHederaIdFormat(),
-			targetId: Validation.checkHederaIdFormat(),
+			targetId: Validation.checkHederaIdFormat(true),
 			expirationDate: (val) => {
 				return Hold.checkExpirationTimestamp(
 					parseInt(val),

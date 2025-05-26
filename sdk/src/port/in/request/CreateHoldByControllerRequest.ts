@@ -51,7 +51,7 @@ export default class CreateHoldByControllerRequest extends ValidatedRequest<Crea
 		super({
 			tokenId: Validation.checkHederaIdFormat(),
 			amount: Validation.checkAmount(),
-			escrow: Validation.checkHederaIdFormat(),
+			escrow: Validation.checkHederaIdFormat(true),
 			targetId: Validation.checkHederaIdFormat(),
 			expirationDate: (val) => {
 				return Hold.checkExpirationTimestamp(
