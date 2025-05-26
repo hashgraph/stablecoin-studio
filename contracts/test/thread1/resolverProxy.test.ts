@@ -170,7 +170,7 @@ describe('➡️ ResolverProxy Tests', () => {
     }
 
     before(async () => {
-        // eslint-disable-next-line @typescript-eslint/no-extra-semi
+        // eslint-disable-next-line no-extra-semi, @typescript-eslint/no-extra-semi
         ;[signer_A] = await ethers.getSigners()
         account_A = signer_A.address
 

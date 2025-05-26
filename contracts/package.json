@@ -35,6 +35,7 @@
         "test:hederaReserve": "npx hardhat test test/thread0/hederaReserve.test.ts",
         "test:hederaTokenManager": "npx hardhat test test/thread0/hederaTokenManager.test.ts",
         "test:pausable": "npx hardhat test test/thread0/pausable.test.ts",
+        "test:hold": "npx hardhat test test/thread1/hold.test.ts",
         "test:rescuable": "npx hardhat test test/thread1/rescuable.test.ts",
         "test:reserve": "npx hardhat test test/thread1/reserve.test.ts",
         "test:roleManagement": "npx hardhat test test/thread1/roleManagement.test.ts",

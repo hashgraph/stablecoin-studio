@@ -22,6 +22,10 @@ interface IHoldManagement {
     /// @param escrow The address of the authorized escrow
     error UnauthorizedEscrow(address caller, address escrow);
 
+    /// @notice Thrown when trying to execute/release a hold that has expired
+    /// @param expirationTime The expiration timestamp of the hold
+    error HoldExpired(uint256 expirationTime);
+
     /// @notice Thrown when trying to reclaim a hold that has not yet expired
     /// @param expirationTime The expiration timestamp of the hold
     error HoldNotExpired(uint256 expirationTime);
@@ -30,19 +34,6 @@ interface IHoldManagement {
     /// @param expected The expected destination address
     /// @param provided The provided destination address
     error InvalidDestination(address expected, address provided);
-
-    /// @notice Thrown when a token transfer operation fails
-    error TransferFailed();
-
-    /// @notice Thrown when a token wipe operation fails
-    error WipeFailed();
-
-    /// @notice Thrown when a token mint operation fails
-    error MintFailed();
-
-    /// @notice Thrown when a required token key is missing
-    /// @param keyType The type of key that is missing
-    error TokenKeyMissing(string keyType);
 
     /// @notice Thrown when attempting an operation that requires no active holds
     error HoldActive();

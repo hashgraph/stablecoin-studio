@@ -13,6 +13,7 @@
 	"grantKycOperation": "Grant KYC",
 	"revokeKycOperation": "Revoke KYC",
 	"checkKycOperation": "Check KYC",
+	"holdOperation": "Hold",
 	"modalLoadingTitle": "Loading",
 	"modalSuccessTitle": "Operation successfully completed",
 	"modalSuccessDesc": "You can follow the order in the list of operations.",
@@ -68,6 +69,107 @@
 		"modalAction": {
 			"accept": "Delete",
 			"subtitle": "Are you sure you want to continue with the delete operation?"
+		}
+	},
+	"hold": {
+		"title": "Hold operations",
+		"subtitle": "Choose an hold operation",
+		"operations": {
+			"list": "List",
+			"create": "Create",
+			"execute": "Execute",
+			"release": "Release",
+			"reclaim": "Reclaim"
+		},
+		"create": {
+			"title": "Create hold operation",
+			"operationTitle": "Operation details",
+			"amountLabel": "Enter the amount",
+			"amountPlaceholder": "0",
+			"expirationDateLabel": "Expiration date",
+			"expirationDatePlaceholder": "Enter the expiration date",
+			"escrowLabel": "Escrow address",
+			"escrowPlaceholder": "Enter the escrow address",
+			"destinationLabel": "Destination address",
+			"destinationPlaceholder": "Enter the destination address",
+			"dataLabel": "Data",
+			"dataPlaceholder": "Enter the data",
+			"operatorDataLabel": "Operator data",
+			"operatorDataPlaceholder": "Enter the operator data",
+			"modalSuccessDesc": "Hold operation has been created successfully",
+			"modalAction": {
+				"subtitle": "Operation details review",
+				"amount": "Amount",
+				"expirationDate": "Expiration date",
+				"escrow": "Escrow address",
+				"destination": "Destination address",
+				"accept": "Create hold"
+			}
+		},
+		"execute": {
+			"title": "Execute hold operation",
+			"operationTitle": "Operation details",
+			"amountLabel": "Enter the amount",
+			"amountPlaceholder": "0",
+			"holdIdLabel": "Hold ID",
+			"holdIdPlaceholder": "Enter the hold ID",
+			"targetIdLabel": "Target ID",
+			"targetIdPlaceholder": "Enter the target ID",
+			"sourceIdLabel": "Source ID",
+			"sourceIdPlaceholder": "Enter the source ID",
+			"modalSuccessDesc": "Execute hold operation has been created successfully",
+			"modalAction": {
+				"subtitle": "Operation details review",
+				"amount": "Amount",
+				"holdId": "Hold ID",
+				"target": "Target ID",
+				"source": "Source ID",
+				"accept": "Execute hold"
+			}
+		},
+		"release": {
+			"title": "Release hold operation",
+			"operationTitle": "Operation details",
+			"amountLabel": "Enter the amount",
+			"amountPlaceholder": "0",
+			"holdIdLabel": "Hold ID",
+			"holdIdPlaceholder": "Enter the hold ID",
+			"sourceIdLabel": "Source ID",
+			"sourceIdPlaceholder": "Enter the source ID",
+			"modalSuccessDesc": "Release hold operation has been created successfully",
+			"modalAction": {
+				"subtitle": "Operation details review",
+				"amount": "Amount",
+				"holdId": "Hold ID",
+				"source": "Source ID",
+				"accept": "Release hold"
+			}
+		},
+		"reclaim": {
+			"title": "Reclaim hold operation",
+			"operationTitle": "Operation details",
+			"holdIdLabel": "Hold ID",
+			"holdIdPlaceholder": "Enter the hold ID",
+			"sourceIdLabel": "Source ID",
+			"sourceIdPlaceholder": "Enter the source ID",
+			"modalSuccessDesc": "Reclaim hold operation has been created successfully",
+			"modalAction": {
+				"subtitle": "Operation details review",
+				"originAccount": "Account",
+				"holdId": "Hold ID",
+				"source": "Source ID",
+				"accept": "Reclaim tokens"
+			}
+		},
+		"list": {
+			"title": "List holds",
+			"columns": {
+				"id": "ID",
+				"amount": "Amount",
+				"expirationDate": "Expiration date",
+				"escrowAddress": "Escrow address",
+				"destinationAddress": "Destination address"
+			}
 		}
 	}
 }

@@ -14,12 +14,17 @@ export interface KeysStruct {
     isEd25519: boolean
 }
 
-export function tokenKeysToContract({ addKyc, addFeeSchedule }: TokenKeysToContractCommand): KeysStruct[] {
+export function tokenKeysToContract({
+    addKyc,
+    addFeeSchedule,
+    addSupply,
+    addWipe,
+}: TokenKeysToContractCommand): KeysStruct[] {
     const keyType = generateKeyType(
         new GenerateKeyTypeCommand({
             kycKey: addKyc,
             freezeKey: true,
-            wipeKey: true,
+            wipeKey: addWipe ?? true,
             feeScheduleKey: addFeeSchedule,
             pauseKey: true,
             ignored: false,
@@ -27,7 +32,7 @@ export function tokenKeysToContract({ addKyc, addFeeSchedule }: TokenKeysToContr
     )
 
     return [
-        fixKeys(),
+        fixKeys(addSupply),
         {
             keyType: keyType,
             publicKey: '0x',
@@ -134,14 +139,18 @@ export function rolesToAccounts({
             role: ROLES.customFees.hash,
             account: RoleToAccount,
         },
+        {
+            role: ROLES.hold.hash,
+            account: RoleToAccount,
+        },
     ]
 }
 
-function fixKeys(): KeysStruct {
+function fixKeys(addSupply?: boolean): KeysStruct {
     const keyType = generateKeyType(
         new GenerateKeyTypeCommand({
             adminKey: true,
-            supplyKey: true,
+            supplyKey: addSupply ?? true,
         })
     )
 
