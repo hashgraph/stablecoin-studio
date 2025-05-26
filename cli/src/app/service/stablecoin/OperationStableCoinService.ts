@@ -2363,6 +2363,9 @@ export default class OperationStableCoinService extends Service {
           case language.getText('wizard.CheckAccountsWithRoleOptions.Fees'):
             await this.getAccountsWithRole(StableCoinRole.CUSTOM_FEES_ROLE);
             break;
+          case language.getText('wizard.CheckAccountsWithRoleOptions.Hold'):
+            await this.getAccountsWithRole(StableCoinRole.HOLD_CREATOR_ROLE);
+            break;
 
           default:
             break;
@@ -3468,6 +3471,14 @@ export default class OperationStableCoinService extends Service {
           name: 'Admin Role',
           value: StableCoinRole.DEFAULT_ADMIN_ROLE,
           id: tokenKeys.admin,
+        },
+      },
+      {
+        role: {
+          availability: capabilities.includes(Operation.CONTROLLER_CREATE_HOLD),
+          name: 'Hold Creator Role',
+          value: StableCoinRole.HOLD_CREATOR_ROLE,
+          id: -1,
         },
       },
     ];

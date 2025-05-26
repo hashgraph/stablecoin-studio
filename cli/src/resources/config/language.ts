@@ -464,6 +464,7 @@ export const english = {
       Delete: 'Delete',
       KYC: 'KYC',
       Fees: 'Fees',
+      Hold: 'Hold Creator',
       ...goBack,
     },
 
