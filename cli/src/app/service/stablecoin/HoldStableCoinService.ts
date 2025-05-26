@@ -37,7 +37,7 @@ import {
 import colors from 'colors';
 
 /**
- * Create Role Stablecoin Service
+ * Hold Stablecoin Service
  */
 export default class HoldStableCoinService extends Service {
   constructor() {
