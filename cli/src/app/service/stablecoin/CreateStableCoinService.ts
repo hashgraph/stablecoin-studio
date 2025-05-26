@@ -313,6 +313,7 @@ export default class CreateStableCoinService extends Service {
         tokenToCreate.kycRoleAccount = currentAccount.accountId;
       if (tokenToCreate.feeScheduleKey == Account.NullPublicKey)
         tokenToCreate.feeRoleAccount = currentAccount.accountId;
+      tokenToCreate.holdCreatorRoleAccount = currentAccount.accountId;
     }
 
     const reserve = await this.askForReserve();
@@ -597,6 +598,12 @@ export default class CreateStableCoinService extends Service {
         },
       );
     }
+    await this.askForAccount(
+      language.getText('stablecoin.initialRoles.holdCreator'),
+      currentAccountId,
+      tokenToCreate,
+      'holdCreatorRoleAccount',
+    );
   }
 
   private async askForAccount(
@@ -612,7 +619,8 @@ export default class CreateStableCoinService extends Service {
       | 'deleteRoleAccount'
       | 'kycRoleAccount'
       | 'cashInRoleAccount'
-      | 'feeRoleAccount',
+      | 'feeRoleAccount'
+      | 'holdCreatorRoleAccount',
   ): Promise<string> {
     const options = [
       language.getText('stablecoin.initialRoles.options.currentAccount'),

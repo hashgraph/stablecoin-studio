@@ -23,10 +23,10 @@ import BaseError, {
 } from '../../../../../../../core/error/BaseError.js';
 
 export class NotEscrow extends BaseError {
-	constructor() {
+	constructor(caller: string, escrow: string) {
 		super(
 			ErrorCode.NotEscrow,
-			`The caller is not an escrow account for the selected hold ID`,
+			`The caller ${caller} is not escrow ${escrow} for the selected hold ID`,
 		);
 	}
 }
