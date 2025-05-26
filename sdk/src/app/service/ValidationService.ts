@@ -104,7 +104,7 @@ export default class ValidationService extends Service {
 		const destinationAddress =
 			holdDetails.payload.destinationAddress.toLowerCase();
 
-		if (destinationAddress == EVM_ZERO_ADDRESS && !targetId) {
+		if (destinationAddress === EVM_ZERO_ADDRESS && !targetId) {
 			throw new InvalidHoldDestination();
 		}
 
@@ -130,20 +130,16 @@ export default class ValidationService extends Service {
 			new GetHoldForQuery(tokenId, sourceId, holdId),
 		);
 
-		if (!isReclaim) {
-			if (
-				holdDetails.payload.expirationTimeStamp <
-				Math.floor(Date.now() / 1000)
-			) {
-				throw new ExpiredHold();
-			}
-		} else {
-			if (
-				holdDetails.payload.expirationTimeStamp >
-				Math.floor(Date.now() / 1000)
-			) {
-				throw new HoldNotExpired();
-			}
+		const currentTimestamp = Math.floor(Date.now() / 1000);
+		const { expirationTimeStamp } = holdDetails.payload;
+
+		// Check expiration based on reclaim flag
+		if (!isReclaim && expirationTimeStamp < currentTimestamp) {
+			throw new ExpiredHold();
+		}
+
+		if (isReclaim && expirationTimeStamp > currentTimestamp) {
+			throw new HoldNotExpired();
 		}
 	}
 }
