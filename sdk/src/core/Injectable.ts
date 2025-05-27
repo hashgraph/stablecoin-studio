@@ -113,6 +113,7 @@ import { GetHoldsIdForQueryHandler } from '../app/usecase/query/stablecoin/hold/
 import { GetHoldForQueryHandler } from '../app/usecase/query/stablecoin/hold/getHoldFor/GetHoldForQueryHandler.js';
 import { GetHeldAmountForQueryHandler } from '../app/usecase/query/stablecoin/hold/getHeldAmountFor/GetHeldAmountForQueryHandler.js';
 import { GetHoldCountForQueryHandler } from '../app/usecase/query/stablecoin/hold/getHoldCountFor/GetHoldCountForQueryHandler.js';
+import { GetBurnableAmountQueryHandler } from '../app/usecase/query/stablecoin/burn/getBurnableAmount/GetBurnableAmountQueryHandler.js';
 
 export const TOKENS = {
 	COMMAND_HANDLER: Symbol('CommandHandler'),
@@ -405,6 +406,10 @@ const QUERY_HANDLERS = [
 	{
 		token: TOKENS.QUERY_HANDLER,
 		useClass: GetHoldCountForQueryHandler,
+	},
+	{
+		token: TOKENS.QUERY_HANDLER,
+		useClass: GetBurnableAmountQueryHandler,
 	},
 ];
 

@@ -38,6 +38,7 @@ import {
 	RolesFacet__factory,
 	DiamondFacet__factory,
 	HoldManagementFacet__factory,
+	BurnableFacet__factory,
 } from '@hashgraph/stablecoin-npm-contracts';
 import { StableCoinRole } from '../../../domain/context/stablecoin/StableCoinRole.js';
 import ContractId from '../../../domain/context/contract/ContractId.js';
@@ -321,5 +322,16 @@ export class RPCQueryAdapter {
 		).getHoldCountFor(target.toString());
 
 		return holdCountFor.toNumber();
+	}
+
+	async getBurnableAmount(address: EvmAddress): Promise<string> {
+		LogService.logTrace(`Getting burnable amount`);
+
+		const burnableAmount = await this.connect(
+			BurnableFacet__factory,
+			address.toString(),
+		).getBurnableAmount();
+
+		return burnableAmount.toString();
 	}
 }

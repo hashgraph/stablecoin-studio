@@ -18,6 +18,7 @@
  *
  */
 
+import ValidationService from '../../../../../service/ValidationService.js';
 import CheckNums from '../../../../../../core/checks/numbers/CheckNums.js';
 import { CommandBus } from '../../../../../../core/command/CommandBus.js';
 import { ICommandHandler } from '../../../../../../core/command/CommandHandler.js';
@@ -46,6 +47,8 @@ export class BurnCommandHandler implements ICommandHandler<BurnCommand> {
 		public readonly accountService: AccountService,
 		@lazyInject(TransactionService)
 		public readonly transactionService: TransactionService,
+		@lazyInject(ValidationService)
+		private readonly validationService: ValidationService,
 	) {}
 
 	async execute(command: BurnCommand): Promise<BurnCommandResponse> {
@@ -66,17 +69,7 @@ export class BurnCommandHandler implements ICommandHandler<BurnCommand> {
 		if (!coin.treasury || !coin.tokenId)
 			throw new OperationNotAllowed(`The stablecoin is not valid`);
 
-		const treasuryBalance = (
-			await this.queryBus.execute(
-				new BalanceOfQuery(coin.tokenId, coin.treasury),
-			)
-		).payload;
-
-		if (amountBd.isGreaterThan(treasuryBalance)) {
-			throw new OperationNotAllowed(
-				'The amount is bigger than the treasury account balance',
-			);
-		}
+		await this.validationService.checkBurnableAmount(coin.tokenId, amount);
 
 		const res = await handler.burn(capabilities, amountBd, startDate);
 		return Promise.resolve(

@@ -676,9 +676,6 @@ export default abstract class TransactionAdapter
 	}
 
 	async getEVMAddress(parameter: any): Promise<any> {
-		if (parameter == HederaId.NULL) {
-			return EVM_ZERO_ADDRESS;
-		}
 		if (parameter instanceof ContractId) {
 			const test = (
 				await this.getMirrorNodeAdapter().getContractInfo(
@@ -688,6 +685,9 @@ export default abstract class TransactionAdapter
 			return test;
 		}
 		if (parameter instanceof HederaId) {
+			if (parameter.value == HederaId.NULL.value) {
+				return EVM_ZERO_ADDRESS;
+			}
 			return (
 				await this.getMirrorNodeAdapter().accountToEvmAddress(parameter)
 			).toString();

@@ -33,6 +33,8 @@ import { InvalidHoldId } from '../../app/usecase/command/stablecoin/operations/h
 import { GetHoldsIdForQuery } from '../../app/usecase/query/stablecoin/hold/getHoldsIdFor/GetHoldsIdForQuery';
 import { ExpiredHold } from '../../app/usecase/command/stablecoin/operations/hold/error/ExpiredHold';
 import { HoldNotExpired } from '../../app/usecase/command/stablecoin/operations/hold/error/HoldNotExpired';
+import { GetBurnableAmountQuery } from '../../app/usecase/query/stablecoin/burn/getBurnableAmount/GetBurnableAmountQuery';
+import { BurnableAmountExceeded } from '../../app/usecase/command/stablecoin/operations/burn/error/BurnableAmountExceeded';
 
 export default class ValidationService extends Service {
 	constructor(
@@ -149,6 +151,18 @@ export default class ValidationService extends Service {
 
 		if (isReclaim && expirationTimeStamp > currentTimestamp) {
 			throw new HoldNotExpired();
+		}
+	}
+
+	async checkBurnableAmount(
+		tokenId: HederaId,
+		amount: string,
+	): Promise<void> {
+		const burnableAmount = (
+			await this.queryBus.execute(new GetBurnableAmountQuery(tokenId))
+		).payload;
+		if (burnableAmount.isLowerThan(BigDecimal.fromString(amount))) {
+			throw new BurnableAmountExceeded();
 		}
 	}
 }

@@ -2003,10 +2003,7 @@ export default class RPCTransactionAdapter extends TransactionAdapter {
 				formattedHold = {
 					...params!.hold!,
 					escrow: await this.getEVMAddress(params!.hold!.escrow),
-					to:
-						params!.hold!.to == HederaId.NULL
-							? EVM_ZERO_ADDRESS
-							: await this.getEVMAddress(params!.hold!.to),
+					to: await this.getEVMAddress(params!.hold!.to),
 				};
 				return RPCTransactionResponseAdapter.manageResponse(
 					await HoldManagementFacet__factory.connect(
@@ -2021,10 +2018,7 @@ export default class RPCTransactionAdapter extends TransactionAdapter {
 				formattedHold = {
 					...params!.hold!,
 					escrow: await this.getEVMAddress(params!.hold!.escrow),
-					to:
-						params!.hold!.to == HederaId.NULL
-							? EVM_ZERO_ADDRESS
-							: await this.getEVMAddress(params!.hold!.to),
+					to: await this.getEVMAddress(params!.hold!.to),
 				};
 				return RPCTransactionResponseAdapter.manageResponse(
 					await HoldManagementFacet__factory.connect(
