@@ -3,7 +3,7 @@ pragma solidity 0.8.18;
 
 interface IBurnable {
     /**
-     * @dev Emitted when the `amount` tokens are burned from TokenOwner
+     * @dev Throws if burned amount exceeds maximum allowed
      *
      * @param amount The maximum number of tokens that can be burned
      */
