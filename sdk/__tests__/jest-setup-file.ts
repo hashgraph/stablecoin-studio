@@ -113,6 +113,7 @@ import {
 	HoldDetails,
 	HoldIdentifier,
 } from '../src/domain/context/hold/Hold.js';
+import ValidationService from 'app/service/ValidationService.js';
 
 interface token {
 	tokenId: string;
@@ -163,6 +164,7 @@ let user_account: Account;
 let configVersion: number;
 let configId: string;
 let resolverAddress: string;
+let totalHeldAmount = BigDecimal.ZERO;
 
 function hexToDecimal(hexString: string): number {
 	if (!/^0x[a-fA-F0-9]+$|^[a-fA-F0-9]+$/.test(hexString)) {
@@ -312,6 +314,9 @@ function createHold(tokenHolder: string, hold: Hold): void {
 		...(holdIdsByAccount.get(tokenHolder) ?? []),
 		holdId,
 	]);
+	totalHeldAmount = totalHeldAmount.addUnsafe(
+		BigDecimal.fromString(hold.amount.toString()),
+	);
 }
 
 function decreaseHeldAmount(
@@ -364,6 +369,9 @@ function decreaseHeldAmount(
 			BigDecimal.fromString(balanceDestination)
 				.addUnsafe(BigDecimal.fromString(amount.toString()))
 				.toString(),
+		);
+		totalHeldAmount = totalHeldAmount.subUnsafe(
+			BigDecimal.fromString(amount.toString()),
 		);
 	}
 }
@@ -1459,6 +1467,13 @@ jest.mock('../src/port/out/rpc/RPCQueryAdapter', () => {
 					'0x' + target.toString().toUpperCase().substring(2),
 				) ?? []
 			);
+		},
+	);
+	singletonInstance.getBurnableAmount = jest.fn(
+		async (address: EvmAddress) => {
+			return BigDecimal.fromString(totalSupply)
+				.subUnsafe(totalHeldAmount)
+				.toString();
 		},
 	);
 

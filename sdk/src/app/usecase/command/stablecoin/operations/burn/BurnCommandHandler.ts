@@ -29,7 +29,6 @@ import BigDecimal from '../../../../../../domain/context/shared/BigDecimal.js';
 import AccountService from '../../../../../service/AccountService.js';
 import StableCoinService from '../../../../../service/StableCoinService.js';
 import TransactionService from '../../../../../service/TransactionService.js';
-import { BalanceOfQuery } from '../../../../query/stablecoin/balanceof/BalanceOfQuery.js';
 import { DecimalsOverRange } from '../../error/DecimalsOverRange.js';
 import { OperationNotAllowed } from '../../error/OperationNotAllowed.js';
 import { BurnCommand, BurnCommandResponse } from './BurnCommand.js';

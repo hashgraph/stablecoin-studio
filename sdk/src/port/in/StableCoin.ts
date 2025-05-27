@@ -127,8 +127,6 @@ import { GetHoldCountForQuery } from '../../app/usecase/query/stablecoin/hold/ge
 import { GetHoldsIdForQuery } from '../../app/usecase/query/stablecoin/hold/getHoldsIdFor/GetHoldsIdForQuery.js';
 import { GetHeldAmountForQuery } from '../../app/usecase/query/stablecoin/hold/getHeldAmountFor/GetHeldAmountForQuery.js';
 import { CreateHoldByControllerCommand } from '../../app/usecase/command/stablecoin/operations/hold/createHoldByController/CreateHoldByControllerCommand.js';
-import GetBurnableAmountRequest from './request/GetBurnableAmountRequest.js';
-import { GetBurnableAmountQuery } from '../../app/usecase/query/stablecoin/burn/getBurnableAmount/GetBurnableAmountQuery.js';
 
 export {
 	StableCoinViewModel,
@@ -187,7 +185,6 @@ interface IStableCoinInPort {
 	getHeldAmountFor(request: GetHeldAmountForRequest): Promise<BigDecimal>;
 	getHoldCountFor(request: GetHoldCountForRequest): Promise<number>;
 	getHoldsIdFor(request: GetHoldsIdForRequest): Promise<number[]>;
-	getBurnableAmount(request: GetBurnableAmountRequest): Promise<BigDecimal>;
 	transfers(request: TransfersRequest): Promise<boolean>;
 	update(request: UpdateRequest): Promise<boolean>;
 	signTransaction(request: SignTransactionRequest): Promise<boolean>;
@@ -840,18 +837,6 @@ class StableCoinInPort implements IStableCoinInPort {
 					HederaId.from(tokenId),
 					HederaId.from(sourceId),
 				),
-			)
-		).payload;
-	}
-	@LogError
-	async getBurnableAmount(
-		request: GetBurnableAmountRequest,
-	): Promise<BigDecimal> {
-		handleValidation(GetHeldAmountForRequest.name, request);
-		const { tokenId } = request;
-		return (
-			await this.queryBus.execute(
-				new GetBurnableAmountQuery(HederaId.from(tokenId)),
 			)
 		).payload;
 	}

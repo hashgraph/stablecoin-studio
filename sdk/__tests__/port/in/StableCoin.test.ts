@@ -92,8 +92,6 @@ import Injectable from '../../../src/core/Injectable.js';
 import { CONFIG_SC, DEFAULT_VERSION } from '../../../src/core/Constants.js';
 import { Time } from '../../../src/core/Time.js';
 import HoldViewModel from '../../../src/port/in/response/HoldViewModel.js';
-import { identifiers } from '../../jest-setup-file.js';
-import { EVM_ZERO_ADDRESS } from '../../../src/core/Constants.js';
 
 const initialSupply = parseInt(INITIAL_SUPPLY);
 const maxSupply = parseInt(MAX_SUPPLY);
@@ -111,9 +109,9 @@ const emptyHold: HoldViewModel = {
 		DECIMALS,
 	).toString(),
 	expirationDate: new Date(0),
-	tokenHolderAddress: EVM_ZERO_ADDRESS,
-	escrowAddress: EVM_ZERO_ADDRESS,
-	destinationAddress: EVM_ZERO_ADDRESS,
+	tokenHolderAddress: HederaId.NULL.toString(),
+	escrowAddress: HederaId.NULL.toString(),
+	destinationAddress: HederaId.NULL.toString(),
 	data: '0x',
 };
 
@@ -583,9 +581,9 @@ describe('🧪 Stablecoin test', () => {
 			id: nextHoldId,
 			amount: amount,
 			expirationDate: new Date(parseInt(expirationDate) * 1000),
-			tokenHolderAddress: identifiers(CLIENT_ACCOUNT_ED25519.id)[1],
-			escrowAddress: identifiers(new HederaId(escrow))[1],
-			destinationAddress: identifiers(new HederaId(targetId))[1],
+			tokenHolderAddress: CLIENT_ACCOUNT_ED25519.id.toString(),
+			escrowAddress: escrow,
+			destinationAddress: targetId,
 			data: '0x',
 		};
 
@@ -665,9 +663,9 @@ describe('🧪 Stablecoin test', () => {
 			id: nextHoldId,
 			amount: amount,
 			expirationDate: new Date(parseInt(expirationDate) * 1000),
-			tokenHolderAddress: identifiers(CLIENT_ACCOUNT_ED25519.id)[1],
-			escrowAddress: identifiers(new HederaId(escrow))[1],
-			destinationAddress: identifiers(new HederaId(targetId))[1],
+			tokenHolderAddress: CLIENT_ACCOUNT_ED25519.id.toString(),
+			escrowAddress: escrow,
+			destinationAddress: targetId,
 			data: '0x',
 		};
 
