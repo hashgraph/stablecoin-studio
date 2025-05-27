@@ -537,11 +537,11 @@ describe('➡️ Hold Management Tests', () => {
         before(async () => {
             await setInitialData({})
         })
-        it('GIVEN an active hold WHEN try to do a burn operation AND fail with HoldActive', async () => {
+        it('GIVEN an active hold WHEN burning more than treasury funds THEN fails with BurnableAmountExceeded', async () => {
             await expect(holdManagementFacet.createHold(hold)).to.emit(holdManagementFacet, 'HoldCreated')
             await expect(
                 burnableFacet.burn(DEFAULT_TOKEN.initialSupply.add(tokensToMint))
-            ).to.be.revertedWithCustomError(holdManagementFacet, 'BurnableAmountExceeded')
+            ).to.be.revertedWithCustomError(burnableFacet, 'BurnableAmountExceeded')
         })
     })
 
