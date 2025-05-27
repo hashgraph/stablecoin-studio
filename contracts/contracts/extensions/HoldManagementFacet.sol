@@ -12,6 +12,7 @@ import {HoldManagementStorageWrapper} from './HoldManagementStorageWrapper.sol';
 import {_HOLD_MANAGEMENT_RESOLVER_KEY} from '../constants/resolverKeys.sol';
 import {IRoles} from './Interfaces/IRoles.sol';
 import {IStaticFunctionSelectors} from '../resolver/interfaces/resolverProxy/IStaticFunctionSelectors.sol';
+
 // solhint-enable max-line-length
 
 contract HoldManagementFacet is

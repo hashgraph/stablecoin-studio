@@ -35,9 +35,6 @@ interface IHoldManagement {
     /// @param provided The provided destination address
     error InvalidDestination(address expected, address provided);
 
-    /// @notice Thrown when attempting an operation that requires no active holds
-    error HoldActive();
-
     // ----- Structs -----
 
     struct HoldIdentifier {

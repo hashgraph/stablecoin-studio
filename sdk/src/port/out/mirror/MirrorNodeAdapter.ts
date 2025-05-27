@@ -32,7 +32,11 @@ import PublicKey from '../../../domain/context/account/PublicKey.js';
 import { StableCoinMemo } from '../../../domain/context/stablecoin/StableCoinMemo.js';
 import ContractId from '../../../domain/context/contract/ContractId.js';
 import { MAX_PERCENTAGE_DECIMALS } from '../../../domain/context/fee/CustomFee.js';
-import { BYTES_32_LENGTH, HBAR_DECIMALS } from '../../../core/Constants.js';
+import {
+	BYTES_32_LENGTH,
+	EVM_ZERO_ADDRESS,
+	HBAR_DECIMALS,
+} from '../../../core/Constants.js';
 import { InvalidResponse } from './error/InvalidResponse.js';
 import { HederaId } from '../../../domain/context/shared/HederaId.js';
 import { KeyType } from '../../../domain/context/account/KeyProps.js';
@@ -52,6 +56,7 @@ import { MirrorNode } from '../../../domain/context/network/MirrorNode.js';
 import ContractViewModel from '../../out/mirror/response/ContractViewModel.js';
 import MultiKey from '../../../domain/context/account/MultiKey.js';
 import { Time } from '../../../core/Time.js';
+import Validation from '../../../port/in/request/validation/Validation.js';
 
 const PROTOBUF_ENCODED = 'ProtobufEncoded';
 
@@ -524,6 +529,29 @@ export class MirrorNodeAdapter {
 			return Promise.reject<TransactionResultViewModel>(
 				new InvalidResponse(error),
 			);
+		}
+	}
+
+	public async accountEvmAddressToHederaId(
+		accountAddress: string,
+	): Promise<string> {
+		try {
+			const validationErrors =
+				Validation.checkEvmAddressFormat(true)(accountAddress);
+			if (validationErrors.length > 0) {
+				return Promise.reject<string>(validationErrors[0]);
+			}
+			if (accountAddress === EVM_ZERO_ADDRESS) {
+				return HederaId.NULL.toString();
+			}
+
+			const accountInfo = await this.getAccountInfo(accountAddress);
+			return (
+				accountInfo.id ?? Promise.reject<string>('Account ID not found')
+			);
+		} catch (error) {
+			LogService.logError(error);
+			return Promise.reject<string>(new InvalidResponse(error));
 		}
 	}
 

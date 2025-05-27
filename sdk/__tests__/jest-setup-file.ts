@@ -83,6 +83,7 @@ import {
 } from '../src/index.js';
 import {
 	CREATE_SC_GAS,
+	EVM_ZERO_ADDRESS,
 	TOKEN_CREATION_COST_HBAR,
 } from '../src/core/Constants.js';
 import LogService from '../src/app/service/LogService.js';
@@ -106,8 +107,13 @@ import { FactoryCashinRole } from '../src/domain/context/factory/FactoryCashinRo
 import { KeysStruct } from '../src/domain/context/factory/FactoryKey.js';
 import { FactoryRole } from '../src/domain/context/factory/FactoryRole.js';
 import { FactoryStableCoin } from '../src/domain/context/factory/FactoryStableCoin.js';
-import { REGEX_TRANSACTION } from '../src/port/out/error/TransactionResponseError.js';
 import { ResolverProxyConfiguration } from '../src/domain/context/factory/ResolverProxyConfiguration.js';
+import {
+	Hold,
+	HoldDetails,
+	HoldIdentifier,
+} from '../src/domain/context/hold/Hold.js';
+import ValidationService from 'app/service/ValidationService.js';
 
 interface token {
 	tokenId: string;
@@ -127,6 +133,10 @@ const balances = new Map<string, string>();
 const HBAR_balances = new Map<string, string>();
 const freeze_status = new Map<string, boolean>();
 const kyc_status = new Map<string, boolean>();
+const totalHeldAmountByAccount = new Map<string, BigDecimal>();
+const holdsByAccountAndId = new Map<string, Map<number, HoldDetails>>();
+const holdIdsByAccount = new Map<string, number[]>();
+const nextHoldIdByAccount = new Map<string, number>();
 let pause_status = false;
 let delete_status = false;
 const initialSupply = INITIAL_SUPPLY;
@@ -154,6 +164,7 @@ let user_account: Account;
 let configVersion: number;
 let configId: string;
 let resolverAddress: string;
+let totalHeldAmount = BigDecimal.ZERO;
 
 function hexToDecimal(hexString: string): number {
 	if (!/^0x[a-fA-F0-9]+$|^[a-fA-F0-9]+$/.test(hexString)) {
@@ -162,7 +173,7 @@ function hexToDecimal(hexString: string): number {
 	return parseInt(hexString, 16);
 }
 
-function identifiers(accountId: HederaId | string): string[] {
+export function identifiers(accountId: HederaId | string): string[] {
 	let id;
 	let accountEvmAddress;
 
@@ -264,6 +275,105 @@ function wipe(account: string, amount: any): void {
 		.toBigNumber()
 		.sub(amount)
 		.toString();
+}
+
+function createHold(tokenHolder: string, hold: Hold): void {
+	const current = balances.get(tokenHolder);
+	const newBalance = BigDecimal.fromString(current ?? '0')
+		.subUnsafe(BigDecimal.fromString(hold.amount.toString()))
+		.toString();
+
+	balances.set(tokenHolder, newBalance);
+
+	const currentHeldAmount =
+		totalHeldAmountByAccount.get(tokenHolder) ?? BigDecimal.ZERO;
+	totalHeldAmountByAccount.set(
+		tokenHolder,
+		currentHeldAmount?.addUnsafe(
+			BigDecimal.fromString(hold.amount.toString()),
+		),
+	);
+	const holdId = nextHoldIdByAccount.get(tokenHolder) ?? 0;
+	nextHoldIdByAccount.set(tokenHolder, holdId + 1);
+	const holdDetails: HoldDetails = {
+		expirationTimeStamp: hold.expirationTimestamp.toNumber(),
+		amount: BigDecimal.fromString(hold.amount.toString()),
+		escrowAddress: '0x' + hold.escrow.toString().toUpperCase().substring(2),
+		tokenHolderAddress: '0x' + tokenHolder.toUpperCase().substring(2),
+		destinationAddress:
+			'0x' + hold.to.toString().toUpperCase().substring(2),
+		data: hold.data,
+	};
+
+	if (!holdsByAccountAndId.has(tokenHolder)) {
+		holdsByAccountAndId.set(tokenHolder, new Map());
+	}
+
+	holdsByAccountAndId.get(tokenHolder)!.set(holdId, holdDetails);
+	holdIdsByAccount.set(tokenHolder, [
+		...(holdIdsByAccount.get(tokenHolder) ?? []),
+		holdId,
+	]);
+	totalHeldAmount = totalHeldAmount.addUnsafe(
+		BigDecimal.fromString(hold.amount.toString()),
+	);
+}
+
+function decreaseHeldAmount(
+	holdIdentifier: HoldIdentifier,
+	target: string,
+	amount?: BigNumber,
+): void {
+	const tokenHolder =
+		'0x' + holdIdentifier.tokenHolder.toUpperCase().substring(2);
+	const holdDetails = holdsByAccountAndId
+		.get(tokenHolder)
+		?.get(Number(holdIdentifier.holdId));
+
+	if (holdDetails) {
+		if (amount === undefined) {
+			amount = holdDetails.amount.toBigNumber();
+		}
+		const currentHeldAmount =
+			totalHeldAmountByAccount.get(tokenHolder) ?? BigDecimal.ZERO;
+
+		totalHeldAmountByAccount.set(
+			tokenHolder,
+			currentHeldAmount?.subUnsafe(
+				BigDecimal.fromString(amount.toString()),
+			),
+		);
+		if (
+			holdDetails.amount.isEqualThan(
+				BigDecimal.fromString(amount.toString()),
+			)
+		) {
+			holdsByAccountAndId
+				.get(tokenHolder)
+				?.delete(Number(holdIdentifier.holdId));
+			const holdIds = holdIdsByAccount.get(tokenHolder);
+			if (holdIds) {
+				const index = holdIds.indexOf(Number(holdIdentifier.holdId));
+				if (index !== -1) {
+					holdIds.splice(index, 1);
+				}
+			}
+		}
+		const destination: string =
+			target == EVM_ZERO_ADDRESS
+				? holdDetails.destinationAddress
+				: target;
+		const balanceDestination = balances.get(destination) ?? '0';
+		balances.set(
+			destination,
+			BigDecimal.fromString(balanceDestination)
+				.addUnsafe(BigDecimal.fromString(amount.toString()))
+				.toString(),
+		);
+		totalHeldAmount = totalHeldAmount.subUnsafe(
+			BigDecimal.fromString(amount.toString()),
+		);
+	}
 }
 
 function smartContractCalls(functionName: string, decoded: any): void {
@@ -533,6 +643,30 @@ function smartContractCalls(functionName: string, decoded: any): void {
 		configId = (decoded as any)._newConfigurationId;
 		const version = (decoded as any)._newVersion as BigNumber;
 		configVersion = version.toNumber();
+	} else if (functionName == 'createHold') {
+		const hold: Hold = (decoded as any)._hold;
+		const sender = identifiers(user_account.id)[1];
+		createHold(sender, hold);
+	} else if (functionName == 'createHoldByController') {
+		const hold: Hold = (decoded as any)._hold;
+		const from = '0x' + (decoded as any)._from.toUpperCase().substring(2);
+		createHold(from, hold);
+	} else if (functionName == 'executeHold') {
+		const holdIdentifier: HoldIdentifier = (decoded as any)._holdIdentifier;
+		const target = '0x' + (decoded as any)._to.toUpperCase().substring(2);
+		const amount = (decoded as any)._amount;
+		decreaseHeldAmount(holdIdentifier, target, amount);
+	} else if (functionName == 'releaseHold') {
+		const holdIdentifier: HoldIdentifier = (decoded as any)._holdIdentifier;
+		const target =
+			'0x' + holdIdentifier.tokenHolder.toUpperCase().substring(2);
+		const amount = (decoded as any)._amount;
+		decreaseHeldAmount(holdIdentifier, target, amount);
+	} else if (functionName == 'reclaimHold') {
+		const holdIdentifier: HoldIdentifier = (decoded as any)._holdIdentifier;
+		const target =
+			'0x' + holdIdentifier.tokenHolder.toUpperCase().substring(2);
+		decreaseHeldAmount(holdIdentifier, target);
 	} else if (functionName == 'updateToken') {
 		const updatedToken = (decoded as any).updatedToken;
 		TokenName = updatedToken.tokenName;
@@ -1289,6 +1423,59 @@ jest.mock('../src/port/out/rpc/RPCQueryAdapter', () => {
 	singletonInstance.getConfigInfo = jest.fn(async (address: EvmAddress) => {
 		return [resolverAddress, configId, configVersion];
 	});
+
+	singletonInstance.getHoldFor = jest.fn(
+		async (address: EvmAddress, target: EvmAddress, holdId: number) => {
+			const holdDetails = holdsByAccountAndId
+				.get('0x' + target.toString().toUpperCase().substring(2))
+				?.get(holdId);
+
+			return holdDetails
+				? {
+						expirationTimeStamp: holdDetails.expirationTimeStamp,
+						amount: holdDetails.amount,
+						escrowAddress: holdDetails.escrowAddress,
+						tokenHolderAddress: holdDetails.tokenHolderAddress,
+						destinationAddress: holdDetails.destinationAddress,
+						data: holdDetails.data,
+				  }
+				: HoldDetails.empty();
+		},
+	);
+	singletonInstance.getHoldCountFor = jest.fn(
+		async (address: EvmAddress, target: EvmAddress) => {
+			return (
+				holdIdsByAccount.get(
+					'0x' + target.toString().toUpperCase().substring(2),
+				)?.length ?? 0
+			);
+		},
+	);
+	singletonInstance.getHeldAmountFor = jest.fn(
+		async (address: EvmAddress, target: EvmAddress) => {
+			return (
+				totalHeldAmountByAccount.get(
+					'0x' + target.toString().toUpperCase().substring(2),
+				) ?? BigDecimal.ZERO
+			);
+		},
+	);
+	singletonInstance.getHoldsIdFor = jest.fn(
+		async (address: EvmAddress, target: EvmAddress) => {
+			return (
+				holdIdsByAccount.get(
+					'0x' + target.toString().toUpperCase().substring(2),
+				) ?? []
+			);
+		},
+	);
+	singletonInstance.getBurnableAmount = jest.fn(
+		async (address: EvmAddress) => {
+			return BigDecimal.fromString(totalSupply)
+				.subUnsafe(totalHeldAmount)
+				.toString();
+		},
+	);
 
 	return {
 		RPCQueryAdapter: jest.fn(() => singletonInstance),

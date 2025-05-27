@@ -56,6 +56,15 @@ import {
 	UpdateRequest,
 	UpdateReserveAddressRequest,
 	WipeRequest,
+	CreateHoldRequest,
+	GetHoldForRequest,
+	GetHeldAmountForRequest,
+	GetHoldCountForRequest,
+	GetHoldsIdForRequest,
+	ExecuteHoldRequest,
+	ReleaseHoldRequest,
+	ReclaimHoldRequest,
+	CreateHoldByControllerRequest,
 } from '../../../src/port/in/request/index.js';
 import ConnectRequest, {
 	SupportedWallets,
@@ -74,17 +83,37 @@ import {
 	RESERVE_AMOUNT,
 	RESERVE_ADDRESS,
 	RESOLVER_ADDRESS,
+	CLIENT_ACCOUNT_ECDSA,
 } from '../../config.js';
 import { MirrorNode } from '../../../src/domain/context/network/MirrorNode.js';
 import { JsonRpcRelay } from '../../../src/domain/context/network/JsonRpcRelay.js';
 import BackendEndpoint from '../../../src/domain/context/network/BackendEndpoint.js';
 import Injectable from '../../../src/core/Injectable.js';
 import { CONFIG_SC, DEFAULT_VERSION } from '../../../src/core/Constants.js';
+import { Time } from '../../../src/core/Time.js';
+import HoldViewModel from '../../../src/port/in/response/HoldViewModel.js';
 
 const initialSupply = parseInt(INITIAL_SUPPLY);
 const maxSupply = parseInt(MAX_SUPPLY);
 const configId = CONFIG_SC;
 const configVersion = DEFAULT_VERSION;
+
+const holdId =
+	'0x1111111111111111111111111111111111111111111111111111111111111111';
+let nextHoldId = 0;
+
+const emptyHold: HoldViewModel = {
+	id: 0,
+	amount: BigDecimal.fromStringFixed(
+		BigDecimal.ZERO.toString(),
+		DECIMALS,
+	).toString(),
+	expirationDate: new Date(0),
+	tokenHolderAddress: HederaId.NULL.toString(),
+	escrowAddress: HederaId.NULL.toString(),
+	destinationAddress: HederaId.NULL.toString(),
+	data: '0x',
+};
 
 // const multisigAccountId = MULTISIG_ACCOUNT_ADDRESS;
 
@@ -155,6 +184,7 @@ describe('🧪 Stablecoin test', () => {
 		deleteRoleAccount: CLIENT_ACCOUNT_ED25519.id.toString(),
 		cashInRoleAccount: CLIENT_ACCOUNT_ED25519.id.toString(),
 		feeRoleAccount: CLIENT_ACCOUNT_ED25519.id.toString(),
+		holdCreatorRoleAccount: CLIENT_ACCOUNT_ED25519.id.toString(),
 		cashInRoleAllowance: '0',
 		metadata: '',
 		proxyOwnerAccount: CLIENT_ACCOUNT_ED25519.id.toString(),
@@ -181,6 +211,7 @@ describe('🧪 Stablecoin test', () => {
 		deleteRoleAccount: CLIENT_ACCOUNT_ED25519.id.toString(),
 		cashInRoleAccount: CLIENT_ACCOUNT_ED25519.id.toString(),
 		feeRoleAccount: CLIENT_ACCOUNT_ED25519.id.toString(),
+		holdCreatorRoleAccount: CLIENT_ACCOUNT_ED25519.id.toString(),
 		proxyOwnerAccount: CLIENT_ACCOUNT_ED25519.id.toString(),
 		cashInRoleAllowance: '0',
 		metadata: '',
@@ -194,6 +225,7 @@ describe('🧪 Stablecoin test', () => {
 				account: {
 					accountId: CLIENT_ACCOUNT_ED25519.id.toString(),
 					privateKey: CLIENT_ACCOUNT_ED25519.privateKey,
+					evmAddress: CLIENT_ACCOUNT_ED25519.evmAddress,
 				},
 				network: 'testnet',
 				wallet: SupportedWallets.CLIENT,
@@ -524,6 +556,303 @@ describe('🧪 Stablecoin test', () => {
 	it('Performs update token HTS', async () => {
 		const result = await updateToken(stableCoin);
 		expect(result).not.toBeNull();
+	}, 60_000);
+
+	it('Performs create hold', async () => {
+		const amount = '10';
+		const expirationDate = (Math.floor(Date.now() / 1000) + 10).toString();
+		const escrow = CLIENT_ACCOUNT_ED25519.id.toString();
+		const targetId = CLIENT_ACCOUNT_ECDSA.id.toString();
+		const balanceSourceBefore = await StableCoin.getBalanceOf(
+			new GetAccountBalanceRequest({
+				tokenId: stableCoin?.tokenId?.toString() ?? '0.0.0',
+				targetId: CLIENT_ACCOUNT_ED25519.id.toString(),
+			}),
+		);
+
+		const result = await createHold(
+			amount,
+			escrow,
+			expirationDate,
+			targetId,
+		);
+
+		const holdExpected: HoldViewModel = {
+			id: nextHoldId,
+			amount: amount,
+			expirationDate: new Date(parseInt(expirationDate) * 1000),
+			tokenHolderAddress: CLIENT_ACCOUNT_ED25519.id.toString(),
+			escrowAddress: escrow,
+			destinationAddress: targetId,
+			data: '0x',
+		};
+
+		const holderBalance = await StableCoin.getBalanceOf(
+			new GetAccountBalanceRequest({
+				tokenId: stableCoin?.tokenId?.toString() ?? '0.0.0',
+				targetId: CLIENT_ACCOUNT_ED25519.id.toString(),
+			}),
+		);
+
+		const heldAmountExpected = BigDecimal.fromString(amount, DECIMALS);
+		const holdCountExpected = 1;
+		const holdsIdExpected: number[] = [nextHoldId];
+
+		await checkHold(
+			heldAmountExpected,
+			holdCountExpected,
+			holdsIdExpected,
+			CLIENT_ACCOUNT_ED25519.id.toString(),
+			holdExpected,
+			nextHoldId,
+		);
+
+		expect(result.payload).toBeTruthy();
+		expect(result.holdId).toBe(parseInt(holdId, 16));
+		expect(holderBalance).toEqual(balanceSourceBefore);
+
+		await removeHold(
+			targetId,
+			amount,
+			CLIENT_ACCOUNT_ED25519.id.toString(),
+			0,
+		);
+		nextHoldId = nextHoldId + 1;
+	}, 60_000);
+
+	it('Performs controller create hold', async () => {
+		const amount = '10';
+		const expirationDate = (Math.floor(Date.now() / 1000) + 10).toString();
+		const escrow = CLIENT_ACCOUNT_ED25519.id.toString();
+		const targetId = CLIENT_ACCOUNT_ECDSA.id.toString();
+		const sourceId = CLIENT_ACCOUNT_ED25519.id.toString();
+		const balanceSourceBefore = await StableCoin.getBalanceOf(
+			new GetAccountBalanceRequest({
+				tokenId: stableCoin?.tokenId?.toString() ?? '0.0.0',
+				targetId: sourceId,
+			}),
+		);
+
+		await StableCoin.create(requestSC);
+		await StableCoin.cashIn(
+			new CashInRequest({
+				amount: amount,
+				tokenId: stableCoin?.tokenId?.toString() ?? '0.0.0',
+				targetId: sourceId,
+			}),
+		);
+		const result = await StableCoin.createHoldByController(
+			new CreateHoldByControllerRequest({
+				tokenId: stableCoin?.tokenId?.toString() ?? '0.0.0',
+				amount,
+				escrow,
+				expirationDate,
+				sourceId,
+				targetId,
+			}),
+		);
+
+		const holderBalance = await StableCoin.getBalanceOf(
+			new GetAccountBalanceRequest({
+				tokenId: stableCoin?.tokenId?.toString() ?? '0.0.0',
+				targetId: CLIENT_ACCOUNT_ED25519.id.toString(),
+			}),
+		);
+
+		const holdExpected: HoldViewModel = {
+			id: nextHoldId,
+			amount: amount,
+			expirationDate: new Date(parseInt(expirationDate) * 1000),
+			tokenHolderAddress: CLIENT_ACCOUNT_ED25519.id.toString(),
+			escrowAddress: escrow,
+			destinationAddress: targetId,
+			data: '0x',
+		};
+
+		const heldAmountExpected = BigDecimal.fromString(amount, DECIMALS);
+		const holdCountExpected = 1;
+		const holdsIdExpected: number[] = [nextHoldId];
+
+		await checkHold(
+			heldAmountExpected,
+			holdCountExpected,
+			holdsIdExpected,
+			CLIENT_ACCOUNT_ED25519.id.toString(),
+			holdExpected,
+			nextHoldId,
+		);
+
+		expect(result.payload).toBeTruthy();
+		expect(result.holdId).toBe(parseInt(holdId, 16));
+		expect(holderBalance).toEqual(balanceSourceBefore);
+
+		await removeHold(
+			targetId,
+			amount,
+			CLIENT_ACCOUNT_ED25519.id.toString(),
+			1,
+		);
+		nextHoldId = nextHoldId + 1;
+	}, 60_000);
+
+	it('Performs execute hold', async () => {
+		const amount = '10';
+		const expirationDate = (Math.floor(Date.now() / 1000) + 10).toString();
+		const escrow = CLIENT_ACCOUNT_ED25519.id.toString();
+		const targetId = CLIENT_ACCOUNT_ECDSA.id.toString();
+		const balanceTargetBefore = await StableCoin.getBalanceOf(
+			new GetAccountBalanceRequest({
+				tokenId: stableCoin?.tokenId?.toString() ?? '0.0.0',
+				targetId,
+			}),
+		);
+
+		await createHold(amount, escrow, expirationDate, targetId);
+
+		const result = await StableCoin.executeHold(
+			new ExecuteHoldRequest({
+				holdId: nextHoldId,
+				tokenId: stableCoin?.tokenId?.toString() ?? '0.0.0',
+				amount,
+				sourceId: CLIENT_ACCOUNT_ED25519.id.toString(),
+			}),
+		);
+
+		const targetBalance = await StableCoin.getBalanceOf(
+			new GetAccountBalanceRequest({
+				tokenId: stableCoin?.tokenId?.toString() ?? '0.0.0',
+				targetId: CLIENT_ACCOUNT_ECDSA.id.toString(),
+			}),
+		);
+
+		const heldAmountExpected = BigDecimal.fromString('0', DECIMALS);
+		const holdCountExpected = 0;
+		const holdsIdExpected: number[] = [];
+
+		await checkHold(
+			heldAmountExpected,
+			holdCountExpected,
+			holdsIdExpected,
+			CLIENT_ACCOUNT_ED25519.id.toString(),
+			emptyHold,
+			0,
+		);
+
+		const targetBalanceAfter = balanceTargetBefore.value.addUnsafe(
+			BigDecimal.fromString(amount, DECIMALS),
+		);
+
+		expect(result).toBeTruthy();
+		expect(targetBalance.value).toEqual(targetBalanceAfter);
+		await removeHold(targetId, amount);
+		nextHoldId = nextHoldId + 1;
+	}, 60_000);
+
+	it('Performs release hold', async () => {
+		const amount = '10';
+		const expirationDate = (Math.floor(Date.now() / 1000) + 10).toString();
+		const escrow = CLIENT_ACCOUNT_ED25519.id.toString();
+		const targetId = CLIENT_ACCOUNT_ECDSA.id.toString();
+		const balanceSourceBefore = await StableCoin.getBalanceOf(
+			new GetAccountBalanceRequest({
+				tokenId: stableCoin?.tokenId?.toString() ?? '0.0.0',
+				targetId: CLIENT_ACCOUNT_ED25519.id.toString(),
+			}),
+		);
+
+		await createHold(amount, escrow, expirationDate, targetId);
+
+		const result = await StableCoin.releaseHold(
+			new ReleaseHoldRequest({
+				holdId: nextHoldId,
+				tokenId: stableCoin?.tokenId?.toString() ?? '0.0.0',
+				amount,
+				sourceId: CLIENT_ACCOUNT_ED25519.id.toString(),
+			}),
+		);
+
+		const holderBalance = await StableCoin.getBalanceOf(
+			new GetAccountBalanceRequest({
+				tokenId: stableCoin?.tokenId?.toString() ?? '0.0.0',
+				targetId: CLIENT_ACCOUNT_ED25519.id.toString(),
+			}),
+		);
+
+		const heldAmountExpected = BigDecimal.fromString('0', DECIMALS);
+		const holdCountExpected = 0;
+		const holdsIdExpected: number[] = [];
+
+		await checkHold(
+			heldAmountExpected,
+			holdCountExpected,
+			holdsIdExpected,
+			CLIENT_ACCOUNT_ED25519.id.toString(),
+			emptyHold,
+			0,
+		);
+
+		const balanceSourceAfter = balanceSourceBefore.value.addUnsafe(
+			BigDecimal.fromString(amount, DECIMALS),
+		);
+
+		expect(result).toBeTruthy();
+		expect(holderBalance.value).toEqual(balanceSourceAfter);
+		await removeHold(CLIENT_ACCOUNT_ED25519.id.toString(), amount);
+		nextHoldId = nextHoldId + 1;
+	}, 60_000);
+
+	it('Performs reclaim hold', async () => {
+		const amount = '10';
+		const expirationDate = (Math.floor(Date.now() / 1000) + 10).toString();
+		const escrow = CLIENT_ACCOUNT_ED25519.id.toString();
+		const targetId = CLIENT_ACCOUNT_ECDSA.id.toString();
+		const balanceSourceBefore = await StableCoin.getBalanceOf(
+			new GetAccountBalanceRequest({
+				tokenId: stableCoin?.tokenId?.toString() ?? '0.0.0',
+				targetId: CLIENT_ACCOUNT_ED25519.id.toString(),
+			}),
+		);
+
+		await createHold(amount, escrow, expirationDate, targetId);
+
+		await Time.delay(10, 'seconds');
+
+		const result = await StableCoin.reclaimHold(
+			new ReclaimHoldRequest({
+				holdId: nextHoldId,
+				tokenId: stableCoin?.tokenId?.toString() ?? '0.0.0',
+				sourceId: CLIENT_ACCOUNT_ED25519.id.toString(),
+			}),
+		);
+
+		const holderBalance = await StableCoin.getBalanceOf(
+			new GetAccountBalanceRequest({
+				tokenId: stableCoin?.tokenId?.toString() ?? '0.0.0',
+				targetId: CLIENT_ACCOUNT_ED25519.id.toString(),
+			}),
+		);
+
+		const heldAmountExpected = BigDecimal.fromString('0', DECIMALS);
+		const holdCountExpected = 0;
+		const holdsIdExpected: number[] = [];
+
+		await checkHold(
+			heldAmountExpected,
+			holdCountExpected,
+			holdsIdExpected,
+			CLIENT_ACCOUNT_ED25519.id.toString(),
+			emptyHold,
+			0,
+		);
+
+		const balanceSourceAfter = balanceSourceBefore.value.addUnsafe(
+			BigDecimal.fromString(amount, DECIMALS),
+		);
+
+		expect(result).toBeTruthy();
+		expect(holderBalance.value).toEqual(balanceSourceAfter);
+		await removeHold(CLIENT_ACCOUNT_ED25519.id.toString(), amount);
+		nextHoldId = nextHoldId + 1;
 	}, 60_000);
 
 	async function burnOperation(
@@ -951,5 +1280,102 @@ describe('🧪 Stablecoin test', () => {
 		currentDatePlusDays.setDate(currentDate.getDate() + days);
 		const currentDatePlusDaysInMillis = currentDatePlusDays.getTime();
 		return (currentDatePlusDaysInMillis * 1000000).toString();
+	}
+
+	async function createHold(
+		amount: string,
+		escrow: string,
+		expirationDate: string,
+		targetId: string,
+	): Promise<{ holdId: number; payload: boolean }> {
+		await StableCoin.create(requestSC);
+		await StableCoin.cashIn(
+			new CashInRequest({
+				amount: amount,
+				tokenId: stableCoin?.tokenId?.toString() ?? '0.0.0',
+				targetId: CLIENT_ACCOUNT_ED25519.id.toString(),
+			}),
+		);
+		return await StableCoin.createHold(
+			new CreateHoldRequest({
+				tokenId: stableCoin?.tokenId?.toString() ?? '0.0.0',
+				amount,
+				escrow,
+				expirationDate,
+				targetId,
+			}),
+		);
+	}
+
+	async function removeHold(
+		targetId: string,
+		amount: string,
+		sourceId?: string,
+		holdId?: number,
+	): Promise<void> {
+		if (sourceId) {
+			await StableCoin.executeHold(
+				new ExecuteHoldRequest({
+					// eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+					holdId: holdId!,
+					tokenId: stableCoin?.tokenId?.toString() ?? '0.0.0',
+					amount,
+					sourceId,
+				}),
+			);
+		}
+		await StableCoin.wipe(
+			new WipeRequest({
+				amount,
+				targetId,
+				tokenId: stableCoin?.tokenId?.toString() ?? '0.0.0',
+			}),
+		);
+	}
+
+	async function checkHold(
+		heldAmountExpected: BigDecimal,
+		holdCountExpected: number,
+		holdsIdExpected: number[],
+		sourceId: string,
+		holdExpected: HoldViewModel,
+		holdId: number,
+	): Promise<void> {
+		const hold = await StableCoin.getHoldFor(
+			new GetHoldForRequest({
+				tokenId: stableCoin?.tokenId?.toString() ?? '0.0.0',
+				sourceId,
+				holdId,
+			}),
+		);
+
+		const heldAmount: BigDecimal = await StableCoin.getHeldAmountFor(
+			new GetHeldAmountForRequest({
+				tokenId: stableCoin?.tokenId?.toString() ?? '0.0.0',
+				sourceId,
+			}),
+		);
+
+		const holdCount: number = await StableCoin.getHoldCountFor(
+			new GetHoldCountForRequest({
+				tokenId: stableCoin?.tokenId?.toString() ?? '0.0.0',
+				sourceId,
+			}),
+		);
+
+		const holdsId: number[] = await StableCoin.getHoldsIdFor(
+			new GetHoldsIdForRequest({
+				tokenId: stableCoin?.tokenId?.toString() ?? '0.0.0',
+				sourceId,
+				start: 0,
+				end: 10,
+			}),
+		);
+
+		expect(hold).toEqual(holdExpected);
+
+		expect(heldAmount).toEqual(heldAmountExpected);
+		expect(holdCount).toBe(holdCountExpected);
+		expect(holdsId).toEqual(holdsIdExpected);
 	}
 });

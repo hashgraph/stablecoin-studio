@@ -19,5 +19,6 @@
  */
 
 import ConfigInfoViewModel from './ConfigInfoViewModel';
+import HoldViewModel from './HoldViewModel';
 
-export { ConfigInfoViewModel };
+export { ConfigInfoViewModel, HoldViewModel };

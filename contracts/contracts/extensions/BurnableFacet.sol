@@ -19,6 +19,14 @@ contract BurnableFacet is
     RolesStorageWrapper,
     TokenOwnerStorageWrapper
 {
+    modifier checkBurnAmount(int64 _amount) {
+        int64 burnableAmount = getBurnableAmount();
+        if (burnableAmount < _amount) {
+            revert BurnableAmountExceeded(burnableAmount);
+        }
+        _;
+    }
+
     /**
      * @dev Burns an `amount` of tokens owned by the treasury account
      *
@@ -31,8 +39,7 @@ contract BurnableFacet is
         override(IBurnable)
         onlyRole(_getRoleId(IRoles.RoleName.BURN))
         amountIsNotNegative(amount, false)
-        valueIsNotGreaterThan(SafeCast.toUint256(amount), _balanceOf(address(this)), true)
-        isHoldActive
+        checkBurnAmount(amount)
         returns (bool)
     {
         address currentTokenAddress = _getTokenAddress();
@@ -50,14 +57,19 @@ contract BurnableFacet is
         return success;
     }
 
+    function getBurnableAmount() public view returns (int64 amount_) {
+        amount_ = SafeCast.toInt64(SafeCast.toInt256(_balanceOf(address(this)))) - _holdDataStorage().totalHeldAmount;
+    }
+
     function getStaticResolverKey() external pure override returns (bytes32 staticResolverKey_) {
         staticResolverKey_ = _BURNABLE_RESOLVER_KEY;
     }
 
     function getStaticFunctionSelectors() external pure override returns (bytes4[] memory staticFunctionSelectors_) {
         uint256 selectorIndex;
-        staticFunctionSelectors_ = new bytes4[](1);
+        staticFunctionSelectors_ = new bytes4[](2);
         staticFunctionSelectors_[selectorIndex++] = this.burn.selector;
+        staticFunctionSelectors_[selectorIndex++] = this.getBurnableAmount.selector;
     }
 
     function getStaticInterfaceIds() external pure override returns (bytes4[] memory staticInterfaceIds_) {

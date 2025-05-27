@@ -17,16 +17,6 @@ abstract contract HoldManagementStorageWrapper {
         mapping(address => uint256) nextHoldIdByAccount;
     }
 
-    /**
-     * @dev Modifier to check if there are no active holds
-     */
-    modifier isHoldActive() {
-        if (_holdDataStorage().totalHeldAmount > 0) {
-            revert IHoldManagement.HoldActive();
-        }
-        _;
-    }
-
     function _holdDataStorage() internal pure returns (HoldDataStorage storage holdDataStorage_) {
         bytes32 position = _HOLD_STORAGE_POSITION;
         // solhint-disable-next-line no-inline-assembly
