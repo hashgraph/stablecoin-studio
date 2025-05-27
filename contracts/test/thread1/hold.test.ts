@@ -13,6 +13,7 @@ import {
     CashInFacet__factory,
 } from '@typechain-types'
 import {
+    DEFAULT_TOKEN,
     delay,
     deployFullInfrastructure,
     DeployFullInfrastructureCommand,
@@ -538,7 +539,9 @@ describe('➡️ Hold Management Tests', () => {
         })
         it('GIVEN an active hold WHEN try to do a burn operation AND fail with HoldActive', async () => {
             await expect(holdManagementFacet.createHold(hold)).to.emit(holdManagementFacet, 'HoldCreated')
-            await expect(burnableFacet.burn(_AMOUNT)).to.be.revertedWithCustomError(holdManagementFacet, 'HoldActive')
+            await expect(
+                burnableFacet.burn(DEFAULT_TOKEN.initialSupply.add(tokensToMint))
+            ).to.be.revertedWithCustomError(holdManagementFacet, 'BurnableAmountExceeded')
         })
     })
 
