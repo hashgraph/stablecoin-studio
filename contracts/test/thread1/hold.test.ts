@@ -533,7 +533,7 @@ describe('➡️ Hold Management Tests', () => {
             )
         })
     })
-    describe('isHoldActive modifier', () => {
+    describe('Burn when held amount greater than 0', () => {
         before(async () => {
             await setInitialData({})
         })
