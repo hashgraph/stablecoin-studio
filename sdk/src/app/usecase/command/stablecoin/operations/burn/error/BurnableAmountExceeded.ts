@@ -24,6 +24,9 @@ import BaseError, {
 
 export class BurnableAmountExceeded extends BaseError {
 	constructor() {
-		super(ErrorCode.HoldNotExpired, `Burn amount greater than allowed`);
+		super(
+			ErrorCode.BurnableAmountExceeded,
+			`Burn amount greater than allowed`,
+		);
 	}
 }
