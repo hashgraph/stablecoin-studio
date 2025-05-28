@@ -26,6 +26,7 @@ import { lazyInject } from '../../../../../../core/decorator/LazyInjectDecorator
 import StableCoinService from '../../../../../service/StableCoinService.js';
 import BigDecimal from '../../../../../../domain/context/shared/BigDecimal.js';
 import { MirrorNodeAdapter } from '../../../../../../port/out/mirror/MirrorNodeAdapter.js';
+import { HoldDetails } from '../../../../../../domain/context/hold/Hold.js';
 
 @QueryHandler(GetHoldForQuery)
 export class GetHoldForQueryHandler implements IQueryHandler<GetHoldForQuery> {
@@ -45,17 +46,29 @@ export class GetHoldForQueryHandler implements IQueryHandler<GetHoldForQuery> {
 
 		if (!coin.evmProxyAddress) throw new Error('Invalid token id');
 
-		const holdDetail = await this.queryAdapter.getHoldFor(
-			coin.evmProxyAddress,
-			await this.mirrorNode.accountToEvmAddress(sourceId),
-			holdId,
-		);
+		let holdDetail;
 
-		holdDetail.amount = BigDecimal.fromStringFixed(
-			holdDetail.amount.toString(),
-			coin.decimals,
-		);
+		try {
+			const holdDetail = await this.queryAdapter.getHoldFor(
+				coin.evmProxyAddress,
+				await this.mirrorNode.accountToEvmAddress(sourceId),
+				holdId,
+			);
 
-		return Promise.resolve(new GetHoldForQueryResponse(holdDetail));
+			holdDetail.amount = BigDecimal.fromStringFixed(
+				holdDetail.amount.toString(),
+				coin.decimals,
+			);
+
+			return Promise.resolve(new GetHoldForQueryResponse(holdDetail));
+		} catch (error: any) {
+			if (
+				error.code === 'CALL_EXCEPTION' &&
+				error.errorName === 'HoldNotFound'
+			) {
+				holdDetail = HoldDetails.empty();
+				return Promise.resolve(new GetHoldForQueryResponse(holdDetail));
+			} else throw error;
+		}
 	}
 }
