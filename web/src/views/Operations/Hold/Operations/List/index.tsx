@@ -117,7 +117,7 @@ export const ListOperationHold = () => {
 											<Tr key={index}>
 												<Td>{hold.id}</Td>
 												<Td>{hold.amount}</Td>
-												<Td>{formatDate(hold.expirationDate)}</Td>
+												<Td>{formatDate(hold.expirationDate, 'dd/MM/yyyy HH:mm:ss')}</Td>
 												<Td>{hold.escrowAddress}</Td>
 												<Td>{hold.destinationAddress}</Td>
 											</Tr>
