@@ -25,7 +25,7 @@ import BaseContainer from '../../../../../components/BaseContainer';
 import { useNavigate } from 'react-router-dom';
 import { RouterManager } from '../../../../../Router/RouterManager';
 import { ChevronLeftIcon } from '@chakra-ui/icons';
-import { formatDateTime } from '../../../../../utils/inputHelper';
+import { formatDate } from '../../../../../utils/format';
 
 export const ListOperationHold = () => {
 	const navigate = useNavigate();
@@ -117,7 +117,7 @@ export const ListOperationHold = () => {
 											<Tr key={index}>
 												<Td>{hold.id}</Td>
 												<Td>{hold.amount}</Td>
-												<Td>{formatDateTime({ dateTime: hold.expirationDate })}</Td>
+												<Td>{formatDate(hold.expirationDate)}</Td>
 												<Td>{hold.escrowAddress}</Td>
 												<Td>{hold.destinationAddress}</Td>
 											</Tr>
