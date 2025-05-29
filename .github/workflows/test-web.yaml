@@ -15,6 +15,9 @@ on:
       - "web/tsconfig*.json"
   # env:
   # NODE_VERSION: "20.17.0" # Fixed version for better stability
+permissions:
+  contents: read
+
 jobs:
   main:
     runs-on: token-studio-linux-medium
