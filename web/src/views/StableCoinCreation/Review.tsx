@@ -47,6 +47,8 @@ const Review = (props: ReviewProps) => {
 		feeScheduleKey,
 		reserveAddress,
 		reserveInitialAmount,
+		reserveConfigId,
+		reserveConfigVersion,
 	} = getValues();
 
 	const getKey = (keySelected: { value: number; label: string }, nameOtherKey: string) => {
@@ -292,6 +294,14 @@ const Review = (props: ReviewProps) => {
 								{
 									label: t('stableCoinCreation:proofOfReserve.addressPor'),
 									value: reserveAddress || t('stableCoinCreation:proofOfReserve.createDataFeed'),
+								},
+								{
+									label: t('stableCoinCreation:proofOfReserve.reserveConfigId'),
+									value: formatBytes32(reserveConfigId, 8) || '',
+								},
+								{
+									label: t('stableCoinCreation:proofOfReserve.reserveConfigVersion'),
+									value: reserveConfigVersion || '-',
 								},
 								{
 									label: t('stableCoinCreation:proofOfReserve.initialSupplyPor'),

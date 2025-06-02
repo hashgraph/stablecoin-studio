@@ -105,6 +105,8 @@
 		"addressPor": "Proof-of-reserve address",
 		"initialSupplyPor": "Proof-of-reserve supply",
 		"initialSupplyPorExternal": "External PoR",
+		"reserveConfigId": "Reserve Config ID",
+		"reserveConfigVersion": "Reserve Config version",
 		"link": "https://github.com/hashgraph/stablecoin-studio/blob/main/README.md#Proof-of-reserve"
 	},
 	"proxyAdmin": {
