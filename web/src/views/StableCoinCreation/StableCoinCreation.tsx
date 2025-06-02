@@ -176,7 +176,7 @@ const StableCoinCreation = () => {
 				if (hasDataFeed) {
 					keys.push('reserveAddress');
 				} else {
-					keys.push('reserveInitialAmount');
+					keys.push('reserveInitialAmount', 'reserveConfigId', 'reserveConfigVersion');
 				}
 				// @ts-ignore
 				fieldsStep = watch(keys);
@@ -257,6 +257,8 @@ const StableCoinCreation = () => {
 			manageCustomFees,
 			feeScheduleKey,
 			reserveInitialAmount,
+			reserveConfigId,
+			reserveConfigVersion,
 			reserveAddress,
 			grantKYCToOriginalSender,
 			cashInRoleAccount,
@@ -280,6 +282,8 @@ const StableCoinCreation = () => {
 		} else {
 			request.createReserve = true;
 			request.reserveInitialAmount = reserveInitialAmount;
+			request.reserveConfigId = reserveConfigId;
+			request.reserveConfigVersion = reserveConfigVersion;
 			request.reserveAddress = undefined;
 		}
 
