@@ -1,6 +1,7 @@
 import { task, types } from 'hardhat/config'
 import { CONTRACT_NAMES, ContractName, NetworkName } from '@configuration'
 import { DeployAllCommand, DeployCommand, DeployStableCoinCommand, NotInContractNameListError } from '@tasks'
+import { writeFileSync } from "fs"
 
 task('deployStableCoin', 'Deploy new stable coin')
     .addOptionalParam('tokenName', 'The name of the token to deploy', undefined, types.string)
@@ -234,6 +235,7 @@ task(
         }
 
         console.log('\n 🟢 StableCoin Studio Smart Contracts deployed successfully:')
+        let contractAddresses = '🟢 StableCoin Studio Smart Contracts deployed successfully:\n'
         for (const [key, address] of Object.entries(addressList)) {
             if (!address) {
                 continue
@@ -243,7 +245,10 @@ task(
                 network,
             })
             console.log(`   --> ${key}: ${address} (${contractId})`)
+            contractAddresses = contractAddresses +`   --> ${key}: ${address} (${contractId})\n`
         }
+
+        writeFileSync("contractAddresses_v2.txt", contractAddresses)
     })
 
 // TODO: add all features. Now only deploys basic contracts without proxy, no args etc...

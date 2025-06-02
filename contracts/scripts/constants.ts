@@ -140,15 +140,15 @@ export const GAS_LIMIT = {
     },
     proxyAdmin: {
         deploy: 2_000_000n,
-        upgrade: 150_000n,
+        upgrade: 200_000n,
     },
     tup: {
         deploy: 2_000_000n,
-        upgrade: 150_000n,
+        upgrade: 200_000n,
     },
     resolverProxy: {
         deploy: 2_000_000n,
-        upgrade: 150_000n,
+        upgrade: 200_000n,
     },
     hederaReserve: {
         initialize: 180_000n,
@@ -168,7 +168,7 @@ export const GAS_LIMIT = {
     },
     migrationProxy: {
         deploy: 2_000_000n,
-        upgrade: 150_000n,
+        upgrade: 200_000n,
     },
     diamondCutManager: {
         createConfiguration: 100_000n,
