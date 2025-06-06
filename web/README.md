@@ -64,6 +64,7 @@ The ENV file contains the following parameters:
 
 - **REACT_APP_LOG_LEVEL**: defines the log level the application is going to apply to filter the logs been displayed in the browser's console. The default value is "ERROR".
 - **REACT_APP_FACTORIES**: This var is only required if you want to create a new stablecoin. The var must be a JSON array with a factory proxy id in Hedera format `0.0.XXXXX` per environment. Regarding this, your can find the factories proxy's contract ids depending on the Stablecoin Studio versión [here](./../FACTORY_VERSION.md).
+- **REACT_APP_RESOLVERS**: This var is only required if you want to create a new stablecoin. The var must be a JSON array with a business logic resolver proxy id in Hedera format `0.0.XXXXX` per environment. Regarding this, your can find the business logic resolver proxy's contract ids depending on the Stablecoin Studio versión [here](./../FACTORY_VERSION.md).
 - **REACT_APP_MIRROR_NODE**: This var is required if you want to create a new stablecoin. The var must be a unique mirror node service for each Hedera network, and this is the service which would be used when the UI starts. The service is configured by the environment and the base url properties, and, optionally, can also have an api key and a http header through which the api key is provided.
 - **REACT_APP_RPC_NODE**: This var is required if you want to create a new stablecoin. The var must be a unique rpc node service for Hedera network, and this is the service which would be used when the UI starts. The service is configured using the same properties than the mirror node. You can check the available JSON-RPC relays [here](https://github.com/hashgraph/stablecoin-studio/blob/main/README.md#JSON-RPC-Relays).
 - **REACT_APP_BACKEND_URL**: This variable is only required if you want to enable multisignature functionality. It corresponds to the backend REST API endpoint.
@@ -73,6 +74,7 @@ The ENV file contains the following parameters:
 
 ```bash
 REACT_APP_FACTORIES='[{"Environment":"mainnet","STABLE_COIN_FACTORY_ADDRESS":"0.0.1234567"},{"Environment":"testnet","STABLE_COIN_FACTORY_ADDRESS":"0.0.3950554"},{"Environment":"previewnet","STABLE_COIN_FACTORY_ADDRESS":"0.0.239703"}]'
+REACT_APP_RESOLVERS='[{"Environment":"mainnet","STABLE_COIN_RESOLVER_ADDRESS":"0.0.1234567"}, {"Environment":"testnet","STABLE_COIN_RESOLVER_ADDRESS":"0.0.6095328"},{"Environment":"previewnet","STABLE_COIN_RESOLVER_ADDRESS":"0.0.2345678"}]'
 REACT_APP_MIRROR_NODE='[{"Environment":"testnet","BASE_URL":"https://testnet.mirrornode.hedera.com/api/v1/", "API_KEY": "132456", "HEADER": "x-api-key"}]'
 REACT_APP_RPC_NODE='[{"Environment":"testnet","BASE_URL":"https://testnet.hashio.io/api", "API_KEY": "132456", "HEADER": "x-api-key"}]'
 REACT_APP_BACKEND_URL='http://localhost:3001/api/'
@@ -89,7 +91,8 @@ For example, the following is a full working .env file that uses the Hedera mirr
 
 ```.env
 REACT_APP_LOG_LEVEL=ERROR
-REACT_APP_FACTORIES='[{"Environment":"testnet","STABLE_COIN_FACTORY_ADDRESS":"0.0.5088833"}]'
+REACT_APP_FACTORIES='[{"Environment":"testnet","STABLE_COIN_FACTORY_ADDRESS":"0.0.6095357"}]'
+REACT_APP_RESOLVERS='[{"Environment":"testnet","STABLE_COIN_RESOLVER_ADDRESS":"0.0.6095328"}]'
 REACT_APP_MIRROR_NODE='[{"Environment":"testnet","BASE_URL":"https://testnet.mirrornode.hedera.com/api/v1/", "API_KEY": "", "HEADER": ""}]'
 REACT_APP_RPC_NODE='[{"Environment":"testnet","BASE_URL":"http://localhost:7546/api", "API_KEY": "", "HEADER": ""}]'
 REACT_APP_BACKEND_URL='http://localhost:3001/api/'
@@ -157,19 +160,19 @@ If you select an account that does not exist in the Hedera network.
 
 In order to create a new stablecoin using the web application, you must click on the "Create Coin" button at the top of the page then fill-in all the required information :
 
-![Alt text](docs/images/create.png?raw=true 'create stablecoin')
+![Create stablecoin](docs/images/create.png?raw=true 'Create stablecoin')
 
 **Basic details**
 
-Basic information about the stablecoin.
+Basic information about the stablecoin. You can choose the name and the symbol of the stable coin and the config id (0x0000000000000000000000000000000000000000000000000000000000000002 by default) and version (1 by default).
 
-![Selection_036](https://github.com/hashgraph/stablecoin-studio/assets/108128685/d6baa730-349a-4df7-abe2-b3bf2182e584)
+![Create stablecoin details](docs/images/create_stable_coin_details.png?raw=true 'Create stablecoin details')
 
 **Optional details**
 
 Stablecoin supply and accuracy definition (initial supply, max supply, decimals)
 
-![Selection_037](https://github.com/hashgraph/stablecoin-studio/assets/108128685/8bc0fa3b-86ce-4956-9660-64be44c4f826)
+![Create stablecoin details and metadata](docs/images/create_stable_coin_supply.png?raw=true 'Create stablecoin supply and metadata')
 
 **Manage permissions**
 
@@ -177,20 +180,20 @@ Underlying token's keys definition (stablecoin smart contract, current key, anot
 
 In this step, the user can also configure the stablecoin proxy admin owner. By default, this ownership belongs to the account creating the stablecoin, but the user has the chance to change this default behaviour by configuring another account id, which can belongs to a contract, like a timelock controller, a cold wallet, or whatever account.
 
-![Selection_038](https://github.com/hashgraph/stablecoin-studio/assets/108128685/99d76040-8ac6-4bb9-b6d1-18c433b0bc43)
+![Create stablecoin configure permissions](docs/images/create_stable_coin_permissions.png?raw=true 'Create stablecoin configure permissions')
 
 **Proof of reserve**
 
 Choose if the stablecoin will have a proof of reserve (PoR) associated to it or not.
-If so, the user will have two options, either submit the address of an already existing PoR contract or generate a completely new one (using the demo implementation of a PoR contract included in the project) specifying an initial Reserve amount.
+If so, the user will have two options, either submit the address of an already existing PoR contract or generate a completely new one (using the demo implementation of a PoR contract included in the project) specifying an initial Reserve amount. The config id (0x0000000000000000000000000000000000000000000000000000000000000003 by default) and the config version (1 by default)
 
-![Selection_039](https://github.com/hashgraph/stablecoin-studio/assets/108128685/a566a494-9855-4ef7-96e1-210a7ce38c58)
+![Create stablecoin proof of reserve](docs/images/create_stable_coin_reserve.png?raw=true 'Create stablecoin proof of reserve')
 
 **Review**
 
 Final validation before creating the stablecoin.
 
-![Selection_040](https://github.com/hashgraph/stablecoin-studio/assets/108128685/44bd4928-6b12-44bc-a3f3-9881df779fef)
+![Create stablecoin review](docs/images/create_stable_coin_create.png?raw=true 'Create stablecoin review')
 
 You will then have to validate the transaction using the wallet you paired to.
 
@@ -244,17 +247,14 @@ If (and only if) the PoR contract attached to your stablecoin is the PoR demo im
 
 ### Settings
 
-This option allows the user to manage the stablecoin and the factory contracts. These contracts are both upgradeable, using an implementation of the OpenZeppelin **TransparentUpgradeableProxy** contract. This proxy can only be managed by an administrator contract. Therefore, only the account which is the owner of the proxy's administrator contract will be able to manage the proxy, and this management allows the user to change the owner of the proxy's administrator contract and also to change the implementation contract. To change the owner, a two step flow was implemented, so the current owner has to invite another account, which has to accept the invitation before the change is finally performed. Since the invitation is sent until is accepted by the new owner, the invitation can be cancelled by the current owner.
+This option allows the user to manage the stablecoin business logic resolver contract. These contracts are both upgradeable, using an implementation of the OpenZeppelin **TransparentUpgradeableProxy** contract. This proxy can only be managed by an administrator contract. Therefore, only the account which is the owner of the proxy's administrator contract will be able to manage the proxy, and this management allows the user to change the resolver contract.
 
-![Selection_021](https://github.com/hashgraph/stablecoin-studio/assets/108128685/e0724fbe-e8c0-478e-8cbb-66394250d64b)
+![Settings](docs/images/settings.png?raw=true 'Settings')
 
-If the user selects the option to manage the stablecoin, it could change the **HederaTokenManager** contract proxy admin owner and upgrade the stablecoin contract implementation.
+If the user selects the option to manage the stablecoin, it could change the **Business Logic Resolver Proxy** contract, the config id and the config version.
 
-![Selection_014](https://github.com/hashgraph/stablecoin-studio/assets/108128685/abb0b89f-6ec5-449f-a035-f7f9fcea08e1)
+![Settings update](docs/images/settings_update.png?raw=true 'Settings update')
 
-While if the user selects the option to manage the factory, it could change the **Factory** contract proxy admin owner and upgrade the factory contract implementation.
-
-![Selection_019](https://github.com/hashgraph/stablecoin-studio/assets/108128685/3ebb3243-e12a-470b-91cc-de9086af9a9e)
 
 ### Multisig transactions
 
