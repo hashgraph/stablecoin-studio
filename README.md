@@ -261,14 +261,7 @@ If you are using VSCode we recommend the use of the solidity extension from nomi
 # Deploying the stablecoin factories
 In order to be able to deploy any stablecoin, the `HederaTokenManager` and `StablecoinFactory` smart contracts must be deployed on the network. Whenever a new version of these contracts is needed or when the testnet is reset, new contracts must be deployed. Moreover, the address of the `StablecoinFactory` smart contract must be updated in the SDK, CLI and web modules as explained above.
 
-We provide default addresses for the factories that we have deployed for anyone to use that are updated whenever a new version is released.
-
-| Contract name  | Address      | Network    | 
-|----------------|--------------|------------|
-| FactoryAddress | 0.0.2167166  | Testnet    |
-| FactoryAddress | 0.0.XXXXXX   | Previewnet |
-
-(You can check the factorys associated to each version [here](./FACTORY_VERSION.md))
+We provide default addresses for the factory and the business logic resolver that we have deployed for anyone to use that are updated whenever a new version is released. You can find them associated to each version in [FACTORY_VERSION.md](./FACTORY_VERSION.md) and [RESOLVER_VERSION.md](./RESOLVER_VERSION.md)
 
 Follow the steps in the [contracts docs](https://github.com/hashgraph/stablecoin-studio/tree/main/contracts#deploy-factory) to learn how to deploy the factories.
 
