@@ -310,21 +310,83 @@ Use this approach whenever:
 # V1 to V2 Migration
 In order to migrate V1 Stablecoins to V2 you need to :
 
-- Enter the private key of the account set as `owner` in your Stablecoin's `Proxy admin` in the `MAINNET_PRIVATE_KEY_0` field of the `.env`file.
-- Then run the following hardhat task: 
-
+- Build everything: 
 ```shell
-npx hardhat migrateStableCoinToV2 --stablecoinconfigurationidkey CONFIG_ID --stablecoinconfigurationidversion CONFIG_VERSION --businesslogicresolverproxyaddress BLR --stablecoinaddress SC_PROXY --stablecoinproxyadminaddress SC_PROXY_ADMIN
+npm run install:all
+```
+- Deploy new contracts: 
+```shell
+cd contracts
+npx hardhat deployAll --network NETWORK
+```
+- Enter the private key of the account set as `owner` in your Stablecoin's `Proxy admin` in the `MAINNET_PRIVATE_KEY_0`, `PREVIEWNET_PRIVATE_KEY_0` or `TESTNET_PRIVATE_KEY_0` field of the `contracts/.env`file.
+- Then run the following hardhat task: 
+```shell
+npx hardhat migrateStableCoinToV2 --network NETWORK --stablecoinconfigurationidkey CONFIG_ID --stablecoinconfigurationidversion CONFIG_VERSION --businesslogicresolverproxyaddress BLR --stablecoinaddress SC_PROXY --stablecoinproxyadminaddress SC_PROXY_ADMIN
 ```
 
 Where
 
-    - CONFIG_ID: config id of the stablecoin  (bytes32)
-    - CONFIG_VERSION: config version of the stablecoin (integer)
-    - BLR: Business logic resolver address (evm address)
-    - SC_PROXY: address of the stablecoin's proxy (evm address)
-    - SC_PROXY_ADMIN: address of the stablecoin's admin proxy (evm address)
+    - NETWORK: the network you want to deploy the contracts (testnet, mainnet)
+    - CONFIG_ID: config id of the stablecoin  (bytes32) you can use 0x0000000000000000000000000000000000000000000000000000000000000002 by default.
+    - CONFIG_VERSION: config version of the stablecoin (integer) you can use 1 by default.
+    - BLR: Business logic resolver proxy address (evm address) you can find it in contracts/contractAddresses_v2.txt file as "Business Logic Resolver Proxy"
+    - SC_PROXY: address of the stablecoin's proxy (evm address) You can find it in your StableCoin details (CLI or WEB) as "evmProxyAddress"
+    - SC_PROXY_ADMIN: address of the stablecoin's admin proxy (evm address) You can find it in your StableCoin (CLI or WEB) details as "evmProxyAdminAddress"
 
+Example:
+```shell
+npx hardhat migrateStableCoinToV2 --network testnet --stablecoinconfigurationidkey 0x0000000000000000000000000000000000000000000000000000000000000002 --stablecoinconfigurationidversion 1 --businesslogicresolverproxyaddress 0x842760dE0dA78543d6C3df7874156450227694Fc --stablecoinaddress 0x26d43efe6c2064f4f39c508778d76204af5d967a  --stablecoinproxyadminaddress 0x9a56d9a73c3073496604d85824ab7646ef1f2098
+Migrating StableCoin on testnet ...
+✓ Migration Proxy has been deployed successfully
+   --> Transaction Hash: 0xf4a5070b8d631773712debf3418f64fecad2c06d3aeef53256a9c5369665d50b
+   --> Contract Address: 0x773769BBeCf92Db959EFb8C99A86E9411391810d
+✓ StableCoin Proxy implementation upgraded
+   --> Transaction Hash: 0x8b642c3519a581afe3f133f5f6f4765afddc4c358422aa73b3c05bdde982221e
+
+ 🟢 Stable Coin migrated successfully
+
+ Previous implementation : 0x1f9e7ABcbF50e51EA47A17e48E1f90Dc9cB0F5dD
+
+ New implementation : 0x773769BBeCf92Db959EFb8C99A86E9411391810d
+ ```
+
+## Update to v2 web project
+To use V2 within the web project you'll need to adjust the web/.env configuration file
+* Update `REACT_APP_FACTORIES` with the "Stable Coin Factory Facet Proxy" address of the new deployed contracts that you can find the hex address in contracts/contractAddresses_v2.txt file and you can find the hedera id of this address in the hedera explorer (https://hashscan.io) for each environment that you are using.
+* Add `REACT_APP_RESOLVERS` constant with the "Business Logic Resolver Proxy" address of the new deployed contracts that you can find the hex address in contracts/contractAddresses_v2.txt file and you can find the hedera id of this address in the hedera explorer (https://hashscan.io) for each environment that you are using.
+* Ex:
+```
+REACT_APP_FACTORIES='[{"Environment":"mainnet","STABLE_COIN_FACTORY_ADDRESS":"0.0.6095357"}, {"Environment":"testnet","STABLE_COIN_FACTORY_ADDRESS":"0.0.6095357"}]'
+REACT_APP_RESOLVERS='[{"Environment":"mainnet","STABLE_COIN_RESOLVER_ADDRESS":"0.0.6095328"}, {"Environment":"testnet","STABLE_COIN_RESOLVER_ADDRESS":"0.0.6095328"}]'
+ ```
+
+ Then you can start the web project with:
+ ```shell
+ npm start
+ ```
+
+## Update to v2 CLI project
+ To use V2 within the CLI project you'll need to adjust the /cli/hsca-config.yaml configuration file.
+ * Update `factories` with the "Stable Coin Factory Facet Proxy" address of the new deployed contracts that you can find the hex address in contracts/contractAddresses_v2.txt file and you can find the hedera id of this address in the hedera explorer (https://hashscan.io) for each environment that you are using.
+ * Add `resolvers` with the "Business Logic Resolver Proxy" address of the new deployed contracts that you can find the hex address in contracts/contractAddresses_v2.txt file and you can find the hedera id of this address in the hedera explorer (https://hashscan.io) for each environment that you are using.:
+```
+ factories:
+  - id: 0.0.6095357
+    network: testnet
+  - id: 0.0.0
+    network: previewnet
+resolvers:
+  - id: 0.0.6095328
+    network: testnet
+  - id: 0.0.0
+    network: previewnet
+```
+
+Then you can start the CLI project with:
+ ```shell
+ npm run start:wizard
+ ```
 
 # Generate documentation
 

@@ -1,6 +1,6 @@
 {
   "name": "@hashgraph/stablecoin-npm-cli",
-  "version": "1.28.0",
+  "version": "2.0.0",
   "description": "CLI for Hedera Stablecoin",
   "main": "./build/src/index.js",
   "bin": {
@@ -48,7 +48,7 @@
     "@types/node": "^18.11.18",
     "@types/ora": "^3.2.0",
     "@types/shelljs": "^0.8.15",
-    "@typescript-eslint/eslint-plugin": "^5.48.2",
+    "@typescript-eslint/eslint-plugin": "^5.62.0",
     "@typescript-eslint/parser": "^5.48.2",
     "cross-env": "^7.0.3",
     "eslint": "^8.32.0",

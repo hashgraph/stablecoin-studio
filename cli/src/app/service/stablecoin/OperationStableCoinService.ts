@@ -3360,7 +3360,7 @@ export default class OperationStableCoinService extends Service {
           console.log(
             colors.yellow(
               `${element[0]}: ${stableCoinViewModel[element[0]]} --> ${
-                (element[1] as { key: string }).key
+                element[1]
               }`,
             ),
           );
