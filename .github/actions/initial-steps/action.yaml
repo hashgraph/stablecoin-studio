@@ -14,7 +14,7 @@ inputs:
     required: false
     default: "false"
   deps-change-references: # Options: "true", "false"
-    description: "Whether to install dependencies for changing references to the repo. execution of 'changeProyectsReferencesToRepo.sh'"
+    description: "Whether to install dependencies for changing references to the repo. execution of 'changeProjectsReferencesToRepo.sh'"
     required: false
     default: "false"
 
