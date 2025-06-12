@@ -20,22 +20,19 @@
 
 export class StableCoinMemo {
 	proxyContract: string;
-	proxyAdminContract: string;
 
-	constructor(proxyContract: string, proxyAdminContract: string) {
+	constructor(proxyContract: string) {
 		this.proxyContract = proxyContract;
-		this.proxyAdminContract = proxyAdminContract;
 	}
 
 	public static fromJson(json: string): StableCoinMemo {
 		const jsonObject = JSON.parse(json);
-		return new StableCoinMemo(jsonObject.p, jsonObject.a);
+		return new StableCoinMemo(jsonObject.p);
 	}
 
 	public static empty(): StableCoinMemo {
 		const emptyObject = {
 			proxyContract: '',
-			proxyAdminContract: '',
 		};
 		return this.fromJson(JSON.stringify(emptyObject));
 	}
@@ -43,7 +40,6 @@ export class StableCoinMemo {
 	public toJson(): string {
 		return JSON.stringify({
 			proxyContract: this.proxyContract,
-			proxyAdminContract: this.proxyAdminContract,
 		});
 	}
 }

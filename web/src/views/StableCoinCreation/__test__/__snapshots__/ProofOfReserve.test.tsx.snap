@@ -23,6 +23,18 @@ exports[`<ProofOfReserve /> should render correctly 1`] = `
           Will your stablecoin be collateralized by another on-chain asset?
         </p>
       </div>
+      <div
+        class="chakra-stack css-84zodg"
+      >
+        <p
+          class="chakra-text css-3crm2z"
+        >
+          Do you have an existing data feed? You will need the contract address.
+        </p>
+      </div>
+      <div
+        class="chakra-stack css-11wxhjp"
+      />
     </div>
   </div>
   <span

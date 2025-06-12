@@ -72,6 +72,7 @@ export type NetworkResponse = {
 
 export type ConfigResponse = {
 	factoryAddress: string;
+	resolverAddress: string;
 };
 
 export type BackendResponse = {
@@ -86,6 +87,7 @@ interface INetworkInPort {
 	setConfig(req: SetConfigurationRequest): Promise<ConfigResponse>;
 	setBackend(req: SetBackendRequest): Promise<BackendResponse>;
 	getFactoryAddress(): string;
+	getResolverAddress(): string;
 	getNetwork(): string;
 	isNetworkRecognized(): boolean;
 }
@@ -108,7 +110,10 @@ class NetworkInPort implements INetworkInPort {
 		handleValidation('SetConfigurationRequest', req);
 
 		const res = await this.commandBus.execute(
-			new SetConfigurationCommand(req.factoryAddress),
+			new SetConfigurationCommand(
+				req.factoryAddress,
+				req.resolverAddress,
+			),
 		);
 		return res;
 	}
@@ -117,6 +122,13 @@ class NetworkInPort implements INetworkInPort {
 	public getFactoryAddress(): string {
 		return this.networkService.configuration
 			? this.networkService.configuration.factoryAddress
+			: '';
+	}
+
+	@LogError
+	public getResolverAddress(): string {
+		return this.networkService.configuration
+			? this.networkService.configuration.resolverAddress
 			: '';
 	}
 
@@ -159,10 +171,14 @@ class NetworkInPort implements INetworkInPort {
 		);
 
 		if (req.configuration)
-			if (req.configuration.factoryAddress)
+			if (
+				req.configuration.factoryAddress &&
+				req.configuration.resolverAddress
+			)
 				await this.setConfig(
 					new SetConfigurationRequest({
 						factoryAddress: req.configuration.factoryAddress,
+						resolverAddress: req.configuration.resolverAddress,
 					}),
 				);
 
@@ -198,6 +214,7 @@ class NetworkInPort implements INetworkInPort {
 				val.setMirrorNodes(req.mirrorNodes);
 				val.setJsonRpcRelays(req.jsonRpcRelays);
 				val.setFactories(req.factories);
+				val.setResolvers(req.resolvers);
 			}
 		}
 		return wallets;

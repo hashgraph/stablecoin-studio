@@ -4,6 +4,17 @@ on:
   release:
     types:
       - published
+  workflow_dispatch:
+    inputs:
+      dry-run-enabled:
+        description: "Run npm publish with dry-run flag"
+        required: false
+        type: boolean
+        default: false
+
+defaults:
+  run:
+    shell: bash
 
 permissions:
   contents: read
@@ -12,88 +23,97 @@ jobs:
   contracts:
     runs-on: token-studio-linux-medium
     container:
-      image: node:20.17.0-alpine3.20 # Using alpine for a smaller image
+      image: node@sha256:db5dd2f30cb82a8bdbd16acd4a8f3f2789f5b24f6ce43f98aa041be848c82e45 # node:20.17.0-bookworm
     permissions:
       contents: read
 
     steps:
       # * Initial steps
       - name: Harden Runner
-        uses: step-security/harden-runner@f086349bfa2bd1361f7909c78558e816508cdc10 #v2.8.0
+        uses: step-security/harden-runner@0634a2670c59f64b4a01f0f96f84700a4088b9f0 #v2.12.0
         with:
           egress-policy: audit
 
       - name: Checkout repository
-        uses: actions/checkout@a5ac7e51b41094c92402da3b24376905380afc29 # v4.1.6
-
-      - name: Initial steps
-        uses: ./.github/actions/initial-steps
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
         with:
-          deps-contracts-install: "true"
-          deps-change-references: "true"
+          ref: ${{ inputs.ref }}
+          fetch-depth: '0'
+
+      - name: Setup NPM
+        uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4.4.0
+        with:
+          node-version: '20'
+          token: ${{ secrets.NPM_TOKEN }}
 
       - name: Create file .npmrc
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
         run: |
-          cat <<EOF > .npmrc
-          //registry.npmjs.org/:_authToken=${{ secrets.NPM_TOKEN }}
-          # //localhost:4873/:_authToken=${{ secrets.NPM_TOKEN }} # ! Only for local testing, DO NOT uncomment for production
+          cat << 'EOF' > .npmrc
+          //registry.npmjs.org/:_authToken=${NODE_AUTH_TOKEN}
           EOF
-        working-directory: contracts
-
-      # # ! Only for local testing, DO NOT uncomment for production
-      # - name: Set NPM registry to Verdaccio (local)
-      #   run: npm config set registry http://localhost:4873
 
       - name: Change references to repo
-        run: ./changeProyectsReferencesToRepo.sh
+        run:  |
+          ${GITHUB_WORKSPACE}/changeProjectsReferencesToRepo.sh
 
       - name: Install Contracts
         run: npm ci
         working-directory: contracts
 
       - name: Publish contracts
-        run: npm run publish:contracts --access=public
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+          DRY_RUN: ${{ inputs.dry-run-enabled }}
+        run: |
+          echo "DRY_RUN is set to: '${DRY_RUN}'"
+          
+          ARGS=("--access=public")
+          if [[ "${DRY_RUN}" == "true" ]]; then
+            ARGS+=("--dry-run")
+          fi
+
+          npm run publish:contracts -- "${ARGS[@]}"
 
   sdk:
     # needs: contracts
     runs-on: token-studio-linux-medium
     container:
-      image: node:20.17.0-alpine3.20 # Using alpine for a smaller image
+      image: node@sha256:db5dd2f30cb82a8bdbd16acd4a8f3f2789f5b24f6ce43f98aa041be848c82e45 # node:20.17.0-bookworm
     permissions:
       contents: read
 
     steps:
       # * Initial steps
       - name: Harden Runner
-        uses: step-security/harden-runner@f086349bfa2bd1361f7909c78558e816508cdc10 #v2.8.0
+        uses: step-security/harden-runner@0634a2670c59f64b4a01f0f96f84700a4088b9f0 #v2.12.0
         with:
           egress-policy: audit
 
       - name: Checkout repository
-        uses: actions/checkout@a5ac7e51b41094c92402da3b24376905380afc29 # v4.1.6
-
-      - name: Initial steps
-        uses: ./.github/actions/initial-steps
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
         with:
-          deps-contracts-install: "true"
-          deps-change-references: "true"
+          ref: ${{ inputs.ref }}
+          fetch-depth: '0'
+
+      - name: Setup NPM
+        uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4.4.0
+        with:
+          node-version: '20'
+          token: ${{ secrets.NPM_TOKEN }}
 
       - name: Create file .npmrc
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
         run: |
-          cat <<EOF > .npmrc
-          //registry.npmjs.org/:_authToken=${{ secrets.NPM_TOKEN }}
-          # //localhost:4873/:_authToken=${{ secrets.NPM_TOKEN }} # ! Only for local testing, DO NOT uncomment for production
+          cat << 'EOF' > .npmrc
+          //registry.npmjs.org/:_authToken=${NODE_AUTH_TOKEN}
           EOF
-        working-directory: sdk
-
-      # # ! Only for local testing, DO NOT uncomment for production
-      # - name: Set NPM registry to Verdaccio (local)
-      #   run: npm config set registry http://localhost:4873
 
       - name: Change references to repo
-        run: ./changeProyectsReferencesToRepo.sh
+        run:  |
+          ${GITHUB_WORKSPACE}/changeProjectsReferencesToRepo.sh
 
       # * Prepare other modules
       - name: Install and build Contracts and SDK
@@ -102,48 +122,57 @@ jobs:
           module: "sdk"
 
       - name: Publish sdk package
-        run: npm run publish:sdk --access=public
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+          DRY_RUN: ${{ inputs.dry-run-enabled }}
+        run: |
+          echo "DRY_RUN is set to: '${DRY_RUN}'"
+          
+          ARGS=("--access=public")
+          if [[ "${DRY_RUN}" == "true" ]]; then
+            ARGS+=("--dry-run")
+          fi
+
+          npm run publish:sdk -- "${ARGS[@]}"
 
   cli:
     # needs: sdk
     runs-on: token-studio-linux-medium
     container:
-      image: node:20.17.0-alpine3.20 # Using alpine for a smaller image
+      image: node@sha256:db5dd2f30cb82a8bdbd16acd4a8f3f2789f5b24f6ce43f98aa041be848c82e45 # node:20.17.0-bookworm
     permissions:
       contents: read
 
     steps:
       # * Initial steps
       - name: Harden Runner
-        uses: step-security/harden-runner@f086349bfa2bd1361f7909c78558e816508cdc10 #v2.8.0
+        uses: step-security/harden-runner@0634a2670c59f64b4a01f0f96f84700a4088b9f0 #v2.12.0
         with:
           egress-policy: audit
 
       - name: Checkout repository
-        uses: actions/checkout@a5ac7e51b41094c92402da3b24376905380afc29 # v4.1.6
-
-      - name: Initial steps
-        uses: ./.github/actions/initial-steps
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
         with:
-          deps-contracts-install: "true"
-          deps-change-references: "true"
+          ref: ${{ inputs.ref }}
+          fetch-depth: '0'
+
+      - name: Setup NPM
+        uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4.4.0
+        with:
+          node-version: '20'
+          token: ${{ secrets.NPM_TOKEN }}
 
       - name: Create file .npmrc
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
         run: |
-          cat <<EOF > .npmrc
-          //registry.npmjs.org/:_authToken=${{ secrets.NPM_TOKEN }}
-          # //localhost:4873/:_authToken=${{ secrets.NPM_TOKEN }} # ! Only for local testing, DO NOT uncomment for production
+          cat << 'EOF' > .npmrc
+          //registry.npmjs.org/:_authToken=${NODE_AUTH_TOKEN}
           EOF
-        working-directory: cli
-
-      # # ! Only for local testing, DO NOT uncomment for production
-      # - name: Set NPM registry to Verdaccio (local)
-      #   run: npm config set registry http://localhost:4873
 
       - name: Change references to repo
-        run: ./changeProyectsReferencesToRepo.sh
+        run: |
+          ${GITHUB_WORKSPACE}/changeProjectsReferencesToRepo.sh
 
       # * Prepare other modules
       - name: Install and build Contracts and SDK
@@ -152,6 +181,15 @@ jobs:
           module: "cli"
 
       - name: Publish cli package
-        run: npm run publish:cli --access=public
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+          DRY_RUN: ${{ inputs.dry-run-enabled }}
+        run: |
+          echo "DRY_RUN is set to: '${DRY_RUN}'"
+          
+          ARGS=("--access=public")
+          if [[ "${DRY_RUN}" == "true" ]]; then
+            ARGS+=("--dry-run")
+          fi
+
+          npm run publish:cli -- "${ARGS[@]}"

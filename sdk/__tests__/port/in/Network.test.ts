@@ -37,6 +37,7 @@ import {
 	CLIENT_ACCOUNT_ED25519,
 	FACTORY_ADDRESS,
 	MIRROR_NODE,
+	RESOLVER_ADDRESS,
 	RPC_NODE,
 } from '../../config.js';
 import { MirrorNode } from 'domain/context/network/MirrorNode.js';
@@ -105,6 +106,7 @@ describe('🧪 Network test', () => {
 				network: testnet,
 				configuration: {
 					factoryAddress: FACTORY_ADDRESS,
+					resolverAddress: RESOLVER_ADDRESS,
 				},
 				mirrorNode: mirrorNode,
 				rpcNode: rpcNode,
@@ -140,14 +142,24 @@ describe('🧪 Network test', () => {
 
 	it('Sets the configuration', async () => {
 		await Network.setConfig(
-			new SetConfigurationRequest({ factoryAddress: '0.0.1' }),
+			new SetConfigurationRequest({
+				factoryAddress: '0.0.1',
+				resolverAddress: '0.0.2',
+			}),
 		);
 		expect(networkService.configuration.factoryAddress).toEqual('0.0.1');
+		expect(networkService.configuration.resolverAddress).toEqual('0.0.2');
 		await Network.setConfig(
-			new SetConfigurationRequest({ factoryAddress: FACTORY_ADDRESS }),
+			new SetConfigurationRequest({
+				factoryAddress: FACTORY_ADDRESS,
+				resolverAddress: RESOLVER_ADDRESS,
+			}),
 		);
 		expect(networkService.configuration.factoryAddress).toEqual(
 			FACTORY_ADDRESS,
+		);
+		expect(networkService.configuration.resolverAddress).toEqual(
+			RESOLVER_ADDRESS,
 		);
 	}, 60_000);
 

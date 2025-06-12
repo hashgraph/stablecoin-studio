@@ -1,38 +1,55 @@
 import { expect } from 'chai'
 import { SignerWithAddress } from '@nomiclabs/hardhat-ethers/signers'
-import { ethers, network } from 'hardhat'
-import { NetworkName } from '@configuration'
-import { HederaTokenManager, HederaTokenManager__factory, IHederaTokenService, IHRC__factory } from '@typechain'
-import { ADDRESS_ZERO, delay, MESSAGES, validateTxResponse, ValidateTxResponseCommand } from '@scripts'
-import { deployFullInfrastructureInTests, GAS_LIMIT } from '@test/shared'
+import { ethers } from 'hardhat'
+import { CustomFeesFacet, CustomFeesFacet__factory, IHederaTokenService, IHRC__factory } from '@typechain-types'
+import {
+    ADDRESS_ZERO,
+    delay,
+    deployFullInfrastructure,
+    DeployFullInfrastructureCommand,
+    MESSAGES,
+    validateTxResponse,
+    ValidateTxResponseCommand,
+} from '@scripts'
+import { deployStableCoinInTests, GAS_LIMIT } from '@test/shared'
 
 describe('➡️ Custom Fees Tests', function () {
     // Contracts
-    let proxyAddress: string
+    let stableCoinProxyAddress: string
     let tokenAddress: string
-    let hederaTokenManager: HederaTokenManager
+    let customFeesFacet: CustomFeesFacet
+
     // Accounts
     let operator: SignerWithAddress
     let nonOperator: SignerWithAddress
+
     // Custom Fees
     let fixedFees: IHederaTokenService.FixedFeeStruct[]
     let fractionalFees: IHederaTokenService.FractionalFeeStruct[]
 
-    before(async function () {
-        // Disable | Mock console.log()
+    async function setFacets(address: string) {
+        customFeesFacet = CustomFeesFacet__factory.connect(address, operator)
+    }
+
+    before(async () => {
+        // mute | mock console.log
         console.log = () => {} // eslint-disable-line
-        // * Deploy StableCoin Token
         console.info(MESSAGES.deploy.info.deployFullInfrastructureInTests)
         ;[operator, nonOperator] = await ethers.getSigners()
-        // if ((network.name as NetworkName) === NETWORK_LIST.name[0]) {
-        //     await deployPrecompiledHederaTokenServiceMock(hre, signer)
-        // }
-        ;({ proxyAddress, tokenAddress } = await deployFullInfrastructureInTests({
+
+        const { ...deployedContracts } = await deployFullInfrastructure(
+            await DeployFullInfrastructureCommand.newInstance({
+                signer: operator,
+                useDeployed: false,
+                useEnvironment: true,
+            })
+        )
+        ;({ stableCoinProxyAddress, tokenAddress } = await deployStableCoinInTests({
             signer: operator,
-            network: network.name as NetworkName,
+            businessLogicResolverProxyAddress: deployedContracts.businessLogicResolver.proxyAddress!,
+            stableCoinFactoryProxyAddress: deployedContracts.stableCoinFactoryFacet.proxyAddress!,
             addFeeSchedule: true,
         }))
-        hederaTokenManager = HederaTokenManager__factory.connect(proxyAddress, operator)
 
         // This test specific
         fixedFees = [
@@ -54,10 +71,12 @@ describe('➡️ Custom Fees Tests', function () {
                 feeCollector: ADDRESS_ZERO,
             },
         ]
+
+        await setFacets(stableCoinProxyAddress)
     })
 
     it("An account without CUSTOM_FEES role can't update custom fees for a token", async function () {
-        const response = await hederaTokenManager.updateTokenCustomFees(fixedFees, fractionalFees, {
+        const response = await customFeesFacet.updateTokenCustomFees(fixedFees, fractionalFees, {
             gasLimit: GAS_LIMIT.hederaTokenManager.updateCustomFees,
         })
         await expect(
@@ -83,7 +102,7 @@ describe('➡️ Custom Fees Tests', function () {
         fixedFees[0].feeCollector = nonOperator.address
         fractionalFees[0].feeCollector = nonOperator.address
 
-        const response = await hederaTokenManager.updateTokenCustomFees(fixedFees, fractionalFees, {
+        const response = await customFeesFacet.updateTokenCustomFees(fixedFees, fractionalFees, {
             gasLimit: GAS_LIMIT.hederaTokenManager.updateCustomFees,
         })
 

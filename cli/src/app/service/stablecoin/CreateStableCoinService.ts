@@ -23,9 +23,7 @@ import { utilsService } from '../../../index.js';
 import {
   Account,
   CreateRequest,
-  Factory,
   GetPublicKeyRequest,
-  GetTokenManagerListRequest,
   KYCRequest,
   RequestAccount,
   RequestPrivateKey,
@@ -38,10 +36,15 @@ import {
 import { IManagedFeatures } from '../../../domain/configuration/interfaces/IManagedFeatures.js';
 import Service from '../Service.js';
 import SetConfigurationService from '../configuration/SetConfigurationService.js';
-import SetFactoryService from '../configuration/SetFactoryService.js';
+import SetResolverAndFactoryService from '../configuration/SetResolverAndFactoryService.js';
 import AssociateStableCoinService from './AssociateStableCoinService.js';
 import KYCStableCoinService from './KYCStableCoinService.js';
 import { AccountType } from '../../../domain/configuration/interfaces/AccountType';
+import {
+  CONFIG_ID_SC,
+  DEFAULT_VERSION,
+  ZERO_ADDRESS,
+} from '../../../core/Constants.js';
 
 /**
  * Create Stablecoin Service
@@ -71,7 +74,8 @@ export default class CreateStableCoinService extends Service {
     const setConfigurationService: SetConfigurationService =
       new SetConfigurationService();
 
-    const factoryService: SetFactoryService = new SetFactoryService();
+    const resolverAndFactoryService: SetResolverAndFactoryService =
+      new SetResolverAndFactoryService();
 
     if (!utilsService.isAccountConfigValid(currentAccount)) {
       await setConfigurationService.initConfiguration(
@@ -81,9 +85,14 @@ export default class CreateStableCoinService extends Service {
     }
     if (
       utilsService.getCurrentFactory().id !==
-      (await factoryService.getSDKFactory())
+        (await resolverAndFactoryService.getSDKFactory()) ||
+      utilsService.getCurrentResolver().id !==
+        (await resolverAndFactoryService.getSDKResolver())
     ) {
-      await factoryService.setSDKFactory(utilsService.getCurrentFactory().id);
+      await resolverAndFactoryService.setSDKResolverAndFactory(
+        utilsService.getCurrentResolver().id,
+        utilsService.getCurrentFactory().id,
+      );
     }
     let createdToken;
 
@@ -138,11 +147,14 @@ export default class CreateStableCoinService extends Service {
   public async wizardCreateStableCoin(): Promise<[CreateRequest, boolean]> {
     const currentAccount = utilsService.getCurrentAccount();
     // Call to create stablecoin sdk function
-    const tokenToCreate = new CreateRequest({
+    let tokenToCreate = new CreateRequest({
       name: '',
       symbol: '',
       decimals: 6,
       createReserve: false,
+      configId: '',
+      configVersion: 1,
+      proxyOwnerAccount: currentAccount.accountId,
     });
 
     // Name
@@ -166,6 +178,8 @@ export default class CreateStableCoinService extends Service {
         );
       },
     );
+
+    tokenToCreate = await this.selectResolverConfiguration(tokenToCreate);
 
     const optionalProps = await this.askForOptionalProps();
     let initialSupply = '';
@@ -230,6 +244,8 @@ export default class CreateStableCoinService extends Service {
         ? TokenSupplyType.INFINITE
         : TokenSupplyType.FINITE,
       maxSupply: tokenToCreate.maxSupply,
+      configId: tokenToCreate.configId,
+      configVersion: tokenToCreate.configVersion,
     });
 
     if (managedBySC) {
@@ -299,64 +315,23 @@ export default class CreateStableCoinService extends Service {
         tokenToCreate.feeRoleAccount = currentAccount.accountId;
     }
 
-    // Proof of Reserve
-    let reserve = false;
+    const reserve = await this.askForReserve();
     let existingReserve = false;
-    reserve = await this.askForReserve();
-
     if (reserve) {
       existingReserve = await this.askForExistingReserve();
-      if (!existingReserve) {
-        tokenToCreate.createReserve = true;
-        await utilsService.handleValidation(
-          () => tokenToCreate.validate('reserveInitialAmount'),
-          async () => {
-            tokenToCreate.reserveInitialAmount =
-              await this.askForReserveInitialAmount();
-          },
-        );
-      } else {
-        await utilsService.handleValidation(
-          () => tokenToCreate.validate('reserveAddress'),
-          async () => {
-            tokenToCreate.reserveAddress = await utilsService.defaultSingleAsk(
-              language.getText('stablecoin.askReserveAddress'),
-              tokenToCreate.reserveAddress || '0.0.0',
-            );
-          },
-        );
-      }
-    }
-
-    // ProxyAdminOwner
-    let proxyAdminOwnerAccount = false;
-    proxyAdminOwnerAccount = await this.askProxyAdminOwner();
-
-    if (!proxyAdminOwnerAccount) {
-      await utilsService.handleValidation(
-        () => tokenToCreate.validate('proxyAdminOwnerAccount'),
-        async () => {
-          tokenToCreate.proxyAdminOwnerAccount =
-            await utilsService.defaultSingleAsk(
-              language.getText('stablecoin.askProxyAdminOwnerAccount'),
-              tokenToCreate.proxyAdminOwnerAccount || '0.0.0',
-            );
-        },
+      tokenToCreate = await this.configureReserve(
+        tokenToCreate,
+        existingReserve,
       );
     }
 
-    // ASK HederaTokenManager version
     tokenToCreate.stableCoinFactory = utilsService.getCurrentFactory().id;
 
-    await this.askHederaTokenManagerVersion(
-      tokenToCreate.stableCoinFactory,
-      tokenToCreate,
-    );
-
     const stableCoinResume = {
-      hederaTokenManager: tokenToCreate.hederaTokenManager,
       name: tokenToCreate.name,
       symbol: tokenToCreate.symbol,
+      configId: tokenToCreate.configId,
+      configVersion: tokenToCreate.configVersion,
       decimals: tokenToCreate.decimals,
       initialSupply: initialSupply === '' ? undefined : initialSupply,
       supplyType: supplyType
@@ -414,10 +389,6 @@ export default class CreateStableCoinService extends Service {
       cashinRole: tokenToCreate.cashInRoleAccount,
       cashinAllowance: tokenToCreate.cashInRoleAllowance,
       metadata: tokenToCreate.metadata,
-      proxyAdminOwnerAccount:
-        tokenToCreate.proxyAdminOwnerAccount === undefined
-          ? currentAccount.accountId
-          : tokenToCreate.proxyAdminOwnerAccount,
     };
     console.log(stableCoinResume);
     if (
@@ -440,41 +411,6 @@ export default class CreateStableCoinService extends Service {
     );
   }
 
-  private async askHederaTokenManagerVersion(
-    factory: string,
-    request: CreateRequest,
-  ): Promise<void> {
-    const factoryListEvm = await Factory.getHederaTokenManagerList(
-      new GetTokenManagerListRequest({ factoryId: factory }),
-    ).then((value) => value.reverse());
-
-    const choices = factoryListEvm
-      .map((item) => item.toString())
-      .sort((token1, token2) =>
-        +token1.split('.').slice(-1)[0] > +token2.split('.').slice(-1)[0]
-          ? -1
-          : 1,
-      );
-    choices.push(language.getText('stablecoin.askHederaTokenManagerOther'));
-
-    const versionSelection = await utilsService.defaultMultipleAsk(
-      language.getText('stablecoin.askHederaTokenManagerVersion'),
-      choices,
-    );
-
-    if (versionSelection === choices[choices.length - 1]) {
-      await utilsService.handleValidation(
-        () => request.validate('hederaTokenManager'),
-        async () => {
-          request.hederaTokenManager = await utilsService.defaultSingleAsk(
-            language.getText('stablecoin.askHederaTokenManagerImplementation'),
-            '0.0.0',
-          );
-        },
-      );
-    } else request.hederaTokenManager = versionSelection;
-  }
-
   private async askForOptionalProps(): Promise<boolean> {
     return await utilsService.defaultConfirmAsk(
       language.getText('stablecoin.askOptionalProps'),
@@ -492,13 +428,6 @@ export default class CreateStableCoinService extends Service {
   private async askForExistingReserve(): Promise<boolean> {
     return await utilsService.defaultConfirmAsk(
       language.getText('stablecoin.askExistingReserve'),
-      true,
-    );
-  }
-
-  private async askProxyAdminOwner(): Promise<boolean> {
-    return await utilsService.defaultConfirmAsk(
-      language.getText('stablecoin.askProxyAdminOwner'),
       true,
     );
   }
@@ -528,6 +457,23 @@ export default class CreateStableCoinService extends Service {
     return await utilsService.defaultSingleAsk(
       language.getText('stablecoin.askReserveInitialAmount'),
       val || '1',
+    );
+  }
+
+  private async askForReserveConfigVersion(val?: string): Promise<number> {
+    return Number(
+      await utilsService.defaultSingleAsk(
+        language.getText('stablecoin.askReserveConfigVersion'),
+        val || '1',
+      ),
+    );
+  }
+
+  private async askForReserveConfigId(val?: string): Promise<string> {
+    return await utilsService.defaultSingleAsk(
+      language.getText('stablecoin.askReserveConfigId'),
+      val ||
+        '0x0000000000000000000000000000000000000000000000000000000000000003',
     );
   }
 
@@ -770,5 +716,72 @@ export default class CreateStableCoinService extends Service {
       default:
         throw new Error('Selected option not recognized : ' + answer);
     }
+  }
+
+  private async selectResolverConfiguration(
+    tokenToCreate: CreateRequest,
+  ): Promise<CreateRequest> {
+    await utilsService.handleValidation(
+      () => tokenToCreate.validate('configId'),
+      async () => {
+        tokenToCreate.configId = await utilsService.defaultSingleAsk(
+          language.getText('stablecoin.askConfigId'),
+          tokenToCreate.configId || CONFIG_ID_SC,
+        );
+      },
+    );
+    await utilsService.handleValidation(
+      () => tokenToCreate.validate('configVersion'),
+      async () => {
+        tokenToCreate.configVersion = Number(
+          await utilsService.defaultSingleAsk(
+            language.getText('stablecoin.askConfigVersion'),
+            tokenToCreate.configVersion.toString() || DEFAULT_VERSION,
+          ),
+        );
+      },
+    );
+
+    return tokenToCreate;
+  }
+
+  private async configureReserve(
+    tokenToCreate: CreateRequest,
+    existingReserve: boolean,
+  ): Promise<CreateRequest> {
+    if (!existingReserve) {
+      tokenToCreate.createReserve = true;
+      await utilsService.handleValidation(
+        () => tokenToCreate.validate('reserveConfigId'),
+        async () => {
+          tokenToCreate.reserveConfigId = await this.askForReserveConfigId();
+        },
+      );
+      await utilsService.handleValidation(
+        () => tokenToCreate.validate('reserveConfigVersion'),
+        async () => {
+          tokenToCreate.reserveConfigVersion =
+            await this.askForReserveConfigVersion();
+        },
+      );
+      await utilsService.handleValidation(
+        () => tokenToCreate.validate('reserveInitialAmount'),
+        async () => {
+          tokenToCreate.reserveInitialAmount =
+            await this.askForReserveInitialAmount();
+        },
+      );
+    } else {
+      await utilsService.handleValidation(
+        () => tokenToCreate.validate('reserveAddress'),
+        async () => {
+          tokenToCreate.reserveAddress = await utilsService.defaultSingleAsk(
+            language.getText('stablecoin.askReserveAddress'),
+            tokenToCreate.reserveAddress || ZERO_ADDRESS,
+          );
+        },
+      );
+    }
+    return tokenToCreate;
   }
 }

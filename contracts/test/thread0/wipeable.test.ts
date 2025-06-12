@@ -1,34 +1,63 @@
 import { expect } from 'chai'
 import { SignerWithAddress } from '@nomiclabs/hardhat-ethers/signers'
-import { ethers, network } from 'hardhat'
-import { NetworkName } from '@configuration'
-import { HederaTokenManager, HederaTokenManager__factory } from '@typechain'
-import { delay, MESSAGES, validateTxResponse, ValidateTxResponseCommand } from '@scripts'
-import { deployFullInfrastructureInTests, GAS_LIMIT, ONE_TOKEN } from '@test/shared'
+import { ethers } from 'hardhat'
+import {
+    CashInFacet,
+    CashInFacet__factory,
+    HederaTokenManagerFacet,
+    HederaTokenManagerFacet__factory,
+    WipeableFacet,
+    WipeableFacet__factory,
+} from '@typechain-types'
+import {
+    delay,
+    deployFullInfrastructure,
+    DeployFullInfrastructureCommand,
+    MESSAGES,
+    ONE_TOKEN,
+    validateTxResponse,
+    ValidateTxResponseCommand,
+} from '@scripts'
+import { deployStableCoinInTests, GAS_LIMIT } from '@test/shared'
 import { BigNumber } from 'ethers'
 
 describe('➡️ Wipe Tests', function () {
     // Contracts
-    let proxyAddress: string
-    let hederaTokenManager: HederaTokenManager
+    let stableCoinProxyAddress: string
+    let hederaTokenManagerFacet: HederaTokenManagerFacet
+    let wipeFacet: WipeableFacet
+    let cashInFacet: CashInFacet
+
     // Accounts
     let operator: SignerWithAddress
     let nonOperator: SignerWithAddress
 
-    before(async function () {
-        // Disable | Mock console.log()
+    async function setFacets(address: string) {
+        hederaTokenManagerFacet = HederaTokenManagerFacet__factory.connect(address, operator)
+        wipeFacet = WipeableFacet__factory.connect(address, operator)
+        cashInFacet = CashInFacet__factory.connect(address, operator)
+    }
+
+    before(async () => {
+        // mute | mock console.log
         console.log = () => {} // eslint-disable-line
-        // * Deploy StableCoin Token
         console.info(MESSAGES.deploy.info.deployFullInfrastructureInTests)
         ;[operator, nonOperator] = await ethers.getSigners()
-        // if ((network.name as NetworkName) === NETWORK_LIST.name[0]) {
-        //     await deployPrecompiledHederaTokenServiceMock(hre, signer)
-        // }
-        ;({ proxyAddress } = await deployFullInfrastructureInTests({
+
+        const { ...deployedContracts } = await deployFullInfrastructure(
+            await DeployFullInfrastructureCommand.newInstance({
+                signer: operator,
+                useDeployed: false,
+                useEnvironment: true,
+            })
+        )
+        ;({ stableCoinProxyAddress } = await deployStableCoinInTests({
             signer: operator,
-            network: network.name as NetworkName,
+            businessLogicResolverProxyAddress: deployedContracts.businessLogicResolver.proxyAddress!,
+            stableCoinFactoryProxyAddress: deployedContracts.stableCoinFactoryFacet.proxyAddress!,
         }))
-        hederaTokenManager = HederaTokenManager__factory.connect(proxyAddress, operator)
+
+        await setFacets(stableCoinProxyAddress)
     })
 
     it('Account with WIPE role can wipe 10 tokens from an account with 20 tokens', async function () {
@@ -36,7 +65,7 @@ describe('➡️ Wipe Tests', function () {
         const tokensToWipe = BigNumber.from(10).mul(ONE_TOKEN)
 
         // Mint 20 tokens
-        const mintResponse = await hederaTokenManager.mint(operator.address, tokensToMint, {
+        const mintResponse = await cashInFacet.mint(operator.address, tokensToMint, {
             gasLimit: GAS_LIMIT.hederaTokenManager.mint,
         })
         await validateTxResponse(
@@ -45,11 +74,11 @@ describe('➡️ Wipe Tests', function () {
 
         // Get the initial total supply and account's balanceOf
         await delay({ time: 1, unit: 'sec' })
-        const initialTotalSupply = await hederaTokenManager.totalSupply()
-        const initialBalanceOf = await hederaTokenManager.balanceOf(operator.address)
+        const initialTotalSupply = await hederaTokenManagerFacet.totalSupply()
+        const initialBalanceOf = await hederaTokenManagerFacet.balanceOf(operator.address)
 
         // Wipe 10 tokens
-        const wipeResponse = await hederaTokenManager.wipe(operator.address, tokensToWipe, {
+        const wipeResponse = await wipeFacet.wipe(operator.address, tokensToWipe, {
             gasLimit: GAS_LIMIT.hederaTokenManager.wipe,
         })
         await validateTxResponse(
@@ -58,8 +87,8 @@ describe('➡️ Wipe Tests', function () {
 
         // Check balance of account and total supply : success
         await delay({ time: 1, unit: 'sec' })
-        const finalTotalSupply = await hederaTokenManager.totalSupply()
-        const finalBalanceOf = await hederaTokenManager.balanceOf(operator.address)
+        const finalTotalSupply = await hederaTokenManagerFacet.totalSupply()
+        const finalBalanceOf = await hederaTokenManagerFacet.balanceOf(operator.address)
         const expectedTotalSupply = initialTotalSupply.sub(tokensToWipe)
         const expectedBalanceOf = initialBalanceOf.sub(tokensToWipe)
 
@@ -71,7 +100,7 @@ describe('➡️ Wipe Tests', function () {
         const tokensToMint = BigNumber.from(20).mul(ONE_TOKEN)
 
         // Mint 20 tokens
-        const mintResponse = await hederaTokenManager.mint(operator.address, tokensToMint, {
+        const mintResponse = await cashInFacet.mint(operator.address, tokensToMint, {
             gasLimit: GAS_LIMIT.hederaTokenManager.mint,
         })
         await validateTxResponse(
@@ -80,10 +109,10 @@ describe('➡️ Wipe Tests', function () {
 
         // Get the current balance for account
         await delay({ time: 1, unit: 'sec' })
-        const currentBalance = await hederaTokenManager.balanceOf(operator.address)
+        const currentBalance = await hederaTokenManagerFacet.balanceOf(operator.address)
 
         // Wipe more than account's balance : fail
-        const wipeResponse = await hederaTokenManager.wipe(operator.address, currentBalance.add(1), {
+        const wipeResponse = await wipeFacet.wipe(operator.address, currentBalance.add(1), {
             gasLimit: GAS_LIMIT.hederaTokenManager.wipe,
         })
         await expect(
@@ -93,7 +122,7 @@ describe('➡️ Wipe Tests', function () {
 
     it('Account with WIPE role cannot wipe a negative amount', async function () {
         // Wipe a negative amount of tokens : fail
-        const wipeResponse = await hederaTokenManager.wipe(operator.address, -1n, {
+        const wipeResponse = await wipeFacet.wipe(operator.address, -1n, {
             gasLimit: GAS_LIMIT.hederaTokenManager.wipe,
         })
         await expect(
@@ -105,7 +134,7 @@ describe('➡️ Wipe Tests', function () {
         const tokensToMint = BigNumber.from(20).mul(ONE_TOKEN)
 
         // Mint 20 tokens
-        const mintResponse = await hederaTokenManager.mint(operator.address, tokensToMint, {
+        const mintResponse = await cashInFacet.mint(operator.address, tokensToMint, {
             gasLimit: GAS_LIMIT.hederaTokenManager.mint,
         })
         await validateTxResponse(
@@ -113,11 +142,9 @@ describe('➡️ Wipe Tests', function () {
         )
 
         // Wipe with account that does not have the wipe role: fail
-        const nonOperatorWipeResponse = await hederaTokenManager
-            .connect(nonOperator)
-            .wipe(operator.address, BigNumber.from(1), {
-                gasLimit: GAS_LIMIT.hederaTokenManager.wipe,
-            })
+        const nonOperatorWipeResponse = await wipeFacet.connect(nonOperator).wipe(operator.address, BigNumber.from(1), {
+            gasLimit: GAS_LIMIT.hederaTokenManager.wipe,
+        })
         await expect(
             validateTxResponse(new ValidateTxResponseCommand({ txResponse: nonOperatorWipeResponse }))
         ).to.be.rejectedWith(Error)

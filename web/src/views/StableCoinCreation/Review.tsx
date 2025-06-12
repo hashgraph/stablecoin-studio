@@ -15,9 +15,9 @@ const Review = (props: ReviewProps) => {
 
 	const { getValues } = form;
 	const {
-		hederaTokenManagerId,
 		name,
 		symbol,
+		configVersion,
 		initialSupply,
 		supplyType,
 		maxSupply,
@@ -45,8 +45,7 @@ const Review = (props: ReviewProps) => {
 		feeScheduleKey,
 		reserveAddress,
 		reserveInitialAmount,
-		currentAccountAsProxyAdminOwner,
-		proxyAdminOwnerAccount,
+		reserveConfigVersion,
 	} = getValues();
 
 	const getKey = (keySelected: { value: number; label: string }, nameOtherKey: string) => {
@@ -162,16 +161,16 @@ const Review = (props: ReviewProps) => {
 						titleProps={{ fontWeight: 700, color: 'brand.secondary' }}
 						details={[
 							{
-								label: t('stableCoinCreation:basicDetails.hederaTokenManager'),
-								value: hederaTokenManagerId.value || '',
-							},
-							{
 								label: t('stableCoinCreation:basicDetails.name'),
 								value: name || '',
 							},
 							{
 								label: t('stableCoinCreation:basicDetails.symbol'),
 								value: symbol || '',
+							},
+							{
+								label: t('stableCoinCreation:basicDetails.configVersion'),
+								value: configVersion || '',
 							},
 						]}
 					/>
@@ -290,25 +289,16 @@ const Review = (props: ReviewProps) => {
 									value: reserveAddress || t('stableCoinCreation:proofOfReserve.createDataFeed'),
 								},
 								{
+									label: t('stableCoinCreation:proofOfReserve.reserveConfigVersion'),
+									value: reserveConfigVersion || '-',
+								},
+								{
 									label: t('stableCoinCreation:proofOfReserve.initialSupplyPor'),
 									value: reserveInitialAmount || '-',
 								},
 							]}
 						/>
 					)}
-
-					<DetailsReview
-						title={t('stableCoinCreation:proxyAdmin.title')}
-						titleProps={{ fontWeight: 700, color: 'brand.secondary' }}
-						details={[
-							{
-								label: t('stableCoinCreation:proxyAdmin.ownerAccount'),
-								value: currentAccountAsProxyAdminOwner
-									? t('stableCoinCreation:managementPermissions.currentUserAccount')
-									: proxyAdminOwnerAccount,
-							},
-						]}
-					/>
 				</Stack>
 			</Stack>
 		</VStack>

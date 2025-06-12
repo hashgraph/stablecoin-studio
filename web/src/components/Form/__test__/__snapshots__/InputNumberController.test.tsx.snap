@@ -11,6 +11,9 @@ exports[`<InputNumberController /> .render should be disabled if disabled=true: 
       role="group"
     >
       <div
+        class="css-gg4vpm"
+      />
+      <div
         class="chakra-input__group css-bx0blc"
         data-group="true"
       >
@@ -46,21 +49,25 @@ exports[`<InputNumberController /> .render should render the component: WithLabe
       data-testid="formControl"
       role="group"
     >
-      <label
-        class="chakra-form__label css-1hfoxt1"
-        for="field-:r0:"
-        id="field-:r0:-label"
+      <div
+        class="css-gg4vpm"
       >
-        <div
-          class="chakra-stack css-84zodg"
+        <label
+          class="chakra-form__label css-1hfoxt1"
+          for="field-:r0:"
+          id="field-:r0:-label"
         >
-          <p
-            class="chakra-text css-mgupmj"
+          <div
+            class="chakra-stack css-84zodg"
           >
-            test-label
-          </p>
-        </div>
-      </label>
+            <p
+              class="chakra-text css-mgupmj"
+            >
+              test-label
+            </p>
+          </div>
+        </label>
+      </div>
       <div
         class="chakra-input__group css-bx0blc"
         data-group="true"
@@ -97,6 +104,9 @@ exports[`<InputNumberController /> .render should show placeholder: WithPlacehol
       role="group"
     >
       <div
+        class="css-gg4vpm"
+      />
+      <div
         class="chakra-input__group css-bx0blc"
         data-group="true"
       >
@@ -132,6 +142,9 @@ exports[`<InputNumberController /> .render should show the error message: WithEr
       data-testid="formControl"
       role="group"
     >
+      <div
+        class="css-gg4vpm"
+      />
       <div
         class="chakra-input__group css-bx0blc"
         data-group="true"

@@ -55,6 +55,7 @@ import { AccountType } from '../../../domain/configuration/interfaces/AccountTyp
 import fs from 'fs';
 import MultiSigTransaction from '../../../domain/stablecoin/MultiSigTransaction.js';
 import BackendConfig from '../../../domain/configuration/interfaces/BackendConfig.js';
+import { IResolversConfig } from 'domain/configuration/interfaces/IResolverConfig.js';
 
 /**
  * Utilities Service
@@ -66,6 +67,7 @@ export default class UtilitiesService extends Service {
   private currentRPC: IRPCsConfig;
   private currentBackend: BackendConfig;
   private currentFactory: IFactoryConfig;
+  private currentResolver: IResolversConfig;
   private currentHederaTokenManager: IHederaTokenManagerConfig;
 
   constructor() {
@@ -258,8 +260,12 @@ export default class UtilitiesService extends Service {
     }
   }
 
-  public setCurrentFactory(factory: IFactoryConfig): void {
+  public setCurrentResolverAndFactory(
+    factory: IFactoryConfig,
+    resolver: IResolversConfig,
+  ): void {
     this.currentFactory = factory;
+    this.currentResolver = resolver;
   }
 
   public setCurrentHederaTokenManager(
@@ -273,6 +279,14 @@ export default class UtilitiesService extends Service {
       throw new Error('Factory not initialized');
     } else {
       return this.currentFactory;
+    }
+  }
+
+  public getCurrentResolver(): IResolversConfig {
+    if (!this.currentResolver) {
+      throw new Error('Resolver not initialized');
+    } else {
+      return this.currentResolver;
     }
   }
 
