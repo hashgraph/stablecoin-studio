@@ -25,6 +25,7 @@
 		"configIdPlaceholder": "Config ID",
 		"configVersion": "Config Version",
 		"configVersionPlaceholder": "Config Version",
+		"configVersionTooltip": "Use 0 value to use the last version",
 		"title": "Stablecoin Creation",
 		"hederaERC20": "Select HederaTokenManager Smart Contract ID",
 		"hederaERC20Placeholder": "HederaTokenManager Smart Contract ID",
@@ -107,6 +108,7 @@
 		"initialSupplyPorExternal": "External PoR",
 		"reserveConfigId": "Reserve Config ID",
 		"reserveConfigVersion": "Reserve Config version",
+		"reserveConfigVersionTooltip": "Use 0 value to use the last version",
 		"link": "https://github.com/hashgraph/stablecoin-studio/blob/main/README.md#Proof-of-reserve"
 	},
 	"proxyAdmin": {

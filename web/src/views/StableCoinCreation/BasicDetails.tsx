@@ -5,6 +5,7 @@ import InputController from '../../components/Form/InputController';
 import type { CreateRequest } from '@hashgraph/stablecoin-npm-sdk';
 import { handleRequestValidation } from '../../utils/validationsHelper';
 import { propertyNotFound } from '../../constant';
+import InputNumberController from '../../components/Form/InputNumberController';
 
 interface BasicDetailsProps {
 	control: Control<FieldValues>;
@@ -63,26 +64,7 @@ const BasicDetails = ({ request, control }: BasicDetailsProps) => {
 						label={t('stableCoinCreation:basicDetails.symbol') ?? propertyNotFound}
 						placeholder={t('stableCoinCreation:basicDetails.symbolPlaceholder') ?? propertyNotFound}
 					/>
-					<InputController
-						rules={{
-							required: t(`global:validations.required`) ?? propertyNotFound,
-							validate: {
-								validation: (value: string) => {
-									request.configId = value;
-									const res = handleRequestValidation(request.validate('configId'));
-									return res;
-								},
-							},
-						}}
-						isRequired
-						control={control}
-						name={'configId'}
-						label={t('stableCoinCreation:basicDetails.configId') ?? propertyNotFound}
-						placeholder={
-							t('stableCoinCreation:basicDetails.configIdPlaceholder') ?? propertyNotFound
-						}
-					/>
-					<InputController
+					<InputNumberController
 						rules={{
 							required: t(`global:validations.required`) ?? propertyNotFound,
 							validate: {
@@ -97,6 +79,7 @@ const BasicDetails = ({ request, control }: BasicDetailsProps) => {
 						control={control}
 						name={'configVersion'}
 						label={t('stableCoinCreation:basicDetails.configVersion') ?? propertyNotFound}
+						tooltip={t('stableCoinCreation:basicDetails.configVersionTooltip') ?? propertyNotFound}
 						placeholder={
 							t('stableCoinCreation:basicDetails.configVersionPlaceholder') ?? propertyNotFound
 						}

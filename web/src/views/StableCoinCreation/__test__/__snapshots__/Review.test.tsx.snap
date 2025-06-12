@@ -96,32 +96,6 @@ exports[`<Review /> should render correctly 1`] = `
                 <p
                   class="chakra-text css-9s6br4"
                 >
-                  Config ID
-                </p>
-                <div
-                  class="chakra-stack css-1c8ysgd"
-                >
-                  <p
-                    class="chakra-text css-mgupmj"
-                  />
-                </div>
-              </div>
-              <hr
-                aria-orientation="horizontal"
-                class="chakra-divider css-zaaihy"
-                title="divider"
-              />
-            </div>
-            <div
-              class="css-0"
-            >
-              <div
-                class="css-gg4vpm"
-                data-testid="details-review-detail-3"
-              >
-                <p
-                  class="chakra-text css-9s6br4"
-                >
                   Config Version
                 </p>
                 <div

@@ -4,7 +4,6 @@ import { useTranslation } from 'react-i18next';
 import DetailsReview from '../../components/DetailsReview';
 import { OTHER_KEY_VALUE } from './components/KeySelector';
 import { OTHER_ACCOUNT_VALUE } from './components/RoleSelector';
-import { formatBytes32 } from '../../utils/format';
 
 interface ReviewProps {
 	form: UseFormReturn;
@@ -18,7 +17,6 @@ const Review = (props: ReviewProps) => {
 	const {
 		name,
 		symbol,
-		configId,
 		configVersion,
 		initialSupply,
 		supplyType,
@@ -47,7 +45,6 @@ const Review = (props: ReviewProps) => {
 		feeScheduleKey,
 		reserveAddress,
 		reserveInitialAmount,
-		reserveConfigId,
 		reserveConfigVersion,
 	} = getValues();
 
@@ -172,10 +169,6 @@ const Review = (props: ReviewProps) => {
 								value: symbol || '',
 							},
 							{
-								label: t('stableCoinCreation:basicDetails.configId'),
-								value: formatBytes32(configId, 8) || '',
-							},
-							{
 								label: t('stableCoinCreation:basicDetails.configVersion'),
 								value: configVersion || '',
 							},
@@ -294,10 +287,6 @@ const Review = (props: ReviewProps) => {
 								{
 									label: t('stableCoinCreation:proofOfReserve.addressPor'),
 									value: reserveAddress || t('stableCoinCreation:proofOfReserve.createDataFeed'),
-								},
-								{
-									label: t('stableCoinCreation:proofOfReserve.reserveConfigId'),
-									value: formatBytes32(reserveConfigId, 8) || '',
 								},
 								{
 									label: t('stableCoinCreation:proofOfReserve.reserveConfigVersion'),
