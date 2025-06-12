@@ -9,6 +9,7 @@ import InputController from '../../components/Form/InputController';
 import SwitchController from '../../components/Form/SwitchController';
 import { propertyNotFound } from '../../constant';
 import { handleRequestValidation } from '../../utils/validationsHelper';
+import InputNumberController from '../../components/Form/InputNumberController';
 
 interface ProofOfReserveProps {
 	form: UseFormReturn;
@@ -107,26 +108,7 @@ const ProofOfReserve = (props: ProofOfReserveProps) => {
 
 				{!hasDataFeed && proofOfReserve && (
 					<VStack pt={'15px'}>
-						<InputController
-							rules={{
-								required: t(`global:validations.required`) ?? propertyNotFound,
-								validate: {
-									validation: (value: string) => {
-										request.reserveConfigId = value;
-										const res = handleRequestValidation(request.validate('reserveConfigId'));
-										return res;
-									},
-								},
-							}}
-							isRequired
-							control={control}
-							name={'reserveConfigId'}
-							label={t('stableCoinCreation:proofOfReserve.reserveConfigId') ?? propertyNotFound}
-							placeholder={
-								t('stableCoinCreation:proofOfReserve.reserveConfigId') ?? propertyNotFound
-							}
-						/>
-						<InputController
+						<InputNumberController
 							rules={{
 								required: t(`global:validations.required`) ?? propertyNotFound,
 								validate: {
@@ -145,6 +127,10 @@ const ProofOfReserve = (props: ProofOfReserveProps) => {
 							}
 							placeholder={
 								t('stableCoinCreation:proofOfReserve.reserveConfigVersion') ?? propertyNotFound
+							}
+							tooltip={
+								t('stableCoinCreation:proofOfReserve.reserveConfigVersionTooltip') ??
+								propertyNotFound
 							}
 						/>
 						<InputController

@@ -75,12 +75,6 @@ describe(`<${StableCoinCreation.name} />`, () => {
 		const symbol = component.getByTestId('symbol');
 		await userEvent.type(symbol, 'symbol');
 
-		const configId = component.getByTestId('configId');
-		await userEvent.type(
-			configId,
-			'0x0000000000000000000000000000000000000000000000000000000000000001',
-		);
-
 		const configVersion = component.getByTestId('configVersion');
 		await userEvent.type(configVersion, '1');
 

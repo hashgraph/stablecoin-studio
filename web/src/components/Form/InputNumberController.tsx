@@ -15,6 +15,8 @@ import {
 	InputGroup,
 	InputRightElement,
 	Stack,
+	Tooltip,
+	Icon as ChakraIcon,
 } from '@chakra-ui/react';
 import type { Control, FieldValues, UseControllerProps } from 'react-hook-form';
 import { Controller } from 'react-hook-form';
@@ -23,6 +25,7 @@ import { NumericFormat } from 'react-number-format';
 import Icon from '../Icon';
 import InputLabel from './InputLabel';
 import type { InputAttributes } from 'react-number-format/types/types';
+import { InfoOutlineIcon } from '@chakra-ui/icons';
 
 /**
  * NumberFormatValues copied from 'react-number-format' since it isn't exported from the library right now
@@ -54,6 +57,7 @@ export interface InputNumberControllerProps
 	minValue?: number;
 	initialValue?: number;
 	containerStyle?: StackProps;
+	tooltip?: string | null;
 }
 
 const InputNumberController = ({
@@ -81,6 +85,7 @@ const InputNumberController = ({
 	decimalScale = 2,
 	initialValue,
 	containerStyle,
+	tooltip,
 	...props
 }: InputNumberControllerProps) => {
 	const [inputFloatValue, setInputFloatValue] = useState<number>();
@@ -165,11 +170,26 @@ const InputNumberController = ({
 				return (
 					<Stack w='full' {...containerStyle}>
 						<FormControl data-testid='formControl' isInvalid={!!error} id={id} {...formStyle}>
-							{label && (
-								<InputLabel isRequired={isRequired} style={labelStyle}>
-									{label}
-								</InputLabel>
-							)}
+							<Flex justifyContent='space-between'>
+								{label && (
+									<InputLabel isRequired={isRequired} style={labelStyle}>
+										{label}
+									</InputLabel>
+								)}
+								{tooltip && (
+									<Tooltip label={tooltip} aria-label={tooltip}>
+										<span>
+											<ChakraIcon
+												as={InfoOutlineIcon}
+												ml={2}
+												cursor='pointer'
+												position='relative'
+												top='-1px'
+											/>{' '}
+										</span>
+									</Tooltip>
+								)}
+							</Flex>
 							<InputGroup>
 								<NumericFormat
 									data-testid={dataTestId}
