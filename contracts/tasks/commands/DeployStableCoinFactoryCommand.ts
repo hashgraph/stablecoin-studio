@@ -6,12 +6,12 @@ interface DeployStableCoinFactoryBaseParams {
 
 interface DeployStableCoinFactoryCommandParams extends WithSignerCommandParams, DeployStableCoinFactoryBaseParams {}
 
-interface ConstructurParams extends WithSignerConstructorParams, DeployStableCoinFactoryBaseParams {}
+interface ConstructorParams extends WithSignerConstructorParams, DeployStableCoinFactoryBaseParams {}
 
 export default class DeployStableCoinFactoryCommand extends WithSignerCommand {
     public readonly tokenManagerAddress?: string
 
-    protected constructor({ tokenManagerAddress, ...args }: ConstructurParams) {
+    protected constructor({ tokenManagerAddress, ...args }: ConstructorParams) {
         super(args)
         this.tokenManagerAddress = tokenManagerAddress
     }

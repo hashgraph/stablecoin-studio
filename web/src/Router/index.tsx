@@ -37,6 +37,7 @@ const Operations = () => {
 		pause: false,
 		delete: false,
 		checkKyc: false,
+		hold: false,
 	});
 
 	const { isLoading } = useRefreshCoinInfo();
@@ -113,6 +114,7 @@ const Operations = () => {
 					getAccessByOperation(Operation.GRANT_KYC) !== Access.HTS &&
 					!roles.includes(StableCoinRole.KYC_ROLE)),
 			checkKyc: selectedStableCoin?.kycKey === undefined,
+			hold: false,
 		};
 		setDisabledFeatures(areDisabled);
 	};
@@ -189,6 +191,12 @@ const Operations = () => {
 			route: NamedRoutes.CheckKyc,
 			title: t('checkKycOperation'),
 			isDisabled: disabledFeatures?.checkKyc,
+		},
+		{
+			icon: 'LockKeyOpen',
+			route: NamedRoutes.Hold,
+			title: t('holdOperation'),
+			isDisabled: disabledFeatures?.hold,
 		},
 		{
 			icon: 'Warning',

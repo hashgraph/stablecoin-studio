@@ -19,6 +19,7 @@
  */
 
 export const ZERO_ADDRESS = '0.0.0';
+export const ZERO = '0';
 
 export const MIRROR_NODE = 'MIRROR_NODE';
 export const RPC = 'RPC';
@@ -38,3 +39,9 @@ export const HASHIO_RPC_MAINNET_URL = 'https://mainnet.hashio.io/api';
 
 export const DEFAULT_BACKEND_ENDPOINT =
   'http://localhost:3000/api/transactions';
+
+export const CONFIG_ID_SC =
+  '0x0000000000000000000000000000000000000000000000000000000000000002';
+export const CONFIG_ID_RESERVE =
+  '0x0000000000000000000000000000000000000000000000000000000000000003';
+export const DEFAULT_VERSION = '1';

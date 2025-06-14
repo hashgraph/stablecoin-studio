@@ -1,16 +1,12 @@
 /* istanbul ignore file */
 // @ts-ignore
 import type {
-	AcceptFactoryProxyOwnerRequest,
-	AcceptProxyOwnerRequest,
 	AccountViewModel,
 	AddFixedFeeRequest,
 	AddFractionalFeeRequest,
 	AssociateTokenRequest,
 	BurnRequest,
 	CashInRequest,
-	ChangeFactoryProxyOwnerRequest,
-	ChangeProxyOwnerRequest,
 	CheckSupplierLimitRequest,
 	CreateRequest,
 	DecreaseSupplierAllowanceRequest,
@@ -19,15 +15,13 @@ import type {
 	GetAccountBalanceRequest,
 	GetAccountInfoRequest,
 	GetAccountsWithRolesRequest,
-	GetFactoryProxyConfigRequest,
+	GetConfigInfoRequest,
 	GetListStableCoinRequest,
-	GetProxyConfigRequest,
 	GetReserveAddressRequest,
 	GetReserveAmountRequest,
 	GetRolesRequest,
 	GetStableCoinDetailsRequest,
 	GetSupplierAllowanceRequest,
-	GetTokenManagerListRequest,
 	GetTransactionsRequest,
 	GrantMultiRolesRequest,
 	HasRoleRequest,
@@ -46,12 +40,13 @@ import type {
 	StableCoinCapabilities,
 	StableCoinListViewModel,
 	StableCoinViewModel,
+	UpdateConfigRequest,
+	UpdateConfigVersionRequest,
 	UpdateCustomFeesRequest,
 	UpdateRequest,
 	UpdateReserveAddressRequest,
 	UpdateReserveAmountRequest,
-	UpgradeFactoryImplementationRequest,
-	UpgradeImplementationRequest,
+	UpdateResolverRequest,
 	WalletEvent,
 	WipeRequest,
 } from '@hashgraph/stablecoin-npm-sdk';
@@ -59,12 +54,10 @@ import {
 	Account,
 	CapabilitiesRequest,
 	ConnectRequest,
-	Factory,
 	Fees,
 	InitializationRequest,
 	Network,
-	Proxy,
-	RemoveTransactionRequest,
+	Management,
 	ReserveDataFeed,
 	Role,
 	SetConfigurationRequest,
@@ -73,6 +66,15 @@ import {
 	StableCoin,
 	SubmitTransactionRequest,
 	SupportedWallets,
+	RemoveTransactionRequest,
+	GetHoldCountForRequest,
+	GetHoldsIdForRequest,
+	GetHoldForRequest,
+	CreateHoldRequest,
+	ExecuteHoldRequest,
+	ReleaseHoldRequest,
+	ReclaimHoldRequest,
+	GetHeldAmountForRequest,
 } from '@hashgraph/stablecoin-npm-sdk';
 import { type IMirrorRPCNode } from '../interfaces/IMirrorRPCNode';
 import type { IConsensusNodes } from '../interfaces/IConsensusNodes';
@@ -99,18 +101,30 @@ export class SDKService {
 		const _rpcNode = networkConfig[1];
 		const consensusNodes: IConsensusNodes[] = []; // REACT_APP_CONSENSUS_NODES load from .env
 		let factories = []; // REACT_APP_FACTORIES load from .env
+		let resolvers = []; // REACT_APP_RESOLVERS load from .env
 
 		if (process.env.REACT_APP_FACTORIES) factories = JSON.parse(process.env.REACT_APP_FACTORIES);
+		if (process.env.REACT_APP_RESOLVERS) resolvers = JSON.parse(process.env.REACT_APP_RESOLVERS);
+
 		const _lastFactoryId =
 			factories.length !== 0
 				? factories.find((i: any) => i.Environment === connectNetwork)
 					? factories.find((i: any) => i.Environment === connectNetwork).STABLE_COIN_FACTORY_ADDRESS
 					: ''
 				: '';
-		if (_lastFactoryId)
+		const _lastResolverId =
+			resolvers.length !== 0
+				? resolvers.find((i: any) => i.Environment === connectNetwork)
+					? resolvers.find((i: any) => i.Environment === connectNetwork)
+							.STABLE_COIN_RESOLVER_ADDRESS
+					: ''
+				: '';
+
+		if (_lastFactoryId && _lastResolverId)
 			await Network.setConfig(
 				new SetConfigurationRequest({
 					factoryAddress: _lastFactoryId,
+					resolverAddress: _lastResolverId,
 				}),
 			);
 
@@ -283,6 +297,28 @@ export class SDKService {
 					console.error('Factories could not be found in .env');
 				}
 			}
+			if (process.env.REACT_APP_RESOLVERS) {
+				try {
+					const resolvers = [];
+
+					const extractedResolvers = JSON.parse(process.env.REACT_APP_RESOLVERS);
+
+					for (let i = 0; i < extractedResolvers.length; i++) {
+						const resolver = extractedResolvers[i].STABLE_COIN_RESOLVER_ADDRESS;
+
+						resolvers.push({
+							resolver,
+							environment: extractedResolvers[i].Environment,
+						});
+					}
+
+					initReq.resolvers = {
+						resolvers,
+					};
+				} catch (e) {
+					console.error('Resolvers could not be found in .env');
+				}
+			}
 			if (process.env.REACT_APP_MIRROR_NODE) {
 				try {
 					const nodes = [];
@@ -398,16 +434,11 @@ export class SDKService {
 	}
 
 	public static async getStableCoinDetails(req: GetStableCoinDetailsRequest) {
-		console.log('getStableCoinDetails', req);
 		return await StableCoin.getInfo(req);
 	}
 
-	public static async getProxyConfig(req: GetProxyConfigRequest) {
-		return await Proxy.getProxyConfig(req);
-	}
-
-	public static async getFactoryProxyConfig(req: GetFactoryProxyConfigRequest) {
-		return await Proxy.getFactoryProxyConfig(req);
+	public static async getConfigInfo(req: GetConfigInfoRequest) {
+		return await Management.getConfigInfo(req);
 	}
 
 	public static async getAccountInfo(req: GetAccountInfoRequest): Promise<AccountViewModel> {
@@ -558,28 +589,16 @@ export class SDKService {
 		return await ReserveDataFeed.updateReserveAmount(data);
 	}
 
-	public static async changeOwner(req: ChangeProxyOwnerRequest) {
-		return await Proxy.changeProxyOwner(req);
+	public static async updateConfig(req: UpdateConfigRequest) {
+		return await Management.updateConfig(req);
 	}
 
-	public static async acceptOwner(req: AcceptProxyOwnerRequest) {
-		return await Proxy.acceptProxyOwner(req);
+	public static async updateConfigVersion(req: UpdateConfigVersionRequest) {
+		return await Management.updateConfigVersion(req);
 	}
 
-	public static async acceptFactoryOwner(req: AcceptFactoryProxyOwnerRequest) {
-		return await Proxy.acceptFactoryProxyOwner(req);
-	}
-
-	public static async upgradeImplementation(req: UpgradeImplementationRequest) {
-		return await Proxy.upgradeImplementation(req);
-	}
-
-	public static async changeFactoryOwner(req: ChangeFactoryProxyOwnerRequest) {
-		return await Proxy.changeFactoryProxyOwner(req);
-	}
-
-	public static async upgradeFactoryImplementation(req: UpgradeFactoryImplementationRequest) {
-		return await Proxy.upgradeFactoryImplementation(req);
+	public static async updateResolver(req: UpdateResolverRequest) {
+		return await Management.updateResolver(req);
 	}
 
 	public static async grantKyc(data: KYCRequest) {
@@ -610,10 +629,6 @@ export class SDKService {
 		return await Fees.updateCustomFees(data);
 	}
 
-	public static async getHederaTokenManagerList(data: GetTokenManagerListRequest) {
-		return await Factory.getHederaTokenManagerList(data);
-	}
-
 	public static async getMultiSigTransactions(
 		data: GetTransactionsRequest,
 	): Promise<MultiSigTransactionsViewModel> {
@@ -642,6 +657,39 @@ export class SDKService {
 				transactionId: multiSigTransactionId,
 			}),
 		);
+	}
+
+	// HOLD OPERATION
+	public static async getHeldAmountFor(req: GetHeldAmountForRequest) {
+		return StableCoin.getHeldAmountFor(new GetHeldAmountForRequest(req));
+	}
+
+	public static async getHoldsIdFor(req: GetHoldsIdForRequest) {
+		return StableCoin.getHoldsIdFor(new GetHoldsIdForRequest(req));
+	}
+
+	public static async getHoldCountFor(req: GetHoldCountForRequest) {
+		return StableCoin.getHoldCountFor(new GetHoldCountForRequest(req));
+	}
+
+	public static async getHoldFor(req: GetHoldForRequest) {
+		return StableCoin.getHoldFor(new GetHoldForRequest(req));
+	}
+
+	public static async createHold(req: CreateHoldRequest) {
+		return StableCoin.createHold(new CreateHoldRequest(req));
+	}
+
+	public static async executeHold(req: ExecuteHoldRequest) {
+		return StableCoin.executeHold(new ExecuteHoldRequest(req));
+	}
+
+	public static async releaseHold(req: ReleaseHoldRequest) {
+		return StableCoin.releaseHold(new ReleaseHoldRequest(req));
+	}
+
+	public static async reclaimHold(req: ReclaimHoldRequest) {
+		return StableCoin.reclaimHold(new ReclaimHoldRequest(req));
 	}
 }
 

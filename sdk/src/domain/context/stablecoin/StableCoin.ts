@@ -71,9 +71,7 @@ export interface StableCoinProps {
 	maxSupply?: BigDecimal;
 	memo?: string;
 	proxyAddress?: HederaId;
-	proxyAdminAddress?: HederaId;
 	evmProxyAddress?: EvmAddress;
-	evmProxyAdminAddress?: EvmAddress;
 	freezeKey?: PublicKey | ContractId;
 	freezeDefault?: boolean;
 	kycKey?: PublicKey | ContractId;
@@ -100,9 +98,9 @@ export interface StableCoinProps {
 	kycRoleAccount?: HederaId;
 	cashInRoleAccount?: HederaId;
 	feeRoleAccount?: HederaId;
+	holdCreatorRoleAccount?: HederaId;
 	cashInRoleAllowance?: BigDecimal;
 	metadata?: string;
-	proxyAdminOwner?: string;
 }
 
 export class StableCoin extends BaseEntity implements StableCoinProps {
@@ -116,9 +114,7 @@ export class StableCoin extends BaseEntity implements StableCoinProps {
 	maxSupply?: BigDecimal;
 	memo?: string;
 	proxyAddress?: HederaId;
-	proxyAdminAddress?: HederaId;
 	evmProxyAddress?: EvmAddress;
-	evmProxyAdminAddress?: EvmAddress;
 	freezeKey?: PublicKey | ContractId;
 	freezeDefault?: boolean;
 	kycKey?: PublicKey | ContractId;
@@ -146,6 +142,7 @@ export class StableCoin extends BaseEntity implements StableCoinProps {
 	kycRoleAccount?: HederaId;
 	cashInRoleAccount?: HederaId;
 	feeRoleAccount?: HederaId;
+	holdCreatorRoleAccount?: HederaId;
 	cashInRoleAllowance?: BigDecimal;
 	metadata?: string;
 
@@ -176,9 +173,7 @@ export class StableCoin extends BaseEntity implements StableCoinProps {
 			deleted,
 			paused,
 			evmProxyAddress,
-			evmProxyAdminAddress,
 			proxyAddress,
-			proxyAdminAddress,
 			customFees,
 			burnRoleAccount,
 			wipeRoleAccount,
@@ -189,6 +184,7 @@ export class StableCoin extends BaseEntity implements StableCoinProps {
 			kycRoleAccount,
 			cashInRoleAccount,
 			feeRoleAccount,
+			holdCreatorRoleAccount,
 			cashInRoleAllowance,
 			metadata,
 		} = params;
@@ -222,9 +218,7 @@ export class StableCoin extends BaseEntity implements StableCoinProps {
 		this.paused = paused ?? false;
 		this.deleted = deleted ?? false;
 		this.evmProxyAddress = evmProxyAddress;
-		this.evmProxyAdminAddress = evmProxyAdminAddress;
 		this.proxyAddress = proxyAddress;
-		this.proxyAdminAddress = proxyAdminAddress;
 		this.customFees = customFees;
 		this.burnRoleAccount = burnRoleAccount ?? HederaId.from('0.0.0');
 		this.wipeRoleAccount = wipeRoleAccount ?? HederaId.from('0.0.0');
@@ -235,6 +229,8 @@ export class StableCoin extends BaseEntity implements StableCoinProps {
 		this.kycRoleAccount = kycRoleAccount ?? HederaId.from('0.0.0');
 		this.cashInRoleAccount = cashInRoleAccount ?? HederaId.from('0.0.0');
 		this.feeRoleAccount = feeRoleAccount ?? HederaId.from('0.0.0');
+		this.holdCreatorRoleAccount =
+			holdCreatorRoleAccount ?? HederaId.from('0.0.0');
 		this.cashInRoleAllowance = cashInRoleAllowance;
 		this.metadata = metadata;
 	}

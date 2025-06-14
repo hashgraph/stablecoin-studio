@@ -61,12 +61,6 @@ import { SetNetworkCommandHandler } from '../app/usecase/command/network/setNetw
 import { addFixedFeesCommandHandler } from '../app/usecase/command/stablecoin/fees/addCustomFees/addFixedFeesCommandHandler.js';
 import { addFractionalFeesCommandHandler } from '../app/usecase/command/stablecoin/fees/addCustomFees/addFractionalFeesCommandHandler.js';
 import { UpdateCustomFeesCommandHandler } from '../app/usecase/command/stablecoin/fees/updateCustomFees/UpdateCustomFeesCommandHandler.js';
-import { UpgradeImplementationCommandHandler } from '../app/usecase/command/proxy/upgrade/UpgradeImplementationCommandHandler.js';
-import { UpgradeFactoryImplementationCommandHandler } from '../app/usecase/command/factoryProxy/upgrade/UpgradeFactoryImplementationCommandHandler.js';
-import { ChangeOwnerCommandHandler } from '../app/usecase/command/proxy/changeOwner/ChangeOwnerCommandHandler.js';
-import { AcceptOwnerCommandHandler } from '../app/usecase/command/proxy/acceptOwner/AcceptOwnerCommandHandler.js';
-import { ChangeFactoryOwnerCommandHandler } from '../app/usecase/command/factoryProxy/changeOwner/ChangeFactoryOwnerCommandHandler.js';
-import { AcceptFactoryOwnerCommandHandler } from '../app/usecase/command/factoryProxy/acceptOwner/AcceptFactoryOwnerCommandHandler.js';
 
 import { WalletEvents } from '../app/service/event/WalletEvent.js';
 import { CommandHandlerType } from './command/CommandBus.js';
@@ -95,10 +89,7 @@ import { GrantKycCommandHandler } from '../app/usecase/command/stablecoin/operat
 import { GetAccountTokenRelationshipQueryHandler } from '../app/usecase/query/account/tokenRelationship/GetAccountTokenRelationshipQueryHandler.js';
 import { SDK } from '../port/in/Common.js';
 import { SetConfigurationCommandHandler } from '../app/usecase/command/network/setConfiguration/SetConfigurationCommandHandler.js';
-import { GetTokenManagerListQueryHandler } from '../app/usecase/query/factory/getTokenManagerList/GetTokenManagerListQueryHandler.js';
 import { GetAccountsWithRolesQueryHandler } from '../app/usecase/query/stablecoin/roles/getAccountsWithRole/GetAccountsWithRolesQueryHandler.js';
-import { GetProxyConfigQueryHandler } from '../app/usecase/query/proxy/GetProxyConfigQueryHandler.js';
-import { GetFactoryProxyConfigQueryHandler } from '../app/usecase/query/factoryProxy/GetFactoryProxyConfigQueryHandler.js';
 import { FireblocksTransactionAdapter } from '../port/out/hs/hts/custodial/FireblocksTransactionAdapter.js';
 import { DFNSTransactionAdapter } from '../port/out/hs/hts/custodial/DFNSTransactionAdapter.js';
 import { MultiSigTransactionAdapter } from '../port/out/hs/multiSig/MultiSigTransactionAdapter.js';
@@ -109,6 +100,20 @@ import { SetBackendCommandHandler } from '../app/usecase/command/network/setBack
 import { GetTransactionsQueryHandler } from '../app/usecase/query/stablecoin/backend/getTransactions/GetTransactionsQueryHandler.js';
 import { AWSKMSTransactionAdapter } from '../port/out/hs/hts/custodial/AWSKMSTransactionAdapter.js';
 import { HederaWalletConnectTransactionAdapter } from '../port/out/hs/walletconnect/HederaWalletConnectTransactionAdapter.js';
+import { GetConfigInfoQueryHandler } from '../app/usecase/query/stablecoin/management/getConfigInfo/GetConfigInfoQueryHandler.js';
+import { UpdateConfigVersionCommandHandler } from '../app/usecase/command/stablecoin/management/updateConfigVersion/updateConfigVersionCommandHandler.js';
+import { UpdateConfigCommandHandler } from '../app/usecase/command/stablecoin/management/updateConfig/updateConfigCommandHandler.js';
+import { UpdateResolverCommandHandler } from '../app/usecase/command/stablecoin/management/updateResolver/updateResolverCommandHandler.js';
+import { CreateHoldCommandHandler } from '../app/usecase/command/stablecoin/operations/hold/createHold/CreateHoldCommandHandler.js';
+import { CreateHoldByControllerCommandHandler } from '../app/usecase/command/stablecoin/operations/hold/createHoldByController/CreateHoldByControllerCommandHandler.js';
+import { ExecuteHoldCommandHandler } from '../app/usecase/command/stablecoin/operations/hold/executeHold/ExecuteHoldCommandHander.js';
+import { ReleaseHoldCommandHandler } from '../app/usecase/command/stablecoin/operations/hold/releaseHold/ReleaseHoldCommandHandler.js';
+import { ReclaimHoldCommandHandler } from '../app/usecase/command/stablecoin/operations/hold/reclaimHold/ReclaimHoldCommandHandler.js';
+import { GetHoldsIdForQueryHandler } from '../app/usecase/query/stablecoin/hold/getHoldsIdFor/GetHoldsIdForQueryHandler.js';
+import { GetHoldForQueryHandler } from '../app/usecase/query/stablecoin/hold/getHoldFor/GetHoldForQueryHandler.js';
+import { GetHeldAmountForQueryHandler } from '../app/usecase/query/stablecoin/hold/getHeldAmountFor/GetHeldAmountForQueryHandler.js';
+import { GetHoldCountForQueryHandler } from '../app/usecase/query/stablecoin/hold/getHoldCountFor/GetHoldCountForQueryHandler.js';
+import { GetBurnableAmountQueryHandler } from '../app/usecase/query/stablecoin/burn/getBurnableAmount/GetBurnableAmountQueryHandler.js';
 
 export const TOKENS = {
 	COMMAND_HANDLER: Symbol('CommandHandler'),
@@ -193,6 +198,30 @@ const COMMAND_HANDLERS = [
 		token: TOKENS.COMMAND_HANDLER,
 		useClass: AssociateCommandHandler,
 	},
+	{
+		token: TOKENS.COMMAND_HANDLER,
+		useClass: CreateHoldCommandHandler,
+	},
+	{
+		token: TOKENS.COMMAND_HANDLER,
+		useClass: CreateHoldCommandHandler,
+	},
+	{
+		token: TOKENS.COMMAND_HANDLER,
+		useClass: CreateHoldByControllerCommandHandler,
+	},
+	{
+		token: TOKENS.COMMAND_HANDLER,
+		useClass: ExecuteHoldCommandHandler,
+	},
+	{
+		token: TOKENS.COMMAND_HANDLER,
+		useClass: ReleaseHoldCommandHandler,
+	},
+	{
+		token: TOKENS.COMMAND_HANDLER,
+		useClass: ReclaimHoldCommandHandler,
+	},
 	// Stablecoin Role Operations
 	{
 		token: TOKENS.COMMAND_HANDLER,
@@ -273,30 +302,6 @@ const COMMAND_HANDLERS = [
 	},
 	{
 		token: TOKENS.COMMAND_HANDLER,
-		useClass: UpgradeImplementationCommandHandler,
-	},
-	{
-		token: TOKENS.COMMAND_HANDLER,
-		useClass: UpgradeFactoryImplementationCommandHandler,
-	},
-	{
-		token: TOKENS.COMMAND_HANDLER,
-		useClass: ChangeOwnerCommandHandler,
-	},
-	{
-		token: TOKENS.COMMAND_HANDLER,
-		useClass: AcceptOwnerCommandHandler,
-	},
-	{
-		token: TOKENS.COMMAND_HANDLER,
-		useClass: ChangeFactoryOwnerCommandHandler,
-	},
-	{
-		token: TOKENS.COMMAND_HANDLER,
-		useClass: AcceptFactoryOwnerCommandHandler,
-	},
-	{
-		token: TOKENS.COMMAND_HANDLER,
 		useClass: SignCommandHandler,
 	},
 	{
@@ -306,6 +311,18 @@ const COMMAND_HANDLERS = [
 	{
 		token: TOKENS.COMMAND_HANDLER,
 		useClass: RemoveCommandHandler,
+	},
+	{
+		token: TOKENS.COMMAND_HANDLER,
+		useClass: UpdateConfigVersionCommandHandler,
+	},
+	{
+		token: TOKENS.COMMAND_HANDLER,
+		useClass: UpdateConfigCommandHandler,
+	},
+	{
+		token: TOKENS.COMMAND_HANDLER,
+		useClass: UpdateResolverCommandHandler,
 	},
 ];
 
@@ -368,19 +385,31 @@ const QUERY_HANDLERS = [
 	},
 	{
 		token: TOKENS.QUERY_HANDLER,
-		useClass: GetTokenManagerListQueryHandler,
-	},
-	{
-		token: TOKENS.QUERY_HANDLER,
-		useClass: GetProxyConfigQueryHandler,
-	},
-	{
-		token: TOKENS.QUERY_HANDLER,
-		useClass: GetFactoryProxyConfigQueryHandler,
-	},
-	{
-		token: TOKENS.QUERY_HANDLER,
 		useClass: GetTransactionsQueryHandler,
+	},
+	{
+		token: TOKENS.QUERY_HANDLER,
+		useClass: GetConfigInfoQueryHandler,
+	},
+	{
+		token: TOKENS.QUERY_HANDLER,
+		useClass: GetHoldsIdForQueryHandler,
+	},
+	{
+		token: TOKENS.QUERY_HANDLER,
+		useClass: GetHoldForQueryHandler,
+	},
+	{
+		token: TOKENS.QUERY_HANDLER,
+		useClass: GetHeldAmountForQueryHandler,
+	},
+	{
+		token: TOKENS.QUERY_HANDLER,
+		useClass: GetHoldCountForQueryHandler,
+	},
+	{
+		token: TOKENS.QUERY_HANDLER,
+		useClass: GetBurnableAmountQueryHandler,
 	},
 ];
 

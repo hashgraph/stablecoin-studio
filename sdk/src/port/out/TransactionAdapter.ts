@@ -43,6 +43,7 @@ import { Transaction } from '@hashgraph/sdk';
 import AWSKMSSettings from '../../domain/context/custodialwalletsettings/AWSKMSSettings';
 import HWCSettings from '../../domain/context/hwalletconnectsettings/HWCSettings.js';
 import { BigNumber } from 'ethers';
+import { EVM_ZERO_ADDRESS } from '../../core/Constants.js';
 
 export interface InitializationData {
 	account?: Account;
@@ -54,17 +55,20 @@ export interface NetworkData {
 	name?: Environment;
 	recognized?: boolean;
 	factoryId?: string;
+	resolverId?: string;
 }
 
 interface ITransactionAdapter {
 	create(
 		coin: StableCoin,
 		factory: ContractId,
-		hederaTokenManager: ContractId,
 		createReserve: boolean,
+		resolver: ContractId,
+		configId: string,
+		configVersion: number,
+		proxyOwnerAccount: HederaId,
 		reserveAddress?: ContractId,
 		reserveInitialAmount?: BigDecimal,
-		proxyAdminOwnerAccount?: ContractId,
 	): Promise<TransactionResponse>;
 	init(): Promise<Environment>;
 	register(account?: Account): Promise<InitializationData>;
@@ -163,16 +167,21 @@ interface ITransactionAdapter {
 		wipeKey: PublicKey | undefined,
 		metadata: string | undefined,
 	): Promise<TransactionResponse>;
-	upgradeImplementation(
-		proxy: HederaId,
-		proxyAdminId: HederaId,
-		implementationId: ContractId,
+	updateConfigVersion(
+		coin: StableCoinCapabilities,
+		configVersion: number,
 	): Promise<TransactionResponse>;
-	changeOwner(
-		proxyAdminId: HederaId,
-		targetId: HederaId,
+	updateResolver(
+		coin: StableCoinCapabilities,
+		resolver: ContractId,
+		configVersion: number,
+		configId: string,
 	): Promise<TransactionResponse>;
-	acceptOwner(proxyAdminId: HederaId): Promise<TransactionResponse>;
+	updateConfig(
+		coin: StableCoinCapabilities,
+		configId: string,
+		configVersion: number,
+	): Promise<TransactionResponse>;
 	getMirrorNodeAdapter(): MirrorNodeAdapter;
 	sign(message: string | Transaction): Promise<string>;
 	submit(t: Transaction): Promise<TransactionResponse>;
@@ -270,8 +279,47 @@ interface RoleTransactionAdapter {
 	): Promise<TransactionResponse<string[], Error>>;
 }
 
+interface IHoldTransactionAdapter {
+	createHold(
+		coin: StableCoinCapabilities,
+		amount: BigDecimal,
+		escrow: HederaId,
+		expirationDate: BigDecimal,
+		targetId?: HederaId,
+	): Promise<TransactionResponse>;
+	createHoldByController(
+		coin: StableCoinCapabilities,
+		amount: BigDecimal,
+		escrow: HederaId,
+		expirationDate: BigDecimal,
+		sourceId: HederaId,
+		targetId?: HederaId,
+	): Promise<TransactionResponse>;
+	executeHold(
+		coin: StableCoinCapabilities,
+		amount: BigDecimal,
+		sourceId: HederaId,
+		holdId: number,
+		targetId?: HederaId,
+	): Promise<TransactionResponse>;
+	releaseHold(
+		coin: StableCoinCapabilities,
+		amount: BigDecimal,
+		sourceId: HederaId,
+		holdId: number,
+	): Promise<TransactionResponse>;
+	reclaimHold(
+		coin: StableCoinCapabilities,
+		sourceId: HederaId,
+		holdId: number,
+	): Promise<TransactionResponse>;
+}
+
 export default abstract class TransactionAdapter
-	implements ITransactionAdapter, RoleTransactionAdapter
+	implements
+		ITransactionAdapter,
+		RoleTransactionAdapter,
+		IHoldTransactionAdapter
 {
 	transfers(
 		coin: StableCoinCapabilities,
@@ -287,11 +335,15 @@ export default abstract class TransactionAdapter
 	create(
 		coin: StableCoin,
 		factory: ContractId,
-		hederaTokenManager: ContractId,
 		createReserve: boolean,
+		resolver: ContractId,
+		configId: string,
+		configVersion: number,
+		proxyOwnerAccount: HederaId,
 		reserveAddress?: ContractId,
 		reserveInitialAmount?: BigDecimal,
-		proxyAdminOwnerAccount?: ContractId,
+		reserveConfigId?: string,
+		reserveConfigVersion?: number,
 	): Promise<TransactionResponse<any, Error>> {
 		throw new Error('Method not implemented.');
 	}
@@ -555,33 +607,87 @@ export default abstract class TransactionAdapter
 	): Promise<TransactionResponse<string[], Error>> {
 		throw new Error('Method not implemented.');
 	}
-
+	updateConfigVersion(
+		coin: StableCoinCapabilities,
+		configVersion: number,
+	): Promise<TransactionResponse> {
+		throw new Error('Method not implemented.');
+	}
+	updateResolver(
+		coin: StableCoinCapabilities,
+		resolver: ContractId,
+		configVersion: number,
+		configId: string,
+	): Promise<TransactionResponse> {
+		throw new Error('Method not implemented.');
+	}
+	updateConfig(
+		coin: StableCoinCapabilities,
+		configId: string,
+		configVersion: number,
+	): Promise<TransactionResponse> {
+		throw new Error('Method not implemented.');
+	}
+	createHold(
+		coin: StableCoinCapabilities,
+		amount: BigDecimal,
+		escrow: HederaId,
+		expirationDate: BigDecimal,
+		targetId?: HederaId,
+	): Promise<TransactionResponse> {
+		throw new Error('Method not implemented.');
+	}
+	createHoldByController(
+		coin: StableCoinCapabilities,
+		amount: BigDecimal,
+		escrow: HederaId,
+		expirationDate: BigDecimal,
+		sourceId: HederaId,
+		targetId?: HederaId,
+	): Promise<TransactionResponse> {
+		throw new Error('Method not implemented.');
+	}
+	executeHold(
+		coin: StableCoinCapabilities,
+		amount: BigDecimal,
+		sourceId: HederaId,
+		holdId: number,
+		targetId?: HederaId,
+	): Promise<TransactionResponse> {
+		throw new Error('Method not implemented.');
+	}
+	releaseHold(
+		coin: StableCoinCapabilities,
+		amount: BigDecimal,
+		sourceId: HederaId,
+		holdId: number,
+	): Promise<TransactionResponse> {
+		throw new Error('Method not implemented.');
+	}
+	reclaimHold(
+		coin: StableCoinCapabilities,
+		sourceId: HederaId,
+		holdId: number,
+	): Promise<TransactionResponse> {
+		throw new Error('Method not implemented.');
+	}
 	getMirrorNodeAdapter(): MirrorNodeAdapter {
 		throw new Error('Method not implemented.');
 	}
 
-	upgradeImplementation(
-		proxy: HederaId,
-		proxyAdminId: HederaId,
-		implementationId: ContractId,
-	): Promise<TransactionResponse<any, Error>> {
-		throw new Error('Method not implemented.');
-	}
-	changeOwner(
-		proxyAdminId: HederaId,
-		targetId: HederaId,
-	): Promise<TransactionResponse<any, Error>> {
-		throw new Error('Method not implemented.');
-	}
-
-	acceptOwner(
-		proxyAdminId: HederaId,
-	): Promise<TransactionResponse<any, Error>> {
-		throw new Error('Method not implemented.');
-	}
-
 	async getEVMAddress(parameter: any): Promise<any> {
+		if (parameter instanceof ContractId) {
+			const test = (
+				await this.getMirrorNodeAdapter().getContractInfo(
+					parameter.toString(),
+				)
+			).evmAddress.toString();
+			return test;
+		}
 		if (parameter instanceof HederaId) {
+			if (parameter.value == HederaId.NULL.value) {
+				return EVM_ZERO_ADDRESS;
+			}
 			return (
 				await this.getMirrorNodeAdapter().accountToEvmAddress(parameter)
 			).toString();

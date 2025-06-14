@@ -43,6 +43,9 @@ import { StableCoinRole } from '../../../../domain/context/stablecoin/StableCoin
 import { InvalidRole } from '../../../../domain/context/stablecoin/error/InvalidRole.js';
 import { InvalidDate } from '../error/InvalidDate';
 import { ISO_8601_REGEX } from '../../../../domain/context/shared/Date.js';
+import { InvalidBytes32 } from '../error/InvalidBytes32.js';
+import { EVM_ZERO_ADDRESS } from '../../../../core/Constants.js';
+import { InvalidEvmAddress } from '../../../../domain/context/contract/error/InvalidEvmAddress.js';
 
 export default class Validation {
 	public static checkPublicKey = () => {
@@ -341,6 +344,30 @@ export default class Validation {
 
 			if (valueDecimals > decimals) {
 				err.push(new InvalidDecimalRange(val, 0, decimals));
+			}
+			return err;
+		};
+	};
+
+	public static checkBytes32Format = () => {
+		return (val: any): BaseError[] => {
+			const bytes32RegEx = /^0x[a-fA-F0-9]{64}$/;
+			const err: BaseError[] = [];
+			if (!bytes32RegEx.exec(val)) {
+				err.push(new InvalidBytes32(val));
+			}
+			return err;
+		};
+	};
+
+	public static checkEvmAddressFormat = (zeroIsValid = false) => {
+		return (val: any): BaseError[] => {
+			const evmAddressRegEx = /^0x[a-fA-F0-9]{40}$/;
+			const err: BaseError[] = [];
+			if (!evmAddressRegEx.exec(val)) {
+				err.push(new InvalidEvmAddress(val));
+			} else if (!zeroIsValid && val === EVM_ZERO_ADDRESS) {
+				err.push(new AccountIdNotValid(val));
 			}
 			return err;
 		};

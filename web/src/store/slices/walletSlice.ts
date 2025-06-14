@@ -11,7 +11,7 @@ import type {
 	StableCoinCapabilities,
 	StableCoinListViewModel,
 	StableCoinViewModel,
-	ProxyConfigurationViewModel,
+	ConfigInfoViewModel,
 } from '@hashgraph/stablecoin-npm-sdk';
 import type { IMirrorRPCNode } from '../../interfaces/IMirrorRPCNode';
 
@@ -29,8 +29,7 @@ export interface InitialStateProps {
 	loading: boolean;
 	accountInfo: AccountViewModel;
 	selectedStableCoin?: StableCoinViewModel;
-	selectedStableCoinProxyConfig?: ProxyConfigurationViewModel;
-	selectedNetworkFactoryProxyConfig?: ProxyConfigurationViewModel;
+	selectedStableCoinConfigInfo?: ConfigInfoViewModel;
 	isProxyOwner?: boolean;
 	isPendingOwner?: boolean;
 	isAcceptOwner?: boolean;
@@ -51,6 +50,7 @@ export interface InitialStateProps {
 	networkRecognized?: boolean;
 	accountRecognized?: boolean;
 	factoryId?: string;
+	resolverId?: string;
 	mirrorList?: IMirrorRPCNode[];
 	selectedMirrors?: IMirrorRPCNode[];
 	rpcList?: IMirrorRPCNode[];
@@ -64,8 +64,7 @@ export const initialState: InitialStateProps = {
 	loading: false,
 	accountInfo: {},
 	selectedStableCoin: undefined,
-	selectedStableCoinProxyConfig: undefined,
-	selectedNetworkFactoryProxyConfig: undefined,
+	selectedStableCoinConfigInfo: undefined,
 	selectingStableCoin: false,
 	stableCoinList: undefined,
 	externalTokenList: [],
@@ -86,6 +85,7 @@ export const initialState: InitialStateProps = {
 	isFactoryAcceptOwner: false,
 	accountRecognized: true,
 	factoryId: undefined,
+	resolverId: undefined,
 	mirrorList: [],
 	selectedMirrors: [],
 	rpcList: [],
@@ -161,11 +161,8 @@ export const walletSlice = createSlice({
 		setSelectedStableCoin: (state, action) => {
 			state.selectedStableCoin = action.payload;
 		},
-		setSelectedStableCoinProxyConfig: (state, action) => {
-			state.selectedStableCoinProxyConfig = action.payload;
-		},
-		setSelectedNetworkFactoryProxyConfig: (state, action) => {
-			state.selectedNetworkFactoryProxyConfig = action.payload;
+		setSelectedStableCoinConfigInfo: (state, action) => {
+			state.selectedStableCoinConfigInfo = action.payload;
 		},
 		setSelectingStableCoin: (state, action) => {
 			state.selectingStableCoin = action.payload;
@@ -228,6 +225,9 @@ export const walletSlice = createSlice({
 		setFactoryId: (state, action) => {
 			state.factoryId = action.payload;
 		},
+		setResolverId: (state, action) => {
+			state.resolverId = action.payload;
+		},
 		setMirrorList: (state, action) => {
 			state.mirrorList = action.payload;
 			localStorage.setItem(MIRROR_LIST_LS, JSON.stringify(action.payload));
@@ -256,6 +256,7 @@ export const walletSlice = createSlice({
 			state.networkRecognized = initialState.networkRecognized;
 			state.accountRecognized = initialState.accountRecognized;
 			state.factoryId = initialState.factoryId;
+			state.resolverId = initialState.resolverId;
 			state.selectingStableCoin = initialState.selectingStableCoin;
 		},
 		setRoles: (state, action) => {
@@ -265,13 +266,8 @@ export const walletSlice = createSlice({
 			state.selectedStableCoin = initialState.selectedStableCoin;
 			state.isProxyOwner = initialState.isProxyOwner;
 		},
-		clearSelectedStableCoinProxyConfig: (state) => {
-			state.selectedStableCoinProxyConfig = initialState.selectedStableCoinProxyConfig;
-			state.isProxyOwner = initialState.isProxyOwner;
-		},
-		clearSelectedNetworkFactoryProxyConfig: (state) => {
-			state.selectedNetworkFactoryProxyConfig = initialState.selectedNetworkFactoryProxyConfig;
-			state.isProxyOwner = initialState.isProxyOwner;
+		clearSelectedStableCoinConfigInfo: (state) => {
+			state.selectedStableCoinConfigInfo = initialState.selectedStableCoinConfigInfo;
 		},
 		reset: () => initialState,
 	},
@@ -281,14 +277,14 @@ export const walletSlice = createSlice({
 				state.stableCoinList = action.payload;
 				if (state.stableCoinList!.coins.length === 0) {
 					state.selectedStableCoin = undefined;
-					state.selectedStableCoinProxyConfig = undefined;
+					state.selectedStableCoinConfigInfo = undefined;
 				}
 			}
 		});
 		builder.addCase(getStableCoinList.rejected, (state) => {
 			state.stableCoinList = { coins: [] };
 			state.selectedStableCoin = undefined;
-			state.selectedStableCoinProxyConfig = undefined;
+			state.selectedStableCoinConfigInfo = undefined;
 		});
 		builder.addCase(getExternalTokenList.fulfilled, (state, action) => {
 			if (action.payload) {
@@ -302,6 +298,7 @@ export const walletSlice = createSlice({
 });
 
 export const SELECTED_FACTORY_ID = (state: RootState) => state.wallet.factoryId;
+export const SELECTED_RESOLVER_ID = (state: RootState) => state.wallet.resolverId;
 export const SELECTED_NETWORK = (state: RootState) => state.wallet.network;
 export const SELECTED_NETWORK_RECOGNIZED = (state: RootState) => state.wallet.networkRecognized;
 export const SELECTED_WALLET = (state: RootState) => state.wallet;
@@ -310,10 +307,8 @@ export const AVAILABLE_WALLETS = (state: RootState) => state.wallet.foundWallets
 export const EXTERNAL_TOKEN_LIST = (state: RootState) => state.wallet.externalTokenList;
 export const SELECTED_WALLET_DATA = (state: RootState) => state.wallet.data;
 export const SELECTED_WALLET_COIN = (state: RootState) => state.wallet.selectedStableCoin;
-export const SELECTED_WALLET_COIN_PROXY_CONFIG = (state: RootState) =>
-	state.wallet.selectedStableCoinProxyConfig;
-export const SELECTED_NETWORK_FACTORY_PROXY_CONFIG = (state: RootState) =>
-	state.wallet.selectedNetworkFactoryProxyConfig;
+export const SELECTED_WALLET_COIN_CONFIG_INFO = (state: RootState) =>
+	state.wallet.selectedStableCoinConfigInfo;
 export const IS_PROXY_OWNER = (state: RootState) => state.wallet.isProxyOwner;
 export const IS_PENDING_OWNER = (state: RootState) => state.wallet.isPendingOwner;
 export const IS_ACCEPT_OWNER = (state: RootState) => state.wallet.isAcceptOwner;

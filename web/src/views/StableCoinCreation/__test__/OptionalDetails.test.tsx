@@ -29,6 +29,8 @@ const request = new CreateRequest({
 	symbol: 'symbol',
 	decimals: 6,
 	createReserve: false,
+	configId: '',
+	configVersion: 0,
 });
 
 describe(`<${OptionalDetails.name} />`, () => {

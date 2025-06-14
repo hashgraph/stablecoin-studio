@@ -30,26 +30,36 @@ import NetworkService from '../../../app/service/NetworkService.js';
 import LogService from '../../../app/service/LogService.js';
 import {
 	AggregatorV3Interface__factory,
-	HederaTokenManager__factory,
-	StableCoinFactory__factory,
-	StableCoinProxyAdmin__factory,
-	ITransparentUpgradeableProxy__factory,
-	HederaReserve__factory,
+	HederaTokenManagerFacet__factory,
+	StableCoinFactoryFacet__factory,
+	HederaReserveFacet__factory,
+	ReserveFacet__factory,
+	SupplierAdminFacet__factory,
+	RolesFacet__factory,
+	DiamondFacet__factory,
+	HoldManagementFacet__factory,
+	BurnableFacet__factory,
 } from '@hashgraph/stablecoin-npm-contracts';
 import { StableCoinRole } from '../../../domain/context/stablecoin/StableCoinRole.js';
 import ContractId from '../../../domain/context/contract/ContractId.js';
 import EvmAddress from '../../../domain/context/contract/EvmAddress.js';
 import { MirrorNodeAdapter } from '../mirror/MirrorNodeAdapter.js';
 import { ContractId as HContractId } from '@hashgraph/sdk';
+import {
+	HoldDetails,
+	HoldIdentifier,
+} from '../../../domain/context/hold/Hold.js';
+import BigDecimal from '../../../domain/context/shared/BigDecimal';
 
 const LOCAL_JSON_RPC_RELAY_URL = 'http://127.0.0.1:7546/api';
 
-const HederaTokenManager = HederaTokenManager__factory;
+const HederaTokenManagerFacet = HederaTokenManagerFacet__factory;
 const Reserve = AggregatorV3Interface__factory;
-const Factory = StableCoinFactory__factory;
-const StableCoinProxyAdmin = StableCoinProxyAdmin__factory;
-const ITransparentUpgradeableProxy = ITransparentUpgradeableProxy__factory;
-const HederaReserve = HederaReserve__factory;
+const FactoryFacet = StableCoinFactoryFacet__factory;
+const HederaReserveFacet = HederaReserveFacet__factory;
+const ReserveFacet = ReserveFacet__factory;
+const SupplierAdminFacet = SupplierAdminFacet__factory;
+const RolesFacet = RolesFacet__factory;
 
 type StaticConnect = { connect: (...args: any[]) => any };
 
@@ -97,7 +107,7 @@ export class RPCQueryAdapter {
 			`Requesting balanceOf address: ${address.toString()}, target: ${target.toString()}`,
 		);
 		return await this.connect(
-			HederaTokenManager,
+			HederaTokenManagerFacet,
 			address.toString(),
 		).balanceOf(target.toString());
 	}
@@ -107,7 +117,7 @@ export class RPCQueryAdapter {
 			`Requesting getReserveAddress address: ${address.toString()}`,
 		);
 		const val = await this.connect(
-			HederaTokenManager,
+			ReserveFacet,
 			address.toString(),
 		).getReserveAddress();
 
@@ -128,7 +138,7 @@ export class RPCQueryAdapter {
 	async getReserveAmount(address: EvmAddress): Promise<BigNumber> {
 		LogService.logTrace(`Requesting getReserveAmount address: ${address}`);
 		return await this.connect(
-			HederaTokenManager,
+			ReserveFacet,
 			address.toString(),
 		).getReserveAmount();
 	}
@@ -136,7 +146,7 @@ export class RPCQueryAdapter {
 	async getReserveLatestRoundData(address: EvmAddress): Promise<BigNumber[]> {
 		LogService.logTrace(`Requesting getReserveAmount address: ${address}`);
 		return await this.connect(
-			HederaReserve,
+			HederaReserveFacet,
 			address.toString(),
 		).latestRoundData();
 	}
@@ -146,7 +156,7 @@ export class RPCQueryAdapter {
 			`Requesting isLimited address: ${address.toString()}, target: ${target.toString()}`,
 		);
 		return await this.connect(
-			HederaTokenManager,
+			SupplierAdminFacet,
 			address.toString(),
 		).isUnlimitedSupplierAllowance(target.toString());
 	}
@@ -159,7 +169,7 @@ export class RPCQueryAdapter {
 			`Requesting isUnlimited address: ${address.toString()}, target: ${target.toString()}`,
 		);
 		return await this.connect(
-			HederaTokenManager,
+			SupplierAdminFacet,
 			address.toString(),
 		).isUnlimitedSupplierAllowance(target.toString());
 	}
@@ -168,51 +178,9 @@ export class RPCQueryAdapter {
 		LogService.logTrace(
 			`Requesting getRoles address: ${address.toString()}, target: ${target.toString()}`,
 		);
-		return await this.connect(
-			HederaTokenManager,
-			address.toString(),
-		).getRoles(target.toString());
-	}
-
-	async getProxyImplementation(
-		proxyAdmin: EvmAddress,
-		proxy: EvmAddress,
-	): Promise<string> {
-		LogService.logTrace(
-			`Requesting implementation for proxy Admin: ${proxyAdmin.toString()} and proxy: ${proxy.toString()}`,
+		return await this.connect(RolesFacet, address.toString()).getRoles(
+			target.toString(),
 		);
-		return await this.connect(
-			StableCoinProxyAdmin,
-			proxyAdmin.toString(),
-		).getProxyImplementation(proxy.toString());
-	}
-
-	async getProxyAdmin(proxy: EvmAddress): Promise<string> {
-		LogService.logTrace(`Requesting admin for proxy: ${proxy.toString()}`);
-		return await this.connect(
-			ITransparentUpgradeableProxy,
-			proxy.toString(),
-		).implementation();
-	}
-
-	async getProxyOwner(proxyAdmin: EvmAddress): Promise<string> {
-		LogService.logTrace(
-			`Requesting owner for proxy Admin: ${proxyAdmin.toString()}`,
-		);
-		return await this.connect(
-			StableCoinProxyAdmin,
-			proxyAdmin.toString(),
-		).owner();
-	}
-
-	async getProxyPendingOwner(proxyAdmin: EvmAddress): Promise<string> {
-		LogService.logTrace(
-			`Requesting pending owner for proxy Admin: ${proxyAdmin.toString()}`,
-		);
-		return await this.connect(
-			StableCoinProxyAdmin,
-			proxyAdmin.toString(),
-		).pendingOwner();
 	}
 
 	async getAccountsWithRole(
@@ -223,7 +191,7 @@ export class RPCQueryAdapter {
 			`Requesting getAccountsWithRole address: ${address.toString()}, target: ${role}`,
 		);
 		return await this.connect(
-			HederaTokenManager,
+			RolesFacet,
 			address.toString(),
 		).getAccountsWithRole(role);
 	}
@@ -236,10 +204,10 @@ export class RPCQueryAdapter {
 		LogService.logTrace(
 			`Requesting balanceOf address: ${address.toString()}, target: ${target.toString()}`,
 		);
-		return await this.connect(
-			HederaTokenManager,
-			address.toString(),
-		).hasRole(role, target.toString());
+		return await this.connect(RolesFacet, address.toString()).hasRole(
+			role,
+			target.toString(),
+		);
 	}
 
 	async supplierAllowance(
@@ -250,7 +218,7 @@ export class RPCQueryAdapter {
 			`Requesting balanceOf address: ${address.toString()}, target: ${target.toString()}`,
 		);
 		return await this.connect(
-			HederaTokenManager,
+			SupplierAdminFacet,
 			address.toString(),
 		).getSupplierAllowance(target.toString());
 	}
@@ -262,21 +230,108 @@ export class RPCQueryAdapter {
 		return await this.connect(Reserve, address.toString()).decimals();
 	}
 
-	async getTokenManagerList(factoryAddress: EvmAddress): Promise<string[]> {
-		LogService.logTrace(
-			`Requesting getTokenManagerList factoryAddress: ${factoryAddress.toString()}`,
-		);
-		return await this.connect(
-			Factory,
-			factoryAddress.toString(),
-		).getHederaTokenManagerAddress();
-	}
-
 	async getMetadata(address: EvmAddress): Promise<string> {
 		LogService.logTrace(`Requesting metadata: ${address.toString()}`);
 		return await this.connect(
-			HederaTokenManager,
+			HederaTokenManagerFacet,
 			address.toString(),
 		).getMetadata();
+	}
+
+	async getConfigInfo(
+		address: EvmAddress,
+	): Promise<[string, string, number]> {
+		LogService.logTrace(`Getting config info for ${address.toString()}`);
+		const configInfo = await this.connect(
+			DiamondFacet__factory,
+			address.toString(),
+		).getConfigInfo();
+		return [
+			configInfo.resolver_.toString(),
+			configInfo.configurationId_,
+			configInfo.version_.toNumber(),
+		];
+	}
+
+	async getHoldFor(
+		address: EvmAddress,
+		target: EvmAddress,
+		holdId: number,
+	): Promise<HoldDetails> {
+		LogService.logTrace(`Getting hold details for ${target.toString()}`);
+		const holdIdentifier: HoldIdentifier = {
+			tokenHolder: target.toString(),
+			holdId,
+		};
+		const hold = await this.connect(
+			HoldManagementFacet__factory,
+			address.toString(),
+		).getHoldFor(holdIdentifier);
+
+		return new HoldDetails(
+			hold.expirationTimestamp_.toNumber(),
+			new BigDecimal(hold.amount_.toString()),
+			hold.escrow_,
+			target.toString(),
+			hold.destination_,
+			hold.data_,
+		);
+	}
+
+	async getHoldsIdFor(
+		address: EvmAddress,
+		target: EvmAddress,
+		start: number,
+		end: number,
+	): Promise<number[]> {
+		LogService.logTrace(
+			`Getting hold IDs for ${target.toString()} from ${start} to ${end}`,
+		);
+
+		const holdsIdFor = await this.connect(
+			HoldManagementFacet__factory,
+			address.toString(),
+		).getHoldsIdFor(target.toString(), start, end);
+
+		return holdsIdFor.map((id) => id.toNumber());
+	}
+
+	async getHeldAmountFor(
+		address: EvmAddress,
+		target: EvmAddress,
+	): Promise<BigDecimal> {
+		LogService.logTrace(`Getting held amount for ${target.toString()}`);
+
+		const heldAmountFor = await this.connect(
+			HoldManagementFacet__factory,
+			address.toString(),
+		).getHeldAmountFor(target.toString());
+
+		return new BigDecimal(heldAmountFor.toString());
+	}
+
+	async getHoldCountFor(
+		address: EvmAddress,
+		target: EvmAddress,
+	): Promise<number> {
+		LogService.logTrace(`Getting hold count for ${target.toString()}`);
+
+		const holdCountFor = await this.connect(
+			HoldManagementFacet__factory,
+			address.toString(),
+		).getHoldCountFor(target.toString());
+
+		return holdCountFor.toNumber();
+	}
+
+	async getBurnableAmount(address: EvmAddress): Promise<string> {
+		LogService.logTrace(`Getting burnable amount`);
+
+		const burnableAmount = await this.connect(
+			BurnableFacet__factory,
+			address.toString(),
+		).getBurnableAmount();
+
+		return burnableAmount.toString();
 	}
 }

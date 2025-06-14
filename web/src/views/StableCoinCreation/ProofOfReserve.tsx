@@ -71,7 +71,7 @@ const ProofOfReserve = (props: ProofOfReserveProps) => {
 					/>
 				</HStack>
 
-				{proofOfReserve === true && (
+				{proofOfReserve && (
 					<HStack>
 						<Text maxW={'252px'} fontSize='14px' fontWeight='400' lineHeight='17px'>
 							{t('stableCoinCreation:proofOfReserve.haveDataFeed')}
@@ -80,7 +80,7 @@ const ProofOfReserve = (props: ProofOfReserveProps) => {
 					</HStack>
 				)}
 
-				{hasDataFeed === true && proofOfReserve === true && (
+				{hasDataFeed && proofOfReserve && (
 					<HStack pt={'15px'}>
 						<InputController
 							rules={{
@@ -105,8 +105,48 @@ const ProofOfReserve = (props: ProofOfReserveProps) => {
 					</HStack>
 				)}
 
-				{!hasDataFeed && proofOfReserve === true && (
-					<HStack pt={'15px'}>
+				{!hasDataFeed && proofOfReserve && (
+					<VStack pt={'15px'}>
+						<InputController
+							rules={{
+								required: t(`global:validations.required`) ?? propertyNotFound,
+								validate: {
+									validation: (value: string) => {
+										request.reserveConfigId = value;
+										const res = handleRequestValidation(request.validate('reserveConfigId'));
+										return res;
+									},
+								},
+							}}
+							isRequired
+							control={control}
+							name={'reserveConfigId'}
+							label={t('stableCoinCreation:proofOfReserve.reserveConfigId') ?? propertyNotFound}
+							placeholder={
+								t('stableCoinCreation:proofOfReserve.reserveConfigId') ?? propertyNotFound
+							}
+						/>
+						<InputController
+							rules={{
+								required: t(`global:validations.required`) ?? propertyNotFound,
+								validate: {
+									validation: (value: string) => {
+										request.reserveConfigVersion = Number(value);
+										const res = handleRequestValidation(request.validate('reserveConfigVersion'));
+										return res;
+									},
+								},
+							}}
+							isRequired
+							control={control}
+							name={'reserveConfigVersion'}
+							label={
+								t('stableCoinCreation:proofOfReserve.reserveConfigVersion') ?? propertyNotFound
+							}
+							placeholder={
+								t('stableCoinCreation:proofOfReserve.reserveConfigVersion') ?? propertyNotFound
+							}
+						/>
 						<InputController
 							rules={{
 								required: t(`global:validations.required`) ?? propertyNotFound,
@@ -127,7 +167,7 @@ const ProofOfReserve = (props: ProofOfReserveProps) => {
 								t('stableCoinCreation:proofOfReserve.initialSupplyPor') ?? propertyNotFound
 							}
 						/>
-					</HStack>
+					</VStack>
 				)}
 			</Stack>
 		</VStack>

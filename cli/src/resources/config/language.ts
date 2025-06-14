@@ -79,8 +79,8 @@ export const english = {
     askAccountPubKey:
       "Please enter the public key (Hexadecimal format, starting with '0x')",
     askAccountType: `Enter the account type (${AccountType.SelfCustodial}|${AccountType.MultiSignature}|${AccountType.Fireblocks}|${AccountType.Dfns}|${AccountType.AWSKMS})`,
-    askConfigurateFactories:
-      'Do you want to config your factories? Check the documentation for more information : https://github.com/hashgraph/stablecoin-studio#deploying-the-stable-coin-factories',
+    askConfigurateResolversAndFactories:
+      'Do you want to config your resolver and factories? Check the documentation for more information : https://github.com/hashgraph/stablecoin-studio#deploying-the-stable-coin-factories-and-resolvers',
     askConfigurateDefaultMirrorsAndRPCs:
       'Do you want to use default mirror node/JSON-RPC-Relay services? (y/n)',
     askConfigurateBackend: 'Do you want to configure the backend? (y/n)',
@@ -100,7 +100,7 @@ export const english = {
     askOperateWithNewAccount:
       'Would you like to operate with the account you have just created?',
     askFactoryAddress: 'Enter your factory address',
-    askNewFactoryAddress: 'Enter your new factory address',
+    askResolverAddress: 'Enter your resolver address',
     MirrorsConfigurationMessage:
       'You will now configure your mirror node services:',
     askMirrorName: 'Enter the mirror node service name',
@@ -194,6 +194,8 @@ export const english = {
     description: 'Creating Stablecoin',
     askName: 'Enter the name',
     askSymbol: 'Enter the symbol',
+    askConfigId: 'Enter the resolver configuration id',
+    askConfigVersion: 'Enter the resolver configuration version',
     askAutoRenewAccountId: 'Enter the autorenew account',
     askAutoRenewPeriod: 'Enter the token autorenew period in days',
     askDecimals: 'Enter the number of decimal places a token is divisible by',
@@ -205,12 +207,11 @@ export const english = {
     askReserve: 'Do you want to link the stablecoin to a Proof-of-Reserve?',
     askExistingReserve:
       'Do you want to link it to an already existing Proof-of-Reserve?',
-    askReserveAddress:
-      'Enter the Proof-of-Reserve Feed you wish to link your stablecoin to',
+    askReserveConfigId:
+      'A new Proof-of-Reserve Feed will be deployed, enter the resolver configuration ID',
+    askReserveConfigVersion: 'Enter the resolver configuration version',
+    askCreateReserve: 'Do you want to deploy a new Proof-of-Reserve?',
     askReserveInitialAmount: 'Enter the Proof-of-Reserve Feed initial amount',
-    askProxyAdminOwner:
-      'Do you want to use your current account as the proxy admin owner?',
-    askProxyAdminOwnerAccount: 'Enter the proxy admin owner account',
     askInitialSupply: 'Enter the initial supply',
     askSupplyType: 'Do you want the token max supply to be infinite?',
     askTotalSupply: 'Enter the max supply',
@@ -262,6 +263,7 @@ export const english = {
       },
       cashinAllowance:
         "Enter the cashin allowance for the account ('0' if Unlimited)",
+      holdCreator: 'Choose the HOLD CREATOR admin account',
     },
     askTreasuryAccountAddress: 'Enter the treasury account id?',
     askOperateStableCoin:
@@ -291,13 +293,6 @@ export const english = {
     autoRenewAccountError: colors.red(
       'The autorenew account must be your current account.',
     ),
-  },
-  factory: {
-    askFactoryImplementation:
-      'Enter the address of the factory implementation you want to use',
-    askNewOwner: 'Enter the new owner account id',
-    implementation: 'Current factory implementation',
-    owner: 'Factory owner',
   },
   commander: {
     appDescription: 'Hedera Stablecoin is a CLI for managing stablecoins',
@@ -361,9 +356,6 @@ export const english = {
     networkChanged: '\nNetwork changed successfully',
     networkSelected: '\nNetwork selected successfully',
     accountsChanged: '\nAccounts changed successfully',
-    factoryChanged: '\nFactory changed successfully',
-    factoryUpgraded: '\nFactory upgraded successfully',
-    factoryOwnerChanged: '\nFactory owner changed successfully',
     freezeAccount: 'Which account do you want to freeze?',
     unfreezeAccount: 'Which account do you want to unfreeze?',
     checkAccountFrozen:
@@ -372,6 +364,10 @@ export const english = {
     revokeKYCFromAccount: 'Which account do you want to revoke KYC from?',
     checkAccountKYCGranted:
       'which account do you want to know if it has been granted the KYC for the token?',
+    uppdateConfigVersion:
+      'Which version do you want to update your resolver to?',
+    updateConfig: 'Which configuration do want to update your resolver to?',
+    updateResolver: 'Which resolver do you want to use?',
     returnOption: {
       ...returnToMainMenu,
     },
@@ -384,6 +380,8 @@ export const english = {
       Wipe: 'Wipe',
       Rescue: 'Rescue',
       RescueHBAR: 'Rescue HBAR',
+      ResolverMgmt: 'Resolver Management',
+      HoldMgmt: 'Hold Management',
       FreezeMgmt: 'Freeze Management',
       KYCMgmt: 'KYC Management',
       FeesMgmt: 'Fees management',
@@ -410,8 +408,8 @@ export const english = {
       Manage: 'Manage accounts',
       ManageMirrorNode: 'Manage mirror node',
       ManageRPC: 'Manage JSON-RPC-Relay',
-      ManageFactory: 'Manage factory',
       ManageBackend: 'Manage backend',
+      ManageFactoryAndResolver: 'Edit factory and resolver',
       ...returnToMainMenu,
     },
     manageAccountOptions: {
@@ -466,6 +464,7 @@ export const english = {
       Delete: 'Delete',
       KYC: 'KYC',
       Fees: 'Fees',
+      Hold: 'Hold Creator',
       ...goBack,
     },
 
@@ -494,15 +493,6 @@ export const english = {
       Increase: 'Increase limit',
       Decrease: 'Decrease limit',
       Reset: 'Reset limit',
-      ...goBack,
-    },
-    manageFactoryOptions: {
-      ChangeFactory: 'Change factory',
-      UpgradeFactory: 'Upgrade factory',
-      ChangeOwner: 'Change owner',
-      AcceptOwner: 'Accept owner',
-      CancelOwner: 'Cancel owner change',
-      FactoryDetails: 'Factory details',
       ...goBack,
     },
     backOption: {
@@ -577,8 +567,6 @@ export const english = {
     rescueHBARCompleted: 'HBAR Rescue completed',
     wipeCompleted: 'Wipe completed',
     detailsCompleted: 'Details loaded',
-    proxyConfigCompleted: 'Proxy config loaded',
-    factoryProxyConfigCompleted: 'Factory proxy config loaded',
     balanceCompleted: 'Balance loaded',
     associateCompleted: 'Stablecoin associated',
     deleteCompleted: 'Stablecoin deleted',
@@ -599,9 +587,19 @@ export const english = {
     customFeesRemoved: 'Custom fees removed',
     transferCompleted: 'Transfer completed',
     updateCompleted: 'Update completed',
-    changeOwnerCompleted: 'Owner change requested',
-    acceptOwnerCompleted: 'Owner change accepted',
-    upgradeImplementationCompleted: 'Implementation upgrade completed',
+    resolverConfigVersionUpdated: 'Resolver configuration version updated',
+    resolverConfigUpdated: 'Resolver configuration updated',
+    resolverUpdated: 'Resolver updated',
+    holdCreated: 'Hold created with id ${holdId}',
+    holdExecuted: 'Hold executed',
+    holdReleased: 'Hold released',
+    holdReclaimed: 'Hold reclaimed',
+    holdBalance: 'Held balance for ${address} is ${amount}',
+    holdsId:
+      'Address ${address} currently has the following holds ID active: ${holdsId}',
+    holdDetails:
+      'Information for hold ID ${holdId} for address ${address} is ${holdDetails}',
+    holdCount: 'Account ${address} has a total of ${holdCount} active holds',
   },
   operation: {
     success: colors.green('Operation has been completed successfully.'),
@@ -642,8 +640,6 @@ export const english = {
     wrongFormatUrl:
       'The url format is not correct. Please check the format and try again.',
     lessZero: 'The number is 0 or less. Please use a number greater than 0.',
-    wrongFactoryAddress:
-      'The address does not correspond to a valid factory contract.',
   },
   roleManagement: {
     askRoles: 'Choose the roles',
@@ -711,28 +707,10 @@ export const english = {
   },
   stableCoinConfiguration: {
     options: {
-      proxyConfiguration: 'Stablecoin Configuration',
       tokenConfiguration: 'Token Configuration',
       ...goBack,
     },
     askConfiguration: 'What do you want to configure?',
-  },
-  proxyConfiguration: {
-    options: {
-      implementation: 'Upgrade stablecoin implementation',
-      owner: 'Change stablecoin owner',
-      accept: 'Accept stablecoin owner',
-      cancel: 'Cancel stablecoin owner change',
-      ...goBack,
-    },
-    askNewImplementation:
-      'Choose the HederaTokenManager implementation you want to use',
-    askNewOwner: 'Enter the new owner account id',
-    askProxyConfiguration: 'What do you want to do',
-    currentImplementation: 'Your current implementation is : ',
-    pendingOwner: 'pending owner : ',
-    askAcceptOwner: 'Are you sure you want to accept the ownership?',
-    askCancelOwner: 'Are you sure you want to cancel the ownership transfer?',
   },
   tokenConfiguration: {
     askAction: 'What token property do you want to update?',
@@ -762,6 +740,36 @@ export const english = {
       Freeze: 'Freeze an account',
       UnFreeze: 'Unfreeze an account',
       AccountFrozen: 'Check if account is frozen',
+    },
+  },
+  resolverManagement: {
+    askConfigVersion: 'Enter the new configuration version',
+    askConfigId: 'Enter the new configuration Id',
+    askResolverAddress: 'Enter the new resolver address',
+    options: {
+      UpdateConfigVersion: 'Update resolver configuration version',
+      UpdateConfig: 'Update resolver configuration Id and version',
+      UpdateResolver: 'Update resolver address',
+    },
+  },
+  holdManagement: {
+    askAmount: 'Enter the hold amount',
+    askEscrow: 'Enter the hold escrow',
+    askSetDestination: 'Would you like to set a destination?',
+    askDestination: 'Enter a destination',
+    askExpirationDate: 'Enter an expiration date (days from now)',
+    askSource: 'Enter the source address',
+    askHoldId: 'Enter the hold ID',
+    options: {
+      CreateHold: 'Create a new hold for your account',
+      CreateHoldByController: 'Force hold creation for a target account',
+      ExecuteHold: 'Execute a hold for which you are the escrow',
+      ReleaseHold: 'Release a hold for which you are the escrow',
+      ReclaimHold: 'Reclaim an expired hold',
+      HeldBalance: 'Check total held balance for an account',
+      HoldCount: 'Check hold count for an account',
+      HoldDetails: 'Check the details for a hold',
+      HoldsId: 'Check the holds ID for an account',
     },
   },
   keysManagement: {

@@ -51,16 +51,15 @@ import {
 	TransferTransaction,
 } from '@hashgraph/sdk';
 import { MirrorNodeAdapter } from '../../port/out/mirror/MirrorNodeAdapter.js';
-import {
-	HederaTokenManager__factory,
-	Proxy__factory,
-	ProxyAdmin__factory,
-	StableCoinProxyAdmin__factory,
-} from '@hashgraph/stablecoin-npm-contracts';
+import { HederaTokenManagerFacet__factory } from '@hashgraph/stablecoin-npm-contracts';
 import { ethers } from 'ethers';
 import Hex from '../../core/Hex.js';
 import { AWSKMSTransactionAdapter } from '../../port/out/hs/hts/custodial/AWSKMSTransactionAdapter';
 import { HederaWalletConnectTransactionAdapter } from '../../port/out/hs/walletconnect/HederaWalletConnectTransactionAdapter.js';
+import TransactionResponse from '../../domain/context/transaction/TransactionResponse';
+import { Response } from '../../domain/context/transaction/Response';
+import { EmptyResponse } from './error/EmptyResponse.js';
+import { InvalidResponse } from '../../port/out/mirror/error/InvalidResponse.js';
 
 export const EVM_ADDRESS_REGEX = /0x[a-fA-F0-9]{40}$/;
 
@@ -128,6 +127,10 @@ export default class TransactionService extends Service {
 				if (functionParameters) {
 					const decodedFunctionParameters =
 						this.decodeFunctionCall(functionParameters);
+
+					if (!decodedFunctionParameters) {
+						return 'Failed to decode function call';
+					}
 					name = decodedFunctionParameters.name;
 					const inputArgs = decodedFunctionParameters.args;
 
@@ -307,36 +310,47 @@ export default class TransactionService extends Service {
 
 	static decodeFunctionCall(
 		parameters: Uint8Array,
-	): ethers.utils.TransactionDescription {
+	): ethers.utils.TransactionDescription | undefined {
 		const inputData = '0x' + Hex.fromUint8Array(parameters);
 
 		try {
 			const iface_tokenManager = new ethers.utils.Interface(
-				HederaTokenManager__factory.abi,
+				HederaTokenManagerFacet__factory.abi,
 			);
 			return iface_tokenManager.parseTransaction({ data: inputData });
 		} catch (e) {
-			// nothing
+			return undefined;
 		}
-		try {
-			const iface_ProxyAdmin = new ethers.utils.Interface(
-				ProxyAdmin__factory.abi,
-			);
-			return iface_ProxyAdmin.parseTransaction({ data: inputData });
-		} catch (e) {
-			// nothing
+	}
+
+	async getTransactionResult({
+		res,
+		result,
+		className,
+		position,
+		numberOfResultsItems,
+	}: {
+		res: TransactionResponse;
+		result?: Response;
+		className: string;
+		position: number;
+		numberOfResultsItems: number;
+	}): Promise<string> {
+		if (!res.id) throw new EmptyResponse(className);
+
+		if (res.response && result) {
+			return result;
 		}
-		try {
-			const iface_StableCoinProxyAdmin = new ethers.utils.Interface(
-				StableCoinProxyAdmin__factory.abi,
-			);
-			return iface_StableCoinProxyAdmin.parseTransaction({
-				data: inputData,
-			});
-		} catch (e) {
-			// nothing
+
+		const results = await this.mirrorNodeAdapter.getContractResults(
+			res.id.toString(),
+			numberOfResultsItems,
+		);
+
+		if (!results || results.length !== numberOfResultsItems) {
+			throw new InvalidResponse(results);
 		}
-		const iface_Proxy = new ethers.utils.Interface(Proxy__factory.abi);
-		return iface_Proxy.parseTransaction({ data: inputData });
+
+		return results[position];
 	}
 }

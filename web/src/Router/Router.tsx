@@ -43,11 +43,16 @@ import RevokeKycOperation from '../views/Operations/RevokeKyc';
 import CheckKycOperation from '../views/Operations/CheckKyc';
 import Settings from '../views/Settings';
 import StableCoinSettings from '../views/Settings/StableCoin';
-import FactorySettings from '../views/Settings/Factory';
 import ModalWalletConnect from '../components/ModalWalletConnect';
 import AppSettings from '../views/AppSettings';
 import { cleanLocalStorage } from '../utils/cleanStorage';
 import MultiSigTransactions from '../views/MultiSigTransactions/MultisigTransactions';
+import { HoldOperations } from '../views/Operations/Hold';
+import { CreateOperationHold } from '../views/Operations/Hold/Operations/Create/index';
+import { ExecuteOperationHold } from '../views/Operations/Hold/Operations/Execute/index';
+import { ReleaseOperationHold } from '../views/Operations/Hold/Operations/Release/index';
+import { ReclaimOperationHold } from '../views/Operations/Hold/Operations/Reclaim/index';
+import { ListOperationHold } from '../views/Operations/Hold/Operations/List/index';
 
 const LoginOverlayRoute = ({ show, loadingSC }: { show: boolean; loadingSC: boolean }) => {
 	return (
@@ -92,6 +97,7 @@ const Router = () => {
 			dispatch(walletActions.setNetwork(event.network.name));
 			dispatch(walletActions.setNetworkRecognized(event.network.recognized));
 			dispatch(walletActions.setFactoryId(event.network.factoryId));
+			dispatch(walletActions.setResolverId(event.network.resolverId));
 			if (!event.data.account) dispatch(walletActions.setAccountRecognized(false));
 			else
 				dispatch(
@@ -190,12 +196,17 @@ const Router = () => {
 							<Route path={RoutesMappingUrl.proofOfReserve} element={<StableCoinProof />} />
 							<Route path={RoutesMappingUrl.feesManagement} element={<FeesManagement />} />
 							<Route path={RoutesMappingUrl.stableCoinSettings} element={<StableCoinSettings />} />
+							<Route path={RoutesMappingUrl.hold} element={<HoldOperations />} />
+							<Route path={RoutesMappingUrl.holdCreate} element={<CreateOperationHold />} />
+							<Route path={RoutesMappingUrl.holdExecute} element={<ExecuteOperationHold />} />
+							<Route path={RoutesMappingUrl.holdRelease} element={<ReleaseOperationHold />} />
+							<Route path={RoutesMappingUrl.holdReclaim} element={<ReclaimOperationHold />} />
+							<Route path={RoutesMappingUrl.holdList} element={<ListOperationHold />} />
 						</>
 					)}
 					<Route path={RoutesMappingUrl.multiSigTransactions} element={<MultiSigTransactions />} />
 					<Route path={RoutesMappingUrl.settings} element={<Settings />} />
 
-					<Route path={RoutesMappingUrl.factorySettings} element={<FactorySettings />} />
 					<Route path={RoutesMappingUrl.stableCoinCreation} element={<StableCoinCreation />} />
 					<Route path={RoutesMappingUrl.importedToken} element={<ImportedTokenCreation />} />
 					<Route
