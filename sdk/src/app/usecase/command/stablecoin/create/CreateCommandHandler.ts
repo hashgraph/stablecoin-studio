@@ -60,20 +60,44 @@ export class CreateCommandHandler implements ICommandHandler<CreateCommand> {
 	async execute(command: CreateCommand): Promise<CreateCommandResponse> {
 		const {
 			factory,
-			hederaTokenManager,
 			coin,
 			reserveAddress,
 			reserveInitialAmount,
 			createReserve,
-			proxyAdminOwnerAccount,
+			proxyOwnerAccount,
+			resolver,
+			configId,
+			configVersion,
+			reserveConfigId,
+			reserveConfigVersion,
 		} = command;
 
 		if (!factory) {
 			throw new InvalidRequest('Factory not found in request');
 		}
 
-		if (!hederaTokenManager) {
-			throw new InvalidRequest('HederaTokenManager not found in request');
+		if (!resolver) {
+			throw new InvalidRequest('Resolver not found in request');
+		}
+
+		if (!configId) {
+			throw new InvalidRequest('Config Id not found in request');
+		}
+
+		if (!proxyOwnerAccount) {
+			throw new InvalidRequest(
+				'Proxy Owner Account not found in request',
+			);
+		}
+
+		if (configVersion === undefined) {
+			throw new InvalidRequest('Config Version not found in request');
+		}
+
+		if (createReserve && (!reserveConfigId || !reserveConfigVersion)) {
+			throw new InvalidRequest(
+				'Cannot create reserve without reserve config id and version',
+			);
 		}
 
 		const handler = this.transactionService.getHandler();
@@ -135,11 +159,15 @@ export class CreateCommandHandler implements ICommandHandler<CreateCommand> {
 		const res = await handler.create(
 			new StableCoin(coin),
 			factory,
-			hederaTokenManager,
 			createReserve,
+			resolver,
+			configId,
+			configVersion,
+			proxyOwnerAccount,
 			reserveAddress,
 			reserveInitialAmount,
-			proxyAdminOwnerAccount,
+			reserveConfigId,
+			reserveConfigVersion,
 		);
 
 		if (!res.id)
@@ -171,26 +199,26 @@ export class CreateCommandHandler implements ICommandHandler<CreateCommand> {
 				return Promise.resolve(
 					new CreateCommandResponse(
 						ContractId.fromHederaContractId(
-							HContractId.fromSolidityAddress(data[3]),
+							HContractId.fromEvmAddress(0, 0, data[1]),
 						),
-						data[4] === EVM_ZERO_ADDRESS
+						data[0] === EVM_ZERO_ADDRESS
 							? new ContractId('0.0.0')
 							: ContractId.fromHederaContractId(
 									HContractId.fromString(
 										(
 											await this.mirrorNodeAdapter.getContractInfo(
-												data[4],
+												data[0],
 											)
 										).id,
 									),
 							  ),
-						data[5] === EVM_ZERO_ADDRESS
+						data[2] === EVM_ZERO_ADDRESS
 							? new ContractId('0.0.0')
 							: ContractId.fromHederaContractId(
 									HContractId.fromString(
 										(
 											await this.mirrorNodeAdapter.getContractInfo(
-												data[5],
+												data[2],
 											)
 										).id,
 									),

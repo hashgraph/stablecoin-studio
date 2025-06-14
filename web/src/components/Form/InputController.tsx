@@ -8,16 +8,18 @@ import {
 	Flex,
 	FormControl,
 	FormErrorMessage,
+	Icon,
 	Input,
 	InputGroup,
 	Link,
 	Stack,
+	Tooltip,
 } from '@chakra-ui/react';
 import type { Control, FieldValues, UseControllerProps } from 'react-hook-form';
 import { Controller } from 'react-hook-form';
 import type { ChangeEventHandler, ChangeEvent, FocusEvent, ReactNode } from 'react';
 import InputLabel from './InputLabel';
-import { InfoIcon } from '@chakra-ui/icons';
+import { InfoIcon, InfoOutlineIcon } from '@chakra-ui/icons';
 
 export interface InputControllerProps extends Omit<ChakraInputProps, 'name'> {
 	rules?: UseControllerProps['rules'];
@@ -36,6 +38,7 @@ export interface InputControllerProps extends Omit<ChakraInputProps, 'name'> {
 	name: string;
 	containerStyle?: StackProps;
 	link?: string | null;
+	tooltip?: string | null;
 }
 
 const InputController = ({
@@ -58,6 +61,7 @@ const InputController = ({
 	defaultValue,
 	containerStyle,
 	link,
+	tooltip,
 	...props
 }: InputControllerProps) => {
 	return (
@@ -84,6 +88,19 @@ const InputController = ({
 									<InputLabel isRequired={isRequired} style={labelStyle}>
 										{label}
 									</InputLabel>
+								)}
+								{tooltip && (
+									<Tooltip label={tooltip} aria-label={tooltip}>
+										<span>
+											<Icon
+												as={InfoOutlineIcon}
+												ml={2}
+												cursor='pointer'
+												position='relative'
+												top='-1px'
+											/>{' '}
+										</span>
+									</Tooltip>
 								)}
 								{link && (
 									<Link href={link} isExternal>

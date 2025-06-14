@@ -5,6 +5,7 @@
 		"createStableCoin": "Create stablecoin",
 		"createNewStableCoin": "Create new stablecoin",
 		"factoryId": "Factory Id : ",
+		"resolverId": "Resolver Id : ",
 		"cancel": "Cancel"
 	},
 	"tabs": {
@@ -20,6 +21,11 @@
 		"namePlaceholder": "Stablecoin Name",
 		"symbol": "Stablecoin Symbol",
 		"symbolPlaceholder": "Stablecoin Symbol",
+		"configId": "Config ID",
+		"configIdPlaceholder": "Config ID",
+		"configVersion": "Config Version",
+		"configVersionPlaceholder": "Config Version",
+		"configVersionTooltip": "Use 0 value to use the last version",
 		"title": "Stablecoin Creation",
 		"hederaERC20": "Select HederaTokenManager Smart Contract ID",
 		"hederaERC20Placeholder": "HederaTokenManager Smart Contract ID",
@@ -100,6 +106,9 @@
 		"addressPor": "Proof-of-reserve address",
 		"initialSupplyPor": "Proof-of-reserve supply",
 		"initialSupplyPorExternal": "External PoR",
+		"reserveConfigId": "Reserve Config ID",
+		"reserveConfigVersion": "Reserve Config version",
+		"reserveConfigVersionTooltip": "Use 0 value to use the last version",
 		"link": "https://github.com/hashgraph/stablecoin-studio/blob/main/README.md#Proof-of-reserve"
 	},
 	"proxyAdmin": {

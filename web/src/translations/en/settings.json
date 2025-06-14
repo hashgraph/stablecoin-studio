@@ -4,10 +4,30 @@
 	"subtitle": "Choose an option",
 	"stableCoinSettings": "Stablecoin Setting",
 	"factorySettings": "Factory Contract",
+	"configurationSettings": "Configuration Settings",
+	"updateConfigurationSettings": "Update Configuration Settings",
 	"notOwner": "The current account is not the owner of the factory's proxy",
 	"alertNoEnv": "You have not configured a factory address. Without it you can not configure Factory settings.",
 	"alertNoEnvLink": "Go to documentation",
 	"stableCoin": {
+		"resolver": {
+			"title": "Update resolver proxy",
+			"label": "Resolver",
+			"inputPlaceholder": "Enter new resolver proxy",
+			"buttonText": "Update"
+		},
+		"configId": {
+			"title": "Update config ID",
+			"label": "Config ID",
+			"inputPlaceholder": "Enter new config ID",
+			"buttonText": "Update"
+		},
+		"configVersion": {
+			"title": "Update config version",
+			"label": "Config version",
+			"inputPlaceholder": "Enter new config version",
+			"buttonText": "Update"
+		},
 		"transferOwner": {
 			"title": "Transfer proxy owner",
 			"label": "Current owner",

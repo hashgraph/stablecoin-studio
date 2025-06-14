@@ -42,12 +42,14 @@ import {
   RescueRequest,
   StableCoinRole,
   StableCoinViewModel,
+  UpdateConfigRequest,
+  UpdateConfigVersionRequest,
+  UpdateResolverRequest,
   UpdateCustomFeesRequest,
   WipeRequest,
 } from '@hashgraph/stablecoin-npm-sdk';
 import FreezeStableCoinService from '../../../../src/app/service/stablecoin/FreezeStableCoinService.js';
 import BalanceOfStableCoinsService from '../../../../src/app/service/stablecoin/BalanceOfStableCoinService.js';
-import ConfigurationProxyService from '../../../../src/app/service/proxy/ConfigurationProxyService.js';
 import RoleStableCoinService from '../../../../src/app/service/stablecoin/RoleStableCoinService.js';
 import TransfersStableCoinService from '../../../../src/app/service/stablecoin/TransfersStableCoinService.js';
 import CashInStableCoinService from '../../../../src/app/service/stablecoin/CashInStableCoinService.js';
@@ -58,13 +60,12 @@ import RescueStableCoinService from '../../../../src/app/service/stablecoin/Resc
 import RescueHBARStableCoinService from '../../../../src/app/service/stablecoin/RescueHBARStableCoinService.js';
 import KYCStableCoinService from '../../../../src/app/service/stablecoin/KYCStableCoinService.js';
 import FeeStableCoinService from '../../../../src/app/service/stablecoin/FeeStableCoinService.js';
-import ImplementationProxyService from '../../../../src/app/service/proxy/ImplementationProxyService.js';
-import OwnerProxyService from '../../../../src/app/service/proxy/OwnerProxyService.js';
 import UpdateStableCoinService from '../../../../src/app/service/stablecoin/UpdateStableCoinService.js';
 import PauseStableCoinService from '../../../../src/app/service/stablecoin/PauseStableCoinService.js';
 import DeleteStableCoinService from '../../../../src/app/service/stablecoin/DeleteStableCoinService.js';
 import ListStableCoinService from '../../../../src/app/service/stablecoin/ListStableCoinService.js';
 import { AccountType } from '../../../../src/domain/configuration/interfaces/AccountType';
+import ResolverStableCoinService from '../../../../src/app/service/stablecoin/ResolverStableCoinService.js';
 
 const tokenId = '0.0.5555555';
 const tokenMemo = 'memo';
@@ -124,6 +125,9 @@ const coin = {
   tokenId: new HederaId('0.0.5555555'),
   adminKey: 'admin',
   proxyAddress: 'admin',
+  configId:
+    '0x0000000000000000000000000000000000000000000000000000000000000001',
+  configVersion: 1,
 };
 const capabilities = [
   { operation: Operation.CASH_IN, access: 1 },
@@ -144,7 +148,9 @@ const capabilities = [
   { operation: Operation.CREATE_CUSTOM_FEE, access: 1 },
   { operation: Operation.REMOVE_CUSTOM_FEE, access: 1 },
   { operation: Operation.TRANSFERS, access: 1 },
-  { operation: Operation.UPDATE, access: 1 },
+  { operation: Operation.UPDATE_CONFIG_VERSION, access: 1 },
+  { operation: Operation.UPDATE_CONFIG, access: 1 },
+  { operation: Operation.UPDATE_RESOLVER, access: 1 },
 ];
 const roles = [
   StableCoinRole.CASHIN_ROLE,
@@ -182,13 +188,6 @@ describe(`Testing OperationStableCoinService class`, () => {
     FreezeStableCoinService.prototype.isAccountFrozen = jest
       .fn()
       .mockResolvedValue(false);
-    ConfigurationProxyService.prototype.getProxyconfiguration = jest
-      .fn()
-      .mockResolvedValue({
-        implementationAddress: 'implementationAddress',
-        owner: 'owner',
-        pendingOwner: 'pendingOwner',
-      });
     RoleStableCoinService.prototype.getRolesWithoutPrinting = jest
       .fn()
       .mockResolvedValue(roles);
@@ -1401,98 +1400,6 @@ describe(`Testing OperationStableCoinService class`, () => {
     expect(utilsService.cleanAndShowBanner).toHaveBeenCalled();
   });
 
-  it('Should instance start with Configuration proxy implementation', async () => {
-    jest
-      .spyOn(utilsService, 'defaultMultipleAsk')
-      .mockResolvedValueOnce(
-        language.getText('wizard.stableCoinOptions.Configuration'),
-      );
-    jest
-      .spyOn(utilsService, 'defaultMultipleAsk')
-      .mockResolvedValueOnce(
-        language.getText('stableCoinConfiguration.options.proxyConfiguration'),
-      );
-    jest
-      .spyOn(utilsService, 'defaultMultipleAsk')
-      .mockResolvedValueOnce(
-        language.getText('proxyConfiguration.options.implementation'),
-      );
-    jest
-      .spyOn(
-        ImplementationProxyService.prototype as any,
-        'upgradeImplementationOwner',
-      )
-      .mockImplementation();
-    jest
-      .spyOn(utilsService, 'defaultMultipleAsk')
-      .mockResolvedValueOnce('Go back');
-
-    await service.start();
-
-    expect(service).not.toBeNull();
-    expect(utilsService.cleanAndShowBanner).toHaveBeenCalled();
-  });
-
-  it('Should instance start with Configuration proxy owner', async () => {
-    jest
-      .spyOn(utilsService, 'defaultMultipleAsk')
-      .mockResolvedValueOnce(
-        language.getText('wizard.stableCoinOptions.Configuration'),
-      );
-    jest
-      .spyOn(utilsService, 'defaultMultipleAsk')
-      .mockResolvedValueOnce(
-        language.getText('stableCoinConfiguration.options.proxyConfiguration'),
-      );
-    jest
-      .spyOn(utilsService, 'defaultMultipleAsk')
-      .mockResolvedValueOnce(
-        language.getText('proxyConfiguration.options.owner'),
-      );
-    jest
-      .spyOn(utilsService, 'defaultSingleAsk')
-      .mockResolvedValueOnce('0.0.12345');
-    jest
-      .spyOn(OwnerProxyService.prototype as any, 'changeProxyOwner')
-      .mockImplementation();
-    jest
-      .spyOn(utilsService, 'defaultMultipleAsk')
-      .mockResolvedValueOnce('Go back');
-
-    await service.start();
-
-    expect(service).not.toBeNull();
-    expect(utilsService.cleanAndShowBanner).toHaveBeenCalled();
-  });
-
-  it('Should instance start with Configuration proxy go back', async () => {
-    jest
-      .spyOn(utilsService, 'defaultMultipleAsk')
-      .mockResolvedValueOnce(
-        language.getText('wizard.stableCoinOptions.Configuration'),
-      );
-    jest
-      .spyOn(utilsService, 'defaultMultipleAsk')
-      .mockResolvedValueOnce(
-        language.getText('stableCoinConfiguration.options.proxyConfiguration'),
-      );
-    jest
-      .spyOn(utilsService, 'defaultMultipleAsk')
-      .mockResolvedValueOnce('Go back')
-      .mockResolvedValueOnce('Go back');
-
-    const keepFlow = (OperationStableCoinService.prototype as any)
-      .configuration;
-    jest
-      .spyOn(OperationStableCoinService.prototype as any, 'configuration')
-      .mockImplementationOnce(keepFlow)
-      .mockImplementation(jest.fn());
-    await service.start();
-
-    expect(service).not.toBeNull();
-    expect(utilsService.cleanAndShowBanner).toHaveBeenCalled();
-  });
-
   it('Should instance start with Configuration token', async () => {
     jest
       .spyOn(utilsService, 'defaultMultipleAsk')
@@ -1768,6 +1675,141 @@ describe(`Testing OperationStableCoinService class`, () => {
     const keepFlow = (OperationStableCoinService.prototype as any).dangerZone;
     jest
       .spyOn(OperationStableCoinService.prototype as any, 'dangerZone')
+      .mockImplementationOnce(keepFlow)
+      .mockImplementation(jest.fn());
+    await service.start();
+
+    expect(service).not.toBeNull();
+    expect(utilsService.cleanAndShowBanner).toHaveBeenCalled();
+  });
+
+  it('Should instance start with Resolver Management UpdateConfigVersion', async () => {
+    jest
+      .spyOn(utilsService, 'defaultMultipleAsk')
+      .mockResolvedValueOnce(
+        language.getText('wizard.stableCoinOptions.ResolverMgmt'),
+      );
+    jest
+      .spyOn(utilsService, 'defaultMultipleAsk')
+      .mockResolvedValueOnce(
+        language.getText('resolverManagement.options.UpdateConfigVersion'),
+      );
+    jest.spyOn(utilsService, 'defaultSingleAsk').mockResolvedValueOnce('1');
+    jest
+      .spyOn(ResolverStableCoinService.prototype as any, 'updateConfigVersion')
+      .mockImplementation(
+        async (request: UpdateConfigVersionRequest): Promise<void> => {
+          expect(request.tokenId).toEqual(tokenId);
+          expect(request.configVersion).toEqual(1);
+        },
+      );
+    jest
+      .spyOn(utilsService, 'defaultMultipleAsk')
+      .mockResolvedValueOnce('Go back');
+
+    const keepFlow = (OperationStableCoinService.prototype as any)
+      .resolverManagementFlow;
+    jest
+      .spyOn(
+        OperationStableCoinService.prototype as any,
+        'resolverManagementFlow',
+      )
+      .mockImplementationOnce(keepFlow)
+      .mockImplementation(jest.fn());
+    await service.start();
+
+    expect(service).not.toBeNull();
+    expect(utilsService.cleanAndShowBanner).toHaveBeenCalled();
+  });
+
+  it('Should instance start with Resolver Management UpdateConfig', async () => {
+    jest
+      .spyOn(utilsService, 'defaultMultipleAsk')
+      .mockResolvedValueOnce(
+        language.getText('wizard.stableCoinOptions.ResolverMgmt'),
+      );
+    jest
+      .spyOn(utilsService, 'defaultMultipleAsk')
+      .mockResolvedValueOnce(
+        language.getText('resolverManagement.options.UpdateConfig'),
+      );
+    jest
+      .spyOn(utilsService, 'defaultSingleAsk')
+      .mockResolvedValueOnce(
+        '0x0000000000000000000000000000000000000000000000000000000000000001',
+      )
+      .mockResolvedValueOnce('1');
+    jest
+      .spyOn(ResolverStableCoinService.prototype as any, 'updateConfig')
+      .mockImplementation(
+        async (request: UpdateConfigRequest): Promise<void> => {
+          expect(request.tokenId).toEqual(tokenId);
+          expect(request.configVersion).toEqual(1);
+          expect(request.configId).toEqual(
+            '0x0000000000000000000000000000000000000000000000000000000000000001',
+          );
+        },
+      );
+    jest
+      .spyOn(utilsService, 'defaultMultipleAsk')
+      .mockResolvedValueOnce('Go back');
+
+    const keepFlow = (OperationStableCoinService.prototype as any)
+      .resolverManagementFlow;
+    jest
+      .spyOn(
+        OperationStableCoinService.prototype as any,
+        'resolverManagementFlow',
+      )
+      .mockImplementationOnce(keepFlow)
+      .mockImplementation(jest.fn());
+    await service.start();
+
+    expect(service).not.toBeNull();
+    expect(utilsService.cleanAndShowBanner).toHaveBeenCalled();
+  });
+
+  it('Should instance start with Resolver Management UpdateResolver', async () => {
+    jest
+      .spyOn(utilsService, 'defaultMultipleAsk')
+      .mockResolvedValueOnce(
+        language.getText('wizard.stableCoinOptions.ResolverMgmt'),
+      );
+    jest
+      .spyOn(utilsService, 'defaultMultipleAsk')
+      .mockResolvedValueOnce(
+        language.getText('resolverManagement.options.UpdateResolver'),
+      );
+    jest
+      .spyOn(utilsService, 'defaultSingleAsk')
+      .mockResolvedValueOnce(
+        '0x0000000000000000000000000000000000000000000000000000000000000001',
+      )
+      .mockResolvedValueOnce('1')
+      .mockResolvedValueOnce('0.0.12345');
+    jest
+      .spyOn(ResolverStableCoinService.prototype as any, 'updateResolver')
+      .mockImplementation(
+        async (request: UpdateResolverRequest): Promise<void> => {
+          expect(request.tokenId).toEqual(tokenId);
+          expect(request.configVersion).toEqual(1);
+          expect(request.configId).toEqual(
+            '0x0000000000000000000000000000000000000000000000000000000000000001',
+          );
+          expect(request.resolver).toEqual('0.0.12345');
+        },
+      );
+    jest
+      .spyOn(utilsService, 'defaultMultipleAsk')
+      .mockResolvedValueOnce('Go back');
+
+    const keepFlow = (OperationStableCoinService.prototype as any)
+      .resolverManagementFlow;
+    jest
+      .spyOn(
+        OperationStableCoinService.prototype as any,
+        'resolverManagementFlow',
+      )
       .mockImplementationOnce(keepFlow)
       .mockImplementation(jest.fn());
     await service.start();

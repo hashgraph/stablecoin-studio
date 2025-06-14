@@ -274,6 +274,19 @@ export default class StableCoinService extends Service {
 				new Capability(Operation.RESCUE_HBAR, Access.CONTRACT),
 			);
 
+			listCapabilities.push(
+				new Capability(
+					Operation.UPDATE_CONFIG_VERSION,
+					Access.CONTRACT,
+				),
+			);
+			listCapabilities.push(
+				new Capability(Operation.UPDATE_CONFIG, Access.CONTRACT),
+			);
+			listCapabilities.push(
+				new Capability(Operation.UPDATE_RESOLVER, Access.CONTRACT),
+			);
+
 			return new StableCoinCapabilities(_coin, listCapabilities, account);
 		} catch (error) {
 			return Promise.reject(error);

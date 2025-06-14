@@ -126,12 +126,11 @@ const ManageCashIn = () => {
 	}) => {
 		try {
 			onLoading();
-			if (!selectedStableCoin?.proxyAddress || !selectedStableCoin?.tokenId) {
+			if (!selectedStableCoin?.tokenId) {
 				onError();
 				return;
 			}
 			const values = getValues();
-			// console.log('values', values);
 			switch (supplierLimitOption) {
 				case 'INCREASE':
 					await SDKService.increaseSupplierAllowance(

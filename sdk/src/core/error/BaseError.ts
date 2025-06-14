@@ -28,6 +28,7 @@ export enum ErrorCode {
 	InvalidIdFormatHedera = '10009',
 	InvalidContractId = '10014',
 	InvalidType = '10015',
+	InvalidBytes32 = '10027',
 	InvalidLength = '10016',
 	EmptyValue = '10017',
 	InvalidRange = '10018',

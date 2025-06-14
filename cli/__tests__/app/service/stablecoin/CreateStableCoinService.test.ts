@@ -21,11 +21,10 @@
 import CreateStableCoinService from '../../../../src/app/service/stablecoin/CreateStableCoinService';
 import { configurationService, utilsService } from '../../../../src/index.js';
 import Language from '../../../../src/domain/language/Language.js';
-import SetFactoryService from '../../../../src/app/service/configuration/SetFactoryService';
+import SetResolverAndFactoryService from '../../../../src/app/service/configuration/SetResolverAndFactoryService';
 import {
   Account,
   ContractId,
-  Factory,
   CreateRequest,
   HederaId,
   PublicKey,
@@ -62,9 +61,12 @@ const request = new CreateRequest({
   symbol: '',
   decimals: 6,
   createReserve: false,
+  configId:
+    '0x0000000000000000000000000000000000000000000000000000000000000001',
+  configVersion: 1,
 });
 
-describe(`Testing ManageImportedTokenService class`, () => {
+describe(`Testing CreateStableCoinService class`, () => {
   beforeEach(() => {
     jest
       .spyOn(utilsService, 'getCurrentAccount')
@@ -88,8 +90,14 @@ describe(`Testing ManageImportedTokenService class`, () => {
       .spyOn(utilsService, 'getCurrentFactory')
       .mockReturnValue({ id: 'currentFactory', network: 'network' });
     jest
-      .spyOn(SetFactoryService.prototype, 'getSDKFactory')
+      .spyOn(utilsService, 'getCurrentResolver')
+      .mockReturnValue({ id: 'currentResolver', network: 'network' });
+    jest
+      .spyOn(SetResolverAndFactoryService.prototype, 'getSDKFactory')
       .mockResolvedValue('currentFactory');
+    jest
+      .spyOn(SetResolverAndFactoryService.prototype, 'getSDKResolver')
+      .mockResolvedValue('currentResolver');
     jest.spyOn(StableCoin, 'create').mockResolvedValue({ coin, reserve });
     jest
       .spyOn(AssociateStableCoinService.prototype, 'associateStableCoin')
@@ -115,6 +123,14 @@ describe(`Testing ManageImportedTokenService class`, () => {
 
     // Symbol
     jest.spyOn(utilsService, 'defaultSingleAsk').mockResolvedValueOnce('HDC');
+
+    // Resolver config
+    jest
+      .spyOn(utilsService, 'defaultSingleAsk')
+      .mockResolvedValueOnce(
+        '0x0000000000000000000000000000000000000000000000000000000000000001',
+      );
+    jest.spyOn(utilsService, 'defaultSingleAsk').mockResolvedValueOnce('1');
 
     // OptionalProps
     jest.spyOn(utilsService, 'defaultConfirmAsk').mockResolvedValueOnce(true);
@@ -164,25 +180,6 @@ describe(`Testing ManageImportedTokenService class`, () => {
       .spyOn(utilsService, 'defaultSingleAsk')
       .mockResolvedValueOnce('0.0.12345');
 
-    // HederaTokenManagerVersion
-    jest
-      .spyOn(Factory, 'getHederaTokenManagerList')
-      .mockResolvedValue([
-        new ContractId('0.0.12345'),
-        new ContractId('0.0.12347'),
-        new ContractId('0.0.12346'),
-      ]);
-    jest
-      .spyOn(utilsService, 'defaultMultipleAsk')
-      .mockResolvedValueOnce(
-        language.getText('stablecoin.askHederaTokenManagerOther'),
-      );
-    jest
-      .spyOn(utilsService, 'defaultSingleAsk')
-      .mockResolvedValueOnce('0.0.12345');
-
-    jest.spyOn(utilsService, 'defaultConfirmAsk').mockResolvedValueOnce(true);
-
     // grantKYCToOriginalSender true
     jest
       .spyOn(KYCStableCoinService.prototype, 'grantKYCToAccount')
@@ -193,8 +190,14 @@ describe(`Testing ManageImportedTokenService class`, () => {
       .spyOn(utilsService, 'getCurrentFactory')
       .mockReturnValue({ id: 'currentFactory', network: 'network' });
     jest
-      .spyOn(SetFactoryService.prototype, 'getSDKFactory')
+      .spyOn(utilsService, 'getCurrentResolver')
+      .mockReturnValue({ id: 'currentResolver', network: 'network' });
+    jest
+      .spyOn(SetResolverAndFactoryService.prototype, 'getSDKFactory')
       .mockResolvedValue('currentFactory');
+    jest
+      .spyOn(SetResolverAndFactoryService.prototype, 'getSDKResolver')
+      .mockResolvedValue('currentResolver');
     jest.spyOn(StableCoin, 'create').mockResolvedValue({ coin, reserve });
     jest
       .spyOn(AssociateStableCoinService.prototype, 'associateStableCoin')
@@ -247,6 +250,14 @@ describe(`Testing ManageImportedTokenService class`, () => {
 
     // Symbol
     jest.spyOn(utilsService, 'defaultSingleAsk').mockResolvedValueOnce('HDC');
+
+    // Resolver config
+    jest
+      .spyOn(utilsService, 'defaultSingleAsk')
+      .mockResolvedValueOnce(
+        '0x0000000000000000000000000000000000000000000000000000000000000001',
+      );
+    jest.spyOn(utilsService, 'defaultSingleAsk').mockResolvedValueOnce('1');
 
     // OptionalProps
     jest.spyOn(utilsService, 'defaultConfirmAsk').mockResolvedValueOnce(true);
@@ -350,26 +361,13 @@ describe(`Testing ManageImportedTokenService class`, () => {
     // Reserve
     jest.spyOn(utilsService, 'defaultConfirmAsk').mockResolvedValueOnce(true);
     jest.spyOn(utilsService, 'defaultConfirmAsk').mockResolvedValueOnce(false);
-    jest.spyOn(utilsService, 'defaultSingleAsk').mockResolvedValueOnce('10');
-
-    // HederaTokenManagerVersion
-    jest
-      .spyOn(Factory, 'getHederaTokenManagerList')
-      .mockResolvedValue([
-        new ContractId('0.0.12345'),
-        new ContractId('0.0.12347'),
-        new ContractId('0.0.12346'),
-      ]);
-    jest
-      .spyOn(utilsService, 'defaultMultipleAsk')
-      .mockResolvedValueOnce(
-        language.getText('stablecoin.askHederaTokenManagerOther'),
-      );
     jest
       .spyOn(utilsService, 'defaultSingleAsk')
-      .mockResolvedValueOnce('0.0.12345');
-
-    jest.spyOn(utilsService, 'defaultConfirmAsk').mockResolvedValueOnce(true);
+      .mockResolvedValueOnce(
+        '0x0000000000000000000000000000000000000000000000000000000000000003',
+      );
+    jest.spyOn(utilsService, 'defaultSingleAsk').mockResolvedValueOnce('1');
+    jest.spyOn(utilsService, 'defaultSingleAsk').mockResolvedValueOnce('10');
 
     jest
       .spyOn(utilsService, 'getCurrentAccount')
@@ -382,13 +380,19 @@ describe(`Testing ManageImportedTokenService class`, () => {
       .spyOn(utilsService, 'getCurrentFactory')
       .mockReturnValue({ id: 'currentFactory', network: 'network' });
     jest
+      .spyOn(utilsService, 'getCurrentResolver')
+      .mockReturnValue({ id: 'currentResolver', network: 'network' });
+    jest
       .spyOn(SetConfigurationService.prototype, 'initConfiguration')
       .mockImplementation();
     jest
-      .spyOn(SetFactoryService.prototype, 'getSDKFactory')
+      .spyOn(SetResolverAndFactoryService.prototype, 'getSDKFactory')
       .mockResolvedValue('notCurrentFactory');
     jest
-      .spyOn(SetFactoryService.prototype, 'setSDKFactory')
+      .spyOn(SetResolverAndFactoryService.prototype, 'getSDKResolver')
+      .mockResolvedValue('notCurrentResolver');
+    jest
+      .spyOn(SetResolverAndFactoryService.prototype, 'setSDKResolverAndFactory')
       .mockImplementation();
     //jest.spyOn(StableCoin, 'create').mockRejectedValue({});
     jest.spyOn(StableCoin, 'create').mockResolvedValue({ coin, reserve });
