@@ -1,39 +1,54 @@
 import { expect } from 'chai'
 import { SignerWithAddress } from '@nomiclabs/hardhat-ethers/signers'
-import { ethers, network } from 'hardhat'
-import { NetworkName } from '@configuration'
-import { HederaTokenManager, HederaTokenManager__factory, IHRC__factory } from '@typechain'
-import { MESSAGES, ValidateTxResponseCommand } from '@scripts'
-import { deployFullInfrastructureInTests, GAS_LIMIT, INIT_SUPPLY } from '@test/shared'
+import { ethers } from 'hardhat'
+import { IHRC__factory, PausableFacet, PausableFacet__factory } from '@typechain-types'
+import {
+    DEFAULT_TOKEN,
+    deployFullInfrastructure,
+    DeployFullInfrastructureCommand,
+    MESSAGES,
+    ValidateTxResponseCommand,
+} from '@scripts'
+import { deployStableCoinInTests, GAS_LIMIT } from '@test/shared'
 
 describe('Pause Tests', function () {
     // Contracts
-    let proxyAddress: string
+    let stableCoinProxyAddress: string
     let tokenAddress: string
-    let hederaTokenManager: HederaTokenManager
+    let pausableFacet: PausableFacet
     // Accounts
     let operator: SignerWithAddress
     let nonOperator: SignerWithAddress
 
-    before(async function () {
-        // Disable | Mock console.log()
-        // console.log = () => {} // eslint-disable-line
-        // * Deploy StableCoin Token
+    async function setFacets(address: string) {
+        pausableFacet = PausableFacet__factory.connect(address, operator)
+    }
+
+    before(async () => {
+        // mute | mock console.log
+        console.log = () => {} // eslint-disable-line
         console.info(MESSAGES.deploy.info.deployFullInfrastructureInTests)
         ;[operator, nonOperator] = await ethers.getSigners()
-        // if ((network.name as NetworkName) === NETWORK_LIST.name[0]) {
-        //     await deployPrecompiledHederaTokenServiceMock(hre, signer)
-        // }
-        ;({ proxyAddress, tokenAddress } = await deployFullInfrastructureInTests({
+
+        const { ...deployedContracts } = await deployFullInfrastructure(
+            await DeployFullInfrastructureCommand.newInstance({
+                signer: operator,
+                useDeployed: false,
+                useEnvironment: true,
+            })
+        )
+        ;({ stableCoinProxyAddress, tokenAddress } = await deployStableCoinInTests({
             signer: operator,
-            network: network.name as NetworkName,
-            initialAmountDataFeed: INIT_SUPPLY.toString(),
+            businessLogicResolverProxyAddress: deployedContracts.businessLogicResolver.proxyAddress!,
+            stableCoinFactoryProxyAddress: deployedContracts.stableCoinFactoryFacet.proxyAddress!,
+            initialAmountDataFeed: DEFAULT_TOKEN.initialAmountDataFeed.toString(),
         }))
-        hederaTokenManager = HederaTokenManager__factory.connect(proxyAddress, operator)
+
+        await setFacets(stableCoinProxyAddress)
     })
 
     it("An account without PAUSE role can't pause a token", async function () {
-        const response = await hederaTokenManager
+        const response = await pausableFacet
             .connect(nonOperator)
             .pause({ gasLimit: GAS_LIMIT.hederaTokenManager.pause })
         await expect(new ValidateTxResponseCommand({ txResponse: response }).execute()).to.be.rejectedWith(Error)
@@ -50,7 +65,7 @@ describe('Pause Tests', function () {
         }).execute()
 
         // Pause token
-        const pauseResponse = await hederaTokenManager.pause({ gasLimit: GAS_LIMIT.hederaTokenManager.pause })
+        const pauseResponse = await pausableFacet.pause({ gasLimit: GAS_LIMIT.hederaTokenManager.pause })
         await new ValidateTxResponseCommand({ txResponse: pauseResponse, confirmationEvent: 'TokenPaused' }).execute()
 
         //! Dissociate should fail?? It IS working
@@ -67,7 +82,7 @@ describe('Pause Tests', function () {
         // ).to.be.rejectedWith(Error)
 
         // Unpause token from nonOperator account should fail
-        const nonOperatorUnpauseResponse = await hederaTokenManager.connect(nonOperator).unpause({
+        const nonOperatorUnpauseResponse = await pausableFacet.connect(nonOperator).unpause({
             gasLimit: GAS_LIMIT.hederaTokenManager.unpause,
         })
         await expect(
@@ -77,7 +92,7 @@ describe('Pause Tests', function () {
         ).to.be.rejectedWith(Error)
 
         // Unpause token from operator account
-        const unpauseResponse = await hederaTokenManager.unpause({ gasLimit: GAS_LIMIT.hederaTokenManager.unpause })
+        const unpauseResponse = await pausableFacet.unpause({ gasLimit: GAS_LIMIT.hederaTokenManager.unpause })
         await new ValidateTxResponseCommand({
             txResponse: unpauseResponse,
             confirmationEvent: 'TokenUnpaused',

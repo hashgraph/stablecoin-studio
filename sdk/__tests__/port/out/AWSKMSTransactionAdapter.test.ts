@@ -42,14 +42,17 @@ import {
 	AWS_KMS_SETTINGS,
 	DECIMALS,
 	FACTORY_ADDRESS,
-	HEDERA_TOKEN_MANAGER_ADDRESS,
 	MIRROR_NODE,
+	RESOLVER_ADDRESS,
 	RPC_NODE,
 } from '../../config';
 import Injectable from '../../../src/core/Injectable';
 import { Time } from '../../../src/core/Time';
+import { CONFIG_SC, DEFAULT_VERSION } from '../../../src/core/Constants';
 
 const initialSupply = 1000;
+const configId = CONFIG_SC;
+const configVersion = DEFAULT_VERSION;
 
 describe('🧪 AWSKMSTransactionAdapter test', () => {
 	let stableCoinHTS: StableCoinViewModel;
@@ -91,6 +94,7 @@ describe('🧪 AWSKMSTransactionAdapter test', () => {
 				network: 'testnet',
 				configuration: {
 					factoryAddress: FACTORY_ADDRESS,
+					resolverAddress: RESOLVER_ADDRESS,
 				},
 				mirrorNode: mirrorNode,
 				rpcNode: rpcNode,
@@ -108,20 +112,20 @@ describe('🧪 AWSKMSTransactionAdapter test', () => {
 			pauseKey: requestPublicKey,
 			supplyType: TokenSupplyType.INFINITE,
 			stableCoinFactory: FACTORY_ADDRESS,
-			hederaTokenManager: HEDERA_TOKEN_MANAGER_ADDRESS,
 			reserveInitialAmount: '1000000',
-			createReserve: true,
+			createReserve: false,
 			grantKYCToOriginalSender: true,
 			burnRoleAccount: AWS_KMS_SETTINGS.hederaAccountId,
 			rescueRoleAccount: AWS_KMS_SETTINGS.hederaAccountId,
 			deleteRoleAccount: AWS_KMS_SETTINGS.hederaAccountId,
 			cashInRoleAccount: AWS_KMS_SETTINGS.hederaAccountId,
+			proxyOwnerAccount: AWS_KMS_SETTINGS.hederaAccountId,
 			cashInRoleAllowance: '0',
 			metadata: '',
+			configId: configId,
+			configVersion: configVersion,
 		});
-
 		stableCoinHTS = (await StableCoin.create(requestCreateStableCoin)).coin;
-
 		await Time.delay(10, 'seconds');
 	}, 60_000);
 

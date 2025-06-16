@@ -66,7 +66,7 @@ const CashInOperation = () => {
 	}) => {
 		try {
 			onLoading();
-			if (!selectedStableCoin?.proxyAddress || !selectedStableCoin?.tokenId) {
+			if (!selectedStableCoin?.tokenId) {
 				onError();
 				return;
 			}

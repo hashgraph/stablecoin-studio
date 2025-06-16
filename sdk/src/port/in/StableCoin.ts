@@ -185,15 +185,19 @@ class StableCoinInPort implements IStableCoinInPort {
 	}> {
 		handleValidation('CreateRequest', req);
 		const {
-			hederaTokenManager,
 			reserveAddress,
 			reserveInitialAmount,
 			createReserve,
-			proxyAdminOwnerAccount,
+			proxyOwnerAccount,
+			configId,
+			configVersion,
+			reserveConfigVersion,
+			reserveConfigId,
 		} = req;
 
 		const stableCoinFactory =
 			this.networkService.configuration.factoryAddress;
+		const resolver = this.networkService.configuration.resolverAddress;
 
 		const coin: StableCoinProps = {
 			name: req.name,
@@ -262,10 +266,6 @@ class StableCoinInPort implements IStableCoinInPort {
 			await this.mirrorNode.getContractInfo(stableCoinFactory)
 		).id;
 
-		const hederaTokenManagerId: string | undefined = hederaTokenManager
-			? (await this.mirrorNode.getContractInfo(hederaTokenManager)).id
-			: undefined;
-
 		const reserveAddressId: string | undefined = reserveAddress
 			? (await this.mirrorNode.getContractInfo(reserveAddress)).id
 			: undefined;
@@ -277,9 +277,6 @@ class StableCoinInPort implements IStableCoinInPort {
 				stableCoinFactoryId
 					? new ContractId(stableCoinFactoryId)
 					: undefined,
-				hederaTokenManagerId
-					? new ContractId(hederaTokenManagerId)
-					: undefined,
 				reserveAddressId ? new ContractId(reserveAddressId) : undefined,
 				reserveInitialAmount
 					? BigDecimal.fromString(
@@ -287,9 +284,12 @@ class StableCoinInPort implements IStableCoinInPort {
 							RESERVE_DECIMALS,
 					  )
 					: undefined,
-				proxyAdminOwnerAccount
-					? new ContractId(proxyAdminOwnerAccount)
-					: undefined,
+				proxyOwnerAccount ? new HederaId(proxyOwnerAccount) : undefined,
+				resolver ? new ContractId(resolver) : undefined,
+				configId,
+				configVersion,
+				reserveConfigVersion,
+				reserveConfigId,
 			),
 		);
 
@@ -304,7 +304,6 @@ class StableCoinInPort implements IStableCoinInPort {
 					: {},
 			reserve: {
 				proxyAddress: createResponse.reserveProxy,
-				proxyAdminAddress: createResponse.reserveProxyAdmin,
 			},
 		};
 	}

@@ -1,39 +1,65 @@
 import { expect } from 'chai'
 import { SignerWithAddress } from '@nomiclabs/hardhat-ethers/signers'
-import { ethers, network } from 'hardhat'
-import { NetworkName } from '@configuration'
-import { HederaTokenManager, HederaTokenManager__factory } from '@typechain'
-import { MESSAGES, ROLES, validateTxResponse, ValidateTxResponseCommand } from '@scripts'
-import { deployFullInfrastructureInTests, GAS_LIMIT, INIT_SUPPLY, ONE_TOKEN } from '@test/shared'
+import { ethers } from 'hardhat'
+import {
+    CashInFacet,
+    CashInFacet__factory,
+    DeletableFacet,
+    DeletableFacet__factory,
+    RolesFacet,
+    RolesFacet__factory,
+} from '@typechain-types'
+import {
+    deployFullInfrastructure,
+    DeployFullInfrastructureCommand,
+    MESSAGES,
+    ONE_TOKEN,
+    ROLES,
+    validateTxResponse,
+    ValidateTxResponseCommand,
+} from '@scripts'
+import { deployStableCoinInTests, GAS_LIMIT } from '@test/shared'
 
 describe('➡️ Delete Tests', function () {
     // Contracts
-    let proxyAddress: string
-    let hederaTokenManager: HederaTokenManager
+    let stableCoinProxyAddress: string
+    let deletableFacet: DeletableFacet
+    let rolesFacet: RolesFacet
+    let cashInFacet: CashInFacet
     // Accounts
     let operator: SignerWithAddress
     let nonOperator: SignerWithAddress
 
-    before(async function () {
-        // Disable | Mock console.log()
+    async function setFacets(address: string) {
+        deletableFacet = DeletableFacet__factory.connect(address, operator)
+        rolesFacet = RolesFacet__factory.connect(address, operator)
+        cashInFacet = CashInFacet__factory.connect(address, operator)
+    }
+
+    before(async () => {
+        // mute | mock console.log
         console.log = () => {} // eslint-disable-line
-        // * Deploy StableCoin Token
         console.info(MESSAGES.deploy.info.deployFullInfrastructureInTests)
         ;[operator, nonOperator] = await ethers.getSigners()
-        // if ((network.name as NetworkName) === NETWORK_LIST.name[0]) {
-        //     await deployPrecompiledHederaTokenServiceMock(hre, signer)
-        // }
-        ;({ proxyAddress } = await deployFullInfrastructureInTests({
+
+        const { ...deployedContracts } = await deployFullInfrastructure(
+            await DeployFullInfrastructureCommand.newInstance({
+                signer: operator,
+                useDeployed: false,
+                useEnvironment: true,
+            })
+        )
+        ;({ stableCoinProxyAddress } = await deployStableCoinInTests({
             signer: operator,
-            network: network.name as NetworkName,
-            initialAmountDataFeed: INIT_SUPPLY.toString(),
-            addFeeSchedule: true,
+            businessLogicResolverProxyAddress: deployedContracts.businessLogicResolver.proxyAddress!,
+            stableCoinFactoryProxyAddress: deployedContracts.stableCoinFactoryFacet.proxyAddress!,
         }))
-        hederaTokenManager = HederaTokenManager__factory.connect(proxyAddress, operator)
+
+        await setFacets(stableCoinProxyAddress)
     })
 
     it("Account without DELETE role can't delete a token", async function () {
-        const response = await hederaTokenManager.connect(nonOperator).deleteToken({
+        const response = await deletableFacet.connect(nonOperator).deleteToken({
             gasLimit: GAS_LIMIT.hederaTokenManager.deleteToken,
         })
         await expect(validateTxResponse(new ValidateTxResponseCommand({ txResponse: response }))).to.be.rejectedWith(
@@ -43,22 +69,22 @@ describe('➡️ Delete Tests', function () {
 
     it('Account with DELETE role can delete a token', async function () {
         // We first grant delete role to account
-        const grantRoleResponse = await hederaTokenManager.grantRole(ROLES.delete.hash, nonOperator.address, {
+        const grantRoleResponse = await rolesFacet.grantRole(ROLES.delete.hash, nonOperator.address, {
             gasLimit: GAS_LIMIT.hederaTokenManager.grantRole,
         })
         await validateTxResponse(new ValidateTxResponseCommand({ txResponse: grantRoleResponse }))
         // We check that the token exists by minting 1
-        const mintResponse = await hederaTokenManager.mint(operator.address, ONE_TOKEN, {
+        const mintResponse = await cashInFacet.mint(operator.address, ONE_TOKEN, {
             gasLimit: GAS_LIMIT.hederaTokenManager.mint,
         })
         await validateTxResponse(new ValidateTxResponseCommand({ txResponse: mintResponse }))
         // Delete the token
-        const deleteResponse = await hederaTokenManager.connect(nonOperator).deleteToken({
+        const deleteResponse = await deletableFacet.connect(nonOperator).deleteToken({
             gasLimit: GAS_LIMIT.hederaTokenManager.deleteToken,
         })
         await validateTxResponse(new ValidateTxResponseCommand({ txResponse: deleteResponse }))
         // We check that the token does not exist by unsucessfully trying to mint 1
-        const mintResponse2 = await hederaTokenManager.mint(nonOperator.address, ONE_TOKEN, {
+        const mintResponse2 = await cashInFacet.mint(nonOperator.address, ONE_TOKEN, {
             gasLimit: GAS_LIMIT.hederaTokenManager.mint,
         })
         await expect(

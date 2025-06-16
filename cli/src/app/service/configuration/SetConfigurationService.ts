@@ -27,8 +27,8 @@ import {
   wizardService,
   setMirrorNodeService,
   setRPCService,
-  setFactoryService,
   backendConfigurationService,
+  setResolverAndFactoryService,
 } from '../../../index.js';
 import Service from '../Service.js';
 import { ZERO_ADDRESS } from '../../../core/Constants.js';
@@ -65,12 +65,12 @@ export default class SetConfigurationService extends Service {
     await this.configurePath(path);
     await this.configureDefaultNetwork(network);
     await this.configureAccounts();
-    const configFactories = await utilsService.defaultConfirmAsk(
-      language.getText('configuration.askConfigurateFactories'),
+    const configResolversAndFactories = await utilsService.defaultConfirmAsk(
+      language.getText('configuration.askConfigurateResolversAndFactories'),
       true,
     );
-    if (configFactories) {
-      await setFactoryService.configureFactories();
+    if (configResolversAndFactories) {
+      await setResolverAndFactoryService.configureResolversAndFactories();
     }
     const configDefaultMirrorsAndRPCs = await utilsService.defaultConfirmAsk(
       language.getText('configuration.askConfigurateDefaultMirrorsAndRPCs'),

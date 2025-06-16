@@ -44,13 +44,16 @@ export default class CreateRequest extends ValidatedRequest<CreateRequest> {
 	@OptionalField()
 	stableCoinFactory?: string;
 
-	@OptionalField()
-	hederaTokenManager?: string;
-
 	createReserve: boolean;
 
 	@OptionalField()
 	reserveAddress?: string;
+
+	@OptionalField()
+	reserveConfigId?: string;
+
+	@OptionalField()
+	reserveConfigVersion?: number;
 
 	@OptionalField()
 	reserveInitialAmount?: string | undefined;
@@ -119,7 +122,10 @@ export default class CreateRequest extends ValidatedRequest<CreateRequest> {
 	metadata?: string | undefined;
 
 	@OptionalField()
-	proxyAdminOwnerAccount?: string;
+	proxyOwnerAccount?: string;
+
+	configId: string;
+	configVersion: number;
 
 	constructor({
 		name,
@@ -135,9 +141,10 @@ export default class CreateRequest extends ValidatedRequest<CreateRequest> {
 		supplyType,
 		feeScheduleKey,
 		stableCoinFactory,
-		hederaTokenManager,
 		reserveAddress,
 		reserveInitialAmount,
+		reserveConfigId,
+		reserveConfigVersion,
 		createReserve,
 		grantKYCToOriginalSender,
 		burnRoleAccount,
@@ -151,7 +158,9 @@ export default class CreateRequest extends ValidatedRequest<CreateRequest> {
 		feeRoleAccount,
 		cashInRoleAllowance,
 		metadata,
-		proxyAdminOwnerAccount,
+		proxyOwnerAccount,
+		configId,
+		configVersion,
 	}: {
 		name: string;
 		symbol: string;
@@ -166,9 +175,10 @@ export default class CreateRequest extends ValidatedRequest<CreateRequest> {
 		feeScheduleKey?: RequestPublicKey;
 		supplyType?: TokenSupplyType;
 		stableCoinFactory?: string;
-		hederaTokenManager?: string;
 		reserveAddress?: string;
 		reserveInitialAmount?: string;
+		reserveConfigId?: string;
+		reserveConfigVersion?: number;
 		createReserve: boolean;
 		grantKYCToOriginalSender?: boolean;
 		burnRoleAccount?: string;
@@ -182,7 +192,9 @@ export default class CreateRequest extends ValidatedRequest<CreateRequest> {
 		feeRoleAccount?: string;
 		cashInRoleAllowance?: string;
 		metadata?: string;
-		proxyAdminOwnerAccount?: string;
+		proxyOwnerAccount?: string;
+		configId: string;
+		configVersion: number;
 	}) {
 		super({
 			name: (val) => {
@@ -260,7 +272,6 @@ export default class CreateRequest extends ValidatedRequest<CreateRequest> {
 			pauseKey: Validation.checkPublicKey(),
 			feeScheduleKey: Validation.checkPublicKey(),
 			stableCoinFactory: Validation.checkContractId(),
-			hederaTokenManager: Validation.checkContractId(),
 			reserveAddress: Validation.checkContractId(),
 			reserveInitialAmount: (val) => {
 				if (
@@ -331,7 +342,11 @@ export default class CreateRequest extends ValidatedRequest<CreateRequest> {
 				);
 			},
 			metadata: Validation.checkString({ max: 100, emptyCheck: false }),
-			proxyAdminOwnerAccount: Validation.checkContractId(),
+			proxyOwnerAccount: Validation.checkHederaIdFormat(),
+			configId: Validation.checkBytes32Format(),
+			configVersion: Validation.checkNumber(),
+			reserveConfigId: Validation.checkBytes32Format(),
+			reserveConfigVersion: Validation.checkNumber(),
 		});
 		this.name = name;
 		this.symbol = symbol;
@@ -347,9 +362,10 @@ export default class CreateRequest extends ValidatedRequest<CreateRequest> {
 		this.feeScheduleKey = feeScheduleKey;
 		this.supplyType = supplyType;
 		this.stableCoinFactory = stableCoinFactory;
-		this.hederaTokenManager = hederaTokenManager;
 		this.reserveAddress = reserveAddress;
 		this.reserveInitialAmount = reserveInitialAmount;
+		this.reserveConfigId = reserveConfigId;
+		this.reserveConfigVersion = reserveConfigVersion;
 		this.createReserve = createReserve;
 		this.grantKYCToOriginalSender = grantKYCToOriginalSender;
 		this.burnRoleAccount = burnRoleAccount;
@@ -363,6 +379,8 @@ export default class CreateRequest extends ValidatedRequest<CreateRequest> {
 		this.feeRoleAccount = feeRoleAccount;
 		this.cashInRoleAllowance = cashInRoleAllowance;
 		this.metadata = metadata;
-		this.proxyAdminOwnerAccount = proxyAdminOwnerAccount;
+		this.proxyOwnerAccount = proxyOwnerAccount;
+		this.configId = configId;
+		this.configVersion = configVersion;
 	}
 }

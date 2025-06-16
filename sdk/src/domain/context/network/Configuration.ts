@@ -20,4 +20,5 @@
 
 export default interface Configuration {
 	factoryAddress: string;
+	resolverAddress: string;
 }

@@ -51,12 +51,7 @@ import {
 	TransferTransaction,
 } from '@hashgraph/sdk';
 import { MirrorNodeAdapter } from '../../port/out/mirror/MirrorNodeAdapter.js';
-import {
-	HederaTokenManager__factory,
-	Proxy__factory,
-	ProxyAdmin__factory,
-	StableCoinProxyAdmin__factory,
-} from '@hashgraph/stablecoin-npm-contracts';
+import { HederaTokenManagerFacet__factory } from '@hashgraph/stablecoin-npm-contracts';
 import { ethers } from 'ethers';
 import Hex from '../../core/Hex.js';
 import { AWSKMSTransactionAdapter } from '../../port/out/hs/hts/custodial/AWSKMSTransactionAdapter';
@@ -128,6 +123,10 @@ export default class TransactionService extends Service {
 				if (functionParameters) {
 					const decodedFunctionParameters =
 						this.decodeFunctionCall(functionParameters);
+
+					if (!decodedFunctionParameters) {
+						return 'Failed to decode function call';
+					}
 					name = decodedFunctionParameters.name;
 					const inputArgs = decodedFunctionParameters.args;
 
@@ -307,36 +306,16 @@ export default class TransactionService extends Service {
 
 	static decodeFunctionCall(
 		parameters: Uint8Array,
-	): ethers.utils.TransactionDescription {
+	): ethers.utils.TransactionDescription | undefined {
 		const inputData = '0x' + Hex.fromUint8Array(parameters);
 
 		try {
 			const iface_tokenManager = new ethers.utils.Interface(
-				HederaTokenManager__factory.abi,
+				HederaTokenManagerFacet__factory.abi,
 			);
 			return iface_tokenManager.parseTransaction({ data: inputData });
 		} catch (e) {
-			// nothing
+			return undefined;
 		}
-		try {
-			const iface_ProxyAdmin = new ethers.utils.Interface(
-				ProxyAdmin__factory.abi,
-			);
-			return iface_ProxyAdmin.parseTransaction({ data: inputData });
-		} catch (e) {
-			// nothing
-		}
-		try {
-			const iface_StableCoinProxyAdmin = new ethers.utils.Interface(
-				StableCoinProxyAdmin__factory.abi,
-			);
-			return iface_StableCoinProxyAdmin.parseTransaction({
-				data: inputData,
-			});
-		} catch (e) {
-			// nothing
-		}
-		const iface_Proxy = new ethers.utils.Interface(Proxy__factory.abi);
-		return iface_Proxy.parseTransaction({ data: inputData });
 	}
 }

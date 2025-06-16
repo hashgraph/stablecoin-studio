@@ -1,61 +1,76 @@
 import { expect } from 'chai'
-import { ethers, network } from 'hardhat'
-import { NetworkName } from '@configuration'
-import { HederaTokenManager, HederaTokenManager__factory, IHederaTokenManager } from '@typechain'
+import { ethers } from 'hardhat'
+import {
+    CashInFacet,
+    CashInFacet__factory,
+    HederaTokenManagerFacet,
+    HederaTokenManagerFacet__factory,
+    IHederaTokenManager,
+    RolesFacet__factory,
+    SupplierAdminFacet__factory,
+} from '@typechain-types'
 import {
     allTokenKeysToKey,
     AllTokenKeysToKeyCommand,
+    DEFAULT_TOKEN,
     delay,
+    deployFullInfrastructure,
     DeployFullInfrastructureCommand,
     getFullWalletFromSigner,
     getOneMonthFromNowInSeconds,
     MESSAGES,
+    ONE_TOKEN,
     ROLES,
     tokenKeysToKey,
     TokenKeysToKeyCommand,
     validateTxResponse,
     ValidateTxResponseCommand,
 } from '@scripts'
-import {
-    DEFAULT_UPDATE_TOKEN_STRUCT,
-    deployFullInfrastructureInTests,
-    GAS_LIMIT,
-    INIT_SUPPLY,
-    ONE_TOKEN,
-    OTHER_AUTO_RENEW_PERIOD,
-    TOKEN_DECIMALS,
-    TOKEN_MEMO,
-    TOKEN_NAME,
-    TOKEN_SYMBOL,
-} from '@test/shared'
+import { DEFAULT_UPDATE_TOKEN_STRUCT, deployStableCoinInTests, GAS_LIMIT, OTHER_AUTO_RENEW_PERIOD } from '@test/shared'
 import { BigNumber, Wallet } from 'ethers'
 
 describe('➡️ HederaTokenManager Tests', function () {
     // Contracts
-    let proxyAddress: string
-    let hederaTokenManager: HederaTokenManager
+    let stableCoinProxyAddress: string
+    let businessLogicResolver: string
+    let stableCoinFactory: string
+    let hederaTokenManagerFacet: HederaTokenManagerFacet
+    let cashInFacet: CashInFacet
     // Accounts
     let operator: Wallet // ! usign Wallet instead of SignerWithAddress because need public key
     let nonOperator: Wallet
 
-    before(async function () {
-        // Disable | Mock console.log()
+    async function setFacets(address: string) {
+        hederaTokenManagerFacet = HederaTokenManagerFacet__factory.connect(address, operator)
+        cashInFacet = CashInFacet__factory.connect(address, operator)
+    }
+
+    before(async () => {
+        // mute | mock console.log
         console.log = () => {} // eslint-disable-line
-        // * Deploy StableCoin Token
         console.info(MESSAGES.deploy.info.deployFullInfrastructureInTests)
         const [operatorSigner, nonOperatorSigner] = await ethers.getSigners()
         operator = await getFullWalletFromSigner(operatorSigner)
         nonOperator = await getFullWalletFromSigner(nonOperatorSigner)
-        // if ((network.name as NetworkName) === NETWORK_LIST.name[0]) {
-        //     await deployPrecompiledHederaTokenServiceMock(hre, signer)
-        // }
-        ;({ proxyAddress } = await deployFullInfrastructureInTests({
+
+        const { ...deployedContracts } = await deployFullInfrastructure(
+            await DeployFullInfrastructureCommand.newInstance({
+                signer: operatorSigner,
+                useDeployed: false,
+                useEnvironment: true,
+            })
+        )
+        businessLogicResolver = deployedContracts.businessLogicResolver.proxyAddress!
+        stableCoinFactory = deployedContracts.stableCoinFactoryFacet.proxyAddress!
+        ;({ stableCoinProxyAddress } = await deployStableCoinInTests({
             signer: operator,
-            network: network.name as NetworkName,
-            initialAmountDataFeed: INIT_SUPPLY.toString(),
+            businessLogicResolverProxyAddress: businessLogicResolver,
+            stableCoinFactoryProxyAddress: stableCoinFactory,
+            initialAmountDataFeed: DEFAULT_TOKEN.initialAmountDataFeed.toString(),
             addFeeSchedule: true,
         }))
-        hederaTokenManager = HederaTokenManager__factory.connect(proxyAddress, operator)
+
+        await setFacets(stableCoinProxyAddress)
     })
 
     it('Cannot Update token if not Admin', async function () {
@@ -66,10 +81,10 @@ describe('➡️ HederaTokenManager Tests', function () {
             keys: keys as IHederaTokenManager.UpdateTokenStructStructOutput['keys'],
             second: BigNumber.from(getOneMonthFromNowInSeconds()),
             autoRenewPeriod: OTHER_AUTO_RENEW_PERIOD,
-            tokenMetadataURI: TOKEN_MEMO,
+            tokenMetadataURI: DEFAULT_TOKEN.memo,
         } as IHederaTokenManager.UpdateTokenStructStructOutput
 
-        const response = await hederaTokenManager
+        const response = await hederaTokenManagerFacet
             .connect(nonOperator)
             .updateToken(updateTokenStruct, { gasLimit: GAS_LIMIT.hederaTokenManager.updateToken })
 
@@ -91,7 +106,7 @@ describe('➡️ HederaTokenManager Tests', function () {
             tokenMetadataURI: longMetadata,
         } as IHederaTokenManager.UpdateTokenStructStructOutput
 
-        const response = await hederaTokenManager.updateToken(updateTokenStruct, {
+        const response = await hederaTokenManagerFacet.updateToken(updateTokenStruct, {
             gasLimit: GAS_LIMIT.hederaTokenManager.updateToken,
         })
 
@@ -100,30 +115,31 @@ describe('➡️ HederaTokenManager Tests', function () {
         )
     })
 
-    // TODO: review this test
-    it.skip('Admin can update token', async function () {
+    it('Admin can update token', async function () {
         const keys = tokenKeysToKey(new TokenKeysToKeyCommand({ publicKey: operator.publicKey, addKyc: false }))
         const updateTokenStruct = {
             tokenName: 'newName',
             tokenSymbol: 'newSymbol',
             keys: keys as IHederaTokenManager.UpdateTokenStructStructOutput['keys'],
-            second: BigNumber.from(getOneMonthFromNowInSeconds()),
-            autoRenewPeriod: OTHER_AUTO_RENEW_PERIOD,
-            tokenMetadataURI: TOKEN_MEMO,
+            second: BigNumber.from(0),
+            autoRenewPeriod: BigNumber.from(0),
+            tokenMetadataURI: 'newMemo',
         } as IHederaTokenManager.UpdateTokenStructStructOutput
 
-        const response = await hederaTokenManager.updateToken(updateTokenStruct, {
+        const response = await hederaTokenManagerFacet.updateToken(updateTokenStruct, {
             gasLimit: GAS_LIMIT.hederaTokenManager.updateToken,
         })
         await validateTxResponse(
             new ValidateTxResponseCommand({ txResponse: response, confirmationEvent: 'TokenUpdated' })
         )
 
-        const newMetadata = await hederaTokenManager.getMetadata({ gasLimit: GAS_LIMIT.hederaTokenManager.getMetadata })
-        expect(newMetadata).to.equal(TOKEN_MEMO)
+        const newMetadata = await hederaTokenManagerFacet.getMetadata({
+            gasLimit: GAS_LIMIT.hederaTokenManager.getMetadata,
+        })
+        expect(newMetadata).to.equal('newMemo')
 
         // Update back to initial values
-        const defaultResponse = await hederaTokenManager.updateToken(DEFAULT_UPDATE_TOKEN_STRUCT, {
+        const defaultResponse = await hederaTokenManagerFacet.updateToken(DEFAULT_UPDATE_TOKEN_STRUCT, {
             gasLimit: GAS_LIMIT.hederaTokenManager.updateToken,
         })
         await validateTxResponse(
@@ -139,9 +155,9 @@ describe('➡️ HederaTokenManager Tests', function () {
             keys: keys as IHederaTokenManager.UpdateTokenStructStructOutput['keys'],
             second: BigNumber.from(getOneMonthFromNowInSeconds()),
             autoRenewPeriod: OTHER_AUTO_RENEW_PERIOD,
-            tokenMetadataURI: TOKEN_MEMO,
+            tokenMetadataURI: DEFAULT_TOKEN.memo,
         } as IHederaTokenManager.UpdateTokenStructStructOutput
-        const response = await hederaTokenManager.updateToken(updateTokenStruct, {
+        const response = await hederaTokenManagerFacet.updateToken(updateTokenStruct, {
             gasLimit: GAS_LIMIT.hederaTokenManager.updateToken,
         })
         await expect(validateTxResponse(new ValidateTxResponseCommand({ txResponse: response }))).to.be.rejectedWith(
@@ -151,27 +167,30 @@ describe('➡️ HederaTokenManager Tests', function () {
 
     it('deploy SC with roles associated to another account', async function () {
         // Deploy New Token
-        const { proxyAddress: newProxyAddress } = await deployFullInfrastructureInTests({
+        const { stableCoinProxyAddress } = await deployStableCoinInTests({
             signer: operator,
-            network: network.name as NetworkName,
-            initialAmountDataFeed: INIT_SUPPLY.toString(),
+            businessLogicResolverProxyAddress: businessLogicResolver,
+            stableCoinFactoryProxyAddress: stableCoinFactory,
+            initialAmountDataFeed: DEFAULT_TOKEN.initialAmountDataFeed.toString(),
             allRolesToCreator: false,
-            RolesToAccount: nonOperator.address,
+            rolesToAccount: nonOperator.address,
             addFeeSchedule: true,
         })
-        const newHederaTokenManager = HederaTokenManager__factory.connect(newProxyAddress, operator)
+
+        const rolesFacet = RolesFacet__factory.connect(stableCoinProxyAddress, operator)
+        const supplierAdminFacet = SupplierAdminFacet__factory.connect(stableCoinProxyAddress, operator)
 
         // Checking roles
         const [resultOperatorAccount, resultNonOperatorAccount, isUnlimitedOperator, isUnlimitedNonOperator] =
             await Promise.all([
-                newHederaTokenManager.getRoles(operator.address, { gasLimit: GAS_LIMIT.hederaTokenManager.getRoles }),
-                newHederaTokenManager.getRoles(nonOperator.address, {
+                rolesFacet.getRoles(operator.address, { gasLimit: GAS_LIMIT.hederaTokenManager.getRoles }),
+                rolesFacet.getRoles(nonOperator.address, {
                     gasLimit: GAS_LIMIT.hederaTokenManager.getRoles,
                 }),
-                newHederaTokenManager.isUnlimitedSupplierAllowance(operator.address, {
+                supplierAdminFacet.isUnlimitedSupplierAllowance(operator.address, {
                     gasLimit: GAS_LIMIT.hederaTokenManager.isUnlimitedSupplierAllowance,
                 }),
-                newHederaTokenManager.isUnlimitedSupplierAllowance(nonOperator.address, {
+                supplierAdminFacet.isUnlimitedSupplierAllowance(nonOperator.address, {
                     gasLimit: GAS_LIMIT.hederaTokenManager.isUnlimitedSupplierAllowance,
                 }),
             ])
@@ -228,58 +247,71 @@ describe('➡️ HederaTokenManager Tests', function () {
         }
     })
 
-    it('input parmeters check', async function () {
+    it('input parameters check', async function () {
         // We retreive the Token basic params
         const [retrievedTokenName, retrievedTokenSymbol, retrievedTokenDecimals, retrievedTokenTotalSupply] =
             await Promise.all([
-                hederaTokenManager.name({ gasLimit: GAS_LIMIT.hederaTokenManager.name }),
-                hederaTokenManager.symbol({ gasLimit: GAS_LIMIT.hederaTokenManager.symbol }),
-                hederaTokenManager.decimals({ gasLimit: GAS_LIMIT.hederaTokenManager.decimals }),
-                hederaTokenManager.totalSupply({ gasLimit: GAS_LIMIT.hederaTokenManager.totalSupply }),
+                hederaTokenManagerFacet.name({ gasLimit: GAS_LIMIT.hederaTokenManager.name }),
+                hederaTokenManagerFacet.symbol({ gasLimit: GAS_LIMIT.hederaTokenManager.symbol }),
+                hederaTokenManagerFacet.decimals({ gasLimit: GAS_LIMIT.hederaTokenManager.decimals }),
+                hederaTokenManagerFacet.totalSupply({ gasLimit: GAS_LIMIT.hederaTokenManager.totalSupply }),
             ])
 
         // We check their values : success
-        expect(retrievedTokenName).to.equals(TOKEN_NAME)
-        expect(retrievedTokenSymbol).to.equals(TOKEN_SYMBOL)
-        expect(retrievedTokenDecimals).to.equals(TOKEN_DECIMALS)
-        expect(retrievedTokenTotalSupply.toString()).to.equals(INIT_SUPPLY.toString())
+        expect(retrievedTokenName).to.equals(DEFAULT_TOKEN.name)
+        expect(retrievedTokenSymbol).to.equals(DEFAULT_TOKEN.symbol)
+        expect(retrievedTokenDecimals).to.equals(DEFAULT_TOKEN.decimals)
+        expect(retrievedTokenTotalSupply.toString()).to.equals(DEFAULT_TOKEN.initialSupply.toString())
     })
 
-    // TODO: init test before only pass the tokenAddress, this was never tested
-    it.skip('Check initialize can only be run once', async function () {
-        // Retrieve current Token address
-        const tokenAddress = await hederaTokenManager.getTokenAddress({
-            gasLimit: GAS_LIMIT.hederaTokenManager.getTokenAddress,
-        })
-
-        const deployCommand = await DeployFullInfrastructureCommand.newInstance({
-            signer: operator,
-            tokenInformation: {
-                name: TOKEN_NAME,
-                symbol: TOKEN_SYMBOL,
-                decimals: TOKEN_DECIMALS,
-                initialSupply: INIT_SUPPLY.toString(),
-                maxSupply: INIT_SUPPLY.toString(),
-                memo: TOKEN_MEMO,
-                freeze: false,
+    it('Check initialize can only be run once', async function () {
+        const dummyStruct = {
+            token: {
+                name: 'DummyToken',
+                symbol: 'DUM',
+                treasury: '0x000000000000000000000000000000000000dEaD',
+                memo: 'Test token memo',
+                tokenSupplyType: true,
+                maxSupply: 1_000_000,
+                freezeDefault: false,
+                tokenKeys: [
+                    {
+                        keyType: 1,
+                        key: {
+                            inheritAccountKey: false,
+                            contractId: '0x1111111111111111111111111111111111111111',
+                            ed25519: '0xabcdef',
+                            ECDSA_secp256k1: '0x123456',
+                            delegatableContractId: '0x2222222222222222222222222222222222222222',
+                        },
+                    },
+                ],
+                expiry: {
+                    second: 1680000000,
+                    autoRenewAccount: '0x3333333333333333333333333333333333333333',
+                    autoRenewPeriod: 7890000,
+                },
             },
-            initialAmountDataFeed: INIT_SUPPLY.toString(),
-        })
-
-        const initStruct = {
-            // eslint-disable-next-line @typescript-eslint/no-explicit-any
-            token: tokenAddress as any, //! imposible to test...
-            initialTotalSupply: deployCommand.tokenStruct.tokenInitialSupply,
-            tokenDecimals: deployCommand.tokenStruct.tokenDecimals,
-            originalSender: operator.address,
-            reserveAddress: deployCommand.tokenStruct.reserveAddress,
-            roles: deployCommand.tokenStruct.roles,
-            cashinRole: deployCommand.tokenStruct.cashinRole,
-            tokenMetadataURI: deployCommand.tokenStruct.metadata,
+            initialTotalSupply: 500_000,
+            tokenDecimals: 8,
+            originalSender: '0x4444444444444444444444444444444444444444',
+            reserveAddress: '0x5555555555555555555555555555555555555555',
+            roles: [
+                {
+                    account: '0x6666666666666666666666666666666666666666',
+                    allowance: 1_000,
+                    role: '0x53300d27a2268d3ff3ecb0ec8e628321ecfba1a08aed8b817e8acf589a52d25c',
+                },
+            ],
+            cashinRole: {
+                account: '0x7777777777777777777777777777777777777777',
+                allowance: 2_000,
+            },
+            tokenMetadataURI: 'https://example.com/metadata.json',
         }
 
         // Initiliaze : fail
-        const result = await hederaTokenManager.initialize(initStruct, {
+        const result = await hederaTokenManagerFacet.initialize(dummyStruct, {
             gasLimit: GAS_LIMIT.hederaTokenManager.initialize,
         })
         await expect(validateTxResponse(new ValidateTxResponseCommand({ txResponse: result }))).to.be.rejectedWith(
@@ -287,23 +319,23 @@ describe('➡️ HederaTokenManager Tests', function () {
         )
     })
 
-    it('Mint token throw error format number incorrrect', async () => {
-        const initialTotalSupply = await hederaTokenManager.totalSupply({
+    it('Mint token throw error format number incorrect', async () => {
+        const initialTotalSupply = await hederaTokenManagerFacet.totalSupply({
             gasLimit: GAS_LIMIT.hederaTokenManager.totalSupply,
         })
-        const badMintResponse = await hederaTokenManager.mint(operator.address, BigNumber.from(1), {
+        const badMintResponse = await cashInFacet.mint(operator.address, BigNumber.from(1), {
             gasLimit: GAS_LIMIT.hederaTokenManager.mint,
         })
         await expect(
             validateTxResponse(new ValidateTxResponseCommand({ txResponse: badMintResponse }))
         ).to.be.rejectedWith(Error)
 
-        const afterErrorTotalSupply = await hederaTokenManager.totalSupply({
+        const afterErrorTotalSupply = await hederaTokenManagerFacet.totalSupply({
             gasLimit: GAS_LIMIT.hederaTokenManager.totalSupply,
         })
         expect(initialTotalSupply).to.equal(afterErrorTotalSupply)
 
-        const goodMintResponse = await hederaTokenManager.mint(operator.address, ONE_TOKEN, {
+        const goodMintResponse = await cashInFacet.mint(operator.address, ONE_TOKEN, {
             gasLimit: GAS_LIMIT.hederaTokenManager.mint,
         })
         await validateTxResponse(
@@ -311,292 +343,9 @@ describe('➡️ HederaTokenManager Tests', function () {
         )
 
         await delay({ time: 500, unit: 'ms' })
-        const totalSupply = await hederaTokenManager.totalSupply({
+        const totalSupply = await hederaTokenManagerFacet.totalSupply({
             gasLimit: GAS_LIMIT.hederaTokenManager.totalSupply,
         })
         expect(totalSupply).to.equal(initialTotalSupply.add(ONE_TOKEN))
     })
-})
-
-describe.skip('HederaTokenManagerProxy and HederaTokenManagerProxyAdmin Tests', function () {
-    // before(async function () {
-    //     // Deploy Token using Client
-    //     const result = await deployContractsWithSDK({
-    //         name: TOKEN_NAME,
-    //         symbol: TOKEN_SYMBOL,
-    //         decimals: TOKEN_DECIMALS,
-    //         initialSupply: INIT_SUPPLY.toString(),
-    //         maxSupply: MAX_SUPPLY.toString(),
-    //         memo: TOKEN_MEMO,
-    //         account: operatorAccount,
-    //         privateKey: operatorPriKey,
-    //         publicKey: operatorPubKey,
-    //         isED25519Type: operatorIsE25519,
-    //         initialAmountDataFeed: INIT_SUPPLY.toString(),
-    //     })
-    //     proxyAddress = result[0]
-    //     proxyAdminAddress = result[1]
-    //     stableCoinAddress = result[2]
-    // })
-    // it('Can deploy a stablecoin where proxy admin owner is the deploying account', async function () {
-    //     const result = await deployContractsWithSDK({
-    //         name: TOKEN_NAME,
-    //         symbol: TOKEN_SYMBOL,
-    //         decimals: TOKEN_DECIMALS,
-    //         initialSupply: INIT_SUPPLY.toString(),
-    //         maxSupply: MAX_SUPPLY.toString(),
-    //         memo: TOKEN_MEMO,
-    //         account: operatorAccount,
-    //         privateKey: operatorPriKey,
-    //         publicKey: operatorPubKey,
-    //         isED25519Type: operatorIsE25519,
-    //         initialAmountDataFeed: INIT_SUPPLY.toString(),
-    //         proxyAdminOwnerAccount: ADDRESS_ZERO,
-    //     })
-    //     // We retreive the HederaTokenManagerProxy admin and implementation
-    //     const ownerAccount = await owner(abiProxyAdmin, result[1], operatorClient)
-    //     // We check their values : success
-    //     expect(ownerAccount.toUpperCase()).to.equals(
-    //         (await toEvmAddress(operatorAccount, operatorIsE25519)).toUpperCase()
-    //     )
-    // })
-    // it('Can deploy a stablecoin where proxy admin owner is not the deploying account', async function () {
-    //     const result = await deployContractsWithSDK({
-    //         name: TOKEN_NAME,
-    //         symbol: TOKEN_SYMBOL,
-    //         decimals: TOKEN_DECIMALS,
-    //         initialSupply: INIT_SUPPLY.toString(),
-    //         maxSupply: MAX_SUPPLY.toString(),
-    //         memo: TOKEN_MEMO,
-    //         account: operatorAccount,
-    //         privateKey: operatorPriKey,
-    //         publicKey: operatorPubKey,
-    //         isED25519Type: operatorIsE25519,
-    //         initialAmountDataFeed: INIT_SUPPLY.toString(),
-    //         proxyAdminOwnerAccount: await toEvmAddress(nonOperatorAccount, nonOperatorIsE25519),
-    //     })
-    //     // We retreive the HederaTokenManagerProxy admin and implementation
-    //     const ownerAccount = await owner(abiProxyAdmin, result[1], operatorClient)
-    //     // We check their values : success
-    //     expect(ownerAccount.toUpperCase()).to.equals(
-    //         (await toEvmAddress(nonOperatorAccount, nonOperatorIsE25519)).toUpperCase()
-    //     )
-    // })
-    // it('Retrieve admin and implementation addresses for the Proxy', async function () {
-    //     // We retreive the HederaTokenManagerProxy admin and implementation
-    //     const implementation = await getProxyImplementation(
-    //         abiProxyAdmin,
-    //         proxyAdminAddress,
-    //         operatorClient,
-    //         (await getContractInfo(proxyAddress.toString())).evm_address
-    //     )
-    //     const admin = await getProxyAdmin(
-    //         abiProxyAdmin,
-    //         proxyAdminAddress,
-    //         operatorClient,
-    //         (await getContractInfo(proxyAddress.toString())).evm_address
-    //     )
-    //     // We check their values : success
-    //     expect(implementation.toUpperCase()).to.equals(
-    //         (await getContractInfo(stableCoinAddress.toString())).evm_address.toUpperCase()
-    //     )
-    //     expect(admin.toUpperCase()).to.equals(
-    //         (await getContractInfo(proxyAdminAddress.toString())).evm_address.toUpperCase()
-    //     )
-    // })
-    // it('Retrieve proxy admin owner', async function () {
-    //     // We retreive the HederaTokenManagerProxy admin and implementation
-    //     const ownerAccount = await owner(abiProxyAdmin, proxyAdminAddress, operatorClient)
-    //     // We check their values : success
-    //     expect(ownerAccount.toUpperCase()).to.equals(
-    //         (await toEvmAddress(operatorAccount, operatorIsE25519)).toUpperCase()
-    //     )
-    // })
-    // it('Upgrade Proxy implementation without the proxy admin', async function () {
-    //     // Deploy a new contract
-    //     const result = await deployContractsWithSDK({
-    //         name: TOKEN_NAME,
-    //         symbol: TOKEN_SYMBOL,
-    //         decimals: TOKEN_DECIMALS,
-    //         initialSupply: INIT_SUPPLY.toString(),
-    //         maxSupply: MAX_SUPPLY.toString(),
-    //         memo: TOKEN_MEMO,
-    //         account: operatorAccount,
-    //         privateKey: operatorPriKey,
-    //         publicKey: operatorPubKey,
-    //         isED25519Type: operatorIsE25519,
-    //         initialAmountDataFeed: INIT_SUPPLY.toString(),
-    //     })
-    //     const newImplementationContract = result[2]
-    //     // Non Admin upgrades implementation : fail
-    //     await expect(
-    //         upgradeTo(
-    //             abiProxyAdmin,
-    //             proxyAddress,
-    //             operatorClient,
-    //             (await getContractInfo(newImplementationContract.toString())).evm_address
-    //         )
-    //     ).to.eventually.be.rejectedWith(Error)
-    // })
-    // it('Change Proxy admin without the proxy admin', async function () {
-    //     // Non Admin changes admin : fail
-    //     await expect(
-    //         changeAdmin(
-    //             abiProxyAdmin,
-    //             proxyAddress,
-    //             operatorClient,
-    //             await toEvmAddress(nonOperatorAccount, nonOperatorIsE25519)
-    //         )
-    //     ).to.eventually.be.rejectedWith(Error)
-    // })
-    // it('Upgrade Proxy implementation with the proxy admin but without the owner account', async function () {
-    //     // Deploy a new contract
-    //     const result = await deployContractsWithSDK({
-    //         name: TOKEN_NAME,
-    //         symbol: TOKEN_SYMBOL,
-    //         decimals: TOKEN_DECIMALS,
-    //         initialSupply: INIT_SUPPLY.toString(),
-    //         maxSupply: MAX_SUPPLY.toString(),
-    //         memo: TOKEN_MEMO,
-    //         account: operatorAccount,
-    //         privateKey: operatorPriKey,
-    //         publicKey: operatorPubKey,
-    //         isED25519Type: operatorIsE25519,
-    //         initialAmountDataFeed: INIT_SUPPLY.toString(),
-    //     })
-    //     const newImplementationContract = result[2]
-    //     // Upgrading the proxy implementation using the Proxy Admin with an account that is not the owner : fails
-    //     await expect(
-    //         upgrade(
-    //             abiProxyAdmin,
-    //             proxyAdminAddress,
-    //             nonOperatorClient,
-    //             (await getContractInfo(newImplementationContract.toString())).evm_address,
-    //             (await getContractInfo(proxyAddress.toString())).evm_address
-    //         )
-    //     ).to.eventually.be.rejectedWith(Error)
-    // })
-    // it('Change Proxy admin with the proxy admin but without the owner account', async function () {
-    //     // Non Owner changes admin : fail
-    //     await expect(
-    //         changeProxyAdmin(
-    //             abiProxyAdmin,
-    //             proxyAdminAddress,
-    //             nonOperatorClient,
-    //             nonOperatorAccount,
-    //             proxyAddress,
-    //             nonOperatorIsE25519
-    //         )
-    //     ).to.eventually.be.rejectedWith(Error)
-    // })
-    // it('Upgrade Proxy implementation with the proxy admin and the owner account', async function () {
-    //     // Deploy a new contract
-    //     const result = await deployContractsWithSDK({
-    //         name: TOKEN_NAME,
-    //         symbol: TOKEN_SYMBOL,
-    //         decimals: TOKEN_DECIMALS,
-    //         initialSupply: INIT_SUPPLY.toString(),
-    //         maxSupply: MAX_SUPPLY.toString(),
-    //         memo: TOKEN_MEMO,
-    //         account: operatorAccount,
-    //         privateKey: operatorPriKey,
-    //         publicKey: operatorPubKey,
-    //         isED25519Type: operatorIsE25519,
-    //         initialAmountDataFeed: INIT_SUPPLY.toString(),
-    //     })
-    //     const newImplementationContract = result[2]
-    //     // Upgrading the proxy implementation using the Proxy Admin with an account that is the owner : success
-    //     await upgrade(
-    //         abiProxyAdmin,
-    //         proxyAdminAddress,
-    //         operatorClient,
-    //         (await getContractInfo(newImplementationContract.toString())).evm_address,
-    //         (await getContractInfo(proxyAddress.toString())).evm_address
-    //     )
-    //     // Check new implementation address
-    //     const implementation = await getProxyImplementation(
-    //         abiProxyAdmin,
-    //         proxyAdminAddress,
-    //         operatorClient,
-    //         (await getContractInfo(proxyAddress.toString())).evm_address
-    //     )
-    //     expect(implementation.toUpperCase()).to.equals(
-    //         (await getContractInfo(newImplementationContract.toString())).evm_address.toUpperCase()
-    //     )
-    //     // reset
-    //     await upgrade(
-    //         abiProxyAdmin,
-    //         proxyAdminAddress,
-    //         operatorClient,
-    //         (await getContractInfo(stableCoinAddress.toString())).evm_address,
-    //         (await getContractInfo(proxyAddress.toString())).evm_address
-    //     )
-    // })
-    // it('Change Proxy admin with the proxy admin and the owner account', async function () {
-    //     // Owner changes admin : success
-    //     await changeProxyAdmin(
-    //         abiProxyAdmin,
-    //         proxyAdminAddress,
-    //         operatorClient,
-    //         operatorAccount,
-    //         proxyAddress,
-    //         operatorIsE25519
-    //     )
-    //     // Now we cannot get the admin using the Proxy admin contract.
-    //     await expect(
-    //         getProxyAdmin(
-    //             abiProxyAdmin,
-    //             proxyAdminAddress,
-    //             operatorClient,
-    //             (await getContractInfo(proxyAddress.toString())).evm_address
-    //         )
-    //     ).to.eventually.be.rejectedWith(Error)
-    //     // Check that proxy admin has been changed
-    //     const _admin = await admin(ITransparentUpgradeableProxy__factory.abi, proxyAddress, operatorClient)
-    //     expect(_admin.toUpperCase()).to.equals((await toEvmAddress(operatorAccount, operatorIsE25519)).toUpperCase())
-    //     // reset
-    //     await changeAdmin(
-    //         ITransparentUpgradeableProxy__factory.abi,
-    //         proxyAddress,
-    //         operatorClient,
-    //         await toEvmAddress(nonOperatorAccount, nonOperatorIsE25519)
-    //     )
-    //     await changeAdmin(
-    //         ITransparentUpgradeableProxy__factory.abi,
-    //         proxyAddress,
-    //         nonOperatorClient,
-    //         (await getContractInfo(proxyAddress.toString())).evm_address
-    //     )
-    // })
-    // it('Transfers Proxy admin owner without the owner account', async function () {
-    //     // Non Owner transfers owner : fail
-    //     await expect(
-    //         transferOwnership(
-    //             abiProxyAdmin,
-    //             proxyAdminAddress,
-    //             nonOperatorClient,
-    //             nonOperatorAccount,
-    //             nonOperatorIsE25519
-    //         )
-    //     ).to.eventually.be.rejectedWith(Error)
-    // })
-    // it('Transfers Proxy admin owner with the owner account', async function () {
-    //     // Owner transfers owner : success
-    //     await transferOwnership(
-    //         abiProxyAdmin,
-    //         proxyAdminAddress,
-    //         operatorClient,
-    //         nonOperatorAccount,
-    //         nonOperatorIsE25519
-    //     )
-    //     await sleep(5000)
-    //     await acceptOwnership_SCF(proxyAdminAddress, nonOperatorClient)
-    //     // Check
-    //     const ownerAccount = await owner(abiProxyAdmin, proxyAdminAddress, operatorClient)
-    //     expect(ownerAccount.toUpperCase()).to.equals(
-    //         (await toEvmAddress(nonOperatorAccount, nonOperatorIsE25519)).toUpperCase()
-    //     )
-    //     // reset
-    //     await transferOwnership(abiProxyAdmin, proxyAdminAddress, nonOperatorClient, operatorAccount, operatorIsE25519)
-    // })
 })

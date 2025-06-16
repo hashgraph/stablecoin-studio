@@ -6,26 +6,37 @@
 
 - **[Overview](#overview)**<br>
 - **[Architecture](#architecture)**<br>
-    - [Overall architecture](#overall-architecture)<br>
-    - [Detailed architecture](#detailed-architecture)<br>
+  - [Overall architecture](#overall-architecture)<br>
 - **[Content](#content)**<br>
 - **[Technologies](#technologies)**<br>
 - **[Build](#build)**<br>
 - **[Test](#test)**<br>
-    - [Files](#files)<br>
-    - [Configuration](#configuration)<br>
-    - [Run](#run)<br>
+  - [Configuration](#configuration)<br>
+    - [Test accounts](#test-accounts)<br>
+    - [Operating accounts](#operating-accounts)<br>
+  - [Run](#run-tests)<br>
+    - [Run all tests (Default)](#run-all-test-default)<br>
+    - [Run tests in parallel](#run-tests-in-parallel)<br>
+    - [Run specific test](#run-specific-test)<br>
 - **[Deploy](#deploy)**<br>
-    - [Deploy factory](#deploy-factory)<br>
-    - [Create stablecoins](#create-stablecoins)<br>
-- **[Upgrade](#upgrade)**<br>
-    - [Upgrade factory](#upgrade-factory)<br>
-    - [Upgrade stablecoins](#upgrade-stablecoins)<br>
+  - [Deploy full infrastructure](#deploy-full-infrastructure)<br>
+    - [What Does This Do?](#what-does-this-do)<br>
+    - [Optional flags](#optional-flags)<br>
+  - [Deploy a new Stablecoin](#deploy-a-new-stablecoin)<br>
+    - [Minimum required parameters](#minimun-required-parameters)<br>
+    - [Example](#example)<br>
+- **[Upgrade Logic](#upgrade-logic)**<br>
+    - [How it works?](#how-it-works)<br>
+    - [Register new logic version](#register-new-logic-version)<br>
+    - [Required parameters](#required-parameters)<br>
+    - [When to use this?](#when-to-use-this)<br>
+- **[v1 to v2 Migration](#v1-to-v2-migration)**<br>
 - **[Generate documentation](#generate-documentation)**<br>
 - **[Other scripts](#other-scripts)**<br>
 - **[Contributing](#contributing)**<br>
 - **[Code of conduct](#code-of-conduct)**<br>
 - **[License](#license)**<br>
+
 
 # Overview
 
@@ -39,39 +50,40 @@ The smart contracts located in the `hts-precompile` folder are used to interact 
 - `IHederaTokenService.sol`: Interface implemented by the _HTS precompiled smart contract_. In order to execute an HTS operation, our smart contracts will need to instantiate this interface with the _HTS precompiled smart contract_ address.
 
 The remaining smart contracts have been implemented for this project:
-
 - Contracts within the `extensions` folder: _one contract for each stablecoin operation_.
-    - `Burnable.sol`: abstract contract implementing the _burn_ operation (burns tokens from the treasury account. Decreases the total supply).
-    - `CashIn.sol`: abstract contract implementing the _cash-in_ operation (mints new tokens and transfers them to an account. Increases the total supply).
-    - `Deletable.sol`: abstract contract implementing the _delete_ operation (deletes the stablecoin's underlying token. **WARNING** : THIS OPERATION CANNOT BE ROLLED-BACK AND A stablecoin WITHOUT AN UNDERLYING TOKEN WILL NOT WORK ANYMORE).
-    - `Freezable.sol`: abstract contract implementing the _freeze_ and _unfreeze_ operations (if the token is fronzen for an account, this account will not be able to operate with the stablecoin until unfrozen).
-    - `KYC.sol`: abstract contract implementing the _grantKyc_ and _revokeKyc_ operations to grant or revoke KYC flag to a Hedera account for the stablecoin.
-    - `Pausable.sol`: abstract contract implementing the _pause_ and _unpause_ operations (if a token is paused, nobody will be able to operate with it until the token is unpaused).
-    - `Rescatable.sol`: abstract contract implementing the _rescue_ and _rescueHBAR_ operation (transfers tokens and HBAR, respectively, from the treasury account being the stablecoin's smart contract to another account).
-    - `Reserve.sol`: abstract contract implementing the reserve for the stablecoin (checking against the current reserve before minting, changing the reserve data feed, etc...). The Reserve contract allows the option to update the reserve address to 0.0.0 (zero address) to disable the actual address.
-    - `RoleManagement.sol`: abstract contract implementing the _grantRoles_ and _revokeRoles_ operations (granting and revoking multiple roles to/from multiple accounts in one single transaction).
-    - `Roles.sol`: contains the definition of the roles that can be assigned for every stablecoin.
-    - `Supplieradmin.sol`: abstract contract implementing all the _cash-in_ role assignment and management (assigning/removing the role as well as setting, increasing and decreasing the cash-in limit).
-    - `TokenOwner.sol`: abstract contract that stores the addresses of the _HTS precompiled smart contract_ and the _underlying token_ related to the stablecoin. All the smart contracts mentioned above, inherit from this abstract contract.
-    - `Wipeable.sol`: abstract contract implementing the _wipe_ operation (burn token from any account. Decreases the total supply).
-- Contracts within the `proxies` folder:
-    - `StableCoinProxyAdmin.sol`: This contract implements the OpenZeppelin's `transparent ProxyAdmin` but also inherits from the OpenZeppelin's `Ownable2Step` to prevent the ownership to be accidentally transferred.
-- `HederaReserve.sol`: implements the ChainLink AggregatorV3Interface to provide the current data about the stablecoin's reserve.
-- `HederaTokenManager.sol`: main stablecoin contract. Contains all the stablecoin related logic. Inherits all the contracts defined in the "extension" folder as well as the Role.sol contract. **IMPORTANT** : a HederaTokenManager contract will be deployed in testnet for anybody to use. Users are also free to deploy and use their own HederaTokenManager contract. Whatever HederaTokenManager contract users choose to use, they will need to pass the contract's address as an input argument when calling the factory.
-- `StableCoinFactory.sol`: implements the flow to create a new stablecoin. Every time a new stablecoin is created, several smart contracts must be deployed and initialized and an underlying token must be created through the `HTS precompiled smart contract`. this multi-transaction process is encapsulated in this contract so that users can create new stablecoins in a single transaction. **IMPORTANT** : a factory contract will be deployed in tesnet for anybody to use. Users are also free to deploy and use their own factory contract.
+  - `BurnableFacet.sol`: implements the _burn_ operation (burns tokens from the treasury account. Decreases the total supply).
+  - `CashInFacet.sol`: implements the _cash-in_ operation (mints new tokens and transfers them to an account. Increases the total supply).
+  - `DeletableFacet.sol`: implements the _delete_ operation (deletes the stablecoin's underlying token).  
+    **WARNING**: THIS OPERATION CANNOT BE ROLLED BACK. A stablecoin WITHOUT AN UNDERLYING TOKEN WILL NOT WORK ANYMORE.
+  - `FreezableFacet.sol`: implements the _freeze_ and _unfreeze_ operations (if the token is frozen for an account, this account will not be able to operate with the stablecoin until unfrozen).
+  - `KYCFacet.sol`: implements the _grantKyc_ and _revokeKyc_ operations to grant or revoke the KYC flag to a Hedera account for the stablecoin.
+  - `PausableFacet.sol`: implements the _pause_ and _unpause_ operations (if a token is paused, no one will be able to operate with it until unpaused).
+  - `RescatableFacet.sol`: implements the _rescue_ and _rescueHBAR_ operations (transfers tokens and HBAR, respectively, from the treasury account—being the stablecoin’s smart contract—to another account).
+  - `ReserveFacet.sol`: implements the reserve logic for the stablecoin (checks against the current reserve before minting, allows updating the reserve data feed, etc.).  
+    The reserve address can be set to `0.0.0` (zero address) to disable the reserve mechanism.
+  - `RoleManagementFacet.sol`: implements the _grantRoles_ and _revokeRoles_ operations (grants and revokes multiple roles to/from multiple accounts in a single transaction).
+  - `RolesFacet.sol`: contains the definition of the roles that can be assigned to each stablecoin.
+  - `SupplierAdminFacet.sol`: implements the management of the _cash-in_ role (assigning/removing the role and setting, increasing, or decreasing the cash-in limit).
+  - `TokenOwnerFacet.sol`: stores the addresses of the _HTS precompiled smart contract_ and the _underlying token_ related to the stablecoin. All other facets rely on this.
+  - `WipeableFacet.sol`: implements the _wipe_ operation (burns tokens from any account. Decreases the total supply).
+  - `HoldManagementFacet.sol`: implements the _hold_ functionality, enabling temporary locking of tokens under the control of an escrow address. This is used in scenarios like secondary market trades or regulatory compliance.
+- Important contracts within the `resolver` folder:
+  - `BusinessLogicResolver.sol`: central contract that maps function selectors to facet addresses. All stablecoin proxies delegate the selector resolution to this resolver, enabling centralized upgradeability across all stablecoins.
+  - `ResolverProxy.sol`: lightweight diamond clone that delegates execution to the correct facet based on the mapping returned by the `BusinessLogicResolver`.
+  - `BusinessLogicResolverWrapper.sol`: helper contract to simplify interaction with the resolver.
+
+- `HederaReserveFacet.sol`: implements the ChainLink AggregatorV3Interface to provide the current data about the stablecoin's reserve.
+- `HederaTokenManagerFacet.sol`: defines the main logic to initialize and manage a stablecoin. It exposes key ERC-20-like read functions (`name`, `symbol`, `decimals`, `totalSupply`, `balanceOf`) and supports on-chain metadata and token updates via HTS.
+- `StableCoinFactoryFacet.sol`: implements the flow to create a new stablecoin. Every time a new stablecoin is created, several smart contracts must be deployed and initialized and an underlying token must be created through the `HTS precompiled smart contract`. this multi-transaction process is encapsulated in this contract so that users can create new stablecoins in a single transaction. **IMPORTANT** : a factory contract will be deployed in tesnet for anybody to use. Users are also free to deploy and use their own factory contract.
 - These last three contracts have their own interfaces in the `Interfaces` folder.
 
-> Every stablecoin is made of a **ProxyAdmin** and a **TransparentUpgradeableProxy** contracts (from OpenZeppelin) plus an **underlying token** managed through the _HTS precompiled smart contract_. The **hederaTokenManager** contract is meant to be "shared" by multiple users (using proxies). A stablecoin admin may also choose to deploy a **HederaReserve** along with the stablecoin at creation time, with its own **TransparentUpgradeableProxy** and **ProxyAdmin** contracts, or to define an existing reserve instead.
+> 💡 Each stablecoin is deployed as a diamond clone (via `ResolverProxy`) and uses a shared `BusinessLogicResolver` to dynamically delegate logic calls. This enables centralized logic upgrades across all stablecoins with a single transaction.
 
 # Architecture
 
 ## Overall architecture
 
-![StableCoinOverallArchitecture](https://github.com/hashgraph/stablecoin-studio/assets/108128685/218702f9-a0af-4e9a-901a-ffdd97a28b12)
-
-## Detailed architecture
-
-![](./img/StableCoinArchitecture_2.jpg)
+![](./img/StableCoinArchitecture1.png)
 
 # Content
 
@@ -124,28 +136,10 @@ import { hederaTokenManager__factory } from '@hashgraph/stablecoin-npm-contracts
 
 # Test
 
-Each test has been designed to be self-contained following the _arrange, act, assert_ pattern. Tests are completely independent of each other and as such should successfully run in any order.
-
-## Files
-
-Typescript test files can be found in the `test` folder:
-
-- `burnable.ts`: tests the stablecoin burn functionality.
-- `deletable.ts`: tests the stablecoin delete functionality.
-- `deployFactory.ts`: tests the stablecoin factory deployment functionality.
-- `freezable.ts`: tests the stablecoin freeze/unfreeze functionality.
-- `hederaReserve.ts`: tests the HederaReserve functionality.
-- `hederaTokenManager.ts`: tests the hederaTokenManager functionality.
-- `kyc.ts`: tests the KYC grant/revoke functionality to account for stablecoins.
-- `pausable.ts`: tests the stablecoin pause functionality.
-- `rescatable.ts`: tests the stablecoin rescue functionality.
-- `reserve.ts`: tests the stablecoin reserve functionality.
-- `roleManagement.ts`: tests the stablecoin roles (granting/revoking multiple roles) functionality.
-- `roles.ts`: tests the stablecoin roles functionality.
-- `stableCoinFactory.ts`: tests the Factory functionality.
-- `supplieradmin.ts`: tests the stablecoin cash-in functionality.
-- `wipeable.ts`: tests the stablecoin wipe functionality.
-- `customFees.ts`: tests the stablecoin custom fees functionality.
+Each test follows the _arrange, act, assert_ pattern and is self-contained, ensuring full independence and allowing them to run in parallel and in any order.
+Typescript test files are located in the `test` folder and are organized into two parallel execution threads:
+- `Thread0/`
+- `Thread1/`
 
 ## Configuration
 
@@ -155,161 +149,244 @@ You need to create the `.env` file cloning the content of `.env.sample` and add 
 
 These accounts must be existing valid accounts in the **Hedera network** you are using to test the smart contracts, they must also have a **positive balance large enough** to run all the contract deployments, invocations and token creations executed in the tests.
 
-Accounts must be defined in this section:
+For each account you must provide the Private Key (7647657eerr65....878)
 
-> hedera -> networks -> **[network in which you want to run the tests]** -> accounts
-
-For each account you must provide the following information:
-
-- **account**: Account ID (0.0.XXXXXX)
-- **private Key**: Private Key associated to the account (7647657eerr65....878)
-- **public Key**: Public Key linked to the private key (c14er56...78)
-- **isEd25519Type**: _true/false_ indicate whether the private/public key is ED25519 (true) or ECSDA (false)
-
-Example for the Hedera testnet (_these are fake accounts/keys_):
+Example for the Hedera testnet (_fake data_):
 
 ```.env
-    TESTNET_HEDERA_OPERATOR_ACCOUNT='0.0.48513676'
-    TESTNET_HEDERA_OPERATOR_PUBLICKEY='c14dbe4c936181b7a2fe7faf086fd95bdc6900e2d16533e3e8ffd00cac1fe607'
-    TESTNET_HEDERA_OPERATOR_PRIVATEKEY='8830990f02fae1c3a843b8aaad0433a73ee47b08d56426a8e416d08727ea0609'
-    TESTNET_HEDERA_OPERATOR_ED25519=true
-
-    TESTNET_HEDERA_NON_OPERATOR_ACCOUNT='0.0.47786654'
-    TESTNET_HEDERA_NON_OPERATOR_PUBLICKEY='302a300506032b657003210057056288u5d5a9cdaeb85687391dc7372707c464f9e7cb0efb386cf4244ebdf6'
-    TESTNET_HEDERA_NON_OPERATOR_PRIVATEKEY='302e020100300506032b6baf04220420b7ca8f1a5453d5c03b0d8ba99d06306ed6c93ee64d7bf122c21b0981e2b0b679'
-    TESTNET_HEDERA_NON_OPERATOR_ED25519=true
-
-    PREVIEWNET_HEDERA_OPERATOR_ACCOUNT='0.0.48513676'
-    PREVIEWNET_HEDERA_OPERATOR_PUBLICKEY='c14dbe4c936181b7a2fe7faf086fd95bdc6900e2d16533e3e8ffd00cac1fe607'
-    PREVIEWNET_HEDERA_OPERATOR_PRIVATEKEY='8830990f02fae1c3a843b8aaad0433a73ee47b08d56426a8e416d08727ea0609'
-    PREVIEWNET_HEDERA_OPERATOR_ED25519=true
-
-    PREVIEWNET_HEDERA_NON_OPERATOR_ACCOUNT='0.0.47786654'
-    PREVIEWNET_HEDERA_NON_OPERATOR_PUBLICKEY='302a300506032b657003210057056288u5d5a9cdaeb85687391dc7372707c464f9e7cb0efb386cf4244ebdf6'
-    PREVIEWNET_HEDERA_NON_OPERATOR_PRIVATEKEY='302e020100300506032b6baf04220420b7ca8f1a5453d5c03b0d8ba99d06306ed6c93ee64d7bf122c21b0981e2b0b679'
-    PREVIEWNET_HEDERA_NON_OPERATOR_ED25519=true
+    # * Accounts and Keys
+    # Private keys in RAW Format (Not DER)
+    # local
+    LOCAL_PRIVATE_KEY_0='0xEXAMPLEPRIVATEKEY0'
+    LOCAL_PRIVATE_KEY_1='0xEXAMPLEPRIVATEKEY1'
+    # testnet
+    TESTNET_PRIVATE_KEY_0='0xEXAMPLEPRIVATEKEY4'
+    TESTNET_PRIVATE_KEY_1='0xEXAMPLEPRIVATEKEY5'
+    # ... add more keys as needed
+    
 ```
 
-### Operating accounts
+#### Operating accounts
 
 All tests will use the two above mentioned accounts.
 
-- `Operator Account`: This is the account that will deploy the stablecoin used for testing. It will have full rights.
-- `Non Operator Account`: This is the account that will NOT deploy the stablecoin used for testing. It will have no rights to the stablecoin unless explicitly granted during the test.
+- `Operator Account (PRIVATE_KEY_0)`: This is the account that will deploy the stablecoin used for testing. It will have full rights.
+- `Non Operator Account (PRIVATE_KEY_1)`: This is the account that will NOT deploy the stablecoin used for testing. It will have no rights to the stablecoin unless explicitly granted during the test.
 
-You can change which account is the _operator_ and the _non-operator_ account by changing the **clientId** value at:
-scripts -> utilities.ts -> const clientId
 
-### Pre-deployed factory & hederaTokenManager contracts
+## Run tests
+This project includes a suite of automated tests to validate stablecoin functionality. You can run all tests at once, in parallel, or focus on a specific test file.
 
-Tests use a factory and a HederaTokenManager contract to create the stablecoins.
+### Run all test (Default):
+Run all test files using the default configuration:
+```bash
+npm run test
+```
 
-- If you want to deploy a new factory and HederaTokenManager every time: scripts -> deploy.ts -> hederaTokenManagerAddress = "" / factoryProxyAddress = "" / factoryProxyAdminAddress = "" / factoryAddress = ""
-- If you want to re-use a factory and hederaTokenManager : Set the Hedera ContractIds in scripts -> deploy.ts -> hederaTokenManagerAddress /factoryProxyAddress / factoryProxyAdminAddress / factoryAddress
+### Run tests in parallel:
+To speed up the process, you can run all tests concurrently:
 
-> If you set the factory contracts addresses as described above, the tests included in the "stableCoinFactory.ts" file might not work because they will try to upgrade the factory implementation and the accounts used for that (those defined in the "hardhat.SignatureServiceConfig.ts") might not have the right to do it.
+```bash
+npm run test:parallel
+```
+> Useful for CI environments or large test suites.
 
-## Run
+### Run specific test:
+You can also run a single test file. For example, to run only the KYC-related tests:
+```bash
+npm run test:kyc
+```
+> You can customize this command or create more aliases in package.json as needed.
 
-There are several ways to run the tests using the commands defined in the `package.json` file (according to the configuration defined in `hardhat.SignatureServiceConfig.ts`):
+# Deploy 
+## Deploy full infrastructure
 
-- Run all the test files in the `defaultNetwork` network:
+To deploy the entire infrastructure required to support stablecoins, including all core facets, the factory, and the business logic resolver, use the provided programmatic setup via Hardhat.
+
+This includes:
+
+- All diamond facets (KYC, Hold, Burnable, CustomFees, etc.). 
+- The BusinessLogicResolver, initialized and registered. 
+- Creation of configurations (versioned logic definitions). 
+- Deployment of a ResolverProxy for the StableCoinFactory.
 
 ```shell
-npm test
+npx hardhat deployAll --network <network>
 ```
 
-- Run all the test files in a specific network (Hedera TestNet):
+### What Does This Do?
+This deployment process:
+
+1. **Deploys All Contracts**: Deploys all facets using their respective factories, such as `HederaTokenManagerFacet`, `ReserveFacet`, `KYCFacet`, `BurnableFacet`, `RolesFacet`, and more.
+2. **Deploys & Initializes the BusinessLogicResolver**: The resolver is deployed and initialized to manage configuration keys and versioned logic.
+3. **Registers Facets in the Resolver**: All deployed facets are registered under their appropriate configuration key (e.g., `stableCoin`, `reserve`, `factory`), including selectors and interface IDs.
+4. **Creates Logic Configurations**: Each configuration (e.g., for stablecoin logic) is assigned a unique key and version, enabling future upgrades.
+5. **Deploys ResolverProxy for Factory**: A `ResolverProxy` is deployed and linked to the `StableCoinFactory`, allowing it to dynamically use the registered logic.
+6. **Displays All Deployed Contract Addresses**: Includes proxy addresses, base contract addresses, and Hedera IDs for convenient reference.
+
+### Optional flags
+| Flag                   | Description                                                                        |
+| ---------------------- | ---------------------------------------------------------------------------------- |
+| `--useDeployed`        | Reuse already deployed contracts if their addresses are known (default: `true`).   |
+| `--privateKey`         | Use a raw private key as signer instead of local Hardhat account.                  |
+| `--signerAddress`      | Specify signer by address from Hardhat signers array.                              |
+| `--signerPosition`     | Specify signer by index in Hardhat signers array.                                  |
+
+
+## Deploy a new Stablecoin
+The deployment of a stablecoin is managed through a custom Hardhat task: deployStableCoin. This command interacts with the StableCoinFactory and BusinessLogicResolver to initialize and deploy a fully functional stablecoin with optional metadata, roles, reserve configuration, and KYC settings.
 
 ```shell
-npm run test:testnet
+npx hardhat deployStableCoin \
+--businessLogicResolverProxyAddress <resolverProxy> \
+--stableCoinFactoryProxyAddress <factoryProxy> \
+--network <network>
+```
+### Minimun required parameters
+| Parameter                             | Description                                         |
+|---------------------------------------|-----------------------------------------------------|
+| `--businessLogicResolverProxyAddress` | Address of the deployed BusinessLogicResolver proxy |
+| `--stableCoinFactoryProxyAddress`     | Address of the deployed StableCoinFactory proxy     |
+| `--network`                           | Network where deploy the SC                         |
+
+> Note: If --useEnvironment is passed, many of the required addresses and defaults will be pulled from the internal Environment.ts.
+
+### Example
+```shell
+npx hardhat deployStableCoin \
+  --tokenName "USD Token" \
+  --tokenSymbol "USDT" \
+  --tokenDecimals 6 \
+  --tokenInitialSupply 1000000 \
+  --tokenMaxSupply 10000000 \
+  --createReserve true \
+  --addKyc true \
+  --grantKYCToOriginalSender true \
+  --stableCoinConfigurationIdKey "" \
+  --stableCoinConfigurationIdVersion 1 \
+  --businessLogicResolverProxyAddress 0x123...abc \
+  --stableCoinFactoryProxyAddress 0x456...def \
+  --network testnet
 ```
 
-- Run a single test file in the `defaultNetwork` network:
+## Upgrade Logic (via BusinessLogicResolver)
+This system uses a modular Diamond + Resolver pattern for managing upgradeable logic. Smart contracts delegate calls through a ResolverProxy, which dynamically fetches the latest logic version for a given component (e.g., stablecoin, reserve) from a centralized BusinessLogicResolver.
+
+### How it works?
+The BusinessLogicResolver:
+
+- Maps configuration keys (like stableCoin, reserve, factory) to facet contract addresses. 
+- Tracks versioned logic by assigning each registered contract a role in the system (defined by selectors and interfaces). 
+- Allows updating logic without redeploying proxies, by using version-aware resolver lookups.
+
+### Register new logic version
+To register a new list of logic contracts (facets) for any configuration key, use the following Hardhat task:
 
 ```shell
-npm run test:mintable
+npx hardhat updateBusinessLogicKeys \
+  --resolverAddress <businessLogicResolverAddress> \
+  --implementationAddressList <commaSeparatedFacetAddresses> \
+  --privateKey <yourPrivateKey> \
+  --network <network>
+
 ```
+#### Required parameters:
+| Flag                          | Description                                                        |
+| ----------------------------- | ------------------------------------------------------------------ |
+| `--resolverAddress`           | Address of the `BusinessLogicResolver` contract                    |
+| `--implementationAddressList` | Comma-separated list of facet contract addresses                   |
+| `--privateKey`                | Private key of the account with permissions to update the resolver |
+| `--network`                   | Hardhat network to use                                             |
 
-- Run a single test file in a specific network (Hedera PreviewNet):
+### When to use this?
 
+Use this approach whenever:
+- You deploy new or upgraded logic contracts (facets).
+- You want the resolver to expose new logic for proxies using ResolverProxy.
+- You’re rotating logic or deploying stablecoins with a new configuration.
+
+>For this to work, the BusinessLogicResolver must be initialized. If it's not yet initialized, use the initializeBusinessLogicResolver task first.
+
+# V1 to V2 Migration
+In order to migrate V1 Stablecoins to V2 you need to :
+
+- Build everything: 
 ```shell
-npm run test:previewnet:mintable
+npm run install:all
+```
+- Deploy new contracts: 
+```shell
+cd contracts
+npx hardhat deployAll --network NETWORK
+```
+- Enter the private key of the account set as `owner` in your Stablecoin's `Proxy admin` in the `MAINNET_PRIVATE_KEY_0`, `PREVIEWNET_PRIVATE_KEY_0` or `TESTNET_PRIVATE_KEY_0` field of the `contracts/.env`file.
+- Then run the following hardhat task: 
+```shell
+npx hardhat migrateStableCoinToV2 --network NETWORK --stablecoinconfigurationidkey CONFIG_ID --stablecoinconfigurationidversion CONFIG_VERSION --businesslogicresolverproxyaddress BLR --stablecoinaddress SC_PROXY --stablecoinproxyadminaddress SC_PROXY_ADMIN
 ```
 
-> The accounts used to test will be determined by the values in the `.env` file, that must contain the `HEDERA_OPERATOR_` entries for the account id, public / private key and evm address. See the `.env.sample` file to see all the attributes. See [Test accounts](#Test-accounts) to learn more.
+Where
 
-# Deploy
+    - NETWORK: the network you want to deploy the contracts (testnet, mainnet)
+    - CONFIG_ID: config id of the stablecoin  (bytes32) you can use 0x0000000000000000000000000000000000000000000000000000000000000002 by default.
+    - CONFIG_VERSION: config version of the stablecoin (integer) you can use 1 by default.
+    - BLR: Business logic resolver proxy address (evm address) you can find it in contracts/contractAddresses_v2.txt file as "Business Logic Resolver Proxy"
+    - SC_PROXY: address of the stablecoin's proxy (evm address) You can find it in your StableCoin details (CLI or WEB) as "evmProxyAddress"
+    - SC_PROXY_ADMIN: address of the stablecoin's admin proxy (evm address) You can find it in your StableCoin (CLI or WEB) details as "evmProxyAdminAddress"
 
-The stablecoin solution is made of two major components.
+Example:
+```shell
+npx hardhat migrateStableCoinToV2 --network testnet --stablecoinconfigurationidkey 0x0000000000000000000000000000000000000000000000000000000000000002 --stablecoinconfigurationidversion 1 --businesslogicresolverproxyaddress 0x842760dE0dA78543d6C3df7874156450227694Fc --stablecoinaddress 0x26d43efe6c2064f4f39c508778d76204af5d967a  --stablecoinproxyadminaddress 0x9a56d9a73c3073496604d85824ab7646ef1f2098
+Migrating StableCoin on testnet ...
+✓ Migration Proxy has been deployed successfully
+   --> Transaction Hash: 0xf4a5070b8d631773712debf3418f64fecad2c06d3aeef53256a9c5369665d50b
+   --> Contract Address: 0x773769BBeCf92Db959EFb8C99A86E9411391810d
+✓ StableCoin Proxy implementation upgraded
+   --> Transaction Hash: 0x8b642c3519a581afe3f133f5f6f4765afddc4c358422aa73b3c05bdde982221e
 
-- **The factory** : Smart contracts encapsulating the complexity of the creation of new stablecoins.
-- **The stablecoin** : Smart contracts that are deployed by the factory, exposing the functionalities and services of the stablecoin solution and interacting with an underlying token.
+ 🟢 Stable Coin migrated successfully
 
-In order to create stablecoins, a Factory and a hederaTokenManager contracts must be deployed first. Once deployed, creating stablecoins will be as simple as invoking the "deployStableCoin" method of the Factory passing the token basic information and the hederaTokenManager contract address as input arguments.
+ Previous implementation : 0x1f9e7ABcbF50e51EA47A17e48E1f90Dc9cB0F5dD
 
-> A factory and hederaTokenManager contracts will be provided for everybody to use in the testnet network. The address of the factory proxy is configured both in the CLI configuration file and in the web environment file. On the contrary, hederaTokenManager implementations depends on the factory, so the factory smart contract has functions to manage hederaTokenmanager smart contracts versions.
+ New implementation : 0x773769BBeCf92Db959EFb8C99A86E9411391810d
+ ```
 
-## Deploy factory
-
-If you want to deploy your own Factory contracts do the following steps:
-
-1. Deploy the Factory **Logic** smart contract (_StableCoinFactory.sol_).
-2. Deploy the Factory **Proxy Admin** smart contract.
-3. Deploy the Factory **TransparentUpgradeableProxy** smart contract setting the Factory logic as the implementation and the Factory proxy admin as the admin. _**DO NOT FORGET** to add the Factory proxy admin **EVM** address to the "memo" field of the TransparentUpgradeableProxy contract_.
-
-> To enable `deployFactory` task in hardhat, it's necessary to un comment in `hardhat.config.ts` the line 10.
-
-You may also clone this repository, install the dependencies (see [Build](#Build)) and run `npx hardhat deployFactory` in order to deploy all factories (hederaTokenManager and stableCoinFactory) and its proxies onto the testnet network. Once completed, an output with the new addresses is provided:
-
+## Update to v2 web project
+To use V2 within the web project you'll need to adjust the web/.env configuration file
+* Update `REACT_APP_FACTORIES` with the "Stable Coin Factory Facet Proxy" address of the new deployed contracts that you can find the hex address in contracts/contractAddresses_v2.txt file and you can find the hedera id of this address in the hedera explorer (https://hashscan.io) for each environment that you are using.
+* Add `REACT_APP_RESOLVERS` constant with the "Business Logic Resolver Proxy" address of the new deployed contracts that you can find the hex address in contracts/contractAddresses_v2.txt file and you can find the hedera id of this address in the hedera explorer (https://hashscan.io) for each environment that you are using.
+* Ex:
 ```
-Proxy address:           0.0.7110
-Proxy admin address:     0.0.7108
-Factory address:         0.0.7106
-hederaTokenManager address:     0.0.7102
+REACT_APP_FACTORIES='[{"Environment":"mainnet","STABLE_COIN_FACTORY_ADDRESS":"0.0.6095357"}, {"Environment":"testnet","STABLE_COIN_FACTORY_ADDRESS":"0.0.6095357"}]'
+REACT_APP_RESOLVERS='[{"Environment":"mainnet","STABLE_COIN_RESOLVER_ADDRESS":"0.0.6095328"}, {"Environment":"testnet","STABLE_COIN_RESOLVER_ADDRESS":"0.0.6095328"}]'
+ ```
+
+ Then you can start the web project with:
+ ```shell
+ npm start
+ ```
+
+## Update to v2 CLI project
+ To use V2 within the CLI project you'll need to adjust the /cli/hsca-config.yaml configuration file.
+ * Update `factories` with the "Stable Coin Factory Facet Proxy" address of the new deployed contracts that you can find the hex address in contracts/contractAddresses_v2.txt file and you can find the hedera id of this address in the hedera explorer (https://hashscan.io) for each environment that you are using.
+ * Add `resolvers` with the "Business Logic Resolver Proxy" address of the new deployed contracts that you can find the hex address in contracts/contractAddresses_v2.txt file and you can find the hedera id of this address in the hedera explorer (https://hashscan.io) for each environment that you are using.:
+```
+ factories:
+  - id: 0.0.6095357
+    network: testnet
+  - id: 0.0.0
+    network: previewnet
+resolvers:
+  - id: 0.0.6095328
+    network: testnet
+  - id: 0.0.0
+    network: previewnet
 ```
 
-> The account used to deploy will be determined by the values in the `.env` file, that must contain the `HEDERA_OPERATOR_` entries for the account id, public / private key and evm address. See the `.env.sample` file to see all the attributes. See [Test accounts](#Test-accounts) to learn more.
-
-## Create stablecoins
-
-Once the factory has been deployed (or if you are using the common factory), creating stablecoins is very simple, just invoke one single method of the Factory's Logic (through the Factory's Proxy): `deployStableCoin(...)`
-
-> it can be easily done from the CLI and/or UI of the project, for more information on that check their respective README.md
-
-These are the steps the creation method will perform when creating a new stablecoin:
-
-- Deploy **stablecoin proxy admin smart contract** (from the Open Zeppelin library).
-- Transfer the stablecoin Proxy Admin ownership to the sender account.
-- Deploy **stablecoin proxy smart contract** (from the Open Zeppelin library) setting the implementation contract (*the hederaTokenManager contract's address you provided as an input argument) and the admin (*stablecoin proxy admin smart contract\*).
-- Initializing the stablecoin proxy. The initialization will create the underlying token.
-- Associating the token to the deploying account.
-- Granting the KYC to the account for the token, only if the user configured a KYC key in the token when created.
-
-# Upgrade
-
-In order to make all our smart contract's implementation upgradable, we are using the _Transparent Proxy_ pattern combined with the _Proxy admin_ pattern, both from OpenZeppelin. You can find more information about these two patterns [here](https://docs.openzeppelin.com/contracts/4.x/api/proxy#transparent_proxy).
-
-It is also important to note that, in order to avoid future overlapping of state variable due to the inheritance process, we use the _storage gap_ strategy from OpenZeppelin, you can find more information about this strategy [here](https://docs.openzeppelin.com/contracts/3.x/upgradeable#storage_gaps).
-
-The factory's and the stablecoins's logic can be upgraded at any time using the account that was used to either deploy it the first time (for the factory) or create it (for the stablecoins).
-
-## Upgrade factory
-
-- Deploy the new factory logic contract.
-- Invoke the `upgradeAndCall` method of the factory proxy admin passing the previously deployed factory logic contract's address and any data required to initialize it. If you do not need to pass any initialization data, you can simply invoke the `upgrade` method passing the previously deployed factory logic contract's address. **=> USE THE FACTORY PROXY'S ADMIN OWNER ACCOUNT TO PERFORM THIS TASK. BY DEFAULT THAT ACCOUNT WILL BE THE ONE ORIGINALLY USED TO DEPLOY THE FACTORY.**
-
-## Upgrade stablecoins
-
-> These steps must be performed individually for every single stablecoin you wish to upgrade. It is not possible to upgrade all stablecoins at once since they are completely independent of each other:
-
-- Deploy the new stablecoin logic contract (_hederaTokenManager_).
-- Invoke the `upgradeAndCall` method of the stablecoin proxy admin passing the previously deployed stablecoin logic contract's address and any data required to initialize it. If you do not need to pass any initialization data, you can simply invoke the `upgrade` method passing the previously deployed stablecoin logic contract's address. **=> USE THE stablecoin PROXY'S ADMIN ACCOUNT TO PERFORM THIS TASK. BY DEFAULT THAT ACCOUNT WILL BE THE ONE ORIGINALLY USED TO CREATE THE stablecoin.**
-
-# Change ProxyAdmin Owner
-
-The _Transparent Proxy admin_ also allows to change the owner who can manage the proxy, like upgrading it, as explained above.
-Initially, the account deploying the factory contract will be the proxy admin owner of this contract, while the user creating the stablecoin will be able to select the account id (can be a contract id) during the stablecoin creation process, which will be the owner of the stablecoin proxy admin contract.
+Then you can start the CLI project with:
+ ```shell
+ npm run start:wizard
+ ```
 
 # Generate documentation
 
@@ -320,40 +397,6 @@ npm run doc
 ```
 
 Generated files will be stored in the `docs` folder.
-
-# Manage factory
-
-Some scripts have been developed to manage the stablecoin factory.
-
-- Add a new TokenManager address to stablecoin factory:
-
-```shell
-npx hardhat addNewVersionTokenManager --tokenManager <HederaId> --proxyfactory <HederaId>
-```
-
-- Update an TokenManager address:
-
-```shell
-npx hardhat addNewVersionTokenManager --tokenManager <HederaId> --proxyfactory <HederaId> --index <number>
-```
-
-- Remove an TokenManager address:
-
-```shell
-npx hardhat addNewVersionTokenManager --proxyfactory <HederaId> --index <number>
-```
-
-- Get TokenManager address saved in factory:
-
-```shell
-npx hardhat getTokenManager --proxyfactory <HederaId>
-```
-
-- Deploy a new TokenManager implementation:
-
-```shell
-npx hardhat deployTokenManager
-```
 
 # Other scripts
 

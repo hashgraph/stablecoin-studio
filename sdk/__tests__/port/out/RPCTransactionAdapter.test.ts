@@ -55,8 +55,8 @@ import { TokenSupplyType } from '../../../src/port/in/StableCoin.js';
 import {
 	CLIENT_ACCOUNT_ECDSA,
 	FACTORY_ADDRESS,
-	HEDERA_TOKEN_MANAGER_ADDRESS,
 	MIRROR_NODE,
+	RESOLVER_ADDRESS,
 	RPC_NODE,
 } from '../../config.js';
 import Account from '../../../src/domain/context/account/Account.js';
@@ -69,6 +69,7 @@ import { RPCQueryAdapter } from '../../../src/port/out/rpc/RPCQueryAdapter.js';
 import { MirrorNode } from '../../../src/domain/context/network/MirrorNode.js';
 import { JsonRpcRelay } from '../../../src/domain/context/network/JsonRpcRelay.js';
 import { Time } from '../../../src/core/Time';
+import { CONFIG_SC, DEFAULT_VERSION } from '../../../src/core/Constants.js';
 
 SDK.log = { level: 'ERROR', transports: new LoggerTransports.Console() };
 const mirrorNode: MirrorNode = {
@@ -83,6 +84,8 @@ const rpcNode: JsonRpcRelay = {
 const decimals = 6;
 const initSupply = 1000;
 const reserve = 100000000;
+const configId = CONFIG_SC;
+const configVersion = DEFAULT_VERSION;
 
 describe('🧪 [ADAPTER] RPCTransactionAdapter', () => {
 	let stableCoinCapabilitiesSC: StableCoinCapabilities;
@@ -97,23 +100,21 @@ describe('🧪 [ADAPTER] RPCTransactionAdapter', () => {
 	const createToken = async (
 		stablecoin: StableCoin,
 		account: Account,
-		proxyAdminOwner: ContractId | undefined = undefined,
 	): Promise<StableCoinCapabilities> => {
 		const tr = await th.create(
 			stablecoin,
 			new ContractId(FACTORY_ADDRESS),
-			new ContractId(HEDERA_TOKEN_MANAGER_ADDRESS),
-			true,
+			false,
+			new ContractId(RESOLVER_ADDRESS),
+			configId,
+			configVersion,
+			account.id,
 			undefined,
 			BigDecimal.fromString(reserve.toString(), RESERVE_DECIMALS),
-			proxyAdminOwner,
 		);
 
-		// proxyAdmin = tr.response[0][1];
-		// proxy = tr.response[0][0];
-
 		const tokenIdSC = ContractId.fromHederaContractId(
-			HContractId.fromSolidityAddress(tr.response[0][3]),
+			HContractId.fromEvmAddress(0, 0, tr.response[0][1]),
 		);
 		return await stableCoinService.getCapabilities(account, tokenIdSC);
 	};

@@ -26,6 +26,7 @@
 - **[Recommendations](#recommendations)**<br>
 - **[Testnet reset procedure](#testnet-reset-procedure)**<br>
 - **[Deploying the stablecoin factories](#deploying-the-stablecoin-factories)**<br>
+- **[v1 to v2 Migration](#v1-to-v2-migration)**<br>
 - **[Development manifesto](#development-manifesto)**<br>
 - **[Support](#support)**<br>
 - **[Contributing](#contributing)**<br>
@@ -260,16 +261,16 @@ If you are using VSCode we recommend the use of the solidity extension from nomi
 # Deploying the stablecoin factories
 In order to be able to deploy any stablecoin, the `HederaTokenManager` and `StablecoinFactory` smart contracts must be deployed on the network. Whenever a new version of these contracts is needed or when the testnet is reset, new contracts must be deployed. Moreover, the address of the `StablecoinFactory` smart contract must be updated in the SDK, CLI and web modules as explained above.
 
-We provide default addresses for the factories that we have deployed for anyone to use that are updated whenever a new version is released.
+We provide default addresses for the factory and the business logic resolver that we have deployed for anyone to use that are updated whenever a new version is released. 
 
-| Contract name  | Address      | Network    | 
-|----------------|--------------|------------|
-| FactoryAddress | 0.0.2167166  | Testnet    |
-| FactoryAddress | 0.0.XXXXXX   | Previewnet |
-
-(You can check the factorys associated to each version [here](./FACTORY_VERSION.md))
+You can find them associated to each version in [FACTORY_VERSION.md](./FACTORY_VERSION.md) and [RESOLVER_VERSION.md](./RESOLVER_VERSION.md)
 
 Follow the steps in the [contracts docs](https://github.com/hashgraph/stablecoin-studio/tree/main/contracts#deploy-factory) to learn how to deploy the factories.
+
+# V1 to V2 Migration
+V2 smart contracts are not compatible with V1.
+
+If you have deployed Stablecoins in V1 and want to migrate them to V2 please follow the procedure described in the `contracts/README`document `V1 to V2 migration` section.
 
 # Testnet reset procedure
 

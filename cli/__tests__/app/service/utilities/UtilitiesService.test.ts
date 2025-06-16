@@ -160,6 +160,11 @@ describe('UtilitiesService', () => {
     network: network,
   };
 
+  const mockCurrentResolver = {
+    id: '0.0.1234567',
+    network: network,
+  };
+
   const mockCurrentHederaTokenManager = {
     id: '0.0.7654321',
     network: network,
@@ -236,7 +241,10 @@ describe('UtilitiesService', () => {
     utilsService.setCurrentBackend(mockCurrentBackend);
     await expect(utilsService.initSDK()).rejects.toThrow();
     utilsService.setCurrentRPC(mockCurrentRPC);
-    utilsService.setCurrentFactory(mockCurrentFactory);
+    utilsService.setCurrentResolverAndFactory(
+      mockCurrentFactory,
+      mockCurrentResolver,
+    );
     utilsService.setCurrentHederaTokenManager(mockCurrentHederaTokenManager);
     await utilsService.initSDK();
 
@@ -279,7 +287,10 @@ describe('UtilitiesService', () => {
     utilsService.setCurrentMirror(mockCurrentMirror);
     utilsService.setCurrentBackend(mockCurrentBackend);
     utilsService.setCurrentRPC(mockCurrentRPC);
-    utilsService.setCurrentFactory(mockCurrentFactory);
+    utilsService.setCurrentResolverAndFactory(
+      mockCurrentFactory,
+      mockCurrentResolver,
+    );
     utilsService.setCurrentHederaTokenManager(mockCurrentHederaTokenManager);
     await utilsService.initSDK();
 

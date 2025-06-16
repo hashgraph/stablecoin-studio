@@ -1,44 +1,69 @@
 import { expect } from 'chai'
 import { SignerWithAddress } from '@nomiclabs/hardhat-ethers/signers'
-import { ethers, network } from 'hardhat'
+import { ethers } from 'hardhat'
 import { BigNumber } from 'ethers'
-import { HederaTokenManager, HederaTokenManager__factory } from '@typechain'
-import { delay, MESSAGES, validateTxResponse, ValidateTxResponseCommand } from '@scripts'
-import { deployFullInfrastructureInTests, INIT_SUPPLY, GAS_LIMIT } from '@test/shared'
-import { NetworkName } from '@configuration'
+import {
+    BurnableFacet__factory,
+    HederaTokenManagerFacet__factory,
+    HederaTokenManagerFacet,
+    BurnableFacet,
+} from '@typechain-types'
+import {
+    DEFAULT_TOKEN,
+    delay,
+    deployFullInfrastructure,
+    DeployFullInfrastructureCommand,
+    MESSAGES,
+    validateTxResponse,
+    ValidateTxResponseCommand,
+} from '@scripts'
+import { deployStableCoinInTests, GAS_LIMIT } from '@test/shared'
 
 describe('➡️ Burn Tests', () => {
     // Contracts
-    let proxyAddress: string
-    let hederaTokenManager: HederaTokenManager
+    let stableCoinProxyAddress: string
+    let hederaTokenManagerFacet: HederaTokenManagerFacet
+    let burnFacet: BurnableFacet
+
     // Accounts
     let operator: SignerWithAddress
     let nonOperator: SignerWithAddress
 
+    async function setFacets(address: string) {
+        hederaTokenManagerFacet = HederaTokenManagerFacet__factory.connect(address, operator)
+        burnFacet = BurnableFacet__factory.connect(address, operator)
+    }
+
     before(async () => {
-        // Disable | Mock console.log()
+        // mute | mock console.log
         console.log = () => {} // eslint-disable-line
-        // * Deploy StableCoin Token
         console.info(MESSAGES.deploy.info.deployFullInfrastructureInTests)
         ;[operator, nonOperator] = await ethers.getSigners()
-        // if ((network.name as NetworkName) === NETWORK_LIST.name[0]) {
-        //     await deployPrecompiledHederaTokenServiceMock(hre, signer)
-        // }
-        ;({ proxyAddress } = await deployFullInfrastructureInTests({
+
+        const { ...deployedContracts } = await deployFullInfrastructure(
+            await DeployFullInfrastructureCommand.newInstance({
+                signer: operator,
+                useDeployed: false,
+                useEnvironment: true,
+            })
+        )
+        ;({ stableCoinProxyAddress } = await deployStableCoinInTests({
             signer: operator,
-            network: network.name as NetworkName,
+            businessLogicResolverProxyAddress: deployedContracts.businessLogicResolver.proxyAddress!,
+            stableCoinFactoryProxyAddress: deployedContracts.stableCoinFactoryFacet.proxyAddress!,
         }))
-        hederaTokenManager = HederaTokenManager__factory.connect(proxyAddress, operator)
+
+        await setFacets(stableCoinProxyAddress)
     })
 
     it('Account with BURN role can burn 10 tokens from the treasury account having 100 tokens', async () => {
-        const tokensToBurn = INIT_SUPPLY.div(10)
+        const tokensToBurn = DEFAULT_TOKEN.initialSupply.div(10)
 
         // Get the initial total supply and treasury account's balanceOf
-        const initialTotalSupply = await hederaTokenManager.totalSupply()
+        const initialTotalSupply = await hederaTokenManagerFacet.totalSupply()
 
         // burn some tokens
-        const burnResponse = await hederaTokenManager.burn(tokensToBurn, {
+        const burnResponse = await burnFacet.burn(tokensToBurn, {
             gasLimit: GAS_LIMIT.hederaTokenManager.burn,
         })
         await validateTxResponse(
@@ -46,7 +71,7 @@ describe('➡️ Burn Tests', () => {
         )
         // check new total supply and balance of treasury account : success
         await delay({ time: 1, unit: 'sec' })
-        const finalTotalSupply = await hederaTokenManager.totalSupply()
+        const finalTotalSupply = await hederaTokenManagerFacet.totalSupply()
         const expectedTotalSupply = initialTotalSupply.sub(tokensToBurn)
 
         expect(finalTotalSupply.toString()).to.equals(expectedTotalSupply.toString())
@@ -54,10 +79,10 @@ describe('➡️ Burn Tests', () => {
 
     it('Account with BURN role cannot burn more tokens than the treasury account has', async () => {
         // Retrieve original total supply
-        const currentTotalSupply = await hederaTokenManager.totalSupply()
+        const currentTotalSupply = await hederaTokenManagerFacet.totalSupply()
 
         // burn more tokens than original total supply : fail
-        const response = await hederaTokenManager.burn(currentTotalSupply.add(1), {
+        const response = await burnFacet.burn(currentTotalSupply.add(1), {
             gasLimit: GAS_LIMIT.hederaTokenManager.burn,
         })
         await expect(validateTxResponse(new ValidateTxResponseCommand({ txResponse: response }))).to.be.rejectedWith(
@@ -67,7 +92,7 @@ describe('➡️ Burn Tests', () => {
 
     it('Account with BURN role cannot burn a negative amount', async () => {
         // burn a negative amount of tokens : fail
-        const response = await hederaTokenManager.burn(-1n, {
+        const response = await burnFacet.burn(-1n, {
             gasLimit: GAS_LIMIT.hederaTokenManager.burn,
         })
         await expect(validateTxResponse(new ValidateTxResponseCommand({ txResponse: response }))).to.be.rejectedWith(
@@ -76,10 +101,10 @@ describe('➡️ Burn Tests', () => {
     })
 
     it('Account without BURN role cannot burn tokens', async () => {
-        const nonOperatorHederaTokenManager = HederaTokenManager__factory.connect(proxyAddress, nonOperator)
+        const nonOperatorBurnableFacet = BurnableFacet__factory.connect(stableCoinProxyAddress, nonOperator)
 
         // Account without burn role, burns tokens : fail
-        const result = await nonOperatorHederaTokenManager.burn(BigNumber.from(1), {
+        const result = await nonOperatorBurnableFacet.burn(BigNumber.from(1), {
             gasLimit: GAS_LIMIT.hederaTokenManager.burn,
         })
         await expect(validateTxResponse(new ValidateTxResponseCommand({ txResponse: result }))).to.be.rejectedWith(
