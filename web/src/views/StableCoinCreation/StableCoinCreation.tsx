@@ -33,6 +33,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import type { AppDispatch } from '../../store/store';
 import ProofOfReserve from './ProofOfReserve';
 import { SELECTED_WALLET_PAIRED_ACCOUNT } from '../../store/walletSelectors';
+import { CONFIG_ID_RESERVER, CONFIG_ID_SC } from '../../constants';
 
 const StableCoinCreation = () => {
 	const navigate = useNavigate();
@@ -127,8 +128,8 @@ const StableCoinCreation = () => {
 
 		if (currentStep === 0) {
 			// @ts-ignore
-			fieldsStep = watch(['name', 'symbol', 'configId', 'configVersion']);
-			keys = ['configId', 'configVersion'];
+			fieldsStep = watch(['name', 'symbol', 'configVersion']);
+			keys = ['configVersion'];
 		}
 
 		if (currentStep === 1) {
@@ -176,7 +177,7 @@ const StableCoinCreation = () => {
 				if (hasDataFeed) {
 					keys.push('reserveAddress');
 				} else {
-					keys.push('reserveInitialAmount', 'reserveConfigId', 'reserveConfigVersion');
+					keys.push('reserveInitialAmount', 'reserveConfigVersion');
 				}
 				// @ts-ignore
 				fieldsStep = watch(keys);
@@ -257,7 +258,6 @@ const StableCoinCreation = () => {
 			manageCustomFees,
 			feeScheduleKey,
 			reserveInitialAmount,
-			reserveConfigId,
 			reserveConfigVersion,
 			reserveAddress,
 			grantKYCToOriginalSender,
@@ -272,7 +272,6 @@ const StableCoinCreation = () => {
 			feeRoleAccount,
 			cashInAllowanceType,
 			cashInAllowance,
-			configId,
 			configVersion,
 		} = getValues();
 
@@ -282,7 +281,7 @@ const StableCoinCreation = () => {
 		} else {
 			request.createReserve = true;
 			request.reserveInitialAmount = reserveInitialAmount;
-			request.reserveConfigId = reserveConfigId;
+			request.reserveConfigId = CONFIG_ID_RESERVER;
 			request.reserveConfigVersion = reserveConfigVersion;
 			request.reserveAddress = undefined;
 		}
@@ -342,7 +341,7 @@ const StableCoinCreation = () => {
 			'feeSchedule',
 		);
 
-		request.configId = configId;
+		request.configId = CONFIG_ID_SC;
 		request.configVersion = configVersion;
 
 		try {

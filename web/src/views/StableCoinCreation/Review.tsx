@@ -18,7 +18,6 @@ const Review = (props: ReviewProps) => {
 	const {
 		name,
 		symbol,
-		configId,
 		configVersion,
 		initialSupply,
 		supplyType,
@@ -47,7 +46,6 @@ const Review = (props: ReviewProps) => {
 		feeScheduleKey,
 		reserveAddress,
 		reserveInitialAmount,
-		reserveConfigId,
 		reserveConfigVersion,
 	} = getValues();
 
@@ -172,10 +170,6 @@ const Review = (props: ReviewProps) => {
 								value: symbol || '',
 							},
 							{
-								label: t('stableCoinCreation:basicDetails.configId'),
-								value: formatBytes32(configId, 8) || '',
-							},
-							{
 								label: t('stableCoinCreation:basicDetails.configVersion'),
 								value: configVersion || '',
 							},
@@ -294,10 +288,6 @@ const Review = (props: ReviewProps) => {
 								{
 									label: t('stableCoinCreation:proofOfReserve.addressPor'),
 									value: reserveAddress || t('stableCoinCreation:proofOfReserve.createDataFeed'),
-								},
-								{
-									label: t('stableCoinCreation:proofOfReserve.reserveConfigId'),
-									value: formatBytes32(reserveConfigId, 8) || '',
 								},
 								{
 									label: t('stableCoinCreation:proofOfReserve.reserveConfigVersion'),

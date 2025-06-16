@@ -177,6 +177,10 @@ export abstract class HederaTransactionAdapter extends TransactionAdapter {
 					role: StableCoinRole.DEFAULT_ADMIN_ROLE,
 				},
 				{
+					account: proxyOwnerAccount,
+					role: StableCoinRole.DEFAULT_ADMIN_ROLE,
+				},
+				{
 					account: coin.burnRoleAccount,
 					role: StableCoinRole.BURN_ROLE,
 				},
@@ -759,7 +763,6 @@ export abstract class HederaTransactionAdapter extends TransactionAdapter {
 			params,
 			undefined,
 			RoleManagementFacet__factory.abi,
-			startDate,
 		);
 	}
 

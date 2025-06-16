@@ -131,6 +131,10 @@ export default class TransactionService extends Service {
 					if (!decodedFunctionParameters) {
 						return 'Failed to decode function call';
 					}
+
+					if (!decodedFunctionParameters) {
+						return 'Failed to decode function call';
+					}
 					name = decodedFunctionParameters.name;
 					const inputArgs = decodedFunctionParameters.args;
 

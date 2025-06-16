@@ -32,8 +32,7 @@ export const useRefreshCoinInfo = () => {
 				id: selectedStableCoin?.tokenId?.toString() ?? '',
 			}),
 		);
-
-		const stableCoinConfigInfo = await SDKService.getConfigInfo(
+		const configInfo = await SDKService.getConfigInfo(
 			new GetConfigInfoRequest({
 				tokenId: selectedStableCoin?.tokenId?.toString() ?? '',
 			}),
@@ -69,14 +68,6 @@ export const useRefreshCoinInfo = () => {
 				reserveAmount: resp?.reserveAmount?.toString(),
 				reserveAddress: resp?.reserveAddress?.toString(),
 				customFees: resp?.customFees && JSON.parse(JSON.stringify(resp.customFees)),
-			}),
-		);
-
-		dispatch(
-			walletActions.setSelectedStableCoinConfigInfo({
-				configId: stableCoinConfigInfo?.configId,
-				configVersion: stableCoinConfigInfo?.configVersion,
-				resolverAddress: stableCoinConfigInfo?.resolverAddress,
 			}),
 		);
 

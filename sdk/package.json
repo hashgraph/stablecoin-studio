@@ -27,7 +27,6 @@
 		"@types/node": "^18.11.18",
 		"@types/uuid": "^9.0.0 ",
 		"@typescript-eslint/eslint-plugin": "^5.62.0",
-		"@typescript-eslint/eslint-plugin": "^5.62.0",
 		"@typescript-eslint/parser": "^5.48.2",
 		"axios": "^ 1.2.3",
 		"babel-jest": "^29.3.1 ",

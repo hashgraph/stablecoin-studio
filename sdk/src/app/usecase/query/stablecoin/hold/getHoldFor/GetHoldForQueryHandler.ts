@@ -61,6 +61,7 @@ export class GetHoldForQueryHandler implements IQueryHandler<GetHoldForQuery> {
 			);
 
 			return Promise.resolve(new GetHoldForQueryResponse(holdDetail));
+			// eslint-disable-next-line @typescript-eslint/no-explicit-any
 		} catch (error: any) {
 			if (
 				error.code === 'CALL_EXCEPTION' &&
