@@ -684,14 +684,6 @@ export default abstract class TransactionAdapter
 			).evmAddress.toString();
 			return test;
 		}
-		if (parameter instanceof ContractId) {
-			const test = (
-				await this.getMirrorNodeAdapter().getContractInfo(
-					parameter.toString(),
-				)
-			).evmAddress.toString();
-			return test;
-		}
 		if (parameter instanceof HederaId) {
 			if (parameter.value == HederaId.NULL.value) {
 				return EVM_ZERO_ADDRESS;

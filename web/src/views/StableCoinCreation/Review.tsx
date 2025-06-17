@@ -4,7 +4,6 @@ import { useTranslation } from 'react-i18next';
 import DetailsReview from '../../components/DetailsReview';
 import { OTHER_KEY_VALUE } from './components/KeySelector';
 import { OTHER_ACCOUNT_VALUE } from './components/RoleSelector';
-import { formatBytes32 } from '../../utils/format';
 
 interface ReviewProps {
 	form: UseFormReturn;
