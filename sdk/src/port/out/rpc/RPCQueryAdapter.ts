@@ -37,12 +37,19 @@ import {
 	SupplierAdminFacet__factory,
 	RolesFacet__factory,
 	DiamondFacet__factory,
+	HoldManagementFacet__factory,
+	BurnableFacet__factory,
 } from '@hashgraph/stablecoin-npm-contracts';
 import { StableCoinRole } from '../../../domain/context/stablecoin/StableCoinRole.js';
 import ContractId from '../../../domain/context/contract/ContractId.js';
 import EvmAddress from '../../../domain/context/contract/EvmAddress.js';
 import { MirrorNodeAdapter } from '../mirror/MirrorNodeAdapter.js';
 import { ContractId as HContractId } from '@hashgraph/sdk';
+import {
+	HoldDetails,
+	HoldIdentifier,
+} from '../../../domain/context/hold/Hold.js';
+import BigDecimal from '../../../domain/context/shared/BigDecimal';
 
 const LOCAL_JSON_RPC_RELAY_URL = 'http://127.0.0.1:7546/api';
 
@@ -244,5 +251,87 @@ export class RPCQueryAdapter {
 			configInfo.configurationId_,
 			configInfo.version_.toNumber(),
 		];
+	}
+
+	async getHoldFor(
+		address: EvmAddress,
+		target: EvmAddress,
+		holdId: number,
+	): Promise<HoldDetails> {
+		LogService.logTrace(`Getting hold details for ${target.toString()}`);
+		const holdIdentifier: HoldIdentifier = {
+			tokenHolder: target.toString(),
+			holdId,
+		};
+		const hold = await this.connect(
+			HoldManagementFacet__factory,
+			address.toString(),
+		).getHoldFor(holdIdentifier);
+
+		return new HoldDetails(
+			hold.expirationTimestamp_.toNumber(),
+			new BigDecimal(hold.amount_.toString()),
+			hold.escrow_,
+			target.toString(),
+			hold.destination_,
+			hold.data_,
+		);
+	}
+
+	async getHoldsIdFor(
+		address: EvmAddress,
+		target: EvmAddress,
+		start: number,
+		end: number,
+	): Promise<number[]> {
+		LogService.logTrace(
+			`Getting hold IDs for ${target.toString()} from ${start} to ${end}`,
+		);
+
+		const holdsIdFor = await this.connect(
+			HoldManagementFacet__factory,
+			address.toString(),
+		).getHoldsIdFor(target.toString(), start, end);
+
+		return holdsIdFor.map((id) => id.toNumber());
+	}
+
+	async getHeldAmountFor(
+		address: EvmAddress,
+		target: EvmAddress,
+	): Promise<BigDecimal> {
+		LogService.logTrace(`Getting held amount for ${target.toString()}`);
+
+		const heldAmountFor = await this.connect(
+			HoldManagementFacet__factory,
+			address.toString(),
+		).getHeldAmountFor(target.toString());
+
+		return new BigDecimal(heldAmountFor.toString());
+	}
+
+	async getHoldCountFor(
+		address: EvmAddress,
+		target: EvmAddress,
+	): Promise<number> {
+		LogService.logTrace(`Getting hold count for ${target.toString()}`);
+
+		const holdCountFor = await this.connect(
+			HoldManagementFacet__factory,
+			address.toString(),
+		).getHoldCountFor(target.toString());
+
+		return holdCountFor.toNumber();
+	}
+
+	async getBurnableAmount(address: EvmAddress): Promise<string> {
+		LogService.logTrace(`Getting burnable amount`);
+
+		const burnableAmount = await this.connect(
+			BurnableFacet__factory,
+			address.toString(),
+		).getBurnableAmount();
+
+		return burnableAmount.toString();
 	}
 }

@@ -38,6 +38,8 @@ export async function deployStableCoinInTests({
     addFeeSchedule,
     grantKYCToOriginalSender,
     addKyc,
+    addSupply,
+    addWipe,
 }: {
     signer: SignerWithAddress | Wallet
     businessLogicResolverProxyAddress: string
@@ -48,6 +50,8 @@ export async function deployStableCoinInTests({
     addFeeSchedule?: boolean
     grantKYCToOriginalSender?: boolean
     addKyc?: boolean
+    addSupply?: boolean
+    addWipe?: boolean
 }) {
     const command = await DeployStableCoinCommand.newInstance({
         signer,
@@ -69,6 +73,8 @@ export async function deployStableCoinInTests({
         addFeeSchedule,
         grantKYCToOriginalSender,
         addKyc,
+        addSupply,
+        addWipe,
     })
 
     deployedResult = await deployStableCoin(command)

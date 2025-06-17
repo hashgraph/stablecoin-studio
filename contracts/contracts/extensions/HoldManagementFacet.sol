@@ -12,6 +12,7 @@ import {HoldManagementStorageWrapper} from './HoldManagementStorageWrapper.sol';
 import {_HOLD_MANAGEMENT_RESOLVER_KEY} from '../constants/resolverKeys.sol';
 import {IRoles} from './Interfaces/IRoles.sol';
 import {IStaticFunctionSelectors} from '../resolver/interfaces/resolverProxy/IStaticFunctionSelectors.sol';
+
 // solhint-enable max-line-length
 
 contract HoldManagementFacet is
@@ -52,7 +53,7 @@ contract HoldManagementFacet is
      */
     modifier nonExpired(uint256 expirationTimestamp) {
         if (expirationTimestamp < block.timestamp) {
-            revert HoldNotExpired(expirationTimestamp);
+            revert HoldExpired(expirationTimestamp);
         }
         _;
     }
@@ -69,23 +70,6 @@ contract HoldManagementFacet is
     }
 
     /**
-     * @dev Modifier to check if the contract has the admin key for the token
-     */
-    modifier hasContractAdminKey() {
-        _checkHasContractAdminKey();
-        _;
-    }
-
-    function _checkHasContractAdminKey() private {
-        address token = _getTokenAddress();
-        (int64 rc, IHederaTokenService.KeyValue memory adminKey) = IHederaTokenService(_PRECOMPILED_ADDRESS)
-            .getTokenKey(token, 0); // adminKey
-        if (!_checkResponse(rc) || adminKey.contractId != address(this)) {
-            revert TokenKeyMissing('Admin key');
-        }
-    }
-
-    /**
      * @dev Modifier to check if the contract has the wipe key for the token
      */
     modifier hasContractWipeKey() {
@@ -95,13 +79,8 @@ contract HoldManagementFacet is
 
     function _checkHasContractWipeKey() private {
         address token = _getTokenAddress();
-        (int64 rc, IHederaTokenService.KeyValue memory wipeKey) = IHederaTokenService(_PRECOMPILED_ADDRESS).getTokenKey(
-            token,
-            3
-        ); // wipeKey
-        if (!_checkResponse(rc) || wipeKey.contractId != address(this)) {
-            revert TokenKeyMissing('Wipe key');
-        }
+        (int64 responseCode, ) = IHederaTokenService(_PRECOMPILED_ADDRESS).getTokenKey(token, 8); // wipeKey
+        _checkResponse(responseCode);
     }
 
     /**
@@ -114,11 +93,8 @@ contract HoldManagementFacet is
 
     function _checkHasContractSupplyKey() private {
         address token = _getTokenAddress();
-        (int64 rc, IHederaTokenService.KeyValue memory supplyKey) = IHederaTokenService(_PRECOMPILED_ADDRESS)
-            .getTokenKey(token, 4); // supplyKey
-        if (!_checkResponse(rc) || supplyKey.contractId != address(this)) {
-            revert TokenKeyMissing('Supply key');
-        }
+        (int64 responseCode, ) = IHederaTokenService(_PRECOMPILED_ADDRESS).getTokenKey(token, 16); // supplyKey
+        _checkResponse(responseCode);
     }
 
     /**
@@ -144,12 +120,10 @@ contract HoldManagementFacet is
     )
         external
         override
-        hasContractAdminKey
         hasContractSupplyKey
         hasContractWipeKey
         validExpiration(_hold.expirationTimestamp)
         addressIsNotZero(_hold.escrow)
-        addressIsNotZero(_hold.to)
         amountIsNotNegative(_hold.amount, false)
         returns (bool success_, uint256 holdId_)
     {
@@ -171,14 +145,12 @@ contract HoldManagementFacet is
         bytes calldata _operatorData
     )
         external
-        hasContractAdminKey
         hasContractSupplyKey
         hasContractWipeKey
         validExpiration(_hold.expirationTimestamp)
         addressIsNotZero(_hold.escrow)
         addressIsNotZero(_from)
-        addressIsNotZero(_hold.to)
-        onlyRole(_getRoleId(IRoles.RoleName.HOLD_CREATOR_ROLE))
+        onlyRole(_getRoleId(IRoles.RoleName.HOLD_CREATOR))
         amountIsNotNegative(_hold.amount, false)
         returns (bool success_, uint256 holdId_)
     {
@@ -200,8 +172,7 @@ contract HoldManagementFacet is
     ) internal returns (bool success_, uint256 holdId_) {
         address currentTokenAddress = _getTokenAddress();
         HoldDataStorage storage holdDataStorage = _holdDataStorage();
-        holdId_ = holdDataStorage.nextHoldIdByAccount[_tokenHolder];
-        holdDataStorage.nextHoldIdByAccount[_tokenHolder]++;
+        holdId_ = ++holdDataStorage.nextHoldIdByAccount[_tokenHolder];
 
         _wipeAndMintTokens(currentTokenAddress, _tokenHolder, _hold.amount);
 
@@ -248,9 +219,7 @@ contract HoldManagementFacet is
 
         _decreaseHoldAmount(_holdIdentifier.tokenHolder, _holdIdentifier.holdId, _amount);
 
-        if (!_transferTokens(address(this), _to, _amount)) {
-            revert TransferFailed();
-        }
+        _transferTokens(address(this), _to, _amount);
 
         emit HoldExecuted(_holdIdentifier.tokenHolder, _holdIdentifier.holdId, _amount, _to);
         return true;
@@ -280,15 +249,11 @@ contract HoldManagementFacet is
         isEscrow(_holdDataStorage().holdsByAccountAndId[_holdIdentifier.tokenHolder][_holdIdentifier.holdId].escrow)
         returns (bool success_)
     {
-        address tokenHolder = msg.sender;
+        _decreaseHoldAmount(_holdIdentifier.tokenHolder, _holdIdentifier.holdId, _amount);
 
-        _decreaseHoldAmount(tokenHolder, _holdIdentifier.holdId, _amount);
+        _transferTokens(address(this), _holdIdentifier.tokenHolder, _amount);
 
-        if (!_transferTokens(address(this), _holdIdentifier.tokenHolder, _amount)) {
-            revert TransferFailed();
-        }
-
-        emit HoldReleased(tokenHolder, _holdIdentifier.holdId, _amount);
+        emit HoldReleased(_holdIdentifier.tokenHolder, _holdIdentifier.holdId, _amount);
         return true;
     }
 
@@ -309,13 +274,12 @@ contract HoldManagementFacet is
             revert HoldNotExpired(holdData.expirationTimestamp);
         }
 
-        _decreaseHoldAmount(_holdIdentifier.tokenHolder, _holdIdentifier.holdId, holdData.amount);
+        int64 amount = holdData.amount;
+        _decreaseHoldAmount(_holdIdentifier.tokenHolder, _holdIdentifier.holdId, amount);
 
-        if (!_transferTokens(address(this), _holdIdentifier.tokenHolder, holdData.amount)) {
-            revert TransferFailed();
-        }
+        _transferTokens(address(this), _holdIdentifier.tokenHolder, amount);
 
-        emit HoldReclaimed(msg.sender, _holdIdentifier.tokenHolder, holdData.id, holdData.amount);
+        emit HoldReclaimed(msg.sender, _holdIdentifier.tokenHolder, _holdIdentifier.holdId, amount);
         return true;
     }
 
@@ -335,14 +299,13 @@ contract HoldManagementFacet is
             mintedAmount
         );
 
-        if (!_checkResponse(responseCode)) revert WipeFailed();
+        _checkResponse(responseCode);
 
         bytes[] memory metadata;
 
         (responseCode, , ) = IHederaTokenService(_PRECOMPILED_ADDRESS).mintToken(tokenAddress, mintedAmount, metadata);
-        if (!_checkResponse(responseCode)) revert MintFailed();
 
-        return true;
+        return _checkResponse(responseCode);
     }
 
     /**

@@ -1,6 +1,6 @@
 {
     "name": "@hashgraph/stablecoin-npm-contracts",
-    "version": "2.0.0",
+    "version": "2.1.0",
     "description": "",
     "main": "./build/typechain-types/index.js",
     "module": "./build/typechain-types/index.js",
@@ -35,6 +35,7 @@
         "test:hederaReserve": "npx hardhat test test/thread0/hederaReserve.test.ts",
         "test:hederaTokenManager": "npx hardhat test test/thread0/hederaTokenManager.test.ts",
         "test:pausable": "npx hardhat test test/thread0/pausable.test.ts",
+        "test:hold": "npx hardhat test test/thread1/hold.test.ts",
         "test:rescuable": "npx hardhat test test/thread1/rescuable.test.ts",
         "test:reserve": "npx hardhat test test/thread1/reserve.test.ts",
         "test:roleManagement": "npx hardhat test test/thread1/roleManagement.test.ts",

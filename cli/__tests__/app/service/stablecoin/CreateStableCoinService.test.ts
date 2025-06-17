@@ -358,6 +358,12 @@ describe(`Testing CreateStableCoinService class`, () => {
       .mockResolvedValueOnce('0.0.1234');
     jest.spyOn(utilsService, 'defaultSingleAsk').mockResolvedValueOnce('10'); //cashin
 
+    jest
+      .spyOn(utilsService, 'defaultMultipleAsk')
+      .mockResolvedValueOnce(
+        language.getText('stablecoin.initialRoles.options.currentAccount'),
+      ); //hold
+
     // Reserve
     jest.spyOn(utilsService, 'defaultConfirmAsk').mockResolvedValueOnce(true);
     jest.spyOn(utilsService, 'defaultConfirmAsk').mockResolvedValueOnce(false);

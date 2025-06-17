@@ -263,6 +263,7 @@ export const english = {
       },
       cashinAllowance:
         "Enter the cashin allowance for the account ('0' if Unlimited)",
+      holdCreator: 'Choose the HOLD CREATOR admin account',
     },
     askTreasuryAccountAddress: 'Enter the treasury account id?',
     askOperateStableCoin:
@@ -380,6 +381,7 @@ export const english = {
       Rescue: 'Rescue',
       RescueHBAR: 'Rescue HBAR',
       ResolverMgmt: 'Resolver Management',
+      HoldMgmt: 'Hold Management',
       FreezeMgmt: 'Freeze Management',
       KYCMgmt: 'KYC Management',
       FeesMgmt: 'Fees management',
@@ -462,6 +464,7 @@ export const english = {
       Delete: 'Delete',
       KYC: 'KYC',
       Fees: 'Fees',
+      Hold: 'Hold Creator',
       ...goBack,
     },
 
@@ -587,6 +590,16 @@ export const english = {
     resolverConfigVersionUpdated: 'Resolver configuration version updated',
     resolverConfigUpdated: 'Resolver configuration updated',
     resolverUpdated: 'Resolver updated',
+    holdCreated: 'Hold created with id ${holdId}',
+    holdExecuted: 'Hold executed',
+    holdReleased: 'Hold released',
+    holdReclaimed: 'Hold reclaimed',
+    holdBalance: 'Held balance for ${address} is ${amount}',
+    holdsId:
+      'Address ${address} currently has the following holds ID active: ${holdsId}',
+    holdDetails:
+      'Information for hold ID ${holdId} for address ${address} is ${holdDetails}',
+    holdCount: 'Account ${address} has a total of ${holdCount} active holds',
   },
   operation: {
     success: colors.green('Operation has been completed successfully.'),
@@ -737,6 +750,26 @@ export const english = {
       UpdateConfigVersion: 'Update resolver configuration version',
       UpdateConfig: 'Update resolver configuration Id and version',
       UpdateResolver: 'Update resolver address',
+    },
+  },
+  holdManagement: {
+    askAmount: 'Enter the hold amount',
+    askEscrow: 'Enter the hold escrow',
+    askSetDestination: 'Would you like to set a destination?',
+    askDestination: 'Enter a destination',
+    askExpirationDate: 'Enter an expiration date (days from now)',
+    askSource: 'Enter the source address',
+    askHoldId: 'Enter the hold ID',
+    options: {
+      CreateHold: 'Create a new hold for your account',
+      CreateHoldByController: 'Force hold creation for a target account',
+      ExecuteHold: 'Execute a hold for which you are the escrow',
+      ReleaseHold: 'Release a hold for which you are the escrow',
+      ReclaimHold: 'Reclaim an expired hold',
+      HeldBalance: 'Check total held balance for an account',
+      HoldCount: 'Check hold count for an account',
+      HoldDetails: 'Check the details for a hold',
+      HoldsId: 'Check the holds ID for an account',
     },
   },
   keysManagement: {

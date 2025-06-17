@@ -104,6 +104,16 @@ import { GetConfigInfoQueryHandler } from '../app/usecase/query/stablecoin/manag
 import { UpdateConfigVersionCommandHandler } from '../app/usecase/command/stablecoin/management/updateConfigVersion/updateConfigVersionCommandHandler.js';
 import { UpdateConfigCommandHandler } from '../app/usecase/command/stablecoin/management/updateConfig/updateConfigCommandHandler.js';
 import { UpdateResolverCommandHandler } from '../app/usecase/command/stablecoin/management/updateResolver/updateResolverCommandHandler.js';
+import { CreateHoldCommandHandler } from '../app/usecase/command/stablecoin/operations/hold/createHold/CreateHoldCommandHandler.js';
+import { CreateHoldByControllerCommandHandler } from '../app/usecase/command/stablecoin/operations/hold/createHoldByController/CreateHoldByControllerCommandHandler.js';
+import { ExecuteHoldCommandHandler } from '../app/usecase/command/stablecoin/operations/hold/executeHold/ExecuteHoldCommandHander.js';
+import { ReleaseHoldCommandHandler } from '../app/usecase/command/stablecoin/operations/hold/releaseHold/ReleaseHoldCommandHandler.js';
+import { ReclaimHoldCommandHandler } from '../app/usecase/command/stablecoin/operations/hold/reclaimHold/ReclaimHoldCommandHandler.js';
+import { GetHoldsIdForQueryHandler } from '../app/usecase/query/stablecoin/hold/getHoldsIdFor/GetHoldsIdForQueryHandler.js';
+import { GetHoldForQueryHandler } from '../app/usecase/query/stablecoin/hold/getHoldFor/GetHoldForQueryHandler.js';
+import { GetHeldAmountForQueryHandler } from '../app/usecase/query/stablecoin/hold/getHeldAmountFor/GetHeldAmountForQueryHandler.js';
+import { GetHoldCountForQueryHandler } from '../app/usecase/query/stablecoin/hold/getHoldCountFor/GetHoldCountForQueryHandler.js';
+import { GetBurnableAmountQueryHandler } from '../app/usecase/query/stablecoin/burn/getBurnableAmount/GetBurnableAmountQueryHandler.js';
 
 export const TOKENS = {
 	COMMAND_HANDLER: Symbol('CommandHandler'),
@@ -187,6 +197,30 @@ const COMMAND_HANDLERS = [
 	{
 		token: TOKENS.COMMAND_HANDLER,
 		useClass: AssociateCommandHandler,
+	},
+	{
+		token: TOKENS.COMMAND_HANDLER,
+		useClass: CreateHoldCommandHandler,
+	},
+	{
+		token: TOKENS.COMMAND_HANDLER,
+		useClass: CreateHoldCommandHandler,
+	},
+	{
+		token: TOKENS.COMMAND_HANDLER,
+		useClass: CreateHoldByControllerCommandHandler,
+	},
+	{
+		token: TOKENS.COMMAND_HANDLER,
+		useClass: ExecuteHoldCommandHandler,
+	},
+	{
+		token: TOKENS.COMMAND_HANDLER,
+		useClass: ReleaseHoldCommandHandler,
+	},
+	{
+		token: TOKENS.COMMAND_HANDLER,
+		useClass: ReclaimHoldCommandHandler,
 	},
 	// Stablecoin Role Operations
 	{
@@ -356,6 +390,26 @@ const QUERY_HANDLERS = [
 	{
 		token: TOKENS.QUERY_HANDLER,
 		useClass: GetConfigInfoQueryHandler,
+	},
+	{
+		token: TOKENS.QUERY_HANDLER,
+		useClass: GetHoldsIdForQueryHandler,
+	},
+	{
+		token: TOKENS.QUERY_HANDLER,
+		useClass: GetHoldForQueryHandler,
+	},
+	{
+		token: TOKENS.QUERY_HANDLER,
+		useClass: GetHeldAmountForQueryHandler,
+	},
+	{
+		token: TOKENS.QUERY_HANDLER,
+		useClass: GetHoldCountForQueryHandler,
+	},
+	{
+		token: TOKENS.QUERY_HANDLER,
+		useClass: GetBurnableAmountQueryHandler,
 	},
 ];
 

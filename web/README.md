@@ -73,8 +73,8 @@ The ENV file contains the following parameters:
 - **REACT_APP_ICON**: url of the application icon to be displayed on wallets when connecting.
 
 ```bash
-REACT_APP_FACTORIES='[{"Environment":"mainnet","STABLE_COIN_FACTORY_ADDRESS":"0.0.1234567"},{"Environment":"testnet","STABLE_COIN_FACTORY_ADDRESS":"0.0.3950554"},{"Environment":"previewnet","STABLE_COIN_FACTORY_ADDRESS":"0.0.239703"}]'
-REACT_APP_RESOLVERS='[{"Environment":"mainnet","STABLE_COIN_RESOLVER_ADDRESS":"0.0.1234567"}, {"Environment":"testnet","STABLE_COIN_RESOLVER_ADDRESS":"0.0.6095328"},{"Environment":"previewnet","STABLE_COIN_RESOLVER_ADDRESS":"0.0.2345678"}]'
+REACT_APP_FACTORIES='[{"Environment":"mainnet","STABLE_COIN_FACTORY_ADDRESS":"0.0.1234567"},{"Environment":"testnet","STABLE_COIN_FACTORY_ADDRESS":"0.0.6176922"},{"Environment":"previewnet","STABLE_COIN_FACTORY_ADDRESS":"0.0.239703"}]'
+REACT_APP_RESOLVERS='[{"Environment":"mainnet","STABLE_COIN_RESOLVER_ADDRESS":"0.0.1234567"}, {"Environment":"testnet","STABLE_COIN_RESOLVER_ADDRESS":"0.0.6176887"},{"Environment":"previewnet","STABLE_COIN_RESOLVER_ADDRESS":"0.0.2345678"}]'
 REACT_APP_MIRROR_NODE='[{"Environment":"testnet","BASE_URL":"https://testnet.mirrornode.hedera.com/api/v1/", "API_KEY": "132456", "HEADER": "x-api-key"}]'
 REACT_APP_RPC_NODE='[{"Environment":"testnet","BASE_URL":"https://testnet.hashio.io/api", "API_KEY": "132456", "HEADER": "x-api-key"}]'
 REACT_APP_BACKEND_URL='http://localhost:3001/api/'
@@ -116,9 +116,7 @@ The front end will automatically detect how many compatible wallets are availabl
 
 If you choose HashPack or Blade, you will be asked to choose a network (testnet or mainnet)
 
-
 If you want to switch to another compatible wallet, you can do it at any time by clicking on the disconnect button (top right corner) then connecting again.
-
 
 If you choose Multisig, you will be asked to choose a network (testnet or mainnet) and enter the multisig account id
 
@@ -254,7 +252,6 @@ This option allows the user to manage the stablecoin business logic resolver con
 If the user selects the option to manage the stablecoin, it could change the **Business Logic Resolver Proxy** contract, the config id and the config version.
 
 ![Settings update](docs/images/settings_update.png?raw=true 'Settings update')
-
 
 ### Multisig transactions
 

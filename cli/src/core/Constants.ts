@@ -19,6 +19,7 @@
  */
 
 export const ZERO_ADDRESS = '0.0.0';
+export const ZERO = '0';
 
 export const MIRROR_NODE = 'MIRROR_NODE';
 export const RPC = 'RPC';

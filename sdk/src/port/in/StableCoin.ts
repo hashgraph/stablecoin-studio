@@ -107,6 +107,26 @@ import { SignCommand } from '../../app/usecase/command/stablecoin/backend/sign/S
 import { RemoveCommand } from '../../app/usecase/command/stablecoin/backend/remove/RemoveCommand.js';
 import { SubmitCommand } from '../../app/usecase/command/stablecoin/backend/submit/SubmitCommand.js';
 import { GetTransactionsQuery } from '../../app/usecase/query/stablecoin/backend/getTransactions/GetTransactionsQuery.js';
+import CreateHoldRequest from './request/CreateHoldRequest.js';
+import CreateHoldByControllerRequest from './request/CreateHoldByControllerRequest.js';
+import ExecuteHoldRequest from './request/ExecuteHoldRequest.js';
+import ReleaseHoldRequest from './request/ReleaseHoldRequest.js';
+import ReclaimHoldRequest from './request/ReclaimHoldRequest.js';
+import GetHoldForRequest from './request/GetHoldForRequest.js';
+import GetHeldAmountForRequest from './request/GetHeldAmountForRequest.js';
+import GetHoldCountForRequest from './request/GetHoldCountForRequest.js';
+import GetHoldsIdForRequest from './request/GetHoldsIdForRequest.js';
+import { CreateHoldCommand } from '../../app/usecase/command/stablecoin/operations/hold/createHold/CreateHoldCommand.js';
+import { ExecuteHoldCommand } from '../../app/usecase/command/stablecoin/operations/hold/executeHold/ExecuteHoldCommand.js';
+import { ReleaseHoldCommand } from '../../app/usecase/command/stablecoin/operations/hold/releaseHold/ReleaseHoldCommand.js';
+import { ReclaimHoldCommand } from '../../app/usecase/command/stablecoin/operations/hold/reclaimHold/ReclaimHoldCommand.js';
+import { GetHoldForQuery } from '../../app/usecase/query/stablecoin/hold/getHoldFor/GetHoldForQuery.js';
+import HoldViewModel from '../../port/in/response/HoldViewModel.js';
+import { ONE_THOUSAND } from '../../core/Constants.js';
+import { GetHoldCountForQuery } from '../../app/usecase/query/stablecoin/hold/getHoldCountFor/GetHoldCountForQuery.js';
+import { GetHoldsIdForQuery } from '../../app/usecase/query/stablecoin/hold/getHoldsIdFor/GetHoldsIdForQuery.js';
+import { GetHeldAmountForQuery } from '../../app/usecase/query/stablecoin/hold/getHeldAmountFor/GetHeldAmountForQuery.js';
+import { CreateHoldByControllerCommand } from '../../app/usecase/command/stablecoin/operations/hold/createHoldByController/CreateHoldByControllerCommand.js';
 
 export {
 	StableCoinViewModel,
@@ -152,6 +172,19 @@ interface IStableCoinInPort {
 	grantKyc(request: KYCRequest): Promise<boolean>;
 	revokeKyc(request: KYCRequest): Promise<boolean>;
 	isAccountKYCGranted(request: KYCRequest): Promise<boolean>;
+	createHold(
+		request: CreateHoldRequest,
+	): Promise<{ holdId: number; payload: boolean }>;
+	createHoldByController(
+		request: CreateHoldByControllerRequest,
+	): Promise<{ holdId: number; payload: boolean }>;
+	executeHold(request: ExecuteHoldRequest): Promise<boolean>;
+	releaseHold(request: ReleaseHoldRequest): Promise<boolean>;
+	reclaimHold(request: ReclaimHoldRequest): Promise<boolean>;
+	getHoldFor(request: GetHoldForRequest): Promise<HoldViewModel>;
+	getHeldAmountFor(request: GetHeldAmountForRequest): Promise<BigDecimal>;
+	getHoldCountFor(request: GetHoldCountForRequest): Promise<number>;
+	getHoldsIdFor(request: GetHoldsIdForRequest): Promise<number[]>;
 	transfers(request: TransfersRequest): Promise<boolean>;
 	update(request: UpdateRequest): Promise<boolean>;
 	signTransaction(request: SignTransactionRequest): Promise<boolean>;
@@ -255,6 +288,9 @@ class StableCoinInPort implements IStableCoinInPort {
 			kycRoleAccount: new HederaId(req.kycRoleAccount ?? '0.0.0'),
 			cashInRoleAccount: new HederaId(req.cashInRoleAccount ?? '0.0.0'),
 			feeRoleAccount: new HederaId(req.feeRoleAccount ?? '0.0.0'),
+			holdCreatorRoleAccount: new HederaId(
+				req.holdCreatorRoleAccount ?? '0.0.0',
+			),
 			cashInRoleAllowance: BigDecimal.fromString(
 				req.cashInRoleAllowance ?? '0',
 				req.decimals,
@@ -635,6 +671,171 @@ class StableCoinInPort implements IStableCoinInPort {
 				new UpdateReserveAddressCommand(
 					HederaId.from(request.tokenId),
 					new ContractId(reserveAddressId),
+				),
+			)
+		).payload;
+	}
+
+	@LogError
+	async createHold(
+		request: CreateHoldRequest,
+	): Promise<{ holdId: number; payload: boolean }> {
+		handleValidation(CreateHoldRequest.name, request);
+		const { tokenId, targetId, amount, expirationDate, escrow } = request;
+		return await this.commandBus.execute(
+			new CreateHoldCommand(
+				HederaId.from(tokenId),
+				amount,
+				HederaId.from(escrow),
+				expirationDate,
+				targetId ? HederaId.from(targetId) : undefined,
+			),
+		);
+	}
+
+	@LogError
+	async createHoldByController(
+		request: CreateHoldByControllerRequest,
+	): Promise<{ holdId: number; payload: boolean }> {
+		handleValidation(CreateHoldByControllerRequest.name, request);
+		const { tokenId, targetId, sourceId, amount, expirationDate, escrow } =
+			request;
+		return await this.commandBus.execute(
+			new CreateHoldByControllerCommand(
+				HederaId.from(tokenId),
+				HederaId.from(sourceId),
+				amount,
+				HederaId.from(escrow),
+				expirationDate,
+				targetId ? HederaId.from(targetId) : undefined,
+			),
+		);
+	}
+
+	@LogError
+	async executeHold(request: ExecuteHoldRequest): Promise<boolean> {
+		handleValidation(ExecuteHoldRequest.name, request);
+		const { tokenId, targetId, amount, sourceId, holdId } = request;
+		return (
+			await this.commandBus.execute(
+				new ExecuteHoldCommand(
+					HederaId.from(tokenId),
+					holdId,
+					HederaId.from(sourceId),
+					amount,
+					targetId ? HederaId.from(targetId) : undefined,
+				),
+			)
+		).payload;
+	}
+
+	@LogError
+	async releaseHold(request: ReleaseHoldRequest): Promise<boolean> {
+		handleValidation(ReleaseHoldRequest.name, request);
+		const { tokenId, amount, sourceId, holdId } = request;
+		return (
+			await this.commandBus.execute(
+				new ReleaseHoldCommand(
+					HederaId.from(tokenId),
+					holdId,
+					HederaId.from(sourceId),
+					amount,
+				),
+			)
+		).payload;
+	}
+
+	@LogError
+	async reclaimHold(request: ReclaimHoldRequest): Promise<boolean> {
+		handleValidation(ReclaimHoldRequest.name, request);
+		const { tokenId, sourceId, holdId } = request;
+		return (
+			await this.commandBus.execute(
+				new ReclaimHoldCommand(
+					HederaId.from(tokenId),
+					holdId,
+					HederaId.from(sourceId),
+				),
+			)
+		).payload;
+	}
+
+	@LogError
+	async getHoldFor(request: GetHoldForRequest): Promise<HoldViewModel> {
+		handleValidation(GetHoldForRequest.name, request);
+		const { tokenId, sourceId, holdId } = request;
+		const res = (
+			await this.queryBus.execute(
+				new GetHoldForQuery(
+					HederaId.from(tokenId),
+					HederaId.from(sourceId),
+					holdId,
+				),
+			)
+		).payload;
+
+		const hold: HoldViewModel = {
+			id: request.holdId,
+			amount: res.amount.toString(),
+			expirationDate: new Date(res.expirationTimeStamp * ONE_THOUSAND),
+			tokenHolderAddress:
+				await this.mirrorNode.accountEvmAddressToHederaId(
+					res.tokenHolderAddress,
+				),
+			escrowAddress: await this.mirrorNode.accountEvmAddressToHederaId(
+				res.escrowAddress,
+			),
+			destinationAddress:
+				await this.mirrorNode.accountEvmAddressToHederaId(
+					res.destinationAddress,
+				),
+			data: res.data,
+		};
+
+		return hold;
+	}
+
+	@LogError
+	async getHoldCountFor(request: GetHoldCountForRequest): Promise<number> {
+		handleValidation(GetHoldCountForRequest.name, request);
+		const { tokenId, sourceId } = request;
+		return (
+			await this.queryBus.execute(
+				new GetHoldCountForQuery(
+					HederaId.from(tokenId),
+					HederaId.from(sourceId),
+				),
+			)
+		).payload;
+	}
+
+	@LogError
+	async getHoldsIdFor(request: GetHoldsIdForRequest): Promise<number[]> {
+		handleValidation(GetHoldsIdForRequest.name, request);
+		const { tokenId, sourceId, start, end } = request;
+		return (
+			await this.queryBus.execute(
+				new GetHoldsIdForQuery(
+					HederaId.from(tokenId),
+					HederaId.from(sourceId),
+					start,
+					end,
+				),
+			)
+		).payload;
+	}
+
+	@LogError
+	async getHeldAmountFor(
+		request: GetHeldAmountForRequest,
+	): Promise<BigDecimal> {
+		handleValidation(GetHeldAmountForRequest.name, request);
+		const { tokenId, sourceId } = request;
+		return (
+			await this.queryBus.execute(
+				new GetHeldAmountForQuery(
+					HederaId.from(tokenId),
+					HederaId.from(sourceId),
 				),
 			)
 		).payload;
