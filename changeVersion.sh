@@ -1,5 +1,5 @@
 #!/bin/bash
-# example: ./changeVersionToPublish.sh 1.0.0
+# example: ./changeVersion.sh 1.0.0
 
 set -e
 
