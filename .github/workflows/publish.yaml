@@ -62,6 +62,12 @@ jobs:
         run: npm ci
         working-directory: contracts
 
+      # * Build contracts
+      - name: Build Contracts
+        uses: ./.github/actions/install-and-build
+        with:
+          module: "contracts"
+
       - name: Publish contracts
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
