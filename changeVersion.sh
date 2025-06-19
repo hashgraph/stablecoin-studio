@@ -45,6 +45,7 @@ update_version() {
 if [[ "$OSTYPE" == "darwin"* || "$OSTYPE" == "linux-gnu"* || "$OSTYPE" == "msys" ]]; then
   # Works for macOS, Linux, and Git Bash on Windows
   update_version
+  npm install
 else
   echo "❌ Error: Unsupported OS type: $OSTYPE"
   exit 1
