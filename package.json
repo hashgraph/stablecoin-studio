@@ -1,6 +1,6 @@
 {
   "name": "@hashgraph/hedera-stable-coin",
-  "version": "2.1.1",
+  "version": "2.1.2",
   "private": true,
   "description": "Stablecoin studio",
   "keywords": [
