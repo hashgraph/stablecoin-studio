@@ -13,6 +13,7 @@
 # Protection Rules for Github Configuration Files and Actions Workflows
 /.github/                                               @hashgraph/platform-ci @hashgraph/release-engineering-managers @hashgraph/iobuilders-hedera 
 /.github/workflows/                                     @hashgraph/platform-ci @hashgraph/platform-ci-committers @hashgraph/release-engineering-managers @hashgraph/iobuilders-hedera
+/.github/dependabot.yaml                                @hashgraph/platform-ci @hashgraph/platform-ci-committers @hashgraph/release-engineering-managers @hashgraph/developer-advocates @hashgraph/iobuilders-hedera
 
 # Codacy Tool Configurations
 /config/                                                @hashgraph/platform-ci @hashgraph/release-engineering-managers @hashgraph/iobuilders-hedera
