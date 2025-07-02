@@ -308,13 +308,11 @@ export default class RPCTransactionAdapter extends TransactionAdapter {
 				coin.decimals,
 				reserveAddress?.toString?.() === '0.0.0' || !reserveAddress
 					? '0x0000000000000000000000000000000000000000'
-					: HContractId.fromString(
-							(
-								await this.mirrorNodeAdapter.getContractInfo(
-									reserveAddress.value,
-								)
-							).evmAddress,
-					  ).toString(),
+					: (
+							await this.mirrorNodeAdapter.getContractInfo(
+								reserveAddress.value,
+							)
+					  ).evmAddress,
 				reserveInitialAmount
 					? reserveInitialAmount.toFixedNumber()
 					: BigDecimal.ZERO.toFixedNumber(),

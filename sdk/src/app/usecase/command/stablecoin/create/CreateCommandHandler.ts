@@ -94,7 +94,10 @@ export class CreateCommandHandler implements ICommandHandler<CreateCommand> {
 			throw new InvalidRequest('Config Version not found in request');
 		}
 
-		if (createReserve && (!reserveConfigId || !reserveConfigVersion)) {
+		if (
+			createReserve &&
+			(!reserveConfigId || reserveConfigVersion == undefined)
+		) {
 			throw new InvalidRequest(
 				'Cannot create reserve without reserve config id and version',
 			);
