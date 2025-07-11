@@ -3,7 +3,7 @@ import {
     IBusinessLogicResolver__factory,
     IDiamondCutManager__factory,
     IStaticFunctionSelectors__factory,
-} from '@typechain-types'
+} from '@contracts'
 import {
     EVENTS,
     GAS_LIMIT,
@@ -34,9 +34,8 @@ export async function getFacetsByConfigurationIdAndVersion({
     provider,
 }: GetFacetsByConfigurationIdAndVersionQuery): Promise<GetFacetsByConfigurationIdAndVersionResult> {
     const diamondCutManager = IDiamondCutManager__factory.connect(businessLogicResolverAddress, provider)
-    const latestConfigVersionRaw = await diamondCutManager.getLatestVersionByConfiguration(configurationId)
 
-    const lastestConfigVersion = parseInt(latestConfigVersionRaw.toHexString(), 16)
+    const lastestConfigVersion = await diamondCutManager.getLatestVersionByConfiguration(configurationId)
 
     console.log(`Number of Versions for Config ${configurationId}: ${lastestConfigVersion}`)
 
@@ -44,11 +43,10 @@ export async function getFacetsByConfigurationIdAndVersion({
         facetListRecord: [],
     })
     for (let currentVersion = 1; currentVersion <= lastestConfigVersion; currentVersion++) {
-        const facetListLengthRaw = await diamondCutManager.getFacetsLengthByConfigurationIdAndVersion(
+        const facetListLength = await diamondCutManager.getFacetsLengthByConfigurationIdAndVersion(
             configurationId,
             currentVersion
         )
-        const facetListLength = parseInt(facetListLengthRaw.toHexString(), 16)
 
         result.facetListRecord[currentVersion] = await diamondCutManager.getFacetsByConfigurationIdAndVersion(
             configurationId,
@@ -103,15 +101,14 @@ export async function registerBusinessLogics({
         Object.values(contractAddressListToRegister).map(async (address) => {
             const proxiedContract = IStaticFunctionSelectors__factory.connect(address, signer)
             const businessLogicKey = await proxiedContract.getStaticResolverKey()
-
             return {
                 businessLogicKey,
-                businessLogicAddress: address.replace('0x', ''),
+                businessLogicAddress: address,
             }
         })
     )
-
     const resolverContract = IBusinessLogicResolver__factory.connect(businessLogicResolverProxyAddress, signer)
+
     const response = await resolverContract.registerBusinessLogics(businessLogicRegistries, {
         gasLimit: GAS_LIMIT.businessLogicResolver.registerBusinessLogics,
         ...overrides,

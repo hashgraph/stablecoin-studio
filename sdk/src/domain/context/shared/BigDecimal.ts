@@ -18,54 +18,59 @@
  *
  */
 
-import {
-	BigNumber,
-	FixedFormat,
-	FixedNumber,
-	parseFixed,
-} from '@ethersproject/bignumber';
 import { Long } from '@hashgraph/sdk';
 import CheckNums from '../../../core/checks/numbers/CheckNums.js';
-
+import { FixedNumber, FixedFormat, toQuantity } from 'ethers';
 export type BigDecimalFormat = string | number | FixedFormat | undefined;
 
 const SEPARATOR = '.';
-export default class BigDecimal implements FixedNumber {
-	readonly _hex: string;
-	readonly _value: string;
-	readonly _isFixedNumber: boolean;
 
-	public get format(): FixedFormat {
-		return this.#fn.format;
+export default class BigDecimal {
+	public get _hex(): string {
+		return toQuantity(this.#fn.value);
+	}
+
+	public get _value(): string {
+		return this.#fn.toString();
+	}
+
+	public get _isFixedNumber(): boolean {
+		return true; // Always true for this wrapper.
+	}
+
+	#fn: FixedNumber; // La instancia interna de FixedNumber de Ethers v6
+
+	// Public getters for the API you expect
+	public get format(): string {
+		return this.#fn.format; // FixedNumber.format in v6 is already FixedFormat.
 	}
 
 	public set format(value: FixedFormat) {
-		this.#fn = this.#fn.toFormat(value);
+		this.#fn = this.#fn.toFormat(value); // This returns a new FixedNumber.
 	}
 
 	public get hex(): string {
-		return this.#fn.toHexString();
+		return this._hex; // Just expose the _hex getter.
 	}
 
 	public get value(): string {
-		return this.#fn._value;
+		return this._value; // Just expose the _value getter.
 	}
 
 	public get isFixedNumber(): boolean {
-		return this.#fn._isFixedNumber;
+		return this._isFixedNumber; // Just expose the _isFixedNumber getter.
 	}
 
 	public get decimals(): number {
-		return this.format.decimals;
+		// Access decimals directly from the internal FixedFormat object
+		return this.#fn.decimals;
 	}
 
-	#fn: FixedNumber;
-
-	public static ZERO: BigDecimal = this.fromString('0', 0);
-	public static MINUSONE: BigDecimal = this.fromString('-1', 0);
+	public static ZERO: BigDecimal = BigDecimal.fromString('0', 0);
+	public static MINUSONE: BigDecimal = BigDecimal.fromString('-1', 0);
 
 	constructor(
-		value: string | BigNumber,
+		value: string | bigint, // Use the alias for compatibility
 		format?: BigDecimalFormat,
 		decimals?: number,
 	) {
@@ -74,17 +79,10 @@ export default class BigDecimal implements FixedNumber {
 		} else {
 			this.#fn = FixedNumber.fromValue(value, decimals, format);
 		}
-		this._hex = this.#fn._hex;
-		this._value = this.#fn._value;
-		this._isFixedNumber = this.#fn._isFixedNumber;
-	}
-
-	_checkFormat(other: BigDecimal): void {
-		return this.#fn._checkFormat(other);
 	}
 
 	addUnsafe(other: BigDecimal): BigDecimal {
-		return this.fromFixedNumber(this.#fn.addUnsafe(other));
+		return this.fromFixedNumber(this.#fn.addUnsafe(other.#fn));
 	}
 
 	subUnsafe(other: BigDecimal): BigDecimal {
@@ -115,14 +113,6 @@ export default class BigDecimal implements FixedNumber {
 		return this.#fn.isZero();
 	}
 
-	isNegative(): boolean {
-		return this.#fn.isNegative();
-	}
-
-	toHexString(width?: number | undefined): string {
-		return this.#fn.toHexString(width);
-	}
-
 	toUnsafeFloat(): number {
 		return this.#fn.toUnsafeFloat();
 	}
@@ -133,47 +123,38 @@ export default class BigDecimal implements FixedNumber {
 
 	private fromFixedNumber(number: FixedNumber): BigDecimal {
 		return new BigDecimal(
-			number._value,
+			number.toString(),
 			number.format,
-			number.format.decimals,
+			number.decimals,
 		);
 	}
 
 	public isGreaterOrEqualThan(other: BigDecimal): boolean {
-		const a = parseFixed(this.#fn._value, this.#fn.format.decimals);
-		const b = parseFixed(other.#fn._value, other.#fn.format.decimals);
-		return a.gte(b);
+		return this.#fn.gte(other.#fn);
 	}
 
 	public isGreaterThan(other: BigDecimal): boolean {
-		const a = parseFixed(this.#fn._value, this.#fn.format.decimals);
-		const b = parseFixed(other.#fn._value, other.#fn.format.decimals);
-		return a.gt(b);
+		return this.#fn.gt(other.#fn);
 	}
+
 	public isLowerThan(other: BigDecimal): boolean {
-		const a = parseFixed(this.#fn._value, this.#fn.format.decimals);
-		const b = parseFixed(other.#fn._value, other.#fn.format.decimals);
-		return b.gt(a);
+		return this.#fn.lt(other.#fn);
 	}
 
 	public isLowerOrEqualThan(other: BigDecimal): boolean {
-		const a = parseFixed(this.#fn._value, this.#fn.format.decimals);
-		const b = parseFixed(other.#fn._value, other.#fn.format.decimals);
-		return b.gte(a);
+		return this.#fn.lte(other.#fn);
 	}
 
 	public isEqualThan(other: BigDecimal): boolean {
-		const a = parseFixed(this.#fn._value, this.#fn.format.decimals);
-		const b = parseFixed(other.#fn._value, other.#fn.format.decimals);
-		return a.eq(b);
+		return this.#fn.eq(other.#fn);
 	}
 
-	public toBigNumber(): BigNumber {
-		return parseFixed(this.value, this.format.decimals);
+	public toBigInt(): bigint {
+		return this.#fn.value;
 	}
 
 	public toFixedNumber(): string {
-		return this.toBigNumber().toString();
+		return this.toBigInt().toString();
 	}
 
 	public toString(): string {
@@ -183,8 +164,6 @@ export default class BigDecimal implements FixedNumber {
 			number = number.substring(0, number.length - 2);
 		}
 		return number;
-
-		// this.#fn.toString() => 10.0
 	}
 
 	public setDecimals(value: number): BigDecimal {
@@ -204,7 +183,7 @@ export default class BigDecimal implements FixedNumber {
 	private splitNumber(): string[] {
 		const splitNumber = this.#fn.toString().split('.');
 		if (splitNumber.length > 1) {
-			splitNumber[1] = splitNumber[1].padEnd(this.format.decimals, '0');
+			splitNumber[1] = splitNumber[1].padEnd(this.#fn.decimals, '0');
 		} else {
 			splitNumber[1] = '';
 		}
@@ -235,18 +214,19 @@ export default class BigDecimal implements FixedNumber {
 	}
 
 	static fromStringFixed(value: string, decimals: number): BigDecimal {
+		let formattedValue: string;
 		if (value.length < decimals) {
-			value = '0.' + value.padStart(decimals - value.length + 1, '0');
+			formattedValue = '0.' + value.padStart(decimals, '0');
 		} else {
 			const position = value.length - decimals;
-			value =
+			formattedValue =
 				value.substring(0, position) + '.' + value.substring(position);
 		}
-		return new BigDecimal(value, decimals);
+		return new BigDecimal(formattedValue, decimals);
 	}
 
 	static fromValue(
-		value: BigNumber,
+		value: bigint,
 		decimals?: number,
 		format?: FixedFormat | string | number,
 	): BigDecimal {
@@ -256,7 +236,7 @@ export default class BigDecimal implements FixedNumber {
 	public static isBigDecimal(value: string | BigDecimal): boolean {
 		try {
 			if (value instanceof BigDecimal) return true;
-			BigDecimal.fromString(value);
+			FixedNumber.fromString(value as string);
 			return true;
 		} catch (err) {
 			return false;

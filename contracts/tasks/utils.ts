@@ -1,6 +1,6 @@
 import { task, types } from 'hardhat/config'
-import { keccak256 } from 'ethers/lib/utils'
 import { Keccak256Query } from '@tasks'
+import { keccak256 } from 'ethers'
 
 task('keccak256', 'Prints the keccak256 hash of a string')
     .addPositionalParam('input', 'The string to be hashed', undefined, types.string)

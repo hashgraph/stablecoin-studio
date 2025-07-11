@@ -1,13 +1,12 @@
-import { BigNumber } from 'ethers'
 import { CONFIG_ID, DEFAULT_CONFIG_VERSION, DEFAULT_TOKEN } from 'scripts/constants'
 import { WithSignerCommand, WithSignerCommandParams, WithSignerConstructorParams } from '@tasks'
 
 interface DeployStableCoinCommandBaseParams {
     tokenName?: string
     tokenSymbol?: string
-    tokenDecimals?: number
-    tokenInitialSupply?: BigNumber
-    tokenMaxSupply?: BigNumber
+    tokenDecimals?: bigint
+    tokenInitialSupply?: bigint
+    tokenMaxSupply?: bigint
     tokenMemo?: string
     tokenFreeze?: boolean
     initialAmountDataFeed?: string
@@ -35,9 +34,9 @@ interface ConstructorParams extends WithSignerConstructorParams, DeployStableCoi
 export default class DeployStableCoinCommand extends WithSignerCommand {
     public readonly tokenName?: string
     public readonly tokenSymbol?: string
-    public readonly tokenDecimals?: number
-    public readonly tokenInitialSupply?: BigNumber
-    public readonly tokenMaxSupply?: BigNumber
+    public readonly tokenDecimals?: bigint
+    public readonly tokenInitialSupply?: bigint
+    public readonly tokenMaxSupply?: bigint
     public readonly tokenMemo?: string
     public readonly tokenFreeze?: boolean
     public readonly initialAmountDataFeed?: string

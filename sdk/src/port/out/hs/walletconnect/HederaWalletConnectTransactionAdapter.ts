@@ -454,9 +454,10 @@ export class HederaWalletConnectTransactionAdapter extends HederaTransactionAdap
 			throw new SigningError(
 				'❌ Hedera WalletConnect must sign a transaction not a string',
 			);
+
 		if (
 			!this.networkService.consensusNodes ||
-			this.networkService.consensusNodes.length == 0
+			this.networkService.consensusNodes.length === 0
 		) {
 			throw new Error(
 				'❌ In order to create sign multisignature transactions you must set consensus nodes for the environment',
@@ -481,43 +482,51 @@ export class HederaWalletConnectTransactionAdapter extends HederaTransactionAdap
 					2,
 				)}`,
 			);
+
 			// @ts-ignore
 			const signResult = await this.dAppConnector.signTransaction(params);
+
 			LogService.logInfo(`✅ Transaction signed successfully!`);
 			LogService.logTrace(
 				`Signature result: ${JSON.stringify(signResult, null, 2)}`,
 			);
 
-			const signatureMap = signResult._signedTransactions.current.sigMap;
+			// @ts-ignore
+			const signedTxn = signResult.signedTransaction as Transaction;
 
-			LogService.logTrace(
-				`Decoded signature map: ${JSON.stringify(
-					signatureMap,
-					null,
-					2,
-				)}`,
-			);
-
-			if (!signatureMap?.sigPair?.length) {
-				throw new Error(`❌ No signatures found in response`);
-			}
-
-			const firstSignature =
-				signatureMap.sigPair[0]?.ed25519 ||
-				signatureMap.sigPair[0]?.ECDSASecp256k1 ||
-				signatureMap.sigPair[0]?.ECDSA_384;
-
-			if (!firstSignature) {
+			if (!signedTxn) {
 				throw new Error(
-					`❌ No signatures found in response: ${JSON.stringify(
-						firstSignature,
-						null,
-						2,
-					)}`,
+					'❌ No signed transaction returned from WalletConnect',
 				);
 			}
 
+			const signatureMap = signedTxn.getSignatures();
+
+			const flatSigList = signatureMap.getFlatSignatureList();
+
+			if (flatSigList.length === 0) {
+				throw new Error('No signatures found');
+			}
+
+			const firstSigPair = flatSigList[0];
+
+			const iterator = firstSigPair[Symbol.iterator]();
+			const firstEntry = iterator.next();
+
+			if (firstEntry.done) {
+				throw new Error(
+					'No signatures found in first SignaturePairMap',
+				);
+			}
+
+			const [publicKey, firstSignature] = firstEntry.value;
+
+			if (!firstSignature) {
+				throw new Error('Signature is empty');
+			}
+
 			const hexSignature = Hex.fromUint8Array(firstSignature);
+
 			LogService.logTrace(
 				`Final hexadecimal signature: ${JSON.stringify(
 					hexSignature,
@@ -525,6 +534,7 @@ export class HederaWalletConnectTransactionAdapter extends HederaTransactionAdap
 					2,
 				)}`,
 			);
+
 			return hexSignature;
 		} catch (error) {
 			throw new SigningError(JSON.stringify(error, null, 2));

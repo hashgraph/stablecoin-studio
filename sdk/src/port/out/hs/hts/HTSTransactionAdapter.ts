@@ -156,10 +156,11 @@ export class HTSTransactionAdapter extends HederaTransactionAdapter {
 			throw new SigningError('HTS must sign a transaction not a string');
 
 		try {
-			const signer = this.account.privateKey.toHashgraphKey();
-			const signed_Transaction = await signer.signTransaction(message);
+			const privateKey = this.account.privateKey.toHashgraphKey();
+			const signedTx = await message.sign(privateKey); // firma y retorna Transaction
 
-			return Hex.fromUint8Array(signed_Transaction);
+			const bytes = signedTx.toBytes(); // Uint8Array
+			return Hex.fromUint8Array(bytes);
 		} catch (error) {
 			LogService.logError(error);
 			throw new SigningError(error);

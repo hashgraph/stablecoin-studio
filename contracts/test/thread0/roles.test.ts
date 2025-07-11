@@ -1,7 +1,7 @@
 import { expect } from 'chai'
-import { SignerWithAddress } from '@nomiclabs/hardhat-ethers/signers'
+import { SignerWithAddress } from '@nomicfoundation/hardhat-ethers/signers'
 import { ethers } from 'hardhat'
-import { RolesFacet, RolesFacet__factory } from '@typechain-types'
+import { RolesFacet, RolesFacet__factory } from '@contracts'
 import {
     delay,
     deployFullInfrastructure,
@@ -11,7 +11,7 @@ import {
     ValidateTxResponseCommand,
 } from '@scripts'
 import { deployStableCoinInTests, GAS_LIMIT } from '@test/shared'
-import { ContractTransaction } from 'ethers'
+import { ContractTransactionResponse } from 'ethers'
 
 describe('➡️ Roles Tests', function () {
     // Contracts
@@ -49,7 +49,7 @@ describe('➡️ Roles Tests', function () {
 
     it('Non Admin account can not grant a role to an account', async function () {
         // Non operator has not burn role
-        let hasBurnRole = await rolesFacet.hasRole(ROLES.burn.hash, nonOperator.address, {
+        let hasBurnRole = await rolesFacet.hasRole(ROLES.burn.hash, nonOperator, {
             gasLimit: GAS_LIMIT.hederaTokenManager.hasRole,
         })
         expect(hasBurnRole).to.equals(false)
@@ -65,7 +65,7 @@ describe('➡️ Roles Tests', function () {
             }).execute()
         ).to.be.rejectedWith(Error)
         // Non operator stil has not burn role
-        hasBurnRole = await rolesFacet.hasRole(ROLES.burn.hash, nonOperator.address, {
+        hasBurnRole = await rolesFacet.hasRole(ROLES.burn.hash, nonOperator, {
             gasLimit: GAS_LIMIT.hederaTokenManager.hasRole,
         })
         expect(hasBurnRole).to.equals(false)
@@ -73,12 +73,12 @@ describe('➡️ Roles Tests', function () {
 
     it('Admin account can grant role to an account', async function () {
         // Non operator has not burn role
-        let hasBurnRole = await rolesFacet.hasRole(ROLES.burn.hash, nonOperator.address, {
+        let hasBurnRole = await rolesFacet.hasRole(ROLES.burn.hash, nonOperator, {
             gasLimit: GAS_LIMIT.hederaTokenManager.hasRole,
         })
         expect(hasBurnRole).to.equals(false)
         // Admin grants burn role : success
-        const grantRoleResponse = await rolesFacet.grantRole(ROLES.burn.hash, nonOperator.address, {
+        const grantRoleResponse = await rolesFacet.grantRole(ROLES.burn.hash, nonOperator, {
             gasLimit: GAS_LIMIT.hederaTokenManager.grantRole,
         })
         await new ValidateTxResponseCommand({
@@ -86,7 +86,7 @@ describe('➡️ Roles Tests', function () {
             confirmationEvent: 'RoleGranted',
         }).execute()
         // Non operator has burn role
-        hasBurnRole = await rolesFacet.hasRole(ROLES.burn.hash, nonOperator.address, {
+        hasBurnRole = await rolesFacet.hasRole(ROLES.burn.hash, nonOperator, {
             gasLimit: GAS_LIMIT.hederaTokenManager.hasRole,
         })
         expect(hasBurnRole).to.equals(true)
@@ -94,23 +94,21 @@ describe('➡️ Roles Tests', function () {
 
     it('Non Admin account can not revoke role from an account', async function () {
         // Non operator has burn role
-        let hasBurnRole = await rolesFacet.hasRole(ROLES.burn.hash, nonOperator.address, {
+        let hasBurnRole = await rolesFacet.hasRole(ROLES.burn.hash, nonOperator, {
             gasLimit: GAS_LIMIT.hederaTokenManager.hasRole,
         })
         expect(hasBurnRole).to.equals(true)
         // Non Admin revokes burn role : fail
-        const revokeRoleResponse = await rolesFacet
-            .connect(nonOperator)
-            .revokeRole(ROLES.burn.hash, nonOperator.address, {
-                gasLimit: GAS_LIMIT.hederaTokenManager.revokeRole,
-            })
+        const revokeRoleResponse = await rolesFacet.connect(nonOperator).revokeRole(ROLES.burn.hash, nonOperator, {
+            gasLimit: GAS_LIMIT.hederaTokenManager.revokeRole,
+        })
         await expect(
             new ValidateTxResponseCommand({
                 txResponse: revokeRoleResponse,
             }).execute()
         ).to.be.rejectedWith(Error)
         // Non operator stil has burn role
-        hasBurnRole = await rolesFacet.hasRole(ROLES.burn.hash, nonOperator.address, {
+        hasBurnRole = await rolesFacet.hasRole(ROLES.burn.hash, nonOperator, {
             gasLimit: GAS_LIMIT.hederaTokenManager.hasRole,
         })
         expect(hasBurnRole).to.equals(true)
@@ -118,12 +116,12 @@ describe('➡️ Roles Tests', function () {
 
     it('Admin account can revoke role from an account', async function () {
         // Non operator has burn role
-        let hasBurnRole = await rolesFacet.hasRole(ROLES.burn.hash, nonOperator.address, {
+        let hasBurnRole = await rolesFacet.hasRole(ROLES.burn.hash, nonOperator, {
             gasLimit: GAS_LIMIT.hederaTokenManager.hasRole,
         })
         expect(hasBurnRole).to.equals(true)
         // Admin revokes burn role : success
-        const revokeRoleResponse = await rolesFacet.revokeRole(ROLES.burn.hash, nonOperator.address, {
+        const revokeRoleResponse = await rolesFacet.revokeRole(ROLES.burn.hash, nonOperator, {
             gasLimit: GAS_LIMIT.hederaTokenManager.revokeRole,
         })
         await new ValidateTxResponseCommand({
@@ -133,7 +131,7 @@ describe('➡️ Roles Tests', function () {
 
         // Non operator has not burn role
         await delay({ time: 1, unit: 'sec' })
-        hasBurnRole = await rolesFacet.hasRole(ROLES.burn.hash, nonOperator.address, {
+        hasBurnRole = await rolesFacet.hasRole(ROLES.burn.hash, nonOperator, {
             gasLimit: GAS_LIMIT.hederaTokenManager.hasRole,
         })
         expect(hasBurnRole).to.equals(false)
@@ -142,7 +140,7 @@ describe('➡️ Roles Tests', function () {
 
     it('Getting roles', async function () {
         // Check roles
-        const roles = await rolesFacet.getRoles(nonOperator.address, {
+        const roles = await rolesFacet.getRoles(nonOperator, {
             gasLimit: GAS_LIMIT.hederaTokenManager.getRoles,
         })
         for (const role of roles) {
@@ -150,54 +148,54 @@ describe('➡️ Roles Tests', function () {
         }
 
         // Assign roles
-        const grantRoleResponseList: ContractTransaction[] = []
+        const grantRoleResponseList: ContractTransactionResponse[] = []
         grantRoleResponseList.push(
-            await rolesFacet.grantRole(ROLES.defaultAdmin.hash, nonOperator.address, {
+            await rolesFacet.grantRole(ROLES.defaultAdmin.hash, nonOperator, {
                 gasLimit: GAS_LIMIT.hederaTokenManager.grantRole,
             })
         )
         grantRoleResponseList.push(
-            await rolesFacet.grantRole(ROLES.cashin.hash, nonOperator.address, {
+            await rolesFacet.grantRole(ROLES.cashin.hash, nonOperator, {
                 gasLimit: GAS_LIMIT.hederaTokenManager.grantRole,
             })
         )
         grantRoleResponseList.push(
-            await rolesFacet.grantRole(ROLES.burn.hash, nonOperator.address, {
+            await rolesFacet.grantRole(ROLES.burn.hash, nonOperator, {
                 gasLimit: GAS_LIMIT.hederaTokenManager.grantRole,
             })
         )
         grantRoleResponseList.push(
-            await rolesFacet.grantRole(ROLES.delete.hash, nonOperator.address, {
+            await rolesFacet.grantRole(ROLES.delete.hash, nonOperator, {
                 gasLimit: GAS_LIMIT.hederaTokenManager.grantRole,
             })
         )
         grantRoleResponseList.push(
-            await rolesFacet.grantRole(ROLES.freeze.hash, nonOperator.address, {
+            await rolesFacet.grantRole(ROLES.freeze.hash, nonOperator, {
                 gasLimit: GAS_LIMIT.hederaTokenManager.grantRole,
             })
         )
         grantRoleResponseList.push(
-            await rolesFacet.grantRole(ROLES.pause.hash, nonOperator.address, {
+            await rolesFacet.grantRole(ROLES.pause.hash, nonOperator, {
                 gasLimit: GAS_LIMIT.hederaTokenManager.grantRole,
             })
         )
         grantRoleResponseList.push(
-            await rolesFacet.grantRole(ROLES.rescue.hash, nonOperator.address, {
+            await rolesFacet.grantRole(ROLES.rescue.hash, nonOperator, {
                 gasLimit: GAS_LIMIT.hederaTokenManager.grantRole,
             })
         )
         grantRoleResponseList.push(
-            await rolesFacet.grantRole(ROLES.wipe.hash, nonOperator.address, {
+            await rolesFacet.grantRole(ROLES.wipe.hash, nonOperator, {
                 gasLimit: GAS_LIMIT.hederaTokenManager.grantRole,
             })
         )
         grantRoleResponseList.push(
-            await rolesFacet.grantRole(ROLES.kyc.hash, nonOperator.address, {
+            await rolesFacet.grantRole(ROLES.kyc.hash, nonOperator, {
                 gasLimit: GAS_LIMIT.hederaTokenManager.grantRole,
             })
         )
         grantRoleResponseList.push(
-            await rolesFacet.grantRole(ROLES.customFees.hash, nonOperator.address, {
+            await rolesFacet.grantRole(ROLES.customFees.hash, nonOperator, {
                 gasLimit: GAS_LIMIT.hederaTokenManager.grantRole,
             })
         )
@@ -209,7 +207,7 @@ describe('➡️ Roles Tests', function () {
         }
 
         // Checking roles
-        const rolesAfter = await rolesFacet.getRoles(nonOperator.address, {
+        const rolesAfter = await rolesFacet.getRoles(nonOperator, {
             gasLimit: GAS_LIMIT.hederaTokenManager.getRoles,
         })
         for (const rol of rolesAfter) {
@@ -251,54 +249,54 @@ describe('➡️ Roles Tests', function () {
         }
 
         // Revoke roles
-        const revokeRoleResponseList: ContractTransaction[] = []
+        const revokeRoleResponseList: ContractTransactionResponse[] = []
         revokeRoleResponseList.push(
-            await rolesFacet.revokeRole(ROLES.defaultAdmin.hash, nonOperator.address, {
+            await rolesFacet.revokeRole(ROLES.defaultAdmin.hash, nonOperator, {
                 gasLimit: GAS_LIMIT.hederaTokenManager.revokeRole,
             })
         )
         revokeRoleResponseList.push(
-            await rolesFacet.revokeRole(ROLES.cashin.hash, nonOperator.address, {
+            await rolesFacet.revokeRole(ROLES.cashin.hash, nonOperator, {
                 gasLimit: GAS_LIMIT.hederaTokenManager.revokeRole,
             })
         )
         revokeRoleResponseList.push(
-            await rolesFacet.revokeRole(ROLES.burn.hash, nonOperator.address, {
+            await rolesFacet.revokeRole(ROLES.burn.hash, nonOperator, {
                 gasLimit: GAS_LIMIT.hederaTokenManager.revokeRole,
             })
         )
         revokeRoleResponseList.push(
-            await rolesFacet.revokeRole(ROLES.delete.hash, nonOperator.address, {
+            await rolesFacet.revokeRole(ROLES.delete.hash, nonOperator, {
                 gasLimit: GAS_LIMIT.hederaTokenManager.revokeRole,
             })
         )
         revokeRoleResponseList.push(
-            await rolesFacet.revokeRole(ROLES.freeze.hash, nonOperator.address, {
+            await rolesFacet.revokeRole(ROLES.freeze.hash, nonOperator, {
                 gasLimit: GAS_LIMIT.hederaTokenManager.revokeRole,
             })
         )
         revokeRoleResponseList.push(
-            await rolesFacet.revokeRole(ROLES.pause.hash, nonOperator.address, {
+            await rolesFacet.revokeRole(ROLES.pause.hash, nonOperator, {
                 gasLimit: GAS_LIMIT.hederaTokenManager.revokeRole,
             })
         )
         revokeRoleResponseList.push(
-            await rolesFacet.revokeRole(ROLES.rescue.hash, nonOperator.address, {
+            await rolesFacet.revokeRole(ROLES.rescue.hash, nonOperator, {
                 gasLimit: GAS_LIMIT.hederaTokenManager.revokeRole,
             })
         )
         revokeRoleResponseList.push(
-            await rolesFacet.revokeRole(ROLES.wipe.hash, nonOperator.address, {
+            await rolesFacet.revokeRole(ROLES.wipe.hash, nonOperator, {
                 gasLimit: GAS_LIMIT.hederaTokenManager.revokeRole,
             })
         )
         revokeRoleResponseList.push(
-            await rolesFacet.revokeRole(ROLES.kyc.hash, nonOperator.address, {
+            await rolesFacet.revokeRole(ROLES.kyc.hash, nonOperator, {
                 gasLimit: GAS_LIMIT.hederaTokenManager.revokeRole,
             })
         )
         revokeRoleResponseList.push(
-            await rolesFacet.revokeRole(ROLES.customFees.hash, nonOperator.address, {
+            await rolesFacet.revokeRole(ROLES.customFees.hash, nonOperator, {
                 gasLimit: GAS_LIMIT.hederaTokenManager.revokeRole,
             })
         )
@@ -310,7 +308,7 @@ describe('➡️ Roles Tests', function () {
         }
 
         // Check roles
-        const rolesAfterRevoke = await rolesFacet.getRoles(nonOperator.address, {
+        const rolesAfterRevoke = await rolesFacet.getRoles(nonOperator, {
             gasLimit: GAS_LIMIT.hederaTokenManager.getRoles,
         })
         for (const rol of rolesAfterRevoke) {

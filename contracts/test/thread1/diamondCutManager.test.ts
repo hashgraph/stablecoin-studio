@@ -1,9 +1,10 @@
 import { expect } from 'chai'
 import { ethers } from 'hardhat'
-import { SignerWithAddress } from '@nomiclabs/hardhat-ethers/signers.js'
+import { SignerWithAddress } from '@nomicfoundation/hardhat-ethers/signers'
 import {
     CONFIG_ID,
     DEFAULT_CONFIG_VERSION,
+    delay,
     deployFullInfrastructure,
     DeployFullInfrastructureCommand,
     GAS_LIMIT,
@@ -16,7 +17,7 @@ import {
     DiamondCutManager__factory,
     IDiamondCutManager,
     IDiamondLoupe,
-} from '@typechain-types'
+} from '@contracts'
 
 describe('➡️ DiamondCutManager Tests', () => {
     const configId = '0x0000000000000000000000000000000000000000000000000000000000000000'
@@ -47,7 +48,7 @@ describe('➡️ DiamondCutManager Tests', () => {
         )
 
         businessLogicResolver = deployedContracts.businessLogicResolver.contract
-        diamondCutManager = DiamondCutManager__factory.connect(businessLogicResolver.address, operator)
+        diamondCutManager = DiamondCutManager__factory.connect(await businessLogicResolver.getAddress(), operator)
         ;({ stableCoinFactoryFacetIdList, stableCoinFacetIdList, reserveFacetIdList, stableCoinFacetVersionList } =
             facetLists)
     })
@@ -59,9 +60,8 @@ describe('➡️ DiamondCutManager Tests', () => {
     }
 
     async function validateFacets(configId: string, configVersion: number) {
-        const facetsLength = (
-            await diamondCutManager.getFacetsLengthByConfigurationIdAndVersion(configId, configVersion)
-        ).toNumber()
+        const facetsLength = await diamondCutManager.getFacetsLengthByConfigurationIdAndVersion(configId, configVersion)
+
         const facets = await diamondCutManager.getFacetsByConfigurationIdAndVersion(
             configId,
             configVersion,
@@ -86,13 +86,11 @@ describe('➡️ DiamondCutManager Tests', () => {
         configVersion: number,
         facet: IDiamondLoupe.FacetStructOutput
     ) {
-        const selectorsLength = (
-            await diamondCutManager.getFacetSelectorsLengthByConfigurationIdVersionAndFacetId(
-                configId,
-                configVersion,
-                facet.id
-            )
-        ).toNumber()
+        const selectorsLength = await diamondCutManager.getFacetSelectorsLengthByConfigurationIdVersionAndFacetId(
+            configId,
+            configVersion,
+            facet.id
+        )
 
         const selectors = await diamondCutManager.getFacetSelectorsByConfigurationIdVersionAndFacetId(
             configId,
@@ -113,14 +111,13 @@ describe('➡️ DiamondCutManager Tests', () => {
             configVersion,
             facet.id
         )
-
         expect(facet.addr).to.exist
         expect(facet.addr).to.not.be.empty
         expect(facet.addr).to.equal(address)
-        expect(facet.addr).to.not.equal('0x0000000000000000000000000000000000000000')
+        expect(facet.addr).to.be.not.equal('0x0000000000000000000000000000000000000000')
         expect(facet.selectors).to.exist
         expect(facet.selectors).to.not.be.empty
-        expect(facet.selectors).to.have.members(selectors)
+        expect(Array.from(facet.selectors)).to.have.members(Array.from(selectors))
 
         expect(facet.interfaceIds).to.exist
         expect(facet.interfaceIds).to.not.be.empty
@@ -134,7 +131,7 @@ describe('➡️ DiamondCutManager Tests', () => {
         configId: string,
         configVersion: number,
         facet: IDiamondLoupe.FacetStructOutput,
-        selectorsLength: number
+        selectorsLength: bigint
     ) {
         for (let selectorIndex = 0; selectorIndex < selectorsLength; selectorIndex++) {
             const selectorId = facet.selectors[selectorIndex]
@@ -170,7 +167,7 @@ describe('➡️ DiamondCutManager Tests', () => {
     async function validateFacetIdsAndAddresses(
         configId: string,
         configVersion: number,
-        facetsLength: number,
+        facetsLength: bigint,
         facetIds: string[],
         facetAddresses: string[]
     ) {
@@ -208,16 +205,19 @@ describe('➡️ DiamondCutManager Tests', () => {
     }
 
     it('GIVEN a resolver WHEN reading configuration information THEN everything matches', async () => {
-        const configLength = (await diamondCutManager.getConfigurationsLength()).toNumber()
+        const configLength = await diamondCutManager.getConfigurationsLength()
         expect(configLength).to.equal(3)
 
         const configIds = await diamondCutManager.getConfigurations(0, configLength)
-        expect(configIds).to.have.members([CONFIG_ID.stableCoin, CONFIG_ID.reserve, CONFIG_ID.stableCoinFactory])
+        expect(Array.from(configIds)).to.have.members([
+            CONFIG_ID.stableCoin,
+            CONFIG_ID.reserve,
+            CONFIG_ID.stableCoinFactory,
+        ])
 
         for (const configId of configIds) {
-            const configLatestVersion = (await diamondCutManager.getLatestVersionByConfiguration(configId)).toNumber()
-            expect(configLatestVersion).to.equal(1)
-
+            const configLatestVersion = await diamondCutManager.getLatestVersionByConfiguration(configId)
+            expect(configLatestVersion).to.equal(1n)
             await validateConfiguration(configId)
         }
     })
@@ -239,7 +239,7 @@ describe('➡️ DiamondCutManager Tests', () => {
         expect(configVersionDoesNotExist).to.be.false
         await expect(
             diamondCutManager.checkResolverProxyConfigurationRegistered(CONFIG_ID.stableCoin, 2)
-        ).to.be.rejectedWith('ResolverProxyConfigurationNoRegistered')
+        ).to.be.revertedWithCustomError(diamondCutManager, 'ResolverProxyConfigurationNoRegistered')
 
         const configDoesNotExist = await diamondCutManager.isResolverProxyConfigurationRegistered(
             configId,
@@ -248,7 +248,7 @@ describe('➡️ DiamondCutManager Tests', () => {
         expect(configDoesNotExist).to.equal(false)
         await expect(
             diamondCutManager.checkResolverProxyConfigurationRegistered(configId, DEFAULT_CONFIG_VERSION)
-        ).to.be.rejectedWith('ResolverProxyConfigurationNoRegistered')
+        ).to.be.revertedWithCustomError(diamondCutManager, 'ResolverProxyConfigurationNoRegistered')
 
         const noFacetAddress = await diamondCutManager.resolveResolverProxyCall(
             CONFIG_ID.stableCoin,
@@ -345,21 +345,22 @@ describe('➡️ DiamondCutManager Tests', () => {
         )
 
         businessLogicResolver = deployedContracts.businessLogicResolver.contract
-        diamondCutManager = DiamondCutManager__factory.connect(businessLogicResolver.address, operator)
+        diamondCutManager = DiamondCutManager__factory.connect(await businessLogicResolver.getAddress(), operator)
 
-        const configLength = (await diamondCutManager.getConfigurationsLength()).toNumber()
+        const configLength = await diamondCutManager.getConfigurationsLength()
         expect(configLength).to.equal(1)
 
         const configIds = await diamondCutManager.getConfigurations(0, configLength)
-        expect(configIds).to.have.members([CONFIG_ID.stableCoinFactory])
+        expect(Array.from(configIds)).to.have.members([CONFIG_ID.stableCoinFactory])
 
         for (const configId of [CONFIG_ID.stableCoin, CONFIG_ID.reserve]) {
-            const configLatestVersion = (await diamondCutManager.getLatestVersionByConfiguration(configId)).toNumber()
+            const configLatestVersion = await diamondCutManager.getLatestVersionByConfiguration(configId)
             expect(configLatestVersion).to.equal(0)
             await validateConfiguration(configId)
 
             // Run cancelBatchConfiguration
             await diamondCutManager.cancelBatchConfiguration(configId)
+            await delay({ time: 700, unit: 'ms' })
             expect(
                 await diamondCutManager.getFacetsLengthByConfigurationIdAndVersion(configId, DEFAULT_CONFIG_VERSION)
             ).to.equal(0)
@@ -456,7 +457,7 @@ describe('➡️ DiamondCutManager Tests', () => {
         const blackListedSelectors = ['0x8456cb59'] // pause() selector
 
         await businessLogicResolver.addSelectorsToBlacklist(CONFIG_ID.stableCoin, blackListedSelectors)
-
+        await delay({ time: 1, unit: 'sec' })
         diamondCutManager = diamondCutManager.connect(operator)
         const facetConfigurations: IDiamondCutManager.FacetConfigurationStruct[] = []
         stableCoinFacetIdList.forEach((id, index) =>

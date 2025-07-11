@@ -1,5 +1,5 @@
 import { expect } from 'chai'
-import { SignerWithAddress } from '@nomiclabs/hardhat-ethers/signers'
+import { SignerWithAddress } from '@nomicfoundation/hardhat-ethers/signers'
 import { ethers } from 'hardhat'
 import {
     CashInFacet,
@@ -8,7 +8,7 @@ import {
     HederaTokenManagerFacet__factory,
     WipeableFacet,
     WipeableFacet__factory,
-} from '@typechain-types'
+} from '@contracts'
 import {
     delay,
     deployFullInfrastructure,
@@ -19,7 +19,6 @@ import {
     ValidateTxResponseCommand,
 } from '@scripts'
 import { deployStableCoinInTests, GAS_LIMIT } from '@test/shared'
-import { BigNumber } from 'ethers'
 
 describe('➡️ Wipe Tests', function () {
     // Contracts
@@ -61,8 +60,8 @@ describe('➡️ Wipe Tests', function () {
     })
 
     it('Account with WIPE role can wipe 10 tokens from an account with 20 tokens', async function () {
-        const tokensToMint = BigNumber.from(20).mul(ONE_TOKEN)
-        const tokensToWipe = BigNumber.from(10).mul(ONE_TOKEN)
+        const tokensToMint = 20n * ONE_TOKEN
+        const tokensToWipe = 10n * ONE_TOKEN
 
         // Mint 20 tokens
         const mintResponse = await cashInFacet.mint(operator.address, tokensToMint, {
@@ -89,15 +88,15 @@ describe('➡️ Wipe Tests', function () {
         await delay({ time: 1, unit: 'sec' })
         const finalTotalSupply = await hederaTokenManagerFacet.totalSupply()
         const finalBalanceOf = await hederaTokenManagerFacet.balanceOf(operator.address)
-        const expectedTotalSupply = initialTotalSupply.sub(tokensToWipe)
-        const expectedBalanceOf = initialBalanceOf.sub(tokensToWipe)
+        const expectedTotalSupply = initialTotalSupply - tokensToWipe
+        const expectedBalanceOf = initialBalanceOf - tokensToWipe
 
         expect(finalTotalSupply.toString()).to.equals(expectedTotalSupply.toString())
         expect(finalBalanceOf.toString()).to.equals(expectedBalanceOf.toString())
     })
 
     it("Account with WIPE role cannot wipe more than account's balance", async function () {
-        const tokensToMint = BigNumber.from(20).mul(ONE_TOKEN)
+        const tokensToMint = 20n * ONE_TOKEN
 
         // Mint 20 tokens
         const mintResponse = await cashInFacet.mint(operator.address, tokensToMint, {
@@ -112,7 +111,7 @@ describe('➡️ Wipe Tests', function () {
         const currentBalance = await hederaTokenManagerFacet.balanceOf(operator.address)
 
         // Wipe more than account's balance : fail
-        const wipeResponse = await wipeFacet.wipe(operator.address, currentBalance.add(1), {
+        const wipeResponse = await wipeFacet.wipe(operator.address, currentBalance + 1n, {
             gasLimit: GAS_LIMIT.hederaTokenManager.wipe,
         })
         await expect(
@@ -131,7 +130,7 @@ describe('➡️ Wipe Tests', function () {
     })
 
     it('Account without WIPE role cannot wipe tokens', async function () {
-        const tokensToMint = BigNumber.from(20).mul(ONE_TOKEN)
+        const tokensToMint = 20n * ONE_TOKEN
 
         // Mint 20 tokens
         const mintResponse = await cashInFacet.mint(operator.address, tokensToMint, {
@@ -142,7 +141,7 @@ describe('➡️ Wipe Tests', function () {
         )
 
         // Wipe with account that does not have the wipe role: fail
-        const nonOperatorWipeResponse = await wipeFacet.connect(nonOperator).wipe(operator.address, BigNumber.from(1), {
+        const nonOperatorWipeResponse = await wipeFacet.connect(nonOperator).wipe(operator.address, 1n, {
             gasLimit: GAS_LIMIT.hederaTokenManager.wipe,
         })
         await expect(

@@ -2,7 +2,6 @@
 
 pragma solidity 0.8.18;
 
-import {AddressUpgradeable} from '@openzeppelin/contracts-upgradeable/utils/AddressUpgradeable.sol';
 import {_INITIALIZABLE_STORAGE_POSITION} from '../constants/storagePositions.sol';
 
 abstract contract Initializable {
@@ -29,6 +28,7 @@ abstract contract Initializable {
         _;
         _postInitializer(_facetKey);
     }
+
     /**
      * @dev Locks the contract, preventing any future reinitialization. This cannot be part of an initializer call.
      * Calling this in the constructor of a contract will prevent that contract from being initialized or reinitialized
@@ -52,6 +52,7 @@ abstract contract Initializable {
     function _preInitializer(bytes32 _facetKey) private view {
         if (_isInitialized(_facetKey)) revert ContractIsAlreadyInitialized(_facetKey);
     }
+
     function _postInitializer(bytes32 _facetKey) private {
         _initializableStorage().initialized[_facetKey] = true;
         emit Initialized(_facetKey);

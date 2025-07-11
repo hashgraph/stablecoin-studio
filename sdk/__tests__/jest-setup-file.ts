@@ -23,7 +23,7 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 
 import 'reflect-metadata';
-import { BigNumber, ethers } from 'ethers';
+import { ethers } from 'ethers';
 import {
 	ContractExecuteTransaction,
 	CustomFee,
@@ -114,6 +114,7 @@ import {
 	HoldIdentifier,
 } from '../src/domain/context/hold/Hold.js';
 import ValidationService from 'app/service/ValidationService.js';
+import CheckEvmAddress from '../src/core/checks/evmaddress/CheckEvmAddress.js';
 
 interface token {
 	tokenId: string;
@@ -179,8 +180,9 @@ export function identifiers(accountId: HederaId | string): string[] {
 
 	if (accountId instanceof HederaId) {
 		id = accountId.toString();
-		accountEvmAddress =
-			'0x' + accountId.toHederaAddress().toSolidityAddress();
+		accountEvmAddress = CheckEvmAddress.toEvmAddress(
+			accountId.toHederaAddress().toSolidityAddress(),
+		);
 	} else {
 		id = '0.0.' + hexToDecimal('0x' + accountId.toUpperCase().substring(2));
 		accountEvmAddress = accountId.toString();
@@ -265,16 +267,14 @@ function assignKey(value: any, id: number): void {
 function wipe(account: string, amount: any): void {
 	let accountBalance = balances.get(account);
 	if (accountBalance) {
-		accountBalance = BigDecimal.fromString(accountBalance)
-			.toBigNumber()
-			.sub(amount)
-			.toString();
+		accountBalance = (
+			BigDecimal.fromString(accountBalance).toBigInt() - amount
+		).toString();
 		balances.set(account, accountBalance);
 	}
-	totalSupply = BigDecimal.fromString(totalSupply)
-		.toBigNumber()
-		.sub(amount)
-		.toString();
+	totalSupply = (
+		BigDecimal.fromString(totalSupply).toBigInt() - amount
+	).toString();
 }
 
 function createHold(tokenHolder: string, hold: Hold): void {
@@ -296,7 +296,7 @@ function createHold(tokenHolder: string, hold: Hold): void {
 	const holdId = nextHoldIdByAccount.get(tokenHolder) ?? 0;
 	nextHoldIdByAccount.set(tokenHolder, holdId + 1);
 	const holdDetails: HoldDetails = {
-		expirationTimeStamp: hold.expirationTimestamp.toNumber(),
+		expirationTimeStamp: Number(hold.expirationTimestamp),
 		amount: BigDecimal.fromString(hold.amount.toString()),
 		escrowAddress: '0x' + hold.escrow.toString().toUpperCase().substring(2),
 		tokenHolderAddress: '0x' + tokenHolder.toUpperCase().substring(2),
@@ -322,7 +322,7 @@ function createHold(tokenHolder: string, hold: Hold): void {
 function decreaseHeldAmount(
 	holdIdentifier: HoldIdentifier,
 	target: string,
-	amount?: BigNumber,
+	amount?: bigint,
 ): void {
 	const tokenHolder =
 		'0x' + holdIdentifier.tokenHolder.toUpperCase().substring(2);
@@ -332,7 +332,7 @@ function decreaseHeldAmount(
 
 	if (holdDetails) {
 		if (amount === undefined) {
-			amount = holdDetails.amount.toBigNumber();
+			amount = holdDetails.amount.toBigInt();
 		}
 		const currentHeldAmount =
 			totalHeldAmountByAccount.get(tokenHolder) ?? BigDecimal.ZERO;
@@ -494,12 +494,10 @@ function smartContractCalls(functionName: string, decoded: any): void {
 		const amount = (decoded as any).amount;
 		const supplierAllowance = suppliers.get(supplier);
 		if (supplierAllowance) {
-			supplierAllowance.amount = BigDecimal.fromString(
-				supplierAllowance.amount,
-			)
-				.toBigNumber()
-				.add(amount)
-				.toString();
+			supplierAllowance.amount = (
+				BigDecimal.fromString(supplierAllowance.amount).toBigInt() +
+				amount
+			).toString();
 			suppliers.set(supplier, supplierAllowance);
 		} else grantSupplierRole(supplier, amount);
 	} else if (functionName == 'decreaseSupplierAllowance') {
@@ -508,12 +506,10 @@ function smartContractCalls(functionName: string, decoded: any): void {
 		const amount = (decoded as any).amount;
 		const supplierAllowance = suppliers.get(supplier);
 		if (supplierAllowance) {
-			supplierAllowance.amount = BigDecimal.fromString(
-				supplierAllowance.amount,
-			)
-				.toBigNumber()
-				.sub(amount)
-				.toString();
+			supplierAllowance.amount = (
+				BigDecimal.fromString(supplierAllowance.amount).toBigInt() -
+				amount
+			).toString();
 			suppliers.set(supplier, supplierAllowance);
 		}
 	} else if (functionName == 'burn') {
@@ -521,32 +517,28 @@ function smartContractCalls(functionName: string, decoded: any): void {
 		const account = identifiers(HederaId.from(PROXY_CONTRACT_ID))[1];
 		let treasury_balance = balances.get(account);
 		if (treasury_balance) {
-			treasury_balance = BigDecimal.fromString(treasury_balance)
-				.toBigNumber()
-				.sub(amount)
-				.toString();
+			treasury_balance = (
+				BigDecimal.fromString(treasury_balance).toBigInt() - amount
+			).toString();
 			balances.set(account, treasury_balance);
 		}
-		totalSupply = BigDecimal.fromString(totalSupply)
-			.toBigNumber()
-			.sub(amount)
-			.toString();
+		totalSupply = (
+			BigDecimal.fromString(totalSupply).toBigInt() - amount
+		).toString();
 	} else if (functionName == 'mint') {
 		const amount = (decoded as any).amount;
 		const account =
 			'0x' + (decoded as any).account.toUpperCase().substring(2);
 		let accountBalance = balances.get(account);
 		if (accountBalance) {
-			accountBalance = BigDecimal.fromString(accountBalance)
-				.toBigNumber()
-				.add(amount)
-				.toString();
-			balances.set(account, accountBalance);
+			accountBalance = (
+				BigDecimal.fromString(accountBalance).toBigInt() + amount
+			).toString();
+			balances.set(account, accountBalance!);
 		} else balances.set(account, amount.toString());
-		totalSupply = BigDecimal.fromString(totalSupply)
-			.toBigNumber()
-			.add(amount)
-			.toString();
+		totalSupply = (
+			BigDecimal.fromString(totalSupply).toBigInt() + amount
+		).toString();
 	} else if (functionName == 'deleteToken') {
 		delete_status = true;
 	} else if (functionName == 'freeze') {
@@ -580,20 +572,18 @@ function smartContractCalls(functionName: string, decoded: any): void {
 
 		let treasury_balance = balances.get(account);
 		if (treasury_balance) {
-			treasury_balance = BigDecimal.fromString(treasury_balance)
-				.toBigNumber()
-				.sub(amount)
-				.toString();
+			treasury_balance = (
+				BigDecimal.fromString(treasury_balance).toBigInt() - amount
+			).toString();
 			balances.set(account, treasury_balance);
 		}
 
 		let accountBalance = balances.get(sender);
 		if (accountBalance) {
-			accountBalance = BigDecimal.fromString(accountBalance)
-				.toBigNumber()
-				.add(amount)
-				.toString();
-			balances.set(sender, accountBalance);
+			accountBalance = (
+				BigDecimal.fromString(accountBalance).toBigInt() + amount
+			).toString();
+			balances.set(sender, accountBalance!);
 		} else balances.set(sender, amount.toString());
 	} else if (functionName == 'rescueHBAR') {
 		const amount = (decoded as any).amount;
@@ -607,20 +597,18 @@ function smartContractCalls(functionName: string, decoded: any): void {
 
 		let treasury_balance = HBAR_balances.get(account);
 		if (treasury_balance) {
-			treasury_balance = BigDecimal.fromString(treasury_balance)
-				.toBigNumber()
-				.sub(amount)
-				.toString();
+			treasury_balance = (
+				BigDecimal.fromString(treasury_balance).toBigInt() - amount
+			).toString();
 			HBAR_balances.set(account, treasury_balance);
 		}
 
 		let accountBalance = HBAR_balances.get(sender);
 		if (accountBalance) {
-			accountBalance = BigDecimal.fromString(accountBalance)
-				.toBigNumber()
-				.add(amount)
-				.toString();
-			HBAR_balances.set(sender, accountBalance);
+			accountBalance = (
+				BigDecimal.fromString(accountBalance).toBigInt() + amount
+			).toString();
+			HBAR_balances.set(sender, accountBalance!);
 		} else HBAR_balances.set(sender, amount.toString());
 	} else if (functionName == 'updateReserveAddress') {
 		const newAddress =
@@ -632,17 +620,17 @@ function smartContractCalls(functionName: string, decoded: any): void {
 			'0x' + (decoded as any).account.toUpperCase().substring(2);
 		wipe(account, amount);
 	} else if (functionName == 'updateConfigVersion') {
-		const version = (decoded as any)._newVersion as BigNumber;
-		configVersion = version.toNumber();
+		const version = (decoded as any)._newVersion as bigint;
+		configVersion = Number(version);
 	} else if (functionName == 'updateConfig') {
 		configId = (decoded as any)._newConfigurationId;
-		const version = (decoded as any)._newVersion as BigNumber;
-		configVersion = version.toNumber();
+		const version = (decoded as any)._newVersion as bigint;
+		configVersion = Number(version);
 	} else if (functionName == 'updateResolver') {
 		resolverAddress = (decoded as any)._newResolver;
 		configId = (decoded as any)._newConfigurationId;
-		const version = (decoded as any)._newVersion as BigNumber;
-		configVersion = version.toNumber();
+		const version = (decoded as any)._newVersion as bigint;
+		configVersion = Number(version);
 	} else if (functionName == 'createHold') {
 		const hold: Hold = (decoded as any)._hold;
 		const sender = identifiers(user_account.id)[1];
@@ -715,7 +703,7 @@ function signAndSendTransaction(
 		const amountValue = (t as TokenWipeTransaction).amount?.toString();
 
 		const account = identifiers(HederaId.from(accountId.toString()))[1];
-		const amount = BigNumber.from(amountValue);
+		const amount = BigInt(amountValue!);
 
 		wipe(account, amount);
 	} else if (t instanceof TokenPauseTransaction) {
@@ -743,8 +731,11 @@ function signAndSendTransaction(
 
 		kyc_status.set(account, false);
 	} else if (t instanceof ContractExecuteTransaction) {
-		const iface = new ethers.utils.Interface(abi);
+		const iface = new ethers.Interface(abi);
 		const functionFragment = iface.getFunction(functionName);
+		if (!functionFragment) {
+			throw new Error(`Function ${functionName} not found in ABI`);
+		}
 		let decoded;
 		if (t.functionParameters) {
 			decoded = iface.decodeFunctionData(
@@ -1326,16 +1317,16 @@ jest.mock('../src/port/out/rpc/RPCQueryAdapter', () => {
 		return new ContractId(reserveAddress);
 	});
 	singletonInstance.getReserveAmount = jest.fn((address: EvmAddress) => {
-		return BigNumber.from(reserveAmount);
+		return BigInt(reserveAmount);
 	});
 	singletonInstance.getReserveLatestRoundData = jest.fn(
 		(address: EvmAddress) => {
-			const b: BigNumber[] = [];
-			b.push(BigNumber.from('1000'));
-			b.push(BigNumber.from(reserveAmount));
-			b.push(BigNumber.from('0'));
-			b.push(BigNumber.from('0'));
-			b.push(BigNumber.from('0'));
+			const b: bigint[] = [];
+			b.push(BigInt('1000'));
+			b.push(BigInt(reserveAmount));
+			b.push(BigInt('0'));
+			b.push(BigInt('0'));
+			b.push(BigInt('0'));
 			return b;
 		},
 	);

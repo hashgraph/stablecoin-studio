@@ -1055,8 +1055,8 @@ export abstract class HederaTransactionAdapter extends TransactionAdapter {
 	): Promise<TransactionResponse> {
 		targetId = targetId ?? HederaId.NULL;
 		const hold = new Hold(
-			amount.toBigNumber(),
-			expirationDate.toBigNumber(),
+			amount.toBigInt(),
+			expirationDate.toBigInt(),
 			escrow,
 			targetId,
 			'0x',
@@ -1085,8 +1085,8 @@ export abstract class HederaTransactionAdapter extends TransactionAdapter {
 	): Promise<TransactionResponse> {
 		targetId = targetId ?? HederaId.NULL;
 		const hold = new Hold(
-			amount.toBigNumber(),
-			expirationDate.toBigNumber(),
+			amount.toBigInt(),
+			expirationDate.toBigInt(),
 			escrow,
 			targetId,
 			'0x',

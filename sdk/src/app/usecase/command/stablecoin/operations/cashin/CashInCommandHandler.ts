@@ -41,7 +41,6 @@ import { AccountNotKyc } from '../../error/AccountNotKyc.js';
 import { GetReserveAmountQuery } from '../../../../query/stablecoin/getReserveAmount/GetReserveAmountQuery.js';
 import { RESERVE_DECIMALS } from '../../../../../../domain/context/reserve/Reserve.js';
 import { MirrorNodeAdapter } from '../../../../../../port/out/mirror/MirrorNodeAdapter.js';
-import { BigNumber } from 'ethers';
 import { TokenSupplyType } from '@hashgraph/sdk';
 
 const MAX_SUPPLY = 9_223_372_036_854_775_807n;
@@ -113,7 +112,7 @@ export class CashInCommandHandler implements ICommandHandler<CashInCommand> {
 			}
 		} else {
 			const max = BigDecimal.fromValue(
-				BigNumber.from(MAX_SUPPLY),
+				BigInt(MAX_SUPPLY),
 				coin.decimals,
 				coin.decimals,
 			);
