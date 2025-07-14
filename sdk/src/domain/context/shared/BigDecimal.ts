@@ -38,7 +38,7 @@ export default class BigDecimal {
 		return true; // Always true for this wrapper.
 	}
 
-	#fn: FixedNumber; // La instancia interna de FixedNumber de Ethers v6
+	#fn: FixedNumber; // The internal instance of FixedNumber from Ethers v6
 
 	// Public getters for the API you expect
 	public get format(): string {
