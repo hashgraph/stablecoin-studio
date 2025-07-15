@@ -1,14 +1,13 @@
 import { expect } from 'chai'
-import { SignerWithAddress } from '@nomiclabs/hardhat-ethers/signers'
+import { SignerWithAddress } from '@nomicfoundation/hardhat-ethers/signers'
 import { ethers, network } from 'hardhat'
-import { TransactionRequest } from '@ethersproject/abstract-provider'
 import { WEIBARS_PER_TINYBAR } from '@configuration'
 import {
     HederaTokenManagerFacet,
     HederaTokenManagerFacet__factory,
     RescuableFacet,
     RescuableFacet__factory,
-} from '@typechain-types'
+} from '@contracts'
 import {
     delay,
     deployFullInfrastructure,
@@ -21,6 +20,7 @@ import {
     ValidateTxResponseCommand,
 } from '@scripts'
 import { deployStableCoinInTests, GAS_LIMIT } from '@test/shared'
+import { TransactionRequest } from 'ethers'
 
 describe('➡️ Rescue Tests', function () {
     // Contracts
@@ -92,8 +92,8 @@ describe('➡️ Rescue Tests', function () {
             gasLimit: GAS_LIMIT.hederaTokenManager.balanceOf,
         })
 
-        const expectedTokenOwnerBalance = initialTokenOwnerBalance.sub(TEN_TOKENS)
-        const expectedClientBalance = initialClientBalance.add(TEN_TOKENS)
+        const expectedTokenOwnerBalance = initialTokenOwnerBalance - TEN_TOKENS
+        const expectedClientBalance = initialClientBalance + TEN_TOKENS
 
         expect(finalTokenOwnerBalance.toString()).to.equals(expectedTokenOwnerBalance.toString())
         expect(finalClientBalance.toString()).to.equals(expectedClientBalance.toString())
@@ -105,7 +105,7 @@ describe('➡️ Rescue Tests', function () {
             gasLimit: GAS_LIMIT.hederaTokenManager.balanceOf,
         })
         // Rescue TokenOwnerBalance + 1 : fail
-        const txResponse = await rescuableFacet.rescue(TokenOwnerBalance.add(1), {
+        const txResponse = await rescuableFacet.rescue(TokenOwnerBalance + 1n, {
             gasLimit: GAS_LIMIT.hederaTokenManager.rescue,
         })
         await expect(new ValidateTxResponseCommand({ txResponse }).execute()).to.be.rejectedWith(Error)
@@ -124,7 +124,7 @@ describe('➡️ Rescue Tests', function () {
         const amountToRescue = ONE_HBAR
         const initialTokenOwnerBalance = await ethers.provider.getBalance(stableCoinProxyAddress)
         // By https://docs.hedera.com/hedera/tutorials/smart-contracts/hscs-workshop/hardhat#tinybars-vs-weibars
-        const amountToRescueInEvm = ONE_HBAR.div(WEIBARS_PER_TINYBAR)
+        const amountToRescueInEvm = ONE_HBAR / WEIBARS_PER_TINYBAR
 
         // rescue some tokens
         const response = await rescuableFacet.rescueHBAR(amountToRescueInEvm, {
@@ -138,7 +138,7 @@ describe('➡️ Rescue Tests', function () {
         // check new balances : success
         const finalTokenOwnerBalance = await ethers.provider.getBalance(stableCoinProxyAddress)
 
-        const expectedTokenOwnerBalance = initialTokenOwnerBalance.sub(amountToRescue)
+        const expectedTokenOwnerBalance = initialTokenOwnerBalance - amountToRescue
         expect(finalTokenOwnerBalance.toString()).to.equals(expectedTokenOwnerBalance.toString())
     })
 
@@ -147,7 +147,7 @@ describe('➡️ Rescue Tests', function () {
         const TokenOwnerBalance = await ethers.provider.getBalance(stableCoinProxyAddress)
 
         // Rescue TokenOwnerBalance + 1 : fail
-        const txResponse = await rescuableFacet.rescueHBAR(TokenOwnerBalance.add(1), {
+        const txResponse = await rescuableFacet.rescueHBAR(TokenOwnerBalance + 1n, {
             gasLimit: GAS_LIMIT.hederaTokenManager.rescueHBAR,
         })
         await expect(new ValidateTxResponseCommand({ txResponse }).execute()).to.be.rejectedWith(Error)

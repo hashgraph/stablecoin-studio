@@ -1,7 +1,7 @@
 import { ethers } from 'ethers'
-import { NetworkName } from '@configuration'
 import { task, types } from 'hardhat/config'
-import { WithSignerCommand } from '@tasks'
+import { NetworkName } from '@configuration'
+import { TransactionStatus, WithSignerCommand } from '@tasks'
 
 /**
  * npx hardhat migrateStableCoinToV2 --stablecoinconfigurationidkey 0x0000000000000000000000000000000000000000000000000000000000000001 --stablecoinconfigurationidversion 0 --businesslogicresolverproxyaddress 0x000000000000000000000000000000000000002a --stablecoinaddress 0xfbe524f1b2fd32a8021cbf880bab06aa4edc7af7 --stablecoinproxyadminaddress 0xffb5d6f958109a8f22e7480d59f4653935d9b292
@@ -20,8 +20,8 @@ task('migrateStableCoinToV2', 'Migrate a v1 stable coin to v2')
     .addParam('stablecoinproxyadminaddress', 'The address of current stablecoin proxy admin', undefined, types.string)
     .setAction(async (args, hre) => {
         // Inlined to avoid circular dependency
-        const { MigrationProxy__factory, ProxyAdmin__factory } = await import('@typechain-types')
-        const { deployContract, DeployContractCommand, GAS_LIMIT } = await import('@scripts')
+        const { MigrationProxy__factory, ProxyAdmin__factory } = await import('@contracts/index')
+        const { deployContract, DeployContractCommand, GAS_LIMIT, TransactionReceiptError } = await import('@scripts')
 
         const {
             stablecoinconfigurationidkey,
@@ -50,7 +50,7 @@ task('migrateStableCoinToV2', 'Migrate a v1 stable coin to v2')
         const migrationProxy = await deployContract(migrationProxyDeployCommand)
             .then((result) => {
                 console.log('✓ Migration Proxy has been deployed successfully')
-                console.log(`   --> Transaction Hash: ${result.receipt?.transactionHash}`)
+                console.log(`   --> Transaction Hash: ${result.receipt?.hash}`)
                 console.log(`   --> Contract Address: ${result.address}`)
                 return result
             })
@@ -61,7 +61,7 @@ task('migrateStableCoinToV2', 'Migrate a v1 stable coin to v2')
         // Upgrading Stablecoin proxy implementation
         const proxyAdmin = await ProxyAdmin__factory.connect(stablecoinproxyadminaddress, signer)
 
-        const iface = new ethers.utils.Interface([
+        const iface = new ethers.Interface([
             'function initializeV2Migration(address _resolver, bytes32 _resolverProxyConfigurationId, uint256 _version, tuple(bytes32 role, address account)[] _roles)',
         ])
 
@@ -81,14 +81,19 @@ task('migrateStableCoinToV2', 'Migrate a v1 stable coin to v2')
         const receipt = await upgradeTx.wait()
 
         const new_impl = await proxyAdmin.getProxyImplementation(stablecoinaddress)
-
-        if (receipt.status !== 1) {
+        if (!receipt) {
+            throw new TransactionReceiptError({
+                errorMessage: `Transaction ${upgradeTx.hash} was not mined`,
+                txHash: upgradeTx.hash,
+            })
+        }
+        if (receipt.status !== TransactionStatus.SUCCESS) {
             console.error('❌ Upgrade transaction failed')
             throw new Error('UpgradeAndCall transaction reverted or failed')
         }
 
         console.log('✓ StableCoin Proxy implementation upgraded')
-        console.log(`   --> Transaction Hash: ${receipt.transactionHash}`)
+        console.log(`   --> Transaction Hash: ${receipt.hash}`)
 
         // Display migration results
         console.log('\n 🟢 Stable Coin migrated successfully')

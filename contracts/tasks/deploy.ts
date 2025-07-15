@@ -163,8 +163,8 @@ task('deployStableCoin', 'Deploy new stable coin')
                 `   --> Stable Coin Reserve Proxy Address: ${result.reserveProxyAddress} (${contractIdList.reserveProxyAddress})`
             )
         }
-        if (result.receipt?.transactionHash) {
-            console.log(`   --> Transaction Hash: ${result.receipt.transactionHash}`)
+        if (result.receipt?.hash) {
+            console.log(`   --> Transaction Hash: ${result.receipt.hash}`)
         }
     })
 

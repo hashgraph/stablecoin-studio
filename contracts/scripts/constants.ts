@@ -1,6 +1,5 @@
-import { BigNumber, constants } from 'ethers'
 import { GAS_LIMIT as CONF_GAS_LIMIT } from '@configuration'
-import { parseUnits } from 'ethers/lib/utils'
+import { ZeroAddress, parseUnits } from 'ethers'
 
 // * General
 export const CONFIG_ID = {
@@ -11,12 +10,12 @@ export const CONFIG_ID = {
 export const DEFAULT_CONFIG_VERSION = 1
 
 // * Ethereum
-export const ADDRESS_ZERO = constants.AddressZero
-export const NUMBER_ZERO = constants.Zero
+export const ADDRESS_ZERO = ZeroAddress
+export const NUMBER_ZERO = 0n
 
 // * Hedera
-export const HBAR_DECIMALS = 8
-export const HBAR_FACTOR = BigNumber.from(10).pow(HBAR_DECIMALS)
+export const HBAR_DECIMALS = 8n
+export const HBAR_FACTOR = 10n ** HBAR_DECIMALS
 export const ONE_HBAR = parseUnits('1', 'ether') // Amount in HBAR (1 HBAR = 1 ether unit)
 export const TWO_HBAR = parseUnits('2', 'ether') // Amount in HBAR (1 HBAR = 1 ether unit)
 
@@ -129,7 +128,7 @@ export const GAS_LIMIT = {
     stableCoinFactory: {
         deploy: 5_000_000n,
         initialize: 130_000n,
-        deployStableCoin: 2_600_000n,
+        deployStableCoin: 3_600_000n,
         addHederaTokenManagerVersion: 4_800_000n,
         editHederaTokenManagerAddress: 4_800_000n,
         removeHederaTokenManagerAddress: 4_800_000n, // Added gas limit for removeHederaTokenManagerAddress
@@ -297,21 +296,21 @@ export const EVENTS = {
 
 // * Default Values
 export const DEFAULT_TOKEN = (() => {
-    const decimals = 6
-    const tokenFactor = BigNumber.from(10).pow(decimals)
+    const decimals = 6n
+    const tokenFactor = 10n ** decimals
     return {
         memo: 'Example Token Memo',
         name: 'ExampleToken',
         symbol: 'EXMPL',
         decimals,
         tokenFactor,
-        initialSupply: tokenFactor.mul(100),
-        maxSupply: tokenFactor.mul(1_000),
-        initialAmountDataFeed: tokenFactor.mul(100_000).toString(),
+        initialSupply: tokenFactor * 100n,
+        maxSupply: tokenFactor * 1_000n,
+        initialAmountDataFeed: (tokenFactor * 100_000n).toString(),
         additionalData: 'Some additional data here',
         freeze: false,
     }
 })()
 
 export const ONE_TOKEN = DEFAULT_TOKEN.tokenFactor
-export const TEN_TOKENS = DEFAULT_TOKEN.tokenFactor.mul(10)
+export const TEN_TOKENS = DEFAULT_TOKEN.tokenFactor * 10n

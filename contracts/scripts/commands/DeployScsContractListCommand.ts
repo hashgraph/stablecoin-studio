@@ -42,9 +42,10 @@ export default class DeployScsContractListCommand {
         if (!signer.provider) {
             throw new Error('Signer must have a provider')
         }
+        const network = await signer.provider.getNetwork()
         return new DeployScsContractListCommand({
             signer,
-            network: (await signer.provider.getNetwork()).name as NetworkName,
+            network: network.name as NetworkName,
             useDeployed,
             useEnvironment,
             partialBatchDeploy,

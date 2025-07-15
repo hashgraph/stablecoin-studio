@@ -6,3 +6,8 @@ export const MESSAGES = {
         },
     },
 }
+
+export enum TransactionStatus {
+    REVERTED = 0,
+    SUCCESS = 1,
+}

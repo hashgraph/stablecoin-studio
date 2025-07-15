@@ -42,7 +42,6 @@ import DfnsSettings from '../../domain/context/custodialwalletsettings/DfnsSetti
 import { Transaction } from '@hashgraph/sdk';
 import AWSKMSSettings from '../../domain/context/custodialwalletsettings/AWSKMSSettings';
 import HWCSettings from '../../domain/context/hwalletconnectsettings/HWCSettings.js';
-import { BigNumber } from 'ethers';
 import { EVM_ZERO_ADDRESS } from '../../core/Constants.js';
 
 export interface InitializationData {
@@ -703,31 +702,31 @@ export default abstract class TransactionAdapter
 				const key = new KeysStruct();
 				switch (index) {
 					case 0: {
-						key.keyType = BigNumber.from(1); // admin
+						key.keyType = BigInt(1); // admin
 						break;
 					}
 					case 1: {
-						key.keyType = BigNumber.from(2); // kyc
+						key.keyType = BigInt(2); // kyc
 						break;
 					}
 					case 2: {
-						key.keyType = BigNumber.from(4); // freeze
+						key.keyType = BigInt(4); // freeze
 						break;
 					}
 					case 3: {
-						key.keyType = BigNumber.from(8); // wipe
+						key.keyType = BigInt(8); // wipe
 						break;
 					}
 					case 4: {
-						key.keyType = BigNumber.from(16); // supply
+						key.keyType = BigInt(16); // supply
 						break;
 					}
 					case 5: {
-						key.keyType = BigNumber.from(32); // fee schedule
+						key.keyType = BigInt(32); // fee schedule
 						break;
 					}
 					case 6: {
-						key.keyType = BigNumber.from(64); // pause
+						key.keyType = BigInt(64); // pause
 						break;
 					}
 				}

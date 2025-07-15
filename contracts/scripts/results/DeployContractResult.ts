@@ -1,13 +1,13 @@
-import { Contract, ContractReceipt } from 'ethers'
+import { BaseContract, ContractTransactionResponse } from 'ethers'
 import { ContractName } from '@configuration'
 
-export default class DeployContractResult<C extends Contract> {
+export default class DeployContractResult<C extends BaseContract> {
     public name: ContractName
     public address: string
     public contract: C
     public proxyAddress?: string
     public proxyAdminAddress?: string
-    public receipt?: ContractReceipt
+    public receipt?: ContractTransactionResponse
 
     constructor({
         name,
@@ -22,7 +22,7 @@ export default class DeployContractResult<C extends Contract> {
         contract: C
         proxyAddress?: string
         proxyAdminAddress?: string
-        receipt?: ContractReceipt
+        receipt?: ContractTransactionResponse
     }) {
         this.name = name
         this.address = address

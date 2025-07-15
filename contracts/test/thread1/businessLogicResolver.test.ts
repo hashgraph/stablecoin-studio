@@ -1,8 +1,8 @@
 import { ethers } from 'hardhat'
 import { expect } from 'chai'
-import { SignerWithAddress } from '@nomiclabs/hardhat-ethers/signers.js'
-import { BusinessLogicResolver } from '@typechain-types'
-import { CONFIG_ID, GAS_LIMIT, ValidateTxResponseCommand } from '@scripts'
+import { SignerWithAddress } from '@nomicfoundation/hardhat-ethers/signers'
+import { BusinessLogicResolver } from '@contracts'
+import { ADDRESS_ZERO, CONFIG_ID, decodeEvent, delay, GAS_LIMIT, ValidateTxResponseCommand } from '@scripts'
 
 describe('➡️ BusinessLogicResolver Tests', () => {
     let operator: SignerWithAddress
@@ -81,18 +81,19 @@ describe('➡️ BusinessLogicResolver Tests', () => {
     describe('Business Logic Resolver functionality', () => {
         it('GIVEN an empty registry WHEN getting data THEN responds empty values or BusinessLogicVersionDoesNotExist', async () => {
             expect(await businessLogicResolver.getLatestVersion()).is.equal(0)
-            await expect(businessLogicResolver.getVersionStatus(0)).to.be.rejectedWith(
+            await expect(businessLogicResolver.getVersionStatus(0)).to.be.revertedWithCustomError(
+                businessLogicResolver,
                 'BusinessLogicVersionDoesNotExist'
             )
             expect(
                 await businessLogicResolver.resolveLatestBusinessLogic(BUSINESS_LOGIC_KEYS[0].businessLogicKey)
-            ).is.equal(ethers.constants.AddressZero)
+            ).is.equal(ADDRESS_ZERO)
             await expect(
                 businessLogicResolver.resolveBusinessLogicByVersion(BUSINESS_LOGIC_KEYS[0].businessLogicKey, 0)
-            ).to.be.rejectedWith('BusinessLogicVersionDoesNotExist')
+            ).to.be.revertedWithCustomError(businessLogicResolver, 'BusinessLogicVersionDoesNotExist')
             await expect(
                 businessLogicResolver.resolveBusinessLogicByVersion(BUSINESS_LOGIC_KEYS[0].businessLogicKey, 1)
-            ).to.be.rejectedWith('BusinessLogicVersionDoesNotExist')
+            ).to.be.revertedWithCustomError(businessLogicResolver, 'BusinessLogicVersionDoesNotExist')
             expect(await businessLogicResolver.getBusinessLogicCount()).is.equal(0)
             expect(await businessLogicResolver.getBusinessLogicKeys(1, 10)).is.deep.equal([])
         })
@@ -100,7 +101,7 @@ describe('➡️ BusinessLogicResolver Tests', () => {
         it('GIVEN an empty key WHEN registerBusinessLogics THEN Fails with ZeroKeyNotValidForBusinessLogic', async () => {
             const BUSINESS_LOGICS_TO_REGISTER = [
                 {
-                    businessLogicKey: ethers.constants.HashZero,
+                    businessLogicKey: ethers.ZeroHash,
                     businessLogicAddress: '0x7773334dc2Db6F14aAF0C1D17c1B3F1769Cf31b9',
                 },
             ]
@@ -132,13 +133,21 @@ describe('➡️ BusinessLogicResolver Tests', () => {
         it('GIVEN an empty registry WHEN registerBusinessLogics THEN queries responds with correct values', async () => {
             const LATEST_VERSION = 1
             const BUSINESS_LOGICS_TO_REGISTER = BUSINESS_LOGIC_KEYS.slice(0, 2)
-            expect(
-                await businessLogicResolver.registerBusinessLogics(BUSINESS_LOGICS_TO_REGISTER, {
-                    gasLimit: GAS_LIMIT.businessLogicResolver.registerBusinessLogics,
-                })
-            )
-                .to.emit(businessLogicResolver, 'BusinessLogicsRegistered')
-                .withArgs(BUSINESS_LOGICS_TO_REGISTER, LATEST_VERSION)
+            const tx = await businessLogicResolver.registerBusinessLogics(BUSINESS_LOGICS_TO_REGISTER, {
+                gasLimit: GAS_LIMIT.businessLogicResolver.registerBusinessLogics,
+            })
+            const receipt = await tx.wait()
+            const event = await decodeEvent(businessLogicResolver, 'BusinessLogicsRegistered', receipt)
+            console.log(event)
+
+            const businessLogicsEventNormalized = event.businessLogics.map((businessLogic) => {
+                return {
+                    businessLogicKey: businessLogic.businessLogicKey,
+                    businessLogicAddress: businessLogic.businessLogicAddress,
+                }
+            })
+            expect(businessLogicsEventNormalized).to.deep.equal(BUSINESS_LOGICS_TO_REGISTER)
+            expect(event.newLatestVersion).to.be.equal(LATEST_VERSION)
 
             expect(await businessLogicResolver.getLatestVersion()).is.equal(LATEST_VERSION)
             expect(await businessLogicResolver.getVersionStatus(LATEST_VERSION)).to.be.equal(VersionStatus.ACTIVATED)
@@ -173,9 +182,17 @@ describe('➡️ BusinessLogicResolver Tests', () => {
 
             const LATEST_VERSION = 2
             const BUSINESS_LOGICS_TO_REGISTER = BUSINESS_LOGIC_KEYS.slice(0, 3)
-            expect(await businessLogicResolver.registerBusinessLogics(BUSINESS_LOGICS_TO_REGISTER))
-                .to.emit(businessLogicResolver, 'BusinessLogicsRegistered')
-                .withArgs(BUSINESS_LOGICS_TO_REGISTER, LATEST_VERSION)
+            const tx = await businessLogicResolver.registerBusinessLogics(BUSINESS_LOGICS_TO_REGISTER)
+            await delay({ time: 1, unit: 'sec' })
+            const event = await decodeEvent(businessLogicResolver, 'BusinessLogicsRegistered', await tx.wait())
+            const businessLogicsEventNormalized = event.businessLogics.map((businessLogic) => {
+                return {
+                    businessLogicKey: businessLogic.businessLogicKey,
+                    businessLogicAddress: businessLogic.businessLogicAddress,
+                }
+            })
+            expect(businessLogicsEventNormalized).to.deep.equal(BUSINESS_LOGICS_TO_REGISTER)
+            expect(event.newLatestVersion).to.be.equal(LATEST_VERSION)
 
             expect(await businessLogicResolver.getLatestVersion()).is.equal(LATEST_VERSION)
             expect(await businessLogicResolver.getVersionStatus(LATEST_VERSION)).to.be.equal(VersionStatus.ACTIVATED)
@@ -215,13 +232,17 @@ describe('➡️ BusinessLogicResolver Tests', () => {
             const blackListedSelectors = ['0x8456cb59'] // pause() selector
 
             await businessLogicResolver.addSelectorsToBlacklist(CONFIG_ID.stableCoin, blackListedSelectors)
+            await delay({ time: 1, unit: 'sec' })
 
-            expect(await businessLogicResolver.getSelectorsBlacklist(CONFIG_ID.stableCoin, 0, 100)).to.deep.equal(
-                blackListedSelectors
-            )
+            expect(
+                Array.from(await businessLogicResolver.getSelectorsBlacklist(CONFIG_ID.stableCoin, 0, 100))
+            ).to.deep.equal(blackListedSelectors)
 
             await businessLogicResolver.removeSelectorsFromBlacklist(CONFIG_ID.stableCoin, blackListedSelectors)
-            expect(await businessLogicResolver.getSelectorsBlacklist(CONFIG_ID.stableCoin, 0, 100)).to.deep.equal([])
+            await delay({ time: 1, unit: 'sec' })
+            expect(
+                Array.from(await businessLogicResolver.getSelectorsBlacklist(CONFIG_ID.stableCoin, 0, 100))
+            ).to.deep.equal([])
         })
     })
 })

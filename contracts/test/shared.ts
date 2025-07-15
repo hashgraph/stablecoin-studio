@@ -1,4 +1,4 @@
-import { BigNumber, Wallet } from 'ethers'
+import { computeAddress, Wallet } from 'ethers'
 import {
     DEFAULT_TOKEN,
     deployStableCoin,
@@ -8,13 +8,13 @@ import {
     tokenKeysToContract,
     TokenKeysToContractCommand,
 } from '@scripts'
-import { SignerWithAddress } from '@nomiclabs/hardhat-ethers/signers'
-import { IHederaTokenManager } from '@typechain-types'
-import { computeAddress } from 'ethers/lib/utils'
+import { SignerWithAddress } from '@nomicfoundation/hardhat-ethers/signers'
+import { IHederaTokenManager } from '@contracts'
+
 export { GAS_LIMIT } from '@scripts'
 
-export const AUTO_RENEW_PERIOD = BigNumber.from(7776000)
-export const OTHER_AUTO_RENEW_PERIOD = BigNumber.from(7884000)
+export const AUTO_RENEW_PERIOD = 7776000n
+export const OTHER_AUTO_RENEW_PERIOD = 7884000n
 export const DEFAULT_UPDATE_TOKEN_STRUCT = {
     tokenName: DEFAULT_TOKEN.name,
     tokenSymbol: DEFAULT_TOKEN.symbol,

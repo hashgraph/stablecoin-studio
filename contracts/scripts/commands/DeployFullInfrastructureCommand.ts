@@ -47,7 +47,7 @@ export default class DeployFullInfrastructureCommand {
             throw new SignerWithoutProviderError()
         }
         const { chainId } = await signer.provider.getNetwork()
-        const network = NetworkNameByChainId[chainId as NetworkChainId]
+        const network = NetworkNameByChainId[Number(chainId) as NetworkChainId]
 
         return new DeployFullInfrastructureCommand({
             signer,

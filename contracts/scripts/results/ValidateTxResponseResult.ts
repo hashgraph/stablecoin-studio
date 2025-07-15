@@ -1,19 +1,16 @@
-import { ContractReceipt, ContractTransaction, Event } from 'ethers'
+import { TransactionReceipt, TransactionResponse } from 'ethers'
 
 interface ValidateTxResponseResultParams {
-    txResponse: ContractTransaction
-    txReceipt: ContractReceipt
-    confirmationEvent?: Event
+    txResponse: TransactionResponse
+    txReceipt: TransactionReceipt
 }
 
 export default class ValidateTxResponseResult {
-    public txResponse: ContractTransaction
-    public txReceipt: ContractReceipt
-    public confirmationEvent?: Event
+    public txResponse: TransactionResponse
+    public txReceipt: TransactionReceipt
 
-    constructor({ txResponse, txReceipt, confirmationEvent }: ValidateTxResponseResultParams) {
+    constructor({ txResponse, txReceipt }: ValidateTxResponseResultParams) {
         this.txResponse = txResponse
         this.txReceipt = txReceipt
-        this.confirmationEvent = confirmationEvent
     }
 }

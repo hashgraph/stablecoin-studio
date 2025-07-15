@@ -1,6 +1,5 @@
 import { HardhatRuntimeEnvironment } from 'hardhat/types'
-import { Signer, Wallet } from 'ethers'
-import { keccak256 } from 'ethers/lib/utils'
+import { Signer, Wallet, keccak256 } from 'ethers'
 
 export interface WithSignerCommandParams {
     hre: HardhatRuntimeEnvironment

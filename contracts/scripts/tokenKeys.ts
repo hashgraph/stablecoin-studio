@@ -5,11 +5,10 @@ import {
     TokenKeysToContractCommand,
     TokenKeysToKeyCommand,
 } from '@scripts'
-import { BigNumber, BytesLike } from 'ethers'
-import { computePublicKey } from 'ethers/lib/utils'
+import { BytesLike, SigningKey, toBigInt } from 'ethers'
 
 export interface KeysStruct {
-    keyType: BigNumber
+    keyType: bigint
     publicKey: BytesLike
     isEd25519: boolean
 }
@@ -52,14 +51,12 @@ export function tokenKeysToKey({ publicKey, isEd25519, addKyc, addFeeSchedule }:
             ignored: false,
         })
     )
-    // Hedera stores the COMPRESSED public key
-    const compressed = true
 
     return [
         fixKeys(),
         {
             keyType: keyType,
-            publicKey: isEd25519 ? publicKey : computePublicKey(publicKey, compressed),
+            publicKey: isEd25519 ? publicKey : SigningKey.computePublicKey(publicKey, true),
             isEd25519,
         },
     ]
@@ -195,5 +192,5 @@ function generateKeyType({
         (feeScheduleKey ? 32 : 0) |
         (pauseKey ? 64 : 0) |
         (ignored ? 128 : 0)
-    return BigNumber.from(number)
+    return toBigInt(number)
 }

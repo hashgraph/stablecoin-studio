@@ -135,9 +135,10 @@ describe('🧪 [ADAPTER] RPCTransactionAdapter', () => {
 		await th.init(true);
 		await th.register(CLIENT_ACCOUNT_ECDSA, true);
 
-		const customHttpProvider = new ethers.providers.JsonRpcProvider(
-			rpcNode.baseUrl,
-		);
+		const customHttpProvider = new ethers.JsonRpcProvider(rpcNode.baseUrl, {
+			chainId: 296,
+			name: rpcNode.name,
+		});
 
 		const hexKey =
 			CLIENT_ACCOUNT_ECDSA.privateKey!.toHashgraphKey().toStringRaw();

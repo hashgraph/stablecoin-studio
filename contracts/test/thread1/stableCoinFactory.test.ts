@@ -1,5 +1,5 @@
 import { expect } from 'chai'
-import { SignerWithAddress } from '@nomiclabs/hardhat-ethers/signers'
+import { SignerWithAddress } from '@nomicfoundation/hardhat-ethers/signers'
 import { ethers } from 'hardhat'
 import {
     ADDRESS_ZERO,
@@ -11,11 +11,10 @@ import {
     MESSAGES,
 } from '@scripts'
 import { GAS_LIMIT } from '@test/shared'
-import { BigNumber } from 'ethers'
-import { HederaReserveFacet__factory, ReserveFacet, ReserveFacet__factory } from '@typechain-types'
+import { HederaReserveFacet__factory, ReserveFacet, ReserveFacet__factory } from '@contracts'
 
-const toReserve = (amount: BigNumber) => {
-    return amount.div(10)
+const toReserve = (amount: bigint) => {
+    return amount / 10n
 }
 
 let businessLogicResolver: string
@@ -78,7 +77,7 @@ describe('StableCoinFactory Tests', function () {
                 freeze: false,
             },
             allToContract: false,
-            initialAmountDataFeed: DEFAULT_TOKEN.initialSupply.add(BigNumber.from('100000')).toString(),
+            initialAmountDataFeed: (DEFAULT_TOKEN.initialSupply + 100000n).toString(),
             businessLogicResolverProxyAddress: businessLogicResolver,
             stableCoinFactoryProxyAddress: stableCoinFactoryProxy,
         })
@@ -100,7 +99,7 @@ describe('StableCoinFactory Tests', function () {
                 freeze: false,
             },
             allToContract: false,
-            initialAmountDataFeed: DEFAULT_TOKEN.initialSupply.add(BigNumber.from('1')).toString(),
+            initialAmountDataFeed: (DEFAULT_TOKEN.initialSupply + 1n).toString(),
             businessLogicResolverProxyAddress: businessLogicResolver,
             stableCoinFactoryProxyAddress: stableCoinFactoryProxy,
         })
@@ -123,7 +122,7 @@ describe('StableCoinFactory Tests', function () {
             },
             allToContract: false,
             createReserve: false,
-            initialAmountDataFeed: DEFAULT_TOKEN.initialSupply.add(BigNumber.from('1')).toString(),
+            initialAmountDataFeed: (DEFAULT_TOKEN.initialSupply + 1n).toString(),
             businessLogicResolverProxyAddress: businessLogicResolver,
             stableCoinFactoryProxyAddress: stableCoinFactoryProxy,
         })
@@ -140,7 +139,7 @@ describe('StableCoinFactory Tests', function () {
         })
 
         expect(await reserveAddress).to.equal(ADDRESS_ZERO)
-        expect(await reserveAmount).to.equal(BigNumber.from(0))
+        expect(await reserveAmount).to.equal(0)
 
         expect(deploymentResult.reserveProxyAddress).to.equal(ADDRESS_ZERO)
     })
@@ -187,14 +186,14 @@ describe('StableCoinFactory Tests', function () {
             tokenInformation: {
                 name: DEFAULT_TOKEN.name,
                 symbol: DEFAULT_TOKEN.symbol,
-                decimals: 0,
+                decimals: 0n,
                 initialSupply: DEFAULT_TOKEN.initialSupply,
                 maxSupply: DEFAULT_TOKEN.maxSupply,
                 memo: DEFAULT_TOKEN.memo,
                 freeze: false,
             },
             allToContract: false,
-            initialAmountDataFeed: toReserve(DEFAULT_TOKEN.initialSupply).sub(1).toString(),
+            initialAmountDataFeed: (toReserve(DEFAULT_TOKEN.initialSupply) - 1n).toString(),
             businessLogicResolverProxyAddress: businessLogicResolver,
             stableCoinFactoryProxyAddress: stableCoinFactoryProxy,
         })
@@ -216,7 +215,7 @@ describe('StableCoinFactory Tests', function () {
                 freeze: false,
             },
             allToContract: false,
-            initialAmountDataFeed: BigNumber.from(1).toString(),
+            initialAmountDataFeed: 1n.toString(),
             businessLogicResolverProxyAddress: businessLogicResolver,
             stableCoinFactoryProxyAddress: stableCoinFactoryProxy,
         })
@@ -239,7 +238,7 @@ describe('StableCoinFactory Tests', function () {
                 freeze: false,
             },
             allToContract: false,
-            initialAmountDataFeed: toReserve(DEFAULT_TOKEN.initialSupply).sub(1).toString(),
+            initialAmountDataFeed: (toReserve(DEFAULT_TOKEN.initialSupply) - 1n).toString(),
             businessLogicResolverProxyAddress: businessLogicResolver,
             stableCoinFactoryProxyAddress: stableCoinFactoryProxy,
         })
@@ -251,12 +250,12 @@ describe('StableCoinFactory Tests', function () {
         const reserve = await new HederaReserveFacet__factory(operator).deploy({
             gasLimit: GAS_LIMIT.hederaTokenManager.facetDeploy,
         })
-        await reserve.deployed()
+        await reserve.waitForDeployment()
 
-        const reserveAmount = BigNumber.from(1)
+        const reserveAmount = 1n
         // Deploy Token using Client
-        const initSupplyAmount = reserveAmount.add(1)
-        const maxSupplyAmount = initSupplyAmount.add(1)
+        const initSupplyAmount = reserveAmount + 1n
+        const maxSupplyAmount = initSupplyAmount + 1n
         // Deploy Token using Client
         const command = await DeployStableCoinCommand.newInstance({
             signer: operator,
@@ -272,7 +271,7 @@ describe('StableCoinFactory Tests', function () {
             },
             allToContract: false,
             createReserve: false,
-            reserveAddress: reserve.address,
+            reserveAddress: await reserve.getAddress(),
             businessLogicResolverProxyAddress: businessLogicResolver,
             stableCoinFactoryProxyAddress: stableCoinFactoryProxy,
         })

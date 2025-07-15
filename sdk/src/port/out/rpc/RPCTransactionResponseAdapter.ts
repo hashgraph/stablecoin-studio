@@ -39,49 +39,119 @@
  *
  */
 
-import { ethers } from 'ethers';
+import { BaseContract, ethers, Result, TransactionReceipt } from 'ethers';
 import LogService from '../../../app/service/LogService.js';
 import TransactionResponse from '../../../domain/context/transaction/TransactionResponse.js';
 import { TransactionResponseError } from '../error/TransactionResponseError.js';
 import { TransactionResponseAdapter } from '../TransactionResponseAdapter.js';
+import { Time } from '../../../core/Time.js';
+
+interface EventData<
+	T extends BaseContract,
+	TEventName extends keyof T['filters'],
+> {
+	eventName: TEventName;
+	contract: T;
+}
 
 export class RPCTransactionResponseAdapter extends TransactionResponseAdapter {
-	public static async manageResponse(
-		response: ethers.ContractTransaction,
+	public static async manageResponse<
+		T extends BaseContract,
+		TEventName extends keyof T['filters'],
+	>(
+		response: ethers.ContractTransactionResponse,
 		network: string,
-		eventName?: string,
+		event?: EventData<T, TEventName>,
 	): Promise<TransactionResponse> {
 		LogService.logTrace('Constructing response from:', response);
 		try {
 			const receipt = await response.wait();
 			LogService.logTrace('Receipt:', receipt);
-			if (receipt.events && eventName) {
-				const returnEvent = receipt.events.filter(
-					(e) => e.event && e.event === eventName,
+			await Time.delay(1, 'seconds');
+			if (receipt === null) {
+				LogService.logError(
+					`The transaction ${response.hash} was not mined or the network did not respond`,
+					{
+						transactionHash: response.hash,
+						network: network,
+					},
 				);
-				if (returnEvent.length > 0 && returnEvent[0].args) {
-					return new TransactionResponse(
-						receipt.transactionHash,
-						returnEvent[0].args,
-					);
-				}
+				throw new TransactionResponseError({
+					message:
+						'The transaction could not be confirmed or was rejected by the network..',
+					network: network,
+					name: event?.eventName.toString(),
+					status: 'timeout_or_reverted',
+					transactionId: response.hash,
+					RPC_relay: true,
+				});
 			}
-			return Promise.resolve(
-				new TransactionResponse(
-					receipt.transactionHash,
-					receipt.status,
-				),
-			);
+
+			let txResponse: number | Result | null = receipt.status;
+			if (receipt.logs && event?.eventName) {
+				txResponse = await this.decodeEvent(
+					event.contract,
+					event.eventName,
+					receipt,
+				);
+			}
+
+			return new TransactionResponse(receipt.hash, txResponse);
 		} catch (error) {
 			LogService.logError('Uncaught Exception:', JSON.stringify(error));
 			throw new TransactionResponseError({
 				message: '',
 				network: network,
-				name: eventName,
+				name: event?.eventName.toString(),
 				status: 'error',
 				transactionId: (error as any)?.transactionHash,
 				RPC_relay: true,
 			});
 		}
+	}
+
+	private static async decodeEvent<
+		T extends BaseContract,
+		TEventName extends keyof T['filters'],
+	>(
+		contract: T,
+		eventName: TEventName,
+		transactionReceipt: TransactionReceipt | null,
+	): Promise<Result> {
+		if (transactionReceipt == null) {
+			throw new Error('Transaction receipt is empty');
+		}
+
+		const eventFragment = contract.interface.getEvent(eventName as string);
+		if (eventFragment === null) {
+			throw new Error(
+				`Event "${eventName as string}" doesn't exist in the contract`,
+			);
+		}
+
+		const topic = eventFragment.topicHash;
+		const contractAddress = await contract.getAddress();
+
+		const eventLog = transactionReceipt.logs.find(
+			(log) =>
+				log.address.toLowerCase() === contractAddress.toLowerCase() &&
+				log.topics[0] === topic,
+		);
+
+		if (!eventLog) {
+			throw new Error(
+				`Event log for "${
+					eventName as string
+				}" not found in transaction receipt`,
+			);
+		}
+
+		const decodedArgs = contract.interface.decodeEventLog(
+			eventFragment,
+			eventLog.data,
+			eventLog.topics,
+		);
+
+		return decodedArgs;
 	}
 }

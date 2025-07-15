@@ -1,5 +1,5 @@
-import { ethers } from 'hardhat'
 import { ContractFactory, Overrides, Signer } from 'ethers'
+import { ethers } from 'hardhat'
 import { ContractName } from '@configuration'
 import { NameOrFactoryRequiredError } from '@scripts'
 
