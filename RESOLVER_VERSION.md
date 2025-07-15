@@ -1,3 +1,4 @@
-| Version | Contract name  | Address     | Network |
-|---------| -------------- | ----------- | ------- |
-| 2.0.0   | FactoryAddress | 0.0.6095328 | Testnet |
+| Version | Contract name   | Address     | Network |
+|---------| --------------  | ----------- | ------- |
+| 2.1.5   | ResolverAddress | 0.0.6349477 | Testnet |
+| 2.0.0   | ResolverAddress | 0.0.6095328 | Testnet |

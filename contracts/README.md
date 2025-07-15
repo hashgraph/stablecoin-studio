@@ -357,8 +357,8 @@ To use V2 within the web project you'll need to adjust the web/.env configuratio
 * Add `REACT_APP_RESOLVERS` constant with the "Business Logic Resolver Proxy" address of the new deployed contracts that you can find the hex address in contracts/contractAddresses_v2.txt file and you can find the hedera id of this address in the hedera explorer (https://hashscan.io) for each environment that you are using.
 * Ex:
 ```
-REACT_APP_FACTORIES='[{"Environment":"mainnet","STABLE_COIN_FACTORY_ADDRESS":"0.0.6095357"}, {"Environment":"testnet","STABLE_COIN_FACTORY_ADDRESS":"0.0.6095357"}]'
-REACT_APP_RESOLVERS='[{"Environment":"mainnet","STABLE_COIN_RESOLVER_ADDRESS":"0.0.6095328"}, {"Environment":"testnet","STABLE_COIN_RESOLVER_ADDRESS":"0.0.6095328"}]'
+REACT_APP_FACTORIES='[{"Environment":"mainnet","STABLE_COIN_FACTORY_ADDRESS":"0.0.6349500"}, {"Environment":"testnet","STABLE_COIN_FACTORY_ADDRESS":"0.0.6349500"}]'
+REACT_APP_RESOLVERS='[{"Environment":"mainnet","STABLE_COIN_RESOLVER_ADDRESS":"0.0.6349477"}, {"Environment":"testnet","STABLE_COIN_RESOLVER_ADDRESS":"0.0.6349477"}]'
  ```
 
  Then you can start the web project with:
@@ -372,12 +372,12 @@ REACT_APP_RESOLVERS='[{"Environment":"mainnet","STABLE_COIN_RESOLVER_ADDRESS":"0
  * Add `resolvers` with the "Business Logic Resolver Proxy" address of the new deployed contracts that you can find the hex address in contracts/contractAddresses_v2.txt file and you can find the hedera id of this address in the hedera explorer (https://hashscan.io) for each environment that you are using.:
 ```
  factories:
-  - id: 0.0.6095357
+  - id: 0.0.6349500
     network: testnet
   - id: 0.0.0
     network: previewnet
 resolvers:
-  - id: 0.0.6095328
+  - id: 0.0.6349477
     network: testnet
   - id: 0.0.0
     network: previewnet

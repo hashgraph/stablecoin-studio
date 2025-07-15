@@ -91,8 +91,8 @@ For example, the following is a full working .env file that uses the Hedera mirr
 
 ```.env
 REACT_APP_LOG_LEVEL=ERROR
-REACT_APP_FACTORIES='[{"Environment":"testnet","STABLE_COIN_FACTORY_ADDRESS":"0.0.6095357"}]'
-REACT_APP_RESOLVERS='[{"Environment":"testnet","STABLE_COIN_RESOLVER_ADDRESS":"0.0.6095328"}]'
+REACT_APP_FACTORIES='[{"Environment":"testnet","STABLE_COIN_FACTORY_ADDRESS":"0.0.6349500"}]'
+REACT_APP_RESOLVERS='[{"Environment":"testnet","STABLE_COIN_RESOLVER_ADDRESS":"0.0.6349477"}]'
 REACT_APP_MIRROR_NODE='[{"Environment":"testnet","BASE_URL":"https://testnet.mirrornode.hedera.com/api/v1/", "API_KEY": "", "HEADER": ""}]'
 REACT_APP_RPC_NODE='[{"Environment":"testnet","BASE_URL":"http://localhost:7546/api", "API_KEY": "", "HEADER": ""}]'
 REACT_APP_BACKEND_URL='http://localhost:3001/api/'

@@ -1,6 +1,6 @@
 {
     "name": "@hashgraph/stablecoin-npm-contracts",
-    "version": "2.1.4",
+    "version": "2.1.5",
     "description": "",
     "main": "./build/typechain-types/index.js",
     "module": "./build/typechain-types/index.js",
