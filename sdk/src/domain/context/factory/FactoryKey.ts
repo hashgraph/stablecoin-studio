@@ -18,10 +18,10 @@
  *
  */
 
-import { BigNumber, BytesLike } from 'ethers';
+import { BytesLike } from 'ethers';
 
 export class KeysStruct {
-	public keyType: BigNumber;
+	public keyType: bigint;
 	public publicKey: BytesLike;
 	public isEd25519: boolean;
 }

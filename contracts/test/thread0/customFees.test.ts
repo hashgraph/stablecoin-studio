@@ -1,7 +1,7 @@
 import { expect } from 'chai'
-import { SignerWithAddress } from '@nomiclabs/hardhat-ethers/signers'
+import { SignerWithAddress } from '@nomicfoundation/hardhat-ethers/signers'
 import { ethers } from 'hardhat'
-import { CustomFeesFacet, CustomFeesFacet__factory, IHederaTokenService, IHRC__factory } from '@typechain-types'
+import { CustomFeesFacet, CustomFeesFacet__factory, IHederaTokenService, IHRC__factory } from '@contracts'
 import {
     ADDRESS_ZERO,
     delay,

@@ -1,5 +1,12 @@
-import { SignerWithAddress } from '@nomiclabs/hardhat-ethers/signers'
-import { BusinessLogicRegistryData, FacetConfiguration, GAS_LIMIT, ROLES, ValidateTxResponseCommand } from '@scripts'
+import { SignerWithAddress } from '@nomicfoundation/hardhat-ethers/signers'
+import {
+    BusinessLogicRegistryData,
+    delay,
+    FacetConfiguration,
+    GAS_LIMIT,
+    ROLES,
+    ValidateTxResponseCommand,
+} from '@scripts'
 import {
     BusinessLogicResolver,
     DiamondFacet,
@@ -9,7 +16,7 @@ import {
     PausableFacet__factory,
     RolesFacet,
     RolesFacet__factory,
-} from '@typechain-types'
+} from '@contracts'
 import { expect } from 'chai'
 import { ethers } from 'hardhat'
 
@@ -68,25 +75,25 @@ describe('➡️ ResolverProxy Tests', () => {
         businessLogicsRegistryDatas = [
             {
                 businessLogicKey: await diamondFacet.getStaticResolverKey(),
-                businessLogicAddress: diamondFacet.address,
+                businessLogicAddress: await diamondFacet.getAddress(),
             },
             {
                 businessLogicKey: await roleImpl.getStaticResolverKey(),
-                businessLogicAddress: roleImpl.address,
+                businessLogicAddress: await roleImpl.getAddress(),
             },
         ]
         businessLogicsRegistryDatas_2 = [
             {
                 businessLogicKey: await diamondFacet.getStaticResolverKey(),
-                businessLogicAddress: diamondFacet.address,
+                businessLogicAddress: await diamondFacet.getAddress(),
             },
             {
                 businessLogicKey: await roleImpl.getStaticResolverKey(),
-                businessLogicAddress: roleImpl.address,
+                businessLogicAddress: await roleImpl.getAddress(),
             },
             {
                 businessLogicKey: await pauseImpl.getStaticResolverKey(),
-                businessLogicAddress: pauseImpl.address,
+                businessLogicAddress: await pauseImpl.getAddress(),
             },
         ]
         await setUpResolver(businessLogicsRegistryDatas, undefined, resolver)
@@ -119,13 +126,11 @@ describe('➡️ ResolverProxy Tests', () => {
     }
 
     async function deployResolver(): Promise<BusinessLogicResolver> {
-        let newResolver = await (
-            await ethers.getContractFactory('BusinessLogicResolver')
+        const newResolver = await (
+            await ethers.getContractFactory('BusinessLogicResolver', signer_A)
         ).deploy({
             gasLimit: GAS_LIMIT.businessLogicResolver.deploy,
         })
-
-        newResolver = newResolver.connect(signer_A)
 
         await newResolver.initialize_BusinessLogicResolver({
             gasLimit: GAS_LIMIT.initialize.businessLogicResolver,
@@ -180,17 +185,17 @@ describe('➡️ ResolverProxy Tests', () => {
     it('GIVEN deployed facets WHEN deploy a new resolverProxy with correct configuration THEN a new resolverProxy proxy was deployed', async () => {
         const resolverProxy = await (
             await ethers.getContractFactory('ResolverProxy')
-        ).deploy(resolver.address, CONFIG_ID, 1, [], { gasLimit: GAS_LIMIT.resolverProxy.deploy })
+        ).deploy(await resolver.getAddress(), CONFIG_ID, 1, [], { gasLimit: GAS_LIMIT.resolverProxy.deploy })
 
-        const diamondCut = await ethers.getContractAt('DiamondCutFacet', resolverProxy.address)
+        const diamondCut = await ethers.getContractAt('DiamondCutFacet', resolverProxy)
 
         const result = await diamondCut.getConfigInfo()
 
-        expect(result.resolver_).to.equal(resolver.address)
+        expect(result.resolver_).to.equal(await resolver.getAddress())
         expect(result.configurationId_).to.equal(CONFIG_ID)
         expect(result.version_).to.equal(1)
 
-        const diamondLoupe = await ethers.getContractAt('DiamondLoupeFacet', resolverProxy.address)
+        const diamondLoupe = await ethers.getContractAt('DiamondLoupeFacet', resolverProxy)
 
         await checkFacets(businessLogicsRegistryDatas, diamondLoupe)
     })
@@ -198,10 +203,10 @@ describe('➡️ ResolverProxy Tests', () => {
     it('GIVEN deployed facets WHEN deploying a resolverProxy and registering Facets to use a non exposed signature THEN raise FunctionNotFound and it is not recognized by supportsInterface', async () => {
         const resolverProxy = await (
             await ethers.getContractFactory('ResolverProxy')
-        ).deploy(resolver.address, CONFIG_ID, 1, [], { gasLimit: GAS_LIMIT.resolverProxy.deploy })
+        ).deploy(await resolver.getAddress(), CONFIG_ID, 1, [], { gasLimit: GAS_LIMIT.resolverProxy.deploy })
 
-        const burnableFacet = await ethers.getContractAt('BurnableFacet', resolverProxy.address)
-        const diamondLoupe = await ethers.getContractAt('DiamondLoupeFacet', resolverProxy.address)
+        const burnableFacet = await ethers.getContractAt('BurnableFacet', resolverProxy)
+        const diamondLoupe = await ethers.getContractAt('DiamondLoupeFacet', resolverProxy)
 
         const BURN_SIGNATURE = '0x5cd3a608'
         await expect(burnableFacet.burn(10))
@@ -213,15 +218,15 @@ describe('➡️ ResolverProxy Tests', () => {
     it('GIVEN deployed facets WHEN deploy a diamond to latestVersion and one to a specific version THEN only the latest version one will get updated', async () => {
         const resolverProxy_v1 = await (
             await ethers.getContractFactory('ResolverProxy')
-        ).deploy(resolver.address, CONFIG_ID, 1, [], { gasLimit: GAS_LIMIT.resolverProxy.deploy })
+        ).deploy(await resolver.getAddress(), CONFIG_ID, 1, [], { gasLimit: GAS_LIMIT.resolverProxy.deploy })
 
         const resolverProxy_latest = await (
             await ethers.getContractFactory('ResolverProxy')
-        ).deploy(resolver.address, CONFIG_ID, 0, [], { gasLimit: GAS_LIMIT.resolverProxy.deploy })
+        ).deploy(await resolver.getAddress(), CONFIG_ID, 0, [], { gasLimit: GAS_LIMIT.resolverProxy.deploy })
 
-        const diamondFacet_v1 = await ethers.getContractAt('DiamondFacet', resolverProxy_v1.address)
+        const diamondFacet_v1 = await ethers.getContractAt('DiamondFacet', resolverProxy_v1)
 
-        const diamondFacet_latest = await ethers.getContractAt('DiamondFacet', resolverProxy_latest.address)
+        const diamondFacet_latest = await ethers.getContractAt('DiamondFacet', resolverProxy_latest)
 
         await checkFacets(businessLogicsRegistryDatas, diamondFacet_v1)
         await checkFacets(businessLogicsRegistryDatas, diamondFacet_latest)
@@ -235,9 +240,9 @@ describe('➡️ ResolverProxy Tests', () => {
     it('GIVEN resolverProxy and non-admin user WHEN updating version THEN fails with AccountHasNoRole', async () => {
         const resolverProxy = await (
             await ethers.getContractFactory('ResolverProxy')
-        ).deploy(resolver.address, CONFIG_ID, 1, [], { gasLimit: GAS_LIMIT.resolverProxy.deploy })
+        ).deploy(await resolver.getAddress(), CONFIG_ID, 1, [], { gasLimit: GAS_LIMIT.resolverProxy.deploy })
 
-        const diamondCut = await ethers.getContractAt('DiamondCutFacet', resolverProxy.address)
+        const diamondCut = await ethers.getContractAt('DiamondCutFacet', resolverProxy)
 
         await expect(diamondCut.updateConfigVersion(0)).to.be.revertedWithCustomError(roleImpl, 'AccountHasNoRole')
     })
@@ -252,9 +257,9 @@ describe('➡️ ResolverProxy Tests', () => {
 
         const resolverProxy = await (
             await ethers.getContractFactory('ResolverProxy')
-        ).deploy(resolver.address, CONFIG_ID, 1, roles, { gasLimit: GAS_LIMIT.resolverProxy.deploy })
+        ).deploy(await resolver.getAddress(), CONFIG_ID, 1, roles, { gasLimit: GAS_LIMIT.resolverProxy.deploy })
 
-        let diamondCut = await ethers.getContractAt('DiamondCutFacet', resolverProxy.address)
+        let diamondCut = await ethers.getContractAt('DiamondCutFacet', resolverProxy)
 
         diamondCut = diamondCut.connect(signer_A)
 
@@ -276,13 +281,15 @@ describe('➡️ ResolverProxy Tests', () => {
 
         const resolverProxy = await (
             await ethers.getContractFactory('ResolverProxy')
-        ).deploy(resolver.address, CONFIG_ID, oldVersion, roles, { gasLimit: GAS_LIMIT.resolverProxy.deploy })
+        ).deploy(await resolver.getAddress(), CONFIG_ID, oldVersion, roles, {
+            gasLimit: GAS_LIMIT.resolverProxy.deploy,
+        })
 
-        let diamondCut = await ethers.getContractAt('DiamondCutFacet', resolverProxy.address)
+        let diamondCut = await ethers.getContractAt('DiamondCutFacet', resolverProxy)
 
         let result = await diamondCut.getConfigInfo()
 
-        expect(result.resolver_).to.equal(resolver.address)
+        expect(result.resolver_).to.equal(await resolver.getAddress())
         expect(result.configurationId_).to.equal(CONFIG_ID)
         expect(result.version_).to.equal(oldVersion)
 
@@ -291,10 +298,10 @@ describe('➡️ ResolverProxy Tests', () => {
         const newVersion = 0
 
         await diamondCut.updateConfigVersion(newVersion)
-
+        await delay({ time: 1, unit: 'sec' })
         result = await diamondCut.getConfigInfo()
 
-        expect(result.resolver_).to.equal(resolver.address)
+        expect(result.resolver_).to.equal(await resolver.getAddress())
         expect(result.configurationId_).to.equal(CONFIG_ID)
         expect(result.version_).to.equal(newVersion)
     })
@@ -302,9 +309,9 @@ describe('➡️ ResolverProxy Tests', () => {
     it('GIVEN resolverProxy and non-admin user WHEN updating configID THEN fails with AccountHasNoRole', async () => {
         const resolverProxy = await (
             await ethers.getContractFactory('ResolverProxy')
-        ).deploy(resolver.address, CONFIG_ID, 1, [], { gasLimit: GAS_LIMIT.resolverProxy.deploy })
+        ).deploy(await resolver.getAddress(), CONFIG_ID, 1, [], { gasLimit: GAS_LIMIT.resolverProxy.deploy })
 
-        const diamondCut = await ethers.getContractAt('DiamondCutFacet', resolverProxy.address)
+        const diamondCut = await ethers.getContractAt('DiamondCutFacet', resolverProxy)
 
         await expect(diamondCut.updateConfig(CONFIG_ID_2, 1)).to.be.revertedWithCustomError(
             roleImpl,
@@ -322,9 +329,9 @@ describe('➡️ ResolverProxy Tests', () => {
 
         const resolverProxy = await (
             await ethers.getContractFactory('ResolverProxy')
-        ).deploy(resolver.address, CONFIG_ID, 1, roles, { gasLimit: GAS_LIMIT.resolverProxy.deploy })
+        ).deploy(await resolver.getAddress(), CONFIG_ID, 1, roles, { gasLimit: GAS_LIMIT.resolverProxy.deploy })
 
-        let diamondCut = await ethers.getContractAt('DiamondCutFacet', resolverProxy.address)
+        let diamondCut = await ethers.getContractAt('DiamondCutFacet', resolverProxy)
 
         diamondCut = diamondCut.connect(signer_A)
 
@@ -349,13 +356,15 @@ describe('➡️ ResolverProxy Tests', () => {
 
         const resolverProxy = await (
             await ethers.getContractFactory('ResolverProxy')
-        ).deploy(resolver.address, CONFIG_ID, oldVersion, roles, { gasLimit: GAS_LIMIT.resolverProxy.deploy })
+        ).deploy(await resolver.getAddress(), CONFIG_ID, oldVersion, roles, {
+            gasLimit: GAS_LIMIT.resolverProxy.deploy,
+        })
 
-        let diamondCut = await ethers.getContractAt('DiamondCutFacet', resolverProxy.address)
+        let diamondCut = await ethers.getContractAt('DiamondCutFacet', resolverProxy)
 
         let result = await diamondCut.getConfigInfo()
 
-        expect(result.resolver_).to.equal(resolver.address)
+        expect(result.resolver_).to.equal(await resolver.getAddress())
         expect(result.configurationId_).to.equal(CONFIG_ID)
         expect(result.version_).to.equal(oldVersion)
 
@@ -364,10 +373,10 @@ describe('➡️ ResolverProxy Tests', () => {
         const newVersion = 0
 
         await diamondCut.updateConfig(CONFIG_ID_2, newVersion, { gasLimit: GAS_LIMIT.diamondFacet.updateConfig })
-
+        await delay({ time: 1, unit: 'sec' })
         result = await diamondCut.getConfigInfo()
 
-        expect(result.resolver_).to.equal(resolver.address)
+        expect(result.resolver_).to.equal(await resolver.getAddress())
         expect(result.configurationId_).to.equal(CONFIG_ID_2)
         expect(result.version_).to.equal(newVersion)
     })
@@ -375,14 +384,13 @@ describe('➡️ ResolverProxy Tests', () => {
     it('GIVEN resolverProxy and non-admin user WHEN updating resolver THEN fails with AccountHasNoRole', async () => {
         const resolverProxy = await (
             await ethers.getContractFactory('ResolverProxy')
-        ).deploy(resolver.address, CONFIG_ID, 1, [], { gasLimit: GAS_LIMIT.resolverProxy.deploy })
+        ).deploy(await resolver.getAddress(), CONFIG_ID, 1, [], { gasLimit: GAS_LIMIT.resolverProxy.deploy })
 
-        const diamondCut = await ethers.getContractAt('DiamondCutFacet', resolverProxy.address)
+        const diamondCut = await ethers.getContractAt('DiamondCutFacet', resolverProxy)
 
-        await expect(diamondCut.updateResolver(resolver_2.address, CONFIG_ID_2, 1)).to.be.revertedWithCustomError(
-            roleImpl,
-            'AccountHasNoRole'
-        )
+        await expect(
+            diamondCut.updateResolver(await resolver_2.getAddress(), CONFIG_ID_2, 1)
+        ).to.be.revertedWithCustomError(roleImpl, 'AccountHasNoRole')
     })
 
     it('GIVEN resolverProxy and admin user WHEN updating to non existing resolver THEN fails with ResolverProxyConfigurationNoRegistered', async () => {
@@ -395,13 +403,13 @@ describe('➡️ ResolverProxy Tests', () => {
 
         const resolverProxy = await (
             await ethers.getContractFactory('ResolverProxy')
-        ).deploy(resolver.address, CONFIG_ID, 1, roles, { gasLimit: GAS_LIMIT.resolverProxy.deploy })
+        ).deploy(await resolver.getAddress(), CONFIG_ID, 1, roles, { gasLimit: GAS_LIMIT.resolverProxy.deploy })
 
-        let diamondCut = await ethers.getContractAt('DiamondCutFacet', resolverProxy.address)
+        let diamondCut = await ethers.getContractAt('DiamondCutFacet', resolverProxy)
 
         diamondCut = diamondCut.connect(signer_A)
 
-        const response = await diamondCut.updateResolver(resolver_2.address, CONFIG_ID_2, 2, {
+        const response = await diamondCut.updateResolver(await resolver_2.getAddress(), CONFIG_ID_2, 2, {
             gasLimit: GAS_LIMIT.diamondFacet.updateResolver,
         })
 
@@ -420,13 +428,15 @@ describe('➡️ ResolverProxy Tests', () => {
 
         const resolverProxy = await (
             await ethers.getContractFactory('ResolverProxy')
-        ).deploy(resolver.address, CONFIG_ID, oldVersion, roles, { gasLimit: GAS_LIMIT.resolverProxy.deploy })
+        ).deploy(await resolver.getAddress(), CONFIG_ID, oldVersion, roles, {
+            gasLimit: GAS_LIMIT.resolverProxy.deploy,
+        })
 
-        let diamondCut = await ethers.getContractAt('DiamondCutFacet', resolverProxy.address)
+        let diamondCut = await ethers.getContractAt('DiamondCutFacet', resolverProxy)
 
         let result = await diamondCut.getConfigInfo()
 
-        expect(result.resolver_).to.equal(resolver.address)
+        expect(result.resolver_).to.equal(await resolver.getAddress())
         expect(result.configurationId_).to.equal(CONFIG_ID)
         expect(result.version_).to.equal(oldVersion)
 
@@ -434,13 +444,13 @@ describe('➡️ ResolverProxy Tests', () => {
 
         const newVersion = 0
 
-        await diamondCut.updateResolver(resolver_2.address, CONFIG_ID_2, newVersion, {
+        await diamondCut.updateResolver(resolver_2, CONFIG_ID_2, newVersion, {
             gasLimit: GAS_LIMIT.diamondFacet.updateResolver,
         })
-
+        await delay({ time: 1, unit: 'sec' })
         result = await diamondCut.getConfigInfo()
 
-        expect(result.resolver_).to.equal(resolver_2.address)
+        expect(result.resolver_).to.equal(await resolver_2.getAddress())
         expect(result.configurationId_).to.equal(CONFIG_ID_2)
         expect(result.version_).to.equal(newVersion)
     })

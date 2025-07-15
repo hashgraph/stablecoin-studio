@@ -40,7 +40,7 @@ task('createConfiguration', 'Create a new configuration')
             HederaTokenManagerFacet__factory,
             RescuableFacet__factory,
             StableCoinFactoryFacet__factory,
-        } = await import('@typechain-types')
+        } = await import('@contracts/index')
         console.log(`Executing createConfiguration on ${hre.network.name} ...`)
 
         const ADDRESS_ZERO = '0x0000000000000000000000000000000000000000'

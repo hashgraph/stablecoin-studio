@@ -23,7 +23,7 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
 
-import { BigNumber, ethers } from 'ethers';
+import { ethers } from 'ethers';
 import { singleton } from 'tsyringe';
 import { lazyInject } from '../../../core/decorator/LazyInjectDecorator.js';
 import NetworkService from '../../../app/service/NetworkService.js';
@@ -71,7 +71,7 @@ type FactoryContract<T extends StaticConnect> = T['connect'] extends (
 
 @singleton()
 export class RPCQueryAdapter {
-	provider: ethers.providers.JsonRpcProvider;
+	provider: ethers.JsonRpcProvider;
 
 	constructor(
 		@lazyInject(NetworkService)
@@ -86,7 +86,7 @@ export class RPCQueryAdapter {
 				? urlRpcProvider + apiKey
 				: urlRpcProvider
 			: LOCAL_JSON_RPC_RELAY_URL;
-		this.provider = new ethers.providers.JsonRpcProvider(url);
+		this.provider = new ethers.JsonRpcProvider(url);
 		LogService.logTrace('RPC Query Adapter Initialized on: ', url);
 
 		return this.networkService.environment;
@@ -99,10 +99,7 @@ export class RPCQueryAdapter {
 		return fac.connect(address, this.provider);
 	}
 
-	async balanceOf(
-		address: EvmAddress,
-		target: EvmAddress,
-	): Promise<BigNumber> {
+	async balanceOf(address: EvmAddress, target: EvmAddress): Promise<bigint> {
 		LogService.logTrace(
 			`Requesting balanceOf address: ${address.toString()}, target: ${target.toString()}`,
 		);
@@ -135,7 +132,7 @@ export class RPCQueryAdapter {
 		}
 	}
 
-	async getReserveAmount(address: EvmAddress): Promise<BigNumber> {
+	async getReserveAmount(address: EvmAddress): Promise<bigint> {
 		LogService.logTrace(`Requesting getReserveAmount address: ${address}`);
 		return await this.connect(
 			ReserveFacet,
@@ -143,7 +140,7 @@ export class RPCQueryAdapter {
 		).getReserveAmount();
 	}
 
-	async getReserveLatestRoundData(address: EvmAddress): Promise<BigNumber[]> {
+	async getReserveLatestRoundData(address: EvmAddress): Promise<bigint[]> {
 		LogService.logTrace(`Requesting getReserveAmount address: ${address}`);
 		return await this.connect(
 			HederaReserveFacet,
@@ -213,7 +210,7 @@ export class RPCQueryAdapter {
 	async supplierAllowance(
 		address: EvmAddress,
 		target: EvmAddress,
-	): Promise<BigNumber> {
+	): Promise<bigint> {
 		LogService.logTrace(
 			`Requesting balanceOf address: ${address.toString()}, target: ${target.toString()}`,
 		);
@@ -227,7 +224,9 @@ export class RPCQueryAdapter {
 		LogService.logTrace(
 			`Requesting balanceOf address: ${address.toString()}`,
 		);
-		return await this.connect(Reserve, address.toString()).decimals();
+		return Number(
+			await this.connect(Reserve, address.toString()).decimals(),
+		);
 	}
 
 	async getMetadata(address: EvmAddress): Promise<string> {
@@ -249,7 +248,7 @@ export class RPCQueryAdapter {
 		return [
 			configInfo.resolver_.toString(),
 			configInfo.configurationId_,
-			configInfo.version_.toNumber(),
+			Number(configInfo.version_), // TODO: Check why not return a bigint
 		];
 	}
 
@@ -269,7 +268,7 @@ export class RPCQueryAdapter {
 		).getHoldFor(holdIdentifier);
 
 		return new HoldDetails(
-			hold.expirationTimestamp_.toNumber(),
+			Number(hold.expirationTimestamp_),
 			new BigDecimal(hold.amount_.toString()),
 			hold.escrow_,
 			target.toString(),
@@ -293,7 +292,7 @@ export class RPCQueryAdapter {
 			address.toString(),
 		).getHoldsIdFor(target.toString(), start, end);
 
-		return holdsIdFor.map((id) => id.toNumber());
+		return holdsIdFor.map((id) => Number(id));
 	}
 
 	async getHeldAmountFor(
@@ -321,7 +320,7 @@ export class RPCQueryAdapter {
 			address.toString(),
 		).getHoldCountFor(target.toString());
 
-		return holdCountFor.toNumber();
+		return Number(holdCountFor);
 	}
 
 	async getBurnableAmount(address: EvmAddress): Promise<string> {

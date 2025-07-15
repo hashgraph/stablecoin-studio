@@ -1,5 +1,5 @@
 import { expect } from 'chai'
-import { SignerWithAddress } from '@nomiclabs/hardhat-ethers/signers'
+import { SignerWithAddress } from '@nomicfoundation/hardhat-ethers/signers'
 import { ethers } from 'hardhat'
 import {
     CashInFacet,
@@ -7,7 +7,7 @@ import {
     HederaReserveFacet__factory,
     ReserveFacet,
     ReserveFacet__factory,
-} from '@typechain-types'
+} from '@contracts'
 import {
     DEFAULT_TOKEN,
     delay,
@@ -19,25 +19,24 @@ import {
     ValidateTxResponseCommand,
 } from '@scripts'
 import { GAS_LIMIT } from '@test/shared'
-import { BigNumber } from 'ethers'
 
 let operator: SignerWithAddress
 let businessLogicResolver: string
 let stableCoinFactoryProxy: string
 
-const RESERVE_DECIMALS = 2
-const ONE_TOKEN_FACTOR = BigNumber.from(10).pow(1)
-const TWO_TOKEN_FACTOR = BigNumber.from(10).pow(2)
-const THREE_TOKEN_FACTOR = BigNumber.from(10).pow(3)
-const INIT_SUPPLY_ONE_DECIMALS = BigNumber.from(10).mul(ONE_TOKEN_FACTOR)
-const MAX_SUPPLY_ONE_DECIMALS = BigNumber.from(1000).mul(ONE_TOKEN_FACTOR)
-const INIT_SUPPLY_TWO_DECIMALS = BigNumber.from(100).mul(TWO_TOKEN_FACTOR)
-const MAX_SUPPLY_TWO_DECIMALS = BigNumber.from(1000).mul(TWO_TOKEN_FACTOR)
-const INIT_SUPPLY_THREE_DECIMALS = BigNumber.from(100).mul(THREE_TOKEN_FACTOR)
-const MAX_SUPPLY_THREE_DECIMALS = BigNumber.from(1000).mul(THREE_TOKEN_FACTOR)
+const RESERVE_DECIMALS = 2n
+const ONE_TOKEN_FACTOR = 10n ** 1n
+const TWO_TOKEN_FACTOR = 10n ** 2n
+const THREE_TOKEN_FACTOR = 10n ** 3n
+const INIT_SUPPLY_ONE_DECIMALS = 10n * ONE_TOKEN_FACTOR
+const MAX_SUPPLY_ONE_DECIMALS = 1000n * ONE_TOKEN_FACTOR
+const INIT_SUPPLY_TWO_DECIMALS = 100n * TWO_TOKEN_FACTOR
+const MAX_SUPPLY_TWO_DECIMALS = 1000n * TWO_TOKEN_FACTOR
+const INIT_SUPPLY_THREE_DECIMALS = 100n * THREE_TOKEN_FACTOR
+const MAX_SUPPLY_THREE_DECIMALS = 1000n * THREE_TOKEN_FACTOR
 const TOKEN_MEMO = 'Hedera Accelerator Stablecoin'
-const INIT_RESERVE_100 = BigNumber.from(10).pow(RESERVE_DECIMALS).mul(BigNumber.from(100))
-const INIT_RESERVE_1000 = BigNumber.from(10).pow(RESERVE_DECIMALS).mul(BigNumber.from(1000))
+const INIT_RESERVE_100 = 10n ** RESERVE_DECIMALS * 100n
+const INIT_RESERVE_1000 = 10n ** RESERVE_DECIMALS * 1000n
 
 before(async () => {
     // mute | mock console.log
@@ -72,7 +71,7 @@ describe('➡️ Reserve Tests', function () {
             tokenInformation: {
                 name: DEFAULT_TOKEN.name,
                 symbol: DEFAULT_TOKEN.symbol,
-                decimals: 3,
+                decimals: 3n,
                 initialSupply: INIT_SUPPLY_THREE_DECIMALS,
                 maxSupply: MAX_SUPPLY_THREE_DECIMALS,
                 memo: TOKEN_MEMO,
@@ -115,9 +114,9 @@ describe('➡️ Reserve Tests', function () {
         const hederaReserveFacet = await new HederaReserveFacet__factory(operator).deploy({
             gasLimit: GAS_LIMIT.hederaTokenManager.facetDeploy,
         })
-        await hederaReserveFacet.deployed()
+        await hederaReserveFacet.waitForDeployment()
 
-        const updateResponse = await reserveFacet.updateReserveAddress(hederaReserveFacet.address, {
+        const updateResponse = await reserveFacet.updateReserveAddress(hederaReserveFacet, {
             gasLimit: GAS_LIMIT.hederaTokenManager.updateReserveAddress,
         })
         await new ValidateTxResponseCommand({ txResponse: updateResponse }).execute()
@@ -155,7 +154,7 @@ describe('Reserve Tests with reserve and token with same Decimals', function () 
             tokenInformation: {
                 name: DEFAULT_TOKEN.name,
                 symbol: DEFAULT_TOKEN.symbol,
-                decimals: 2,
+                decimals: 2n,
                 initialSupply: INIT_SUPPLY_TWO_DECIMALS,
                 maxSupply: MAX_SUPPLY_TWO_DECIMALS,
                 memo: TOKEN_MEMO,
@@ -172,7 +171,7 @@ describe('Reserve Tests with reserve and token with same Decimals', function () 
     })
 
     it('Can Mint less tokens than reserve', async function () {
-        const AmountToMint = BigNumber.from(10).mul(TWO_TOKEN_FACTOR)
+        const AmountToMint = 10n * TWO_TOKEN_FACTOR
 
         // Get the initial reserve amount
         const initialReserve = await reserveFacet.getReserveAmount({
@@ -187,12 +186,11 @@ describe('Reserve Tests with reserve and token with same Decimals', function () 
 
         // Check the reserve account : success
         await delay({ time: 1, unit: 'sec' })
-        const finalReserve = (
-            await reserveFacet.getReserveAmount({
+        const finalReserve =
+            (await reserveFacet.getReserveAmount({
                 gasLimit: GAS_LIMIT.hederaTokenManager.getReserveAmount,
-            })
-        ).sub(AmountToMint)
-        const expectedTotalReserve = initialReserve.sub(AmountToMint)
+            })) - AmountToMint
+        const expectedTotalReserve = initialReserve - AmountToMint
         expect(finalReserve.toString()).to.equals(expectedTotalReserve.toString())
     })
 
@@ -203,7 +201,7 @@ describe('Reserve Tests with reserve and token with same Decimals', function () 
         })
 
         // Cashin more tokens than reserve amount: fail
-        const mintResponse = await cashInFacet.mint(operator.address, totalReserve.add(1), {
+        const mintResponse = await cashInFacet.mint(operator.address, totalReserve + 1n, {
             gasLimit: GAS_LIMIT.hederaTokenManager.mint,
         })
         await expect(
@@ -232,7 +230,7 @@ describe('Reserve Tests with reserve decimals higher than token decimals', funct
             tokenInformation: {
                 name: DEFAULT_TOKEN.name,
                 symbol: DEFAULT_TOKEN.symbol,
-                decimals: 1,
+                decimals: 1n,
                 initialSupply: INIT_SUPPLY_ONE_DECIMALS,
                 maxSupply: MAX_SUPPLY_ONE_DECIMALS,
                 memo: TOKEN_MEMO,
@@ -249,7 +247,7 @@ describe('Reserve Tests with reserve decimals higher than token decimals', funct
     })
 
     it('Can Mint less tokens than reserve', async function () {
-        const AmountToMint = BigNumber.from(10).mul(ONE_TOKEN_FACTOR)
+        const AmountToMint = 10n * ONE_TOKEN_FACTOR
 
         // Get the initial reserve amount
         const initialReserve = await reserveFacet.getReserveAmount({
@@ -264,12 +262,11 @@ describe('Reserve Tests with reserve decimals higher than token decimals', funct
 
         // Check the reserve account : success
         await delay({ time: 1, unit: 'sec' })
-        const finalReserve = (
-            await reserveFacet.getReserveAmount({
+        const finalReserve =
+            (await reserveFacet.getReserveAmount({
                 gasLimit: GAS_LIMIT.hederaTokenManager.getReserveAmount,
-            })
-        ).sub(AmountToMint)
-        const expectedTotalReserve = initialReserve.sub(AmountToMint)
+            })) - AmountToMint
+        const expectedTotalReserve = initialReserve - AmountToMint
         expect(finalReserve.toString()).to.equals(expectedTotalReserve.toString())
     })
 
@@ -280,7 +277,7 @@ describe('Reserve Tests with reserve decimals higher than token decimals', funct
         })
 
         // Cashin more tokens than reserve amount: fail
-        const mintResponse = await cashInFacet.mint(operator.address, totalReserve.add(1), {
+        const mintResponse = await cashInFacet.mint(operator.address, totalReserve + 1n, {
             gasLimit: GAS_LIMIT.hederaTokenManager.mint,
         })
         await expect(new ValidateTxResponseCommand({ txResponse: mintResponse }).execute()).to.be.rejectedWith(Error)
@@ -307,7 +304,7 @@ describe('Reserve Tests with reserve decimals lower than token decimals', functi
             tokenInformation: {
                 name: DEFAULT_TOKEN.name,
                 symbol: DEFAULT_TOKEN.symbol,
-                decimals: 3,
+                decimals: 3n,
                 initialSupply: INIT_SUPPLY_THREE_DECIMALS,
                 maxSupply: MAX_SUPPLY_THREE_DECIMALS,
                 memo: TOKEN_MEMO,
@@ -324,7 +321,7 @@ describe('Reserve Tests with reserve decimals lower than token decimals', functi
     })
 
     it('Can Mint less tokens than reserve', async function () {
-        const AmountToMint = BigNumber.from(10).mul(THREE_TOKEN_FACTOR)
+        const AmountToMint = 10n * THREE_TOKEN_FACTOR
 
         // Get the initial reserve amount
         const initialReserve = await reserveFacet.getReserveAmount({
@@ -339,12 +336,11 @@ describe('Reserve Tests with reserve decimals lower than token decimals', functi
 
         // Check the reserve account : success
         await delay({ time: 1, unit: 'sec' })
-        const finalReserve = (
-            await reserveFacet.getReserveAmount({
+        const finalReserve =
+            (await reserveFacet.getReserveAmount({
                 gasLimit: GAS_LIMIT.hederaTokenManager.getReserveAmount,
-            })
-        ).sub(AmountToMint)
-        const expectedTotalReserve = initialReserve.sub(AmountToMint)
+            })) - AmountToMint
+        const expectedTotalReserve = initialReserve - AmountToMint
         expect(finalReserve.toString()).to.equals(expectedTotalReserve.toString())
     })
 
@@ -355,7 +351,7 @@ describe('Reserve Tests with reserve decimals lower than token decimals', functi
         })
 
         // Cashin more tokens than reserve amount: fail
-        const mintResponse = await cashInFacet.mint(operator.address, totalReserve.add(1), {
+        const mintResponse = await cashInFacet.mint(operator.address, totalReserve + 1n, {
             gasLimit: GAS_LIMIT.hederaTokenManager.mint,
         })
         await expect(new ValidateTxResponseCommand({ txResponse: mintResponse }).execute()).to.be.rejectedWith(Error)

@@ -1,12 +1,10 @@
-import { HardhatUserConfig } from 'hardhat/types'
-import 'tsconfig-paths/register'
+import { HardhatUserConfig } from 'hardhat/config'
 import '@nomicfoundation/hardhat-toolbox'
-import 'hardhat-abi-exporter'
+import 'tsconfig-paths/register'
 import 'hardhat-contract-sizer'
-import 'hardhat-gas-reporter'
 import '@openzeppelin/hardhat-upgrades'
 import '@primitivefi/hardhat-dodoc'
-import { Configuration, DEFAULT_EVM_VERSION, GAS_LIMIT, NETWORK_LIST } from '@configuration'
+import { Configuration, DEFAULT_EVM_VERSION, NETWORK_LIST, GAS_LIMIT } from '@configuration'
 import '@tasks'
 
 export const configuration = new Configuration()
@@ -82,7 +80,7 @@ const hardhatConfig: HardhatUserConfig = {
     },
     typechain: {
         outDir: './typechain-types',
-        target: 'ethers-v5',
+        target: 'ethers-v6',
     },
     mocha: {
         timeout: 400000,

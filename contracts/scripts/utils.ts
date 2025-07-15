@@ -22,8 +22,8 @@ import {
 
 import axios from 'axios'
 import { ADDRESS_ZERO } from './constants'
-import { BigNumber } from 'ethers'
 import FileId from '@hashgraph/sdk/lib/file/FileId'
+import { network as networkName } from 'hardhat'
 
 const SuccessStatus = 22
 
@@ -60,10 +60,10 @@ export async function dissociateToken(tokenId: string, targetId: string, clientO
     await checkTxResponse(txResponse, clientOperator)
 }
 
-export async function transferToken(tokenId: string, targetId: string, amount: BigNumber, clientOperator: Client) {
+export async function transferToken(tokenId: string, targetId: string, amount: bigint, clientOperator: Client) {
     const txResponse = await new TransferTransaction()
-        .addTokenTransfer(tokenId, targetId, amount.toNumber())
-        .addTokenTransfer(tokenId, clientOperator.operatorAccountId!.toString(), -1 * amount.toNumber())
+        .addTokenTransfer(tokenId, targetId, Number(amount))
+        .addTokenTransfer(tokenId, clientOperator.operatorAccountId!.toString(), -1 * Number(amount))
         .execute(clientOperator)
 
     await checkTxResponse(txResponse, clientOperator)
@@ -77,8 +77,7 @@ export function oneMonthLaterInSeconds(): number {
 
 export function getClient(network?: string): Client {
     if (!network) {
-        const hre = require('hardhat')
-        network = hre.network.name
+        network = networkName.name
     }
     switch (network) {
         case 'previewnet':
@@ -243,8 +242,7 @@ interface IKey {
 
 function getHederaNetworkMirrorNodeURL(network?: string): string {
     if (!network) {
-        const hre = require('hardhat')
-        network = hre.network.name
+        network = networkName.name
     }
     switch (network) {
         case 'mainnet':

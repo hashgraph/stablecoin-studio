@@ -8,7 +8,7 @@ import {
     IHederaTokenManager,
     RolesFacet__factory,
     SupplierAdminFacet__factory,
-} from '@typechain-types'
+} from '@contracts'
 import {
     allTokenKeysToKey,
     AllTokenKeysToKeyCommand,
@@ -27,7 +27,7 @@ import {
     ValidateTxResponseCommand,
 } from '@scripts'
 import { DEFAULT_UPDATE_TOKEN_STRUCT, deployStableCoinInTests, GAS_LIMIT, OTHER_AUTO_RENEW_PERIOD } from '@test/shared'
-import { BigNumber, Wallet } from 'ethers'
+import { toBigInt, Wallet } from 'ethers'
 
 describe('➡️ HederaTokenManager Tests', function () {
     // Contracts
@@ -74,12 +74,12 @@ describe('➡️ HederaTokenManager Tests', function () {
     })
 
     it('Cannot Update token if not Admin', async function () {
-        const keys = tokenKeysToKey(new TokenKeysToKeyCommand({ publicKey: operator.publicKey }))
+        const keys = tokenKeysToKey(new TokenKeysToKeyCommand({ publicKey: operator.signingKey.publicKey }))
         const updateTokenStruct = {
             tokenName: 'newName',
             tokenSymbol: 'newSymbol',
             keys: keys as IHederaTokenManager.UpdateTokenStructStructOutput['keys'],
-            second: BigNumber.from(getOneMonthFromNowInSeconds()),
+            second: toBigInt(getOneMonthFromNowInSeconds()),
             autoRenewPeriod: OTHER_AUTO_RENEW_PERIOD,
             tokenMetadataURI: DEFAULT_TOKEN.memo,
         } as IHederaTokenManager.UpdateTokenStructStructOutput
@@ -94,14 +94,16 @@ describe('➡️ HederaTokenManager Tests', function () {
     })
 
     it('Admin cannot update token if metadata exceeds 100 characters', async function () {
-        const keys = tokenKeysToKey(new TokenKeysToKeyCommand({ publicKey: operator.publicKey, addKyc: false }))
+        const keys = tokenKeysToKey(
+            new TokenKeysToKeyCommand({ publicKey: operator.signingKey.publicKey, addKyc: false })
+        )
         const longMetadata = 'X'.repeat(101)
 
         const updateTokenStruct = {
             tokenName: 'newName',
             tokenSymbol: 'newSymbol',
             keys: keys as IHederaTokenManager.UpdateTokenStructStructOutput['keys'],
-            second: BigNumber.from(getOneMonthFromNowInSeconds()),
+            second: toBigInt(getOneMonthFromNowInSeconds()),
             autoRenewPeriod: OTHER_AUTO_RENEW_PERIOD,
             tokenMetadataURI: longMetadata,
         } as IHederaTokenManager.UpdateTokenStructStructOutput
@@ -116,13 +118,15 @@ describe('➡️ HederaTokenManager Tests', function () {
     })
 
     it('Admin can update token', async function () {
-        const keys = tokenKeysToKey(new TokenKeysToKeyCommand({ publicKey: operator.publicKey, addKyc: false }))
+        const keys = tokenKeysToKey(
+            new TokenKeysToKeyCommand({ publicKey: operator.signingKey.publicKey, addKyc: false })
+        )
         const updateTokenStruct = {
             tokenName: 'newName',
             tokenSymbol: 'newSymbol',
             keys: keys as IHederaTokenManager.UpdateTokenStructStructOutput['keys'],
-            second: BigNumber.from(0),
-            autoRenewPeriod: BigNumber.from(0),
+            second: 0n,
+            autoRenewPeriod: 0n,
             tokenMetadataURI: 'newMemo',
         } as IHederaTokenManager.UpdateTokenStructStructOutput
 
@@ -148,12 +152,14 @@ describe('➡️ HederaTokenManager Tests', function () {
     })
 
     it('Admin and supply token keys cannot be updated', async function () {
-        const keys = allTokenKeysToKey(new AllTokenKeysToKeyCommand({ publicKey: operator.publicKey, addKyc: false }))
+        const keys = allTokenKeysToKey(
+            new AllTokenKeysToKeyCommand({ publicKey: operator.signingKey.publicKey, addKyc: false })
+        )
         const updateTokenStruct = {
             tokenName: 'newName',
             tokenSymbol: 'newSymbol',
             keys: keys as IHederaTokenManager.UpdateTokenStructStructOutput['keys'],
-            second: BigNumber.from(getOneMonthFromNowInSeconds()),
+            second: toBigInt(getOneMonthFromNowInSeconds()),
             autoRenewPeriod: OTHER_AUTO_RENEW_PERIOD,
             tokenMetadataURI: DEFAULT_TOKEN.memo,
         } as IHederaTokenManager.UpdateTokenStructStructOutput
@@ -327,7 +333,7 @@ describe('➡️ HederaTokenManager Tests', function () {
         const initialTotalSupply = await hederaTokenManagerFacet.totalSupply({
             gasLimit: GAS_LIMIT.hederaTokenManager.totalSupply,
         })
-        const badMintResponse = await cashInFacet.mint(operator.address, BigNumber.from(1), {
+        const badMintResponse = await cashInFacet.mint(operator.address, 1, {
             gasLimit: GAS_LIMIT.hederaTokenManager.mint,
         })
         await expect(
@@ -350,6 +356,6 @@ describe('➡️ HederaTokenManager Tests', function () {
         const totalSupply = await hederaTokenManagerFacet.totalSupply({
             gasLimit: GAS_LIMIT.hederaTokenManager.totalSupply,
         })
-        expect(totalSupply).to.equal(initialTotalSupply.add(ONE_TOKEN))
+        expect(totalSupply).to.equal(initialTotalSupply + ONE_TOKEN)
     })
 })

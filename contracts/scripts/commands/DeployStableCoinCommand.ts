@@ -1,5 +1,5 @@
-import { BigNumber, Signer, Wallet } from 'ethers'
-import { IStableCoinFactory } from '@typechain-types'
+import { Signer, Wallet } from 'ethers'
+import { IStableCoinFactory } from '@contracts'
 import {
     DEFAULT_TOKEN,
     ADDRESS_ZERO,
@@ -17,9 +17,9 @@ import {
 export interface TokenInformation {
     name: string
     symbol: string
-    decimals?: number
-    initialSupply: BigNumber
-    maxSupply?: BigNumber
+    decimals?: bigint
+    initialSupply: bigint
+    maxSupply?: bigint
     memo: string
     freeze: boolean
 }
@@ -108,7 +108,7 @@ export default class DeployStableCoinCommand {
 
         const keys = allToContract
             ? tokenKeysToContract({ addKyc, addFeeSchedule, addSupply, addWipe })
-            : tokenKeysToKey(new TokenKeysToKeyCommand({ publicKey: wallet.publicKey, isEd25519: false }))
+            : tokenKeysToKey(new TokenKeysToKeyCommand({ publicKey: wallet.signingKey.publicKey, isEd25519: false }))
 
         const tokenStruct: IStableCoinFactory.TokenStructStruct = {
             tokenName: tokenInformation.name,

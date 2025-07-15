@@ -881,11 +881,11 @@ describe('🧪 Stablecoin test', () => {
 			}),
 		);
 
-		const final = initialAmount.value
-			.toBigNumber()
-			.sub(new BigDecimal(burnAmount.toString(), DECIMALS).toBigNumber());
+		const final =
+			initialAmount.value.toBigInt() -
+			new BigDecimal(burnAmount.toString(), DECIMALS).toBigInt();
 
-		expect(finalAmount.value.toBigNumber().toString()).toEqual(
+		expect(finalAmount.value.toBigInt().toString()).toEqual(
 			final.toString(),
 		);
 	}
@@ -917,13 +917,11 @@ describe('🧪 Stablecoin test', () => {
 			}),
 		);
 
-		const final = initialAmount.value
-			.toBigNumber()
-			.add(
-				new BigDecimal(cashInAmount.toString(), DECIMALS).toBigNumber(),
-			);
+		const final =
+			initialAmount.value.toBigInt() +
+			new BigDecimal(cashInAmount.toString(), DECIMALS).toBigInt();
 
-		expect(finalAmount.value.toBigNumber().toString()).toEqual(
+		expect(finalAmount.value.toBigInt().toString()).toEqual(
 			final.toString(),
 		);
 	}
@@ -954,13 +952,11 @@ describe('🧪 Stablecoin test', () => {
 			}),
 		);
 
-		const final = initialAmount.value
-			.toBigNumber()
-			.sub(
-				new BigDecimal(rescueAmount.toString(), DECIMALS).toBigNumber(),
-			);
+		const final =
+			initialAmount.value.toBigInt() -
+			new BigDecimal(rescueAmount.toString(), DECIMALS).toBigInt();
 
-		expect(finalAmount.value.toBigNumber().toString()).toEqual(
+		expect(finalAmount.value.toBigInt().toString()).toEqual(
 			final.toString(),
 		);
 	}
@@ -988,11 +984,9 @@ describe('🧪 Stablecoin test', () => {
 			}),
 		);
 
-		const final = initialAmount.value
-			.toBigNumber()
-			.sub(rescueAmount.toBigNumber());
+		const final = initialAmount.value.toBigInt() - rescueAmount.toBigInt();
 
-		expect(finalAmount.value.toBigNumber().toString()).toEqual(
+		expect(finalAmount.value.toBigInt().toString()).toEqual(
 			final.toString(),
 		);
 	}
@@ -1024,11 +1018,11 @@ describe('🧪 Stablecoin test', () => {
 			}),
 		);
 
-		const final = initialAmount.value
-			.toBigNumber()
-			.sub(new BigDecimal(wipeAmount.toString(), DECIMALS).toBigNumber());
+		const final =
+			initialAmount.value.toBigInt() -
+			new BigDecimal(wipeAmount.toString(), DECIMALS).toBigInt();
 
-		expect(finalAmount.value.toBigNumber().toString()).toEqual(
+		expect(finalAmount.value.toBigInt().toString()).toEqual(
 			final.toString(),
 		);
 	}

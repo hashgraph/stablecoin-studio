@@ -5,7 +5,7 @@ import {IBusinessLogicResolver} from '../../interfaces/IBusinessLogicResolver.so
 import {IDiamondLoupe} from '../../interfaces/resolverProxy/IDiamondLoupe.sol';
 import {RolesStorageWrapper} from '../../../extensions/RolesStorageWrapper.sol';
 import {_RESOLVER_PROXY_STORAGE_POSITION} from '../../../constants/storagePositions.sol';
-import {IHederaTokenManager, RolesStruct} from '../../../Interfaces/IHederaTokenManager.sol';
+import {RolesStruct} from '../../../Interfaces/IHederaTokenManager.sol';
 
 // Remember to add the loupe functions from DiamondLoupeFacet.sol.sol to the resolverProxy.
 // The loupe functions are required by the EIP2535 ResolverProxys standard

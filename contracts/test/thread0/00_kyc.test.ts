@@ -1,7 +1,7 @@
 import { expect } from 'chai'
-import { SignerWithAddress } from '@nomiclabs/hardhat-ethers/signers'
+import { SignerWithAddress } from '@nomicfoundation/hardhat-ethers/signers'
 import { ethers } from 'hardhat'
-import { CashInFacet, CashInFacet__factory, KYCFacet, KYCFacet__factory } from '@typechain-types'
+import { CashInFacet, CashInFacet__factory, KYCFacet, KYCFacet__factory } from '@contracts'
 import {
     ADDRESS_ZERO,
     deployFullInfrastructure,
@@ -28,7 +28,7 @@ describe('➡️ KYC Tests', function () {
 
     before(async () => {
         // mute | mock console.log
-        console.log = () => {} // eslint-disable-line
+        // console.log = () => {} // eslint-disable-line
         console.info(MESSAGES.deploy.info.deployFullInfrastructureInTests)
         ;[operator, nonOperator] = await ethers.getSigners()
 

@@ -1,12 +1,12 @@
-import { Overrides, providers } from 'ethers'
+import { Overrides, Provider } from 'ethers'
 
 export interface BaseBlockchainQueryParams {
-    provider: providers.Provider
+    provider: Provider
     overrides?: Overrides
 }
 
 export default abstract class BaseBlockchainQuery {
-    public readonly provider: providers.Provider
+    public readonly provider: Provider
     public readonly overrides?: Overrides
 
     constructor({ provider, overrides }: BaseBlockchainQueryParams) {

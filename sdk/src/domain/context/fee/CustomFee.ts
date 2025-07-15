@@ -18,6 +18,7 @@
  *
  */
 
+import CheckEvmAddress from '../../../core/checks/evmaddress/CheckEvmAddress.js';
 import { EVM_ZERO_ADDRESS } from '../../../core/Constants.js';
 import BigDecimal from '../shared/BigDecimal.js';
 import { HederaId } from '../shared/HederaId.js';
@@ -203,7 +204,9 @@ export function fromHCustomFeeToSCFee(
 		const tokenId =
 			fee.denominatingTokenId &&
 			fee.denominatingTokenId.toString() != '0.0.0'
-				? fee.denominatingTokenId.toSolidityAddress()
+				? CheckEvmAddress.toEvmAddress(
+						fee.denominatingTokenId.toSolidityAddress(),
+				  )
 				: EVM_ZERO_ADDRESS;
 		const useHbarsForPayment = tokenId === EVM_ZERO_ADDRESS;
 		const useCurrentTokenForPayment =

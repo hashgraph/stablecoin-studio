@@ -4,7 +4,7 @@ pragma solidity 0.8.18;
 import {ResolverProxyUnstructured} from './unstructured/ResolverProxyUnstructured.sol';
 import {IResolverProxy} from '../interfaces/resolverProxy/IResolverProxy.sol';
 import {IBusinessLogicResolver} from '../interfaces/IBusinessLogicResolver.sol';
-import {IHederaTokenManager, RolesStruct} from '../../Interfaces/IHederaTokenManager.sol';
+import {RolesStruct} from '../../Interfaces/IHederaTokenManager.sol';
 
 contract ResolverProxyFallBack is ResolverProxyUnstructured {
     receive() external payable {}

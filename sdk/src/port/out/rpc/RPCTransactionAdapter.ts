@@ -50,16 +50,14 @@ import {
 	WipeableFacet__factory,
 } from '@hashgraph/stablecoin-npm-contracts';
 import TransactionAdapter, { InitializationData } from '../TransactionAdapter';
-import { BigNumber, ContractTransaction, ethers, Signer } from 'ethers';
+import { ContractTransactionResponse, ethers, Provider, Signer } from 'ethers';
 import { singleton } from 'tsyringe';
 import StableCoinCapabilities from '../../../domain/context/stablecoin/StableCoinCapabilities.js';
 import BigDecimal from '../../../domain/context/shared/BigDecimal.js';
 import Injectable from '../../../core/Injectable.js';
-import type { Provider } from '@ethersproject/providers';
 import { CapabilityDecider, Decision } from '../CapabilityDecider.js';
 import { Operation } from '../../../domain/context/stablecoin/Capability.js';
 import { CapabilityError } from '../hs/error/CapabilityError.js';
-import { CallableContract } from '../../../core/Cast.js';
 import { StableCoinRole } from '../../../domain/context/stablecoin/StableCoinRole.js';
 import detectEthereumProvider from '@metamask/detect-provider';
 import { RuntimeError } from '../../../core/error/RuntimeError.js';
@@ -160,6 +158,7 @@ import {
 	Resolvers,
 } from '../../../domain/context/factory/Resolvers.js';
 import { Hold, HoldIdentifier } from '../../../domain/context/hold/Hold.js';
+import CheckEvmAddress from '../../../core/checks/evmaddress/CheckEvmAddress.js';
 
 // eslint-disable-next-line no-var
 declare var ethereum: MetaMaskInpageProvider;
@@ -167,7 +166,7 @@ declare var ethereum: MetaMaskInpageProvider;
 @singleton()
 export default class RPCTransactionAdapter extends TransactionAdapter {
 	account: Account;
-	web3Provider: ethers.providers.Web3Provider;
+	web3Provider: ethers.BrowserProvider;
 	signerOrProvider: Signer | Provider;
 	mirrorNodes: MirrorNodes;
 	jsonRpcRelays: JsonRpcRelays;
@@ -339,7 +338,7 @@ export default class RPCTransactionAdapter extends TransactionAdapter {
 			const res = await factoryInstance.deployStableCoin(
 				stableCoinToCreate,
 				{
-					value: ethers.utils.parseEther(
+					value: ethers.parseEther(
 						TOKEN_CREATION_COST_HBAR.toString(),
 					),
 					gasLimit: CREATE_SC_GAS,
@@ -350,7 +349,7 @@ export default class RPCTransactionAdapter extends TransactionAdapter {
 			return await RPCTransactionResponseAdapter.manageResponse(
 				res,
 				this.networkService.environment,
-				'Deployed',
+				{ eventName: 'Deployed', contract: factoryInstance },
 			);
 		} catch (error) {
 			LogService.logError(error);
@@ -587,8 +586,8 @@ export default class RPCTransactionAdapter extends TransactionAdapter {
 		targetId?: HederaId,
 	): Promise<TransactionResponse> {
 		const hold = new Hold(
-			amount.toBigNumber(),
-			expirationDate.toBigNumber(),
+			amount.toBigInt(),
+			expirationDate.toBigInt(),
 			escrow,
 			targetId ? targetId : HederaId.NULL,
 			'0x',
@@ -608,8 +607,8 @@ export default class RPCTransactionAdapter extends TransactionAdapter {
 		targetId?: HederaId,
 	): Promise<TransactionResponse> {
 		const hold = new Hold(
-			amount.toBigNumber(),
-			expirationDate.toBigNumber(),
+			amount.toBigInt(),
+			expirationDate.toBigInt(),
 			escrow,
 			targetId ? targetId : HederaId.NULL,
 			'0x',
@@ -787,7 +786,7 @@ export default class RPCTransactionAdapter extends TransactionAdapter {
 						)
 					).evmAddress,
 					this.signerOrProvider,
-				).setAmount(amount.toBigNumber(), {
+				).setAmount(amount.toBigInt(), {
 					gasLimit: UPDATE_RESERVE_AMOUNT_GAS,
 				}),
 				this.networkService.environment,
@@ -883,9 +882,9 @@ export default class RPCTransactionAdapter extends TransactionAdapter {
 					message: `StableCoin ${coin.coin.name} does not have a proxy address`,
 				});
 
-			const amountsFormatted: BigNumber[] = [];
+			const amountsFormatted: bigint[] = [];
 			amounts.forEach((amount) => {
-				amountsFormatted.push(amount.toBigNumber());
+				amountsFormatted.push(amount.toBigInt());
 			});
 
 			const accounts: string[] = [];
@@ -983,7 +982,7 @@ export default class RPCTransactionAdapter extends TransactionAdapter {
 				).grantSupplierRole(
 					// (await this.accountToEvmAddress(targetId)).toString(),
 					await this.getEVMAddress(targetId),
-					amount.toBigNumber(),
+					amount.toBigInt(),
 					{ gasLimit: GRANT_ROLES_GAS },
 				),
 				this.networkService.environment,
@@ -1246,7 +1245,7 @@ export default class RPCTransactionAdapter extends TransactionAdapter {
 				).increaseSupplierAllowance(
 					// (await this.accountToEvmAddress(targetId)).toString(),
 					await this.getEVMAddress(targetId),
-					amount.toBigNumber(),
+					amount.toBigInt(),
 					{ gasLimit: INCREASE_SUPPLY_GAS },
 				),
 				this.networkService.environment,
@@ -1282,7 +1281,7 @@ export default class RPCTransactionAdapter extends TransactionAdapter {
 				).decreaseSupplierAllowance(
 					// (await this.accountToEvmAddress(targetId)).toString(),
 					await this.getEVMAddress(targetId),
-					amount.toBigNumber(),
+					amount.toBigInt(),
 					{ gasLimit: DECREASE_SUPPLY_GAS },
 				),
 				this.networkService.environment,
@@ -1393,10 +1392,9 @@ export default class RPCTransactionAdapter extends TransactionAdapter {
 			const HTSTokenEVMAddress = tokenId
 				.toHederaAddress()
 				.toSolidityAddress();
-
 			const response = await RPCTransactionResponseAdapter.manageResponse(
 				await IHRC__factory.connect(
-					HTSTokenEVMAddress,
+					CheckEvmAddress.toEvmAddress(HTSTokenEVMAddress),
 					this.signerOrProvider,
 				).associate({ gasLimit: ASSOCIATE_GAS }),
 				this.networkService.environment,
@@ -1425,13 +1423,18 @@ export default class RPCTransactionAdapter extends TransactionAdapter {
 		contractAddress: string,
 		functionName: string,
 		param: unknown[],
-	): Promise<ContractTransaction> {
-		const tokenManager: CallableContract =
-			IHederaTokenService__factory.connect(
-				contractAddress,
-				this.signerOrProvider,
-			).functions;
-		return tokenManager[functionName](...param);
+	): Promise<ContractTransactionResponse> {
+		const tokenManager = IHederaTokenService__factory.connect(
+			contractAddress,
+			this.signerOrProvider,
+		);
+		const fn = tokenManager.getFunction(functionName);
+
+		if (typeof fn !== 'function') {
+			throw new Error(`Function ${functionName} not found on contract`);
+		}
+
+		return await fn(...param);
 	}
 
 	async signAndSendTransaction(
@@ -1465,11 +1468,8 @@ export default class RPCTransactionAdapter extends TransactionAdapter {
 						);
 
 					pair && (await this.pairWallet());
-					this.web3Provider = new ethers.providers.Web3Provider(
-						// @ts-expect-error No TS compatibility
-						ethereum,
-					);
-					this.signerOrProvider = this.web3Provider.getSigner();
+					this.web3Provider = new ethers.BrowserProvider(ethereum);
+					this.signerOrProvider = await this.web3Provider.getSigner();
 				} else {
 					throw new WalletConnectError('Metamask was not found!');
 				}
@@ -1502,11 +1502,8 @@ export default class RPCTransactionAdapter extends TransactionAdapter {
 				evmAddress: mirrorAccount.accountEvmAddress,
 				publicKey: mirrorAccount.publicKey,
 			});
-			this.web3Provider = new ethers.providers.Web3Provider(
-				// @ts-expect-error No TS compatibility
-				ethereum,
-			);
-			this.signerOrProvider = this.web3Provider.getSigner();
+			this.web3Provider = new ethers.BrowserProvider(ethereum);
+			this.signerOrProvider = await this.web3Provider.getSigner();
 		} else {
 			this.account = Account.NULL;
 		}
@@ -1607,11 +1604,8 @@ export default class RPCTransactionAdapter extends TransactionAdapter {
 			new SetConfigurationCommand(factoryId, resolverId),
 		);
 
-		this.web3Provider = new ethers.providers.Web3Provider(
-			// @ts-expect-error No TS compatibility
-			ethereum,
-		);
-		this.signerOrProvider = this.web3Provider.getSigner();
+		this.web3Provider = new ethers.BrowserProvider(ethereum);
+		this.signerOrProvider = await this.web3Provider.getSigner();
 
 		// await new Promise(f => setTimeout(f, 3000));
 	}
@@ -1799,11 +1793,9 @@ export default class RPCTransactionAdapter extends TransactionAdapter {
 					await CashInFacet__factory.connect(
 						evmProxy,
 						this.signerOrProvider,
-					).mint(
-						targetEvm.toString(),
-						params!.amount!.toBigNumber(),
-						{ gasLimit: CASHIN_GAS },
-					),
+					).mint(targetEvm.toString(), params!.amount!.toBigInt(), {
+						gasLimit: CASHIN_GAS,
+					}),
 					this.networkService.environment,
 				);
 
@@ -1812,7 +1804,7 @@ export default class RPCTransactionAdapter extends TransactionAdapter {
 					await BurnableFacet__factory.connect(
 						evmProxy,
 						this.signerOrProvider,
-					).burn(params!.amount!.toBigNumber(), {
+					).burn(params!.amount!.toBigInt(), {
 						gasLimit: BURN_GAS,
 					}),
 					this.networkService.environment,
@@ -1823,7 +1815,7 @@ export default class RPCTransactionAdapter extends TransactionAdapter {
 					await WipeableFacet__factory.connect(
 						evmProxy,
 						this.signerOrProvider,
-					).wipe(params!.targetId!, params!.amount!.toBigNumber(), {
+					).wipe(params!.targetId!, params!.amount!.toBigInt(), {
 						gasLimit: WIPE_GAS,
 					}),
 					this.networkService.environment,
@@ -1834,7 +1826,7 @@ export default class RPCTransactionAdapter extends TransactionAdapter {
 					await RescuableFacet__factory.connect(
 						evmProxy,
 						this.signerOrProvider,
-					).rescue(params!.amount!.toBigNumber(), {
+					).rescue(params!.amount!.toBigInt(), {
 						gasLimit: RESCUE_GAS,
 					}),
 					this.networkService.environment,
@@ -1845,7 +1837,7 @@ export default class RPCTransactionAdapter extends TransactionAdapter {
 					await RescuableFacet__factory.connect(
 						evmProxy,
 						this.signerOrProvider,
-					).rescueHBAR(params!.amount!.toBigNumber(), {
+					).rescueHBAR(params!.amount!.toBigInt(), {
 						gasLimit: RESCUE_HBAR_GAS,
 					}),
 					this.networkService.environment,
@@ -2040,7 +2032,7 @@ export default class RPCTransactionAdapter extends TransactionAdapter {
 					).executeHold(
 						params!.holdIdentifier!,
 						params!.targetId!,
-						params!.amount!.toBigNumber(),
+						params!.amount!.toBigInt(),
 						{
 							gasLimit: EXECUTE_HOLD_GAS,
 						},
@@ -2054,7 +2046,7 @@ export default class RPCTransactionAdapter extends TransactionAdapter {
 						this.signerOrProvider,
 					).releaseHold(
 						params!.holdIdentifier!,
-						params!.amount!.toBigNumber(),
+						params!.amount!.toBigInt(),
 						{
 							gasLimit: RELEASE_HOLD_GAS,
 						},
@@ -2080,9 +2072,9 @@ export default class RPCTransactionAdapter extends TransactionAdapter {
 	}
 
 	async sign(message: string): Promise<string> {
-		if (!(this.signerOrProvider instanceof Signer))
+		if (typeof (this.signerOrProvider as any).signMessage !== 'function') {
 			throw new Error('RPC instance is not a Signer.');
-
+		}
 		const bytesToSign = Hex.toUint8Array(message);
 		const bytesToSignHash = this.calcKeccak256(bytesToSign);
 		const bytesToSignHashHex = '0x' + Hex.fromUint8Array(bytesToSignHash);

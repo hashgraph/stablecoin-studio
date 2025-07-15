@@ -2,7 +2,6 @@
 pragma solidity 0.8.18;
 
 import {ResolverProxyFallBack} from '../../resolver/resolverProxy/ResolverProxy.sol';
-import {IResolverProxy} from '../../resolver/interfaces/resolverProxy/IResolverProxy.sol';
 import {IBusinessLogicResolver} from '../../resolver/interfaces/IBusinessLogicResolver.sol';
 import {RolesStruct} from '../../Interfaces/IHederaTokenManager.sol';
 import {_MIGRATION_PROXY_V2_RESOLVER_KEY} from './../../constants/resolverKeys.sol';

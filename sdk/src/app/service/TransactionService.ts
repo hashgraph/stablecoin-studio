@@ -136,9 +136,7 @@ export default class TransactionService extends Service {
 
 					for (
 						let i = 0;
-						i <
-						decodedFunctionParameters.functionFragment.inputs
-							.length;
+						i < decodedFunctionParameters.fragment.inputs.length;
 						i++
 					) {
 						if (i != 0) args = args.concat(', ');
@@ -151,8 +149,7 @@ export default class TransactionService extends Service {
 						}
 
 						args = args.concat(
-							decodedFunctionParameters.functionFragment.inputs[i]
-								.name +
+							decodedFunctionParameters.fragment.inputs[i].name +
 								' : ' +
 								value,
 						);
@@ -310,16 +307,16 @@ export default class TransactionService extends Service {
 
 	static decodeFunctionCall(
 		parameters: Uint8Array,
-	): ethers.utils.TransactionDescription | undefined {
+	): ethers.TransactionDescription | null {
 		const inputData = '0x' + Hex.fromUint8Array(parameters);
 
 		try {
-			const iface_tokenManager = new ethers.utils.Interface(
+			const iface_tokenManager = new ethers.Interface(
 				HederaTokenManagerFacet__factory.abi,
 			);
 			return iface_tokenManager.parseTransaction({ data: inputData });
 		} catch (e) {
-			return undefined;
+			return null;
 		}
 	}
 

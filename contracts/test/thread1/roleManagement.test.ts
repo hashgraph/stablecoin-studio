@@ -1,5 +1,5 @@
 import { expect } from 'chai'
-import { SignerWithAddress } from '@nomiclabs/hardhat-ethers/signers'
+import { SignerWithAddress } from '@nomicfoundation/hardhat-ethers/signers'
 import { ethers } from 'hardhat'
 import {
     RoleManagementFacet,
@@ -8,7 +8,7 @@ import {
     RolesFacet__factory,
     SupplierAdminFacet,
     SupplierAdminFacet__factory,
-} from '@typechain-types'
+} from '@contracts'
 import {
     delay,
     deployFullInfrastructure,
@@ -18,7 +18,7 @@ import {
     ValidateTxResponseCommand,
 } from '@scripts'
 import { deployStableCoinInTests, GAS_LIMIT, randomAccountAddressList } from '@test/shared'
-import { BigNumber } from 'ethers'
+import { toBigInt } from 'ethers'
 
 describe('➡️ Role Management Tests', function () {
     // Contracts
@@ -120,20 +120,20 @@ describe('➡️ Role Management Tests', function () {
         const txResponse = await roleManagementFacet.grantRoles(
             rolesToGrant,
             randomAccountList,
-            randomAccountList.map((_, index) => BigNumber.from(index)),
+            randomAccountList.map((_, index) => toBigInt(index)),
             {
                 gasLimit: GAS_LIMIT.hederaTokenManager.grantRoles,
             }
         )
         await new ValidateTxResponseCommand({ txResponse }).execute()
-
+        await delay({ time: 1, unit: 'sec' })
         // Check roles and cash in allowances
         for (let accountIndex = 0; accountIndex < randomAccountList.length; accountIndex++) {
             const roles = await rolesFacet.getRoles(randomAccountList[accountIndex], {
                 gasLimit: GAS_LIMIT.hederaTokenManager.getRoles,
             })
             for (const rol of roles) {
-                expect(rolesToGrant).to.include(rol)
+                expect(Array.from(rolesToGrant)).to.include(rol)
             }
             const allowance = await supplierAdminFacet
                 .connect(nonOperator)
@@ -172,7 +172,7 @@ describe('➡️ Role Management Tests', function () {
                 gasLimit: GAS_LIMIT.hederaTokenManager.revokeRoles,
             })
         await expect(new ValidateTxResponseCommand({ txResponse }).execute()).to.be.rejectedWith(Error)
-
+        await delay({ time: 2, unit: 'ms' })
         // Check roles after failed grant
         for (const account of randomAccountList) {
             const hasBurnRole = rolesFacet.hasRole(ROLES.burn.hash, account, {
@@ -206,7 +206,7 @@ describe('➡️ Role Management Tests', function () {
                 gasLimit: GAS_LIMIT.hederaTokenManager.getRoles,
             })
             for (const role of roleList) {
-                expect(rolesToRevoke).to.include(role)
+                expect(Array.from(rolesToRevoke)).to.include(role)
             }
         }
 
@@ -215,7 +215,7 @@ describe('➡️ Role Management Tests', function () {
             gasLimit: GAS_LIMIT.hederaTokenManager.revokeRoles,
         })
         await new ValidateTxResponseCommand({ txResponse }).execute()
-
+        await delay({ time: 2, unit: 'ms' })
         // Check roles and cash in allowances
         await delay({ time: 1, unit: 'sec' })
         for (let i = 0; i < randomAccountList.length; i++) {
@@ -243,10 +243,16 @@ describe('➡️ Role Management Tests', function () {
     it('Admin Cannot grant CashIn role without allowances', async function () {
         // Granting roles with cash in but without allowances
         const Roles = [ROLES.cashin.hash]
-        const amounts: BigNumber[] = []
-        const txResponse = await roleManagementFacet.grantRoles(Roles, randomAccountList, amounts, {
-            gasLimit: GAS_LIMIT.hederaTokenManager.grantRoles,
-        })
+        const amounts: bigint[] = []
+
+        const txResponse = await roleManagementFacet.grantRoles(
+            Roles,
+            randomAccountList,
+            amounts.map((_, index) => toBigInt(index)),
+            {
+                gasLimit: GAS_LIMIT.hederaTokenManager.grantRoles,
+            }
+        )
         await expect(new ValidateTxResponseCommand({ txResponse }).execute()).to.be.rejectedWith(Error)
     })
 

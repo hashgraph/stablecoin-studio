@@ -1,8 +1,7 @@
-import { SignerWithAddress } from '@nomiclabs/hardhat-ethers/signers'
+import { SignerWithAddress } from '@nomicfoundation/hardhat-ethers/signers'
 import { expect } from 'chai'
-import { BigNumber } from 'ethers'
 import { deployStableCoinInTests } from '@test/shared'
-import { HederaReserveFacet, HederaReserveFacet__factory } from '@typechain-types'
+import { HederaReserveFacet, HederaReserveFacet__factory } from '@contracts'
 import {
     DEFAULT_TOKEN,
     delay,
@@ -22,7 +21,7 @@ describe('HederaReserve Tests', function () {
     let operator: SignerWithAddress
     let nonOperator: SignerWithAddress
 
-    const reserve = BigNumber.from('100').mul(DEFAULT_TOKEN.tokenFactor)
+    const reserve = 100n * DEFAULT_TOKEN.tokenFactor
 
     async function setFacets(address: string) {
         hederaReserveFacet = HederaReserveFacet__factory.connect(address, operator)
@@ -58,7 +57,7 @@ describe('HederaReserve Tests', function () {
     })
 
     it('Update admin address', async function () {
-        const ONE = BigNumber.from(1)
+        const ONE = 1
 
         // Set admin to nonOperator
         const setAdminResponse = await hederaReserveFacet.setAdmin(nonOperator.address, {
@@ -102,7 +101,7 @@ describe('HederaReserve Tests', function () {
     })
 
     it('Update reserve throw error client no isAdmin', async function () {
-        const txResponse = await hederaReserveFacet.connect(nonOperator).setAmount(BigNumber.from(1), {
+        const txResponse = await hederaReserveFacet.connect(nonOperator).setAmount(1, {
             gasLimit: GAS_LIMIT.hederaReserve.setAmount,
         })
         await expect(new ValidateTxResponseCommand({ txResponse }).execute()).to.be.rejectedWith(Error)
@@ -112,7 +111,7 @@ describe('HederaReserve Tests', function () {
         const beforeUpdateAmount = await hederaReserveFacet.latestRoundData({
             gasLimit: GAS_LIMIT.hederaReserve.latestRoundData,
         })
-        const setAmountResponse = await hederaReserveFacet.setAmount(BigNumber.from(1), {
+        const setAmountResponse = await hederaReserveFacet.setAmount(1, {
             gasLimit: GAS_LIMIT.hederaReserve.setAmount,
         })
         await new ValidateTxResponseCommand({ txResponse: setAmountResponse }).execute()
@@ -122,7 +121,7 @@ describe('HederaReserve Tests', function () {
             gasLimit: GAS_LIMIT.hederaReserve.latestRoundData,
         })
         expect(beforeUpdateAmount).not.to.equals(afterUpdateAmount)
-        expect(afterUpdateAmount.answer).to.equals(BigNumber.from(1).toString())
+        expect(afterUpdateAmount.answer).to.equals(1n)
 
         // Reset to original state
         const resetAmountResponse = await hederaReserveFacet.setAmount(reserve, {

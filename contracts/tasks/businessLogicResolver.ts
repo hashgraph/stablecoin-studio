@@ -41,7 +41,7 @@ task('getResolverBusinessLogics', 'Get business logics from resolver')
     .addPositionalParam('resolver', 'The resolver proxy admin address', undefined, types.string)
     .setAction(async (args: GetResolverBusinessLogicsQuery, hre) => {
         console.log(`Executing getResolverBusinessLogics on ${hre.network.name} ...`)
-        const { IBusinessLogicResolver__factory } = await import('@typechain-types')
+        const { IBusinessLogicResolver__factory } = await import('@contracts/index')
 
         // Fetch business logic keys
         const businessLogicKeys = await IBusinessLogicResolver__factory.connect(
@@ -108,7 +108,7 @@ task('initializeBusinessLogicResolver', 'Initialize the business logic resolver'
     .addOptionalParam('signerposition', 'The index of the signer in the Hardhat signers array', undefined, types.int)
     .setAction(async (args: { resolverAddress: string; privateKey: string }, hre) => {
         // Inlined import due to circular dependency
-        const { BusinessLogicResolver__factory } = await import('@typechain-types')
+        const { BusinessLogicResolver__factory } = await import('@contracts/index')
         console.log(`Executing initialize_BusinessLogicResolver on ${hre.network.name} ...`)
 
         const signer = new Wallet(args.privateKey, hre.ethers.provider)

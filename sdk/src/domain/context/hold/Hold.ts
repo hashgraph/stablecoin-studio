@@ -21,14 +21,13 @@
 import BaseError from '../../../core/error/BaseError';
 import InvalidExpirationTimestamp from '../stablecoin/error/InvalidExpirationTimestamp';
 import BigDecimal from '../shared/BigDecimal.js';
-import { BigNumber } from 'ethers';
 import { HederaId } from '../shared/HederaId.js';
 import { EVM_ZERO_ADDRESS } from '../../../core/Constants';
 
 export class Hold {
 	constructor(
-		public readonly amount: BigNumber,
-		public readonly expirationTimestamp: BigNumber,
+		public readonly amount: bigint,
+		public readonly expirationTimestamp: bigint,
 		public readonly escrow: HederaId,
 		public readonly to: HederaId,
 		public readonly data: string,

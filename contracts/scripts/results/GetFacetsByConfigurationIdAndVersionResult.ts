@@ -1,4 +1,4 @@
-import { IDiamondLoupe } from '@typechain-types'
+import { IDiamondLoupe } from '@contracts'
 
 interface FacetsPerVersion {
     facetListRecord: Record<number, IDiamondLoupe.FacetStructOutput[]>

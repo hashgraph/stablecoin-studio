@@ -93,7 +93,7 @@ export default class CheckNums {
 	): boolean {
 		let val = from;
 		if (typeof val === 'string') val = BigDecimal.fromString(val);
-		return val.format.decimals > to;
+		return val.decimals > to;
 	}
 
 	public static isNumber(value: any): value is number | bigint {
