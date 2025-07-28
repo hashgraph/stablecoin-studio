@@ -126,6 +126,8 @@ const main = async () => {
 		}),
 	);
 
+	await new Promise((resolve) => setTimeout(resolve, 5000));
+
 	// Check if the account has the Wipe role
 	const noRole = await Role.hasRole(
 		new HasRoleRequest({
@@ -135,10 +137,8 @@ const main = async () => {
 		}),
 	);
 
-	await new Promise((resolve) => setTimeout(resolve, 5000));
-
 	// Assert that the account does not have the Wipe role
-	assert(noRole !== false, 'Expected no role for the account, but found one');
+	assert(noRole === false, 'Expected no role for the account, but found one');
 
 	// Grant the Wipe role to the account
 	await Role.grantRole(
