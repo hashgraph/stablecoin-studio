@@ -12,7 +12,7 @@
 		"burn": "npm run build && node build/burn.js",
 		"mint": "npm run build && node build/mint.js",
 		"wipe": "npm run build && node build/wipe.js",
-		"roles": "npm run build && node build/roles.js",
+		"roles": "npm run build && node build/role.js",
 		"test": "echo \"Error: no test specified\" && exit 1"
 	},
 	"keywords": [],
