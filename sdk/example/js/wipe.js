@@ -6,7 +6,14 @@ const {
 	SupportedWallets,
 	TokenSupplyType,
 	StableCoin,
+	KYCRequest,
+	GetAccountBalanceRequest,
+	CashInRequest,
+	BigDecimal,
+	AssociateTokenRequest,
+	WipeRequest,
 } = require('@hashgraph/stablecoin-npm-sdk');
+const { assert } = require('console');
 
 // Load environment variables from .env file
 require('dotenv').config({ path: __dirname + '/../.env' });
@@ -62,12 +69,12 @@ const main = async () => {
 		}),
 	);
 
-	// Create a new stablecoin with the specified parameters with reserve
+	// Create a new stablecoin with the specified parameters
 	const request = new CreateRequest({
 		name: 'test',
 		symbol: 'test',
-		decimals: 0,
-		initialSupply: '1',
+		decimals: 6,
+		initialSupply: '1000',
 		freezeKey: {
 			key: 'null',
 			type: 'null',
@@ -89,7 +96,6 @@ const main = async () => {
 			type: 'null',
 		},
 		supplyType: TokenSupplyType.INFINITE,
-		reserveAddress: '0x765fe75dbb4afcbf7eb4c67fa9e7bdcc5c6bca64',
 		createReserve: false,
 		grantKYCToOriginalSender: true,
 		burnRoleAccount: account.accountId.toString(),
@@ -110,7 +116,91 @@ const main = async () => {
 
 	// Create the stablecoin and log the result
 	const stableCoin = await StableCoin.create(request);
-	console.log('StableCoin with reserve created:', stableCoin);
+	console.log('StableCoin created:', stableCoin);
+
+	// Associate the stablecoin with the account
+	await StableCoin.associate(
+		new AssociateTokenRequest({
+			targetId: account.accountId.toString(),
+			tokenId: stableCoin?.coin?.tokenId?.toString(),
+		}),
+	);
+
+	//Grant KYC to the original sender
+	await StableCoin.grantKyc(
+		new KYCRequest({
+			targetId: account.accountId.toString(),
+			tokenId: stableCoin?.coin?.tokenId?.toString(),
+		}),
+	);
+
+	// Check balance before cash-in
+	const initialAmount = await StableCoin.getBalanceOf(
+		new GetAccountBalanceRequest({
+			tokenId: stableCoin?.coin?.tokenId?.toString(),
+			targetId: account.accountId.toString(),
+		}),
+	);
+
+	await new Promise((resolve) => setTimeout(resolve, 5000));
+
+	// Perform cash-in operation
+	await StableCoin.cashIn(
+		new CashInRequest({
+			amount: '10',
+			tokenId: stableCoin?.coin?.tokenId?.toString(),
+			targetId: account.accountId.toString(),
+		}),
+	);
+
+	await new Promise((resolve) => setTimeout(resolve, 5000));
+
+	// Check balance after cash-in
+	const finalAmount = await StableCoin.getBalanceOf(
+		new GetAccountBalanceRequest({
+			tokenId: stableCoin?.coin?.tokenId?.toString(),
+			targetId: account.accountId.toString(),
+		}),
+	);
+
+	// Assert that the final amount is as expected
+	const final =
+		initialAmount.value.toBigInt() + new BigDecimal('10', 6).toBigInt();
+
+	assert(
+		finalAmount.value.toBigInt().toString() === final.toString(),
+		'Cash-in operation failed: balance mismatch',
+	);
+
+	// Perform wipe operation
+	await StableCoin.wipe(
+		new WipeRequest({
+			amount: '1',
+			tokenId: stableCoin?.coin?.tokenId?.toString(),
+			targetId: account.accountId.toString(),
+		}),
+	);
+
+	await new Promise((resolve) => setTimeout(resolve, 5000));
+
+	// Check balance after wipe
+	const finalAmountAfterWipe = await StableCoin.getBalanceOf(
+		new GetAccountBalanceRequest({
+			tokenId: stableCoin?.coin?.tokenId?.toString(),
+			targetId: account.accountId.toString(),
+		}),
+	);
+
+	// Assert that the final amount after wipe is as expected
+	const finalAfterWipe =
+		finalAmount.value.toBigInt() - new BigDecimal('1', 6).toBigInt();
+
+	assert(
+		finalAmountAfterWipe.value.toBigInt().toString() ===
+			finalAfterWipe.toString(),
+		'Wipe operation failed: balance mismatch',
+	);
+
 	process.exit(0);
 };
 

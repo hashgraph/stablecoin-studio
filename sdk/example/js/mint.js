@@ -6,7 +6,13 @@ const {
 	SupportedWallets,
 	TokenSupplyType,
 	StableCoin,
+	KYCRequest,
+	GetAccountBalanceRequest,
+	CashInRequest,
+	BigDecimal,
+	AssociateTokenRequest,
 } = require('@hashgraph/stablecoin-npm-sdk');
+const { assert } = require('console');
 
 // Load environment variables from .env file
 require('dotenv').config({ path: __dirname + '/../.env' });
@@ -52,7 +58,7 @@ const main = async () => {
 	};
 
 	// Connect to the network using the provided account
-	const connection = await Network.connect(
+	await Network.connect(
 		new ConnectRequest({
 			account: account,
 			network: 'testnet',
@@ -69,33 +75,37 @@ const main = async () => {
 		decimals: 6,
 		initialSupply: '1000',
 		freezeKey: {
-			key: connection.account.publicKey.key,
-			type: 'ED25519',
+			key: 'null',
+			type: 'null',
 		},
 		kycKey: {
-			key: connection.account.publicKey.key,
-			type: 'ED25519',
+			key: 'null',
+			type: 'null',
 		},
 		wipeKey: {
-			key: connection.account.publicKey.key,
-			type: 'ED25519',
+			key: 'null',
+			type: 'null',
 		},
 		pauseKey: {
-			key: connection.account.publicKey.key,
-			type: 'ED25519',
+			key: 'null',
+			type: 'null',
+		},
+		feeScheduleKey: {
+			key: 'null',
+			type: 'null',
 		},
 		supplyType: TokenSupplyType.INFINITE,
 		createReserve: false,
 		grantKYCToOriginalSender: true,
 		burnRoleAccount: account.accountId.toString(),
-		wipeRoleAccount: '0.0.0',
+		wipeRoleAccount: account.accountId.toString(),
 		rescueRoleAccount: account.accountId.toString(),
-		pauseRoleAccount: '0.0.0',
-		freezeRoleAccount: '0.0.0',
+		pauseRoleAccount: account.accountId.toString(),
+		freezeRoleAccount: account.accountId.toString(),
 		deleteRoleAccount: account.accountId.toString(),
 		kycRoleAccount: account.accountId.toString(),
 		cashInRoleAccount: account.accountId.toString(),
-		feeRoleAccount: '0.0.0',
+		feeRoleAccount: account.accountId.toString(),
 		cashInRoleAllowance: '0',
 		proxyOwnerAccount: account.accountId.toString(),
 		configId:
@@ -106,6 +116,60 @@ const main = async () => {
 	// Create the stablecoin and log the result
 	const stableCoin = await StableCoin.create(request);
 	console.log('StableCoin created:', stableCoin);
+
+	// Associate the stablecoin with the account
+	await StableCoin.associate(
+		new AssociateTokenRequest({
+			targetId: account.accountId.toString(),
+			tokenId: stableCoin?.coin?.tokenId?.toString(),
+		}),
+	);
+
+	//Grant KYC to the original sender
+	await StableCoin.grantKyc(
+		new KYCRequest({
+			targetId: account.accountId.toString(),
+			tokenId: stableCoin?.coin?.tokenId?.toString(),
+		}),
+	);
+
+	// Check balance before cash-in
+	const initialAmount = await StableCoin.getBalanceOf(
+		new GetAccountBalanceRequest({
+			tokenId: stableCoin?.coin?.tokenId?.toString(),
+			targetId: account.accountId.toString(),
+		}),
+	);
+
+	await new Promise((resolve) => setTimeout(resolve, 5000));
+
+	// Perform cash-in operation
+	await StableCoin.cashIn(
+		new CashInRequest({
+			amount: '10',
+			tokenId: stableCoin?.coin?.tokenId?.toString(),
+			targetId: account.accountId.toString(),
+		}),
+	);
+
+	await new Promise((resolve) => setTimeout(resolve, 5000));
+
+	// Check balance after cash-in
+	const finalAmount = await StableCoin.getBalanceOf(
+		new GetAccountBalanceRequest({
+			tokenId: stableCoin?.coin?.tokenId?.toString(),
+			targetId: account.accountId.toString(),
+		}),
+	);
+
+	// Assert that the final amount is as expected
+	const final =
+		initialAmount.value.toBigInt() + new BigDecimal('10', 6).toBigInt();
+
+	assert(
+		finalAmount.value.toBigInt().toString() === final.toString(),
+		'Cash-in operation failed: balance mismatch',
+	);
 	process.exit(0);
 };
 

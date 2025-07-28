@@ -6,7 +6,12 @@ const {
 	SupportedWallets,
 	TokenSupplyType,
 	StableCoin,
+	BigDecimal,
+	AssociateTokenRequest,
+	BurnRequest,
+	GetStableCoinDetailsRequest,
 } = require('@hashgraph/stablecoin-npm-sdk');
+const { assert } = require('console');
 
 // Load environment variables from .env file
 require('dotenv').config({ path: __dirname + '/../.env' });
@@ -52,7 +57,7 @@ const main = async () => {
 	};
 
 	// Connect to the network using the provided account
-	const connection = await Network.connect(
+	await Network.connect(
 		new ConnectRequest({
 			account: account,
 			network: 'testnet',
@@ -69,33 +74,37 @@ const main = async () => {
 		decimals: 6,
 		initialSupply: '1000',
 		freezeKey: {
-			key: connection.account.publicKey.key,
-			type: 'ED25519',
+			key: 'null',
+			type: 'null',
 		},
 		kycKey: {
-			key: connection.account.publicKey.key,
-			type: 'ED25519',
+			key: 'null',
+			type: 'null',
 		},
 		wipeKey: {
-			key: connection.account.publicKey.key,
-			type: 'ED25519',
+			key: 'null',
+			type: 'null',
 		},
 		pauseKey: {
-			key: connection.account.publicKey.key,
-			type: 'ED25519',
+			key: 'null',
+			type: 'null',
+		},
+		feeScheduleKey: {
+			key: 'null',
+			type: 'null',
 		},
 		supplyType: TokenSupplyType.INFINITE,
 		createReserve: false,
 		grantKYCToOriginalSender: true,
 		burnRoleAccount: account.accountId.toString(),
-		wipeRoleAccount: '0.0.0',
+		wipeRoleAccount: account.accountId.toString(),
 		rescueRoleAccount: account.accountId.toString(),
-		pauseRoleAccount: '0.0.0',
-		freezeRoleAccount: '0.0.0',
+		pauseRoleAccount: account.accountId.toString(),
+		freezeRoleAccount: account.accountId.toString(),
 		deleteRoleAccount: account.accountId.toString(),
 		kycRoleAccount: account.accountId.toString(),
 		cashInRoleAccount: account.accountId.toString(),
-		feeRoleAccount: '0.0.0',
+		feeRoleAccount: account.accountId.toString(),
 		cashInRoleAllowance: '0',
 		proxyOwnerAccount: account.accountId.toString(),
 		configId:
@@ -106,6 +115,46 @@ const main = async () => {
 	// Create the stablecoin and log the result
 	const stableCoin = await StableCoin.create(request);
 	console.log('StableCoin created:', stableCoin);
+
+	// Associate the stablecoin with the account
+	await StableCoin.associate(
+		new AssociateTokenRequest({
+			targetId: account.accountId.toString(),
+			tokenId: stableCoin?.coin?.tokenId?.toString(),
+		}),
+	);
+
+	//Get the token info before burn
+	const tokenInfo = await StableCoin.getInfo(
+		new GetStableCoinDetailsRequest({
+			id: stableCoin?.coin?.tokenId?.toString(),
+		}),
+	);
+
+	// Perform burn operation
+	await StableCoin.burn(
+		new BurnRequest({
+			amount: '10',
+			tokenId: stableCoin?.coin?.tokenId?.toString(),
+		}),
+	);
+
+	await new Promise((resolve) => setTimeout(resolve, 5000));
+
+	//After burn, get the token info again
+	const tokenInfoAfterBurn = await StableCoin.getInfo(
+		new GetStableCoinDetailsRequest({
+			id: stableCoin?.coin?.tokenId?.toString(),
+		}),
+	);
+	const final =
+		tokenInfo.totalSupply.toBigInt() - new BigDecimal('10', 6).toBigInt();
+
+	assert(
+		tokenInfoAfterBurn.totalSupply.toBigInt().toString() ===
+			final.toString(),
+		'Burn operation failed: totalSupply mismatch',
+	);
 	process.exit(0);
 };
 

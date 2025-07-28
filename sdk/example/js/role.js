@@ -6,7 +6,13 @@ const {
 	SupportedWallets,
 	TokenSupplyType,
 	StableCoin,
+	StableCoinRole,
+	HasRoleRequest,
+	GrantRoleRequest,
+	Role,
+	RevokeRoleRequest,
 } = require('@hashgraph/stablecoin-npm-sdk');
+const { assert } = require('console');
 
 // Load environment variables from .env file
 require('dotenv').config({ path: __dirname + '/../.env' });
@@ -52,7 +58,7 @@ const main = async () => {
 	};
 
 	// Connect to the network using the provided account
-	const connection = await Network.connect(
+	await Network.connect(
 		new ConnectRequest({
 			account: account,
 			network: 'testnet',
@@ -69,33 +75,37 @@ const main = async () => {
 		decimals: 6,
 		initialSupply: '1000',
 		freezeKey: {
-			key: connection.account.publicKey.key,
-			type: 'ED25519',
+			key: 'null',
+			type: 'null',
 		},
 		kycKey: {
-			key: connection.account.publicKey.key,
-			type: 'ED25519',
+			key: 'null',
+			type: 'null',
 		},
 		wipeKey: {
-			key: connection.account.publicKey.key,
-			type: 'ED25519',
+			key: 'null',
+			type: 'null',
 		},
 		pauseKey: {
-			key: connection.account.publicKey.key,
-			type: 'ED25519',
+			key: 'null',
+			type: 'null',
+		},
+		feeScheduleKey: {
+			key: 'null',
+			type: 'null',
 		},
 		supplyType: TokenSupplyType.INFINITE,
 		createReserve: false,
 		grantKYCToOriginalSender: true,
 		burnRoleAccount: account.accountId.toString(),
-		wipeRoleAccount: '0.0.0',
+		wipeRoleAccount: account.accountId.toString(),
 		rescueRoleAccount: account.accountId.toString(),
-		pauseRoleAccount: '0.0.0',
-		freezeRoleAccount: '0.0.0',
+		pauseRoleAccount: account.accountId.toString(),
+		freezeRoleAccount: account.accountId.toString(),
 		deleteRoleAccount: account.accountId.toString(),
 		kycRoleAccount: account.accountId.toString(),
 		cashInRoleAccount: account.accountId.toString(),
-		feeRoleAccount: '0.0.0',
+		feeRoleAccount: account.accountId.toString(),
 		cashInRoleAllowance: '0',
 		proxyOwnerAccount: account.accountId.toString(),
 		configId:
@@ -106,6 +116,50 @@ const main = async () => {
 	// Create the stablecoin and log the result
 	const stableCoin = await StableCoin.create(request);
 	console.log('StableCoin created:', stableCoin);
+
+	// Revoke the Wipe role from the account
+	await Role.revokeRole(
+		new RevokeRoleRequest({
+			targetId: account.accountId.toString(),
+			tokenId: stableCoin?.coin?.tokenId?.toString(),
+			role: StableCoinRole.WIPE_ROLE,
+		}),
+	);
+
+	// Check if the account has the Wipe role
+	const noRole = await Role.hasRole(
+		new HasRoleRequest({
+			targetId: account.accountId.toString(),
+			tokenId: stableCoin?.coin?.tokenId?.toString(),
+			role: StableCoinRole.WIPE_ROLE,
+		}),
+	);
+
+	await new Promise((resolve) => setTimeout(resolve, 5000));
+
+	// Assert that the account does not have the Wipe role
+	assert(noRole !== false, 'Expected no role for the account, but found one');
+
+	// Grant the Wipe role to the account
+	await Role.grantRole(
+		new GrantRoleRequest({
+			targetId: account.accountId.toString(),
+			tokenId: stableCoin?.coin?.tokenId?.toString(),
+			role: StableCoinRole.WIPE_ROLE,
+		}),
+	);
+
+	await new Promise((resolve) => setTimeout(resolve, 5000));
+
+	// Assert that the role was granted successfully
+	const hasRole = await Role.hasRole(
+		new HasRoleRequest({
+			targetId: account.accountId.toString(),
+			tokenId: stableCoin?.coin?.tokenId?.toString(),
+			role: StableCoinRole.WIPE_ROLE,
+		}),
+	);
+	assert(hasRole === true, 'Expected role to be granted, but it was not');
 	process.exit(0);
 };
 

@@ -110,6 +110,7 @@ const main = async () => {
 	// Create the stablecoin and log the result
 	const stableCoin = await StableCoin.create(request);
 	console.log('StableCoin created:', stableCoin);
+	process.exit(0);
 };
 
 try {
