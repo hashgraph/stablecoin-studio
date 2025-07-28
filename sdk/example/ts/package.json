@@ -4,6 +4,11 @@
 	"description": "",
 	"main": "build/index.js",
 	"scripts": {
+		"build": "tsc",
+		"start-creation": "npm run build && node build/creation.js",
+		"start-creation-with-reserve": "npm run build && node build/creationWithReserve.js",
+		"start-creation-with-reserve-address": "npm run build && node build/creationWithReserveAddress.js",
+		"start-creation-assigning-keys": "npm run build && node build/creationAssigningKeys.js",
 		"test": "echo \"Error: no test specified\" && exit 1"
 	},
 	"keywords": [],
