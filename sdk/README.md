@@ -13,87 +13,78 @@
 - [Connect SDK](#connect-sdk)
 - [Wallet Events](#wallet-events)
 - [About Operations Execution](#about-operations-execution)
-	- [Multisig wallet](#multisig-wallet)
+  - [Multisig wallet](#multisig-wallet)
 - [StableCoin](#stablecoin)
-	- [Create](#create)
-	- [Creates a simple stablecoin, with all keys set to the Smart Contracts](#creates-a-simple-stablecoin-with-all-keys-set-to-the-smart-contracts)
-	- [Creates a simple stablecoin, with all keys set to the admin's public key](#creates-a-simple-stablecoin-with-all-keys-set-to-the-admins-public-key)
-	- [Creates a simple stablecoin, with all keys set to none](#creates-a-simple-stablecoin-with-all-keys-set-to-none)
-	- [GetInfo](#getinfo)
-	- [GetBalanceOf](#getbalanceof)
-	- [GetBalanceOfHBAR](#getbalanceofhbar)
-	- [Associate](#associate)
-	- [isAccountAssociated](#isaccountassociated)
-	- [CashIn](#cashin)
-	- [Burn](#burn)
-	- [Rescue](#rescue)
-	- [Rescue HBAR](#rescue-hbar)
-	- [Wipe](#wipe)
-	- [Pause](#pause)
-	- [Unpause](#unpause)
-	- [Freeze](#freeze)
-	- [Unfreeze](#unfreeze)
-	- [GrantKYC](#grantkyc)
-	- [RevokeKYC](#revokekyc)
-	- [IsAccountKYCGranted](#isaccountkycgranted)
-	- [Transfers](#transfers)
-	- [Update](#update)
-	- [Delete](#delete)
-	- [GetReserveAddress](#getreserveaddress)
-	- [UpdateReserveAddress](#updatereserveaddress)
-	- [Capabilities](#capabilities)
-	- [SignTransaction](#signtransaction)
-	- [SubmitTransaction](#submittransaction)
-	- [RemoveTransaction](#removetransaction)
-	- [GetTransactions](#gettransactions)
-- [Proxy](#proxy)
-	- [GetProxyConfig](#getproxyconfig)
-	- [ChangeProxyOwner](#changeproxyowner)
-	- [AcceptProxyOwner](#acceptproxyowner)
-	- [UpgradeImplementation](#upgradeimplementation)
-	- [GetFactoryProxyConfig](#getfactoryproxyconfig)
-	- [UpgradeFactoryImplementation](#upgradefactoryimplementation)
-	- [ChangeFactoryProxyOwner](#changefactoryproxyowner)
+  - [Create](#create)
+  - [Creates a simple stablecoin, with all keys set to the Smart Contracts](#creates-a-simple-stablecoin-with-all-keys-set-to-the-smart-contracts)
+  - [Creates a simple stablecoin, with all keys set to the admin's public key](#creates-a-simple-stablecoin-with-all-keys-set-to-the-admins-public-key)
+  - [Creates a simple stablecoin, with all keys set to none](#creates-a-simple-stablecoin-with-all-keys-set-to-none)
+  - [GetInfo](#getinfo)
+  - [GetBalanceOf](#getbalanceof)
+  - [GetBalanceOfHBAR](#getbalanceofhbar)
+  - [Associate](#associate)
+  - [isAccountAssociated](#isaccountassociated)
+  - [CashIn](#cashin)
+  - [Burn](#burn)
+  - [Rescue](#rescue)
+  - [Rescue HBAR](#rescue-hbar)
+  - [Wipe](#wipe)
+  - [Pause](#pause)
+  - [Unpause](#unpause)
+  - [Freeze](#freeze)
+  - [Unfreeze](#unfreeze)
+  - [GrantKYC](#grantkyc)
+  - [RevokeKYC](#revokekyc)
+  - [IsAccountKYCGranted](#isaccountkycgranted)
+  - [Transfers](#transfers)
+  - [Update](#update)
+  - [Delete](#delete)
+  - [GetReserveAddress](#getreserveaddress)
+  - [UpdateReserveAddress](#updatereserveaddress)
+  - [Capabilities](#capabilities)
+  - [SignTransaction](#signtransaction)
+  - [SubmitTransaction](#submittransaction)
+  - [RemoveTransaction](#removetransaction)
+  - [GetTransactions](#gettransactions)
 - [Network](#network)
-	- [Connect](#connect)
-	- [Disconnect](#disconnect)
-	- [Init](#init)
-	- [SetNetwork](#setnetwork)
-	- [GetNetwork](#getnetwork)
-	- [IsNetworkRecognized](#isnetworkrecognized)
-	- [SetConfig](#setconfig)
-	- [SetBackend](#setbackend)
-	- [GetFactoryAddress](#getfactoryaddress)
+  - [Connect](#connect)
+  - [Disconnect](#disconnect)
+  - [Init](#init)
+  - [SetNetwork](#setnetwork)
+  - [GetNetwork](#getnetwork)
+  - [IsNetworkRecognized](#isnetworkrecognized)
+  - [SetConfig](#setconfig)
+  - [SetBackend](#setbackend)
+  - [GetFactoryAddress](#getfactoryaddress)
 - [Event](#event)
-	- [Register](#register)
+  - [Register](#register)
 - [Account](#account)
-	- [GetPublicKey](#getpublickey)
-	- [ListStableCoins](#liststablecoins)
-	- [GetInfo](#getinfo-1)
+  - [GetPublicKey](#getpublickey)
+  - [ListStableCoins](#liststablecoins)
+  - [GetInfo](#getinfo-1)
 - [Role](#role)
-	- [HasRole](#hasrole)
-	- [GrantRole](#grantrole)
-	- [GrantMultiRoles](#grantmultiroles)
-	- [RevokeRole](#revokerole)
-	- [RevokeMultiRole](#revokemultirole)
-	- [GetRoles](#getroles)
-	- [GetAccountsWithRoles](#getaccountswithroles)
-	- [GetAllowance](#getallowance)
-	- [ResetAllowance](#resetallowance)
-	- [IncreaseAllowance](#increaseallowance)
-	- [DecreaseAllowance](#decreaseallowance)
-	- [IsLimited](#islimited)
-	- [IsUnlimited](#isunlimited)
+  - [HasRole](#hasrole)
+  - [GrantRole](#grantrole)
+  - [GrantMultiRoles](#grantmultiroles)
+  - [RevokeRole](#revokerole)
+  - [RevokeMultiRole](#revokemultirole)
+  - [GetRoles](#getroles)
+  - [GetAccountsWithRoles](#getaccountswithroles)
+  - [GetAllowance](#getallowance)
+  - [ResetAllowance](#resetallowance)
+  - [IncreaseAllowance](#increaseallowance)
+  - [DecreaseAllowance](#decreaseallowance)
+  - [IsLimited](#islimited)
+  - [IsUnlimited](#isunlimited)
 - [Reserve Data Feed](#reserve-data-feed)
-	- [Get Reserve Amount](#get-reserve-amount)
-	- [Update Reserve Amount](#update-reserve-amount)
+  - [Get Reserve Amount](#get-reserve-amount)
+  - [Update Reserve Amount](#update-reserve-amount)
 - [Factory](#factory)
-	- [GetHederaTokenManagerList](#gethederatokenmanagerlist)
 - [Common](#common)
-	- [Jest](#jest)
+  - [Jest](#jest)
 - [Tsconfig](#tsconfig)
-	- [Client side](#client-side)
-	- [Server side](#server-side)
+  - [Client side](#client-side)
+  - [Server side](#server-side)
 - [License](#license)
 
 # Overview
@@ -138,7 +129,10 @@ To use this project in development mode you must follow the steps indicated in t
 6. `cd` into `./sdk`.
 7. Make your changes.
 8. Run `npm run build` to build the SDK.
-9. Import and use the SDK. Or use one of the example projects under `/examples`.
+
+# Examples
+
+For example, to use the SDK directly, you can run any of the scripts inside the `/example` folder. Just make sure to create a `.env` file containing your `MY_ACCOUNT_ID` and `MY_PRIVATE_KEY`.
 
 # Quick Start
 
@@ -164,14 +158,17 @@ await Network.init(
 In the configuration, you can also specify the factory contract address that will be invoked when creating a stablecoin.
 
 ```Typescript
-const init = await Network.init(
-	new InitializationRequest({
-		network: 'testnet',
-		configuration: {
-			factoryAddress: '0.0.0'
-		},
-	}),
-);
+const init =   await Network.init(
+    new InitializationRequest({
+      network: "testnet",
+      mirrorNode: mirrorNodeConfig,
+      rpcNode: RPCNodeConfig,
+      configuration: {
+        factoryAddress: "0.0.XXXXXX",
+        resolverAddress: "0.0.XXXXX",
+      },
+    })
+  );
 ```
 
 If you are using a backend (for multisignature transactions) you can also specify its url.
@@ -196,7 +193,11 @@ export enum SupportedWallets {
 	METAMASK = 'Metamask',
 	HASHPACK = 'HashPack',
 	CLIENT = 'Client',
-	...
+	FIREBLOCKS = 'Fireblocks',
+	DFNS = 'DFNS',
+	MULTISIG = 'MultiSig',
+	AWSKMS = 'AWSKMS',
+	HWALLETCONNECT = 'HederaWalletConnect',
 }
 ```
 
@@ -217,6 +218,8 @@ await Network.connect(
           },
         },
         network: 'testnet',
+        mirrorNode: mirrorNodeConfig,
+        rpcNode: RPCNodeConfig,
         wallet: SupportedWallets.CLIENT,
       }),
     );
@@ -293,20 +296,21 @@ Creates a new stablecoin. You must use `Network.connect` first with a `Supported
 		name: string;
 		symbol: string;
 		decimals: number | string;
-		initialSupply?: string;
-		maxSupply?: string;
+		stableCoinFactory?: string;
+		createReserve: boolean;
+		reserveAddress?: string;
+		reserveConfigId?: string;
+		reserveConfigVersion?: number;
+		reserveInitialAmount?: string | undefined;
+		initialSupply?: string | undefined;
+		maxSupply?: string | undefined;
 		freezeDefault?: boolean;
 		freezeKey?: RequestPublicKey;
-		KYCKey?: RequestPublicKey;
+		kycKey?: RequestPublicKey;
 		wipeKey?: RequestPublicKey;
 		pauseKey?: RequestPublicKey;
-		supplyType?: TokenSupplyType;
 		feeScheduleKey?: RequestPublicKey;
-		stableCoinFactory: string;
-		hederaTokenManager: string;
-		reserveAddress?: string;
-		reserveInitialAmount?: string;
-		createReserve: boolean;
+		supplyType?: TokenSupplyType;
 		grantKYCToOriginalSender?: boolean;
 		burnRoleAccount?: string | undefined;
 		wipeRoleAccount?: string | undefined;
@@ -315,11 +319,14 @@ Creates a new stablecoin. You must use `Network.connect` first with a `Supported
 		freezeRoleAccount?: string | undefined;
 		deleteRoleAccount?: string | undefined;
 		kycRoleAccount?: string | undefined;
+		holdCreatorRoleAccount?: string | undefined;
 		cashInRoleAccount?: string | undefined;
-		cashInRoleAllowance?: string | undefined;
 		feeRoleAccount?: string | undefined;
+		cashInRoleAllowance?: string | undefined;
 		metadata?: string | undefined;
-		proxyAdminOwnerAccount?: string;
+		proxyOwnerAccount?: string;
+		configId: string;
+		configVersion: number;
 	}
 
 	StableCoin.create = (request: CreateRequest): Promise<StableCoinViewModel>
@@ -334,7 +341,6 @@ This delegates access to features to the smart contract, and enables the usage o
 ```Typescript
 	import {
 		FactoryAddressTestnet,
-		HederaTokenManagerAddressTestnet,
 		Account,
 		CreateRequest,
 	} from '@hashgraph/stablecoin-npm-sdk';
@@ -348,10 +354,12 @@ This delegates access to features to the smart contract, and enables the usage o
 			pauseKey: Account.NullPublicKey,
 			adminKey: Account.NullPublicKey,
 			freezeKey: Account.NullPublicKey,
-			hederaTokenManager: HederaTokenManagerAddressTestnet,
+			configId: "0x0000000000000000000000000000000000000000000000000000000000000002",
+    		configVersion: 1,
 			stableCoinFactory: FactoryAddressTestnet,
 			createReserve: false,
-			metadata: 'metadata'
+			metadata: 'metadata',
+			proxyOwnerAccount: '0.0.13579'
 		})
 	);
 ```
@@ -363,7 +371,6 @@ By specifying the public key of an account, we can set the stablecoin's keys to 
 ```Typescript
 	import {
 		FactoryAddressTestnet,
-		HederaTokenManagerAddressTestnet,
 		Account,
 		CreateRequest,
 	} from '@hashgraph/stablecoin-npm-sdk';
@@ -389,16 +396,17 @@ By specifying the public key of an account, we can set the stablecoin's keys to 
 			pauseKey: publicKey,
 			adminKey: publicKey,
 			freezeKey: publicKey,
-			hederaTokenManager: HederaTokenManagerAddressTestnet,
+			configId: "0x0000000000000000000000000000000000000000000000000000000000000002",
+    		configVersion: 1,
 			stableCoinFactory: FactoryAddressTestnet,
 			createReserve: false,
 			metadata: 'metadata',
-			proxyAdminOwnerAccount: '0.0.13579'
+			proxyOwnerAccount: '0.0.13579'
 		})
 	);
 ```
 
-In the above exmaple, it is also important to notice that, when creating a stablecoin, the `proxyAdminOwnerAccount` parameter in the `CreateRequest` class, allows the user to configure an account id, which may be a contract like a timelock controller, a cold wallet, etc, to be the stablecoin proxy admin owner rather than the account id that is creating the stablecoin, which is the default option if the user doesn't populate this optional parameter.
+In the above exmaple, it is also important to notice that, when creating a stablecoin, the `proxyOwnerAccount` parameter in the `CreateRequest` class, allows the user to configure an account id, which may be a contract like a timelock controller, a cold wallet, etc, to be the stablecoin proxy admin owner rather than the account id that is creating the stablecoin, which is the default option if the user doesn't populate this optional parameter.
 
 ### Creates a simple stablecoin, with all keys set to none
 
@@ -407,7 +415,6 @@ By not setting any of the keys, the stablecoin will have the corresponding featu
 ```Typescript
 	import {
 		FactoryAddressTestnet,
-		HederaTokenManagerAddressTestnet,
 		Account,
 		CreateRequest,
 	} from '@hashgraph/stablecoin-npm-sdk';
@@ -416,9 +423,11 @@ By not setting any of the keys, the stablecoin will have the corresponding featu
 			name: 'Hedera stablecoin',
 			symbol: 'HSC',
 			decimals: 6,
-			hederaTokenManager: HederaTokenManagerAddressTestnet,
+			configId: "0x0000000000000000000000000000000000000000000000000000000000000002",
+    		configVersion: 1,
 			stableCoinFactory: FactoryAddressTestnet,
-			createReserve: false
+			createReserve: false,
+			proxyOwnerAccount: '0.0.13579'
 		})
 	);
 ```
@@ -1125,162 +1134,6 @@ Retrieves multisig transactions from the backend.
 	);
 ```
 
-## Proxy
-
-The following functions allow the user to both get information and execute operations regarding the stablecoin proxy contract.
-
-### GetProxyConfig
-
-Gets the configuration about the stablecoin proxy: the **HederaTokenManager** contract implementation address and the proxy admin account that allows to change the previous implementation.
-
-**Spec:**
-
-```Typescript
-	Proxy.getProxyConfig(request: GetProxyConfigRequest): Promise<ProxyConfigurationViewModel>;
-
-```
-
-**Example:**
-
-```Typescript
-	const result: ProxyConfigurationViewModel = await Proxy.getProxyConfig(
-		new GetProxyConfigRequest({
-			tokenId: '0.0.1',
-		})
-	);
-```
-
-### ChangeProxyOwner
-
-Proposes the change of the **HederaTokenManager** contract proxy admin owner.
-
-**Spec:**
-
-```Typescript
-	Proxy.changeProxyOwner(request: ChangeProxyOwnerRequest): Promise<boolean>;
-
-```
-
-**Example:**
-
-```Typescript
-	const result: boolean = await Proxy.changeProxyOwner(
-		new ChangeProxyOwnerRequest({
-			tokenId: '0.0.1',
-			targetId: '0.0.2'
-		})
-	);
-```
-
-### AcceptProxyOwner
-
-A proposed account accepts the change to be the new **HederaTokenManager** contract proxy admin owner.
-
-**Spec:**
-
-```Typescript
-	Proxy.acceptProxyOwner(request: AcceptProxyOwnerRequest): Promise<boolean>;
-
-```
-
-**Example:**
-
-```Typescript
-	const result: boolean = await Proxy.acceptProxyOwner(
-		new AcceptProxyOwnerRequest({
-			tokenId: '0.0.1',
-			targetId: '0.0.2'
-		})
-	);
-```
-
-### UpgradeImplementation
-
-Updates the **HederaTokenManager** contract implementation address.
-
-**Spec:**
-
-```Typescript
-	Proxy.upgradeImplementation(request: UpgradeImplementationRequest): Promise<boolean>;
-
-```
-
-**Example:**
-
-```Typescript
-	const result: boolean = await Proxy.upgradeImplementation(
-		new UpgradeImplementationRequest({
-			tokenId: '0.0.1',
-			implementationAddress: '0.0.2'
-		})
-	);
-```
-
-### GetFactoryProxyConfig
-
-Gets the factory implementation contract address and the factory proxy owner account.
-
-**Spec:**
-
-```Typescript
-	Proxy.getFactoryProxyConfig(request: GetFactoryProxyConfigRequest): Promise<ProxyConfigurationViewModel>;
-
-```
-
-**Example:**
-
-```Typescript
-	const result: ProxyConfigurationViewModel = await Proxy.getFactoryProxyConfig(
-		new GetFactoryProxyConfigRequest({
-			factoryId: '0.0.1'
-		})
-	);
-```
-
-### UpgradeFactoryImplementation
-
-Upgrades the factory with a new factory implementation contract. Only the owner of the factory proxy can perform this action.
-
-**Spec:**
-
-```Typescript
-	Proxy.upgradeFactoryImplementation(request: UpgradeFactoryImplementationRequest): Promise<boolean>;
-
-```
-
-**Example:**
-
-```Typescript
-	const result: boolean = await Proxy.upgradeFactoryImplementation(
-		new UpgradeFactoryImplementationRequest({
-			factoryId: '0.0.1',
-			implementationAddress: '0.0.2'
-		})
-	);
-```
-
-### ChangeFactoryProxyOwner
-
-Changes the owner of the factory proxy. Only the owner of the factory proxy can perform this action.
-
-**Spec:**
-
-```Typescript
-	Proxy.changeFactoryProxyOwner(request: ChangeFactoryProxyOwnerRequest): Promise<boolean>;
-
-```
-
-**Example:**
-
-```Typescript
-	const result: boolean = await Proxy.changeFactoryProxyOwner(
-		new ChangeFactoryProxyOwnerRequest({
-			factoryId: '0.0.1',
-			targetId: '0.0.2'
-		})
-	);
-```
-
 ## Network
 
 ### Connect
@@ -1923,30 +1776,6 @@ Updates the reserve amount for a stablecoin. The operating account must have the
 			reserveAmount: 1
 		})
 	);
-```
-
-## Factory
-
-The following operations are always performed through smart contracts calls.
-
-### GetHederaTokenManagerList
-
-Get a list of HederaTokenManager smart contract addresses stored in the factory.
-
-**Spec:**
-
-```Typescript
-	Factory.getHederaTokenManagerList = (request: GetTokenManagerListRequest): Promise<ContractId[]>;
-```
-
-**Example**
-
-```Typescript
-	const list = await Factory.getHederaTokenManagerList(
-			new GetTokenManagerListRequest({
-				factoryId: '0.0.1'
-			})
-		);
 ```
 
 ## Common

@@ -4,7 +4,14 @@
 	"description": "",
 	"main": "index.js",
 	"scripts": {
-		"start": "node index.js",
+		"start-creation": "node creation.js",
+		"start-creation-with-reserve": "node creationWithReserve.js",
+		"start-creation-with-reserve-address": "node creationWithReserveAddress.js",
+		"start-creation-assigning-keys": "node creationAssigningKeys.js",
+		"role": "node role.js",
+		"mint": "node mint.js",
+		"burn": "node burn.js",
+		"wipe": "node wipe.js",
 		"test": "echo \"Error: no test specified\" && exit 1"
 	},
 	"keywords": [],
