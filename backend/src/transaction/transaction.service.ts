@@ -156,13 +156,17 @@ export default class TransactionService {
         .includes(normalizedNetwork)
     ) {
       throw new Error(
-        `Invalid network: ${network}. Valid values are: ${Object.values(Network).join(', ')}`,
+        `Invalid network: ${network}. Valid values are: ${Object.values(
+          Network,
+        ).join(', ')}`,
       );
     }
     const normalizedStatus = status?.toUpperCase();
     if (normalizedStatus && !(normalizedStatus in TransactionStatus)) {
       throw new Error(
-        `Invalid status: ${status}. Valid values are: ${Object.values(TransactionStatus).join(', ')}`,
+        `Invalid status: ${status}. Valid values are: ${Object.values(
+          TransactionStatus,
+        ).join(', ')}`,
       );
     }
     if (publicKey) {
