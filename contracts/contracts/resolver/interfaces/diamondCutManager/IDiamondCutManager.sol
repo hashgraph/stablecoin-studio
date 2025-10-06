@@ -56,6 +56,9 @@ interface IDiamondCutManager {
     /// @notice error that occurs when try to add a selector and the selector is blacklisted
     error SelectorBlacklisted(bytes4 selector);
 
+    /// @notice error that occurs when defining a configuration with an empty facet array list
+    error EmptyConfiguration();
+
     /// @notice Create a new configuration to the latest version of all facets.
     /// @param _configurationId unused identifier to the configuration.
     /// @param _facetConfigurations.id list of business logics to be registered.
