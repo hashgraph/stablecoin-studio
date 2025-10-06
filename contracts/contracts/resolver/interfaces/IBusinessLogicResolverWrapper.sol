@@ -18,4 +18,5 @@ interface IBusinessLogicResolverWrapper {
     error BusinessLogicKeyDuplicated(bytes32 businessLogicKey);
     error AllBusinessLogicKeysMustBeenInformed();
     error ZeroKeyNotValidForBusinessLogic();
+    error ZeroAddressNotValidForBusinessLogic();
 }
