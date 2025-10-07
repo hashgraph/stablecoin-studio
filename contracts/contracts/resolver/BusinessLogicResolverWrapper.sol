@@ -72,7 +72,7 @@ abstract contract BusinessLogicResolverWrapper is IBusinessLogicResolverWrapper 
                         businessLogicResolverDataStorage.latestVersion
                     )
                 )
-            ] = versions.length - 1;
+            ] = versions.length;
         }
 
         businessLogicResolverDataStorage.versionStatuses[
@@ -163,6 +163,11 @@ abstract contract BusinessLogicResolverWrapper is IBusinessLogicResolverWrapper 
         uint256 position = businessLogicResolverDataStorage.businessLogicVersionIndex[
             keccak256(abi.encodePacked(_businessLogicKey, _version))
         ];
+
+        if (position == 0) return address(0);
+
+        position--;
+
         IBusinessLogicResolver.BusinessLogicVersion memory businessLogicVersion = businessLogicResolverDataStorage
             .businessLogics[_businessLogicKey][position];
         return businessLogicVersion.businessLogicAddress;
