@@ -15,6 +15,7 @@ import {
     BusinessLogicResolver,
     DiamondCutManager,
     DiamondCutManager__factory,
+    IBusinessLogicResolver,
     IDiamondCutManager,
     IDiamondLoupe,
 } from '@contracts'
@@ -459,13 +460,24 @@ describe('➡️ DiamondCutManager Tests', () => {
         await businessLogicResolver.addSelectorsToBlacklist(CONFIG_ID.stableCoin, blackListedSelectors)
         await delay({ time: 1, unit: 'sec' })
         diamondCutManager = diamondCutManager.connect(operator)
+
+        const businessLogics: IBusinessLogicResolver.BusinessLogicRegistryDataStruct[] = []
+
         const facetConfigurations: IDiamondCutManager.FacetConfigurationStruct[] = []
-        stableCoinFacetIdList.forEach((id, index) =>
+        stableCoinFacetIdList.forEach((id, index) => {
             facetConfigurations.push({
                 id,
                 version: stableCoinFacetIdList[index],
-            })
-        )
+            }),
+                businessLogics.push({
+                    businessLogicKey: id,
+                    businessLogicAddress: '0x0000000000000000000000000000000000000001',
+                })
+        })
+
+        await businessLogicResolver.registerBusinessLogics(businessLogics, {
+            gasLimit: GAS_LIMIT.businessLogicResolver.registerBusinessLogics,
+        })
 
         await expect(diamondCutManager.createConfiguration(CONFIG_ID.stableCoin, facetConfigurations))
             .to.be.revertedWithCustomError(diamondCutManager, 'SelectorBlacklisted')
