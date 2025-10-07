@@ -19,7 +19,7 @@ abstract contract ReserveStorageWrapper is IReserveStorageWrapper, TokenOwnerSto
      * @param amount The amount to check
      */
     modifier checkReserveIncrease(uint256 amount) {
-        if (!_checkReserveAmount(amount, false)) revert AmountBiggerThanReserve(amount);
+        if (!_checkReserveAmount(amount)) revert AmountBiggerThanReserve(amount);
         _;
     }
 
@@ -31,10 +31,8 @@ abstract contract ReserveStorageWrapper is IReserveStorageWrapper, TokenOwnerSto
      * @dev Checks if the current reserve is enough for a certain amount of tokens
      *
      * @param amount The amount to check
-     * @param less Flag that indicates if current reserve is not less than the amount or
-     *             than the sum of amount plus total supply
      */
-    function _checkReserveAmount(uint256 amount, bool less) private view returns (bool) {
+    function _checkReserveAmount(uint256 amount) private view returns (bool) {
         address reserveAddress = _reserveStorage().reserveAddress;
         if (reserveAddress == address(0)) return true;
         int256 reserveAmount = _getReserveAmount();
@@ -51,11 +49,7 @@ abstract contract ReserveStorageWrapper is IReserveStorageWrapper, TokenOwnerSto
             totalSupply = totalSupply * (10 ** (reserveDecimals - tokenDecimals));
         }
 
-        if (less) {
-            return currentReserve >= amount;
-        } else {
-            return currentReserve >= totalSupply + amount;
-        }
+        return currentReserve >= totalSupply + amount;
     }
 
     /**
