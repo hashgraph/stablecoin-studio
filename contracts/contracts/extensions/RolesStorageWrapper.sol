@@ -5,6 +5,7 @@ import {IRoles} from './Interfaces/IRoles.sol';
 // solhint-disable-next-line max-line-length
 import {ADMIN_ROLE, _CASHIN_ROLE, _BURN_ROLE, _WIPE_ROLE, _RESCUE_ROLE, _PAUSE_ROLE, _FREEZE_ROLE, _DELETE_ROLE, _WITHOUT_ROLE, _KYC_ROLE, _CUSTOM_FEES_ROLE, _HOLD_CREATOR_ROLE} from '../constants/roles.sol';
 import {_ROLES_STORAGE_POSITION} from '../constants/storagePositions.sol';
+import {IRoleManagement} from './Interfaces/IRoleManagement.sol';
 
 abstract contract RolesStorageWrapper {
     struct MemberData {
@@ -123,6 +124,7 @@ abstract contract RolesStorageWrapper {
         rolesStorage.roles[role].accounts.pop();
         delete (rolesStorage.roles[role].members[account]);
         emit RoleRevoked(role, account, msg.sender);
+        if (_getNumberOfAccountsWithRole(_getRoleId(IRoles.RoleName.ADMIN)) == 0) revert IRoleManagement.NoAdminsLeft();
     }
 
     function _getAccountsWithRole(bytes32 role) internal view returns (address[] memory) {
