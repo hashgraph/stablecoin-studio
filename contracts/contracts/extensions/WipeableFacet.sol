@@ -10,6 +10,7 @@ import {SafeCast} from '@openzeppelin/contracts/utils/math/SafeCast.sol';
 import {_WIPEABLE_RESOLVER_KEY} from '../constants/resolverKeys.sol';
 import {IRoles} from './Interfaces/IRoles.sol';
 import {IStaticFunctionSelectors} from '../resolver/interfaces/resolverProxy/IStaticFunctionSelectors.sol';
+import {_WIPE_ROLE} from '../constants/roles.sol';
 
 contract WipeableFacet is IWipeable, IStaticFunctionSelectors, TokenOwnerStorageWrapper, RolesStorageWrapper {
     /**
@@ -29,7 +30,7 @@ contract WipeableFacet is IWipeable, IStaticFunctionSelectors, TokenOwnerStorage
     )
         external
         override(IWipeable)
-        onlyRole(_getRoleId(IRoles.RoleName.WIPE))
+        onlyRole(_WIPE_ROLE)
         addressIsNotZero(account)
         amountIsNotNegative(amount, false)
         valueIsNotGreaterThan(SafeCast.toUint256(amount), _balanceOf(account), true)

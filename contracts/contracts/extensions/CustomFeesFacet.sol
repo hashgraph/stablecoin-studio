@@ -9,6 +9,7 @@ import {IHederaTokenService} from '@hashgraph/smart-contracts/contracts/system-c
 import {_CUSTOM_FEES_RESOLVER_KEY} from '../constants/resolverKeys.sol';
 import {IRoles} from './Interfaces/IRoles.sol';
 import {IStaticFunctionSelectors} from '../resolver/interfaces/resolverProxy/IStaticFunctionSelectors.sol';
+import {_CUSTOM_FEES_ROLE} from '../constants/roles.sol';
 
 contract CustomFeesFacet is ICustomFees, IStaticFunctionSelectors, TokenOwnerStorageWrapper, RolesStorageWrapper {
     /**
@@ -20,7 +21,7 @@ contract CustomFeesFacet is ICustomFees, IStaticFunctionSelectors, TokenOwnerSto
     function updateTokenCustomFees(
         IHederaTokenService.FixedFee[] calldata fixedFees,
         IHederaTokenService.FractionalFee[] calldata fractionalFees
-    ) external override(ICustomFees) onlyRole(_getRoleId(IRoles.RoleName.CUSTOM_FEES)) returns (bool) {
+    ) external override(ICustomFees) onlyRole(_CUSTOM_FEES_ROLE) returns (bool) {
         address currentTokenAddress = _getTokenAddress();
 
         int64 responseCode = IHederaTokenService(_PRECOMPILED_ADDRESS).updateFungibleTokenCustomFees(

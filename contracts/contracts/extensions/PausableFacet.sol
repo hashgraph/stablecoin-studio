@@ -9,13 +9,14 @@ import {IHederaTokenService} from '@hashgraph/smart-contracts/contracts/system-c
 import {_PAUSABLE_RESOLVER_KEY} from '../constants/resolverKeys.sol';
 import {IRoles} from './Interfaces/IRoles.sol';
 import {IStaticFunctionSelectors} from '../resolver/interfaces/resolverProxy/IStaticFunctionSelectors.sol';
+import {_PAUSE_ROLE} from '../constants/roles.sol';
 
 contract PausableFacet is IPausable, IStaticFunctionSelectors, TokenOwnerStorageWrapper, RolesStorageWrapper {
     /**
      * @dev Pauses the token in order to prevent it from being involved in any kind of operation
      *
      */
-    function pause() external override(IPausable) onlyRole(_getRoleId(IRoles.RoleName.PAUSE)) returns (bool) {
+    function pause() external override(IPausable) onlyRole(_PAUSE_ROLE) returns (bool) {
         address currentTokenAddress = _getTokenAddress();
 
         int64 responseCode = IHederaTokenService(_PRECOMPILED_ADDRESS).pauseToken(currentTokenAddress);
@@ -31,7 +32,7 @@ contract PausableFacet is IPausable, IStaticFunctionSelectors, TokenOwnerStorage
      * @dev Unpauses the token in order to allow it to be involved in any kind of operation
      *
      */
-    function unpause() external override(IPausable) onlyRole(_getRoleId(IRoles.RoleName.PAUSE)) returns (bool) {
+    function unpause() external override(IPausable) onlyRole(_PAUSE_ROLE) returns (bool) {
         address currentTokenAddress = _getTokenAddress();
 
         int64 responseCode = IHederaTokenService(_PRECOMPILED_ADDRESS).unpauseToken(currentTokenAddress);

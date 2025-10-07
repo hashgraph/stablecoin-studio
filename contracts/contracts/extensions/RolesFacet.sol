@@ -71,29 +71,19 @@ contract RolesFacet is IRoles, IStaticFunctionSelectors, RolesStorageWrapper {
         return _getRoles(account);
     }
 
-    /**
-     * @dev Returns a role bytes32 representation
-     *
-     * @param role The role we want to retrieve the bytes32 for
-     */
-    function getRoleId(RoleName role) external view override(IRoles) returns (bytes32) {
-        return _getRoleId(role);
-    }
-
     function getStaticResolverKey() external pure override returns (bytes32 staticResolverKey_) {
         staticResolverKey_ = _ROLES_RESOLVER_KEY;
     }
 
     function getStaticFunctionSelectors() external pure override returns (bytes4[] memory staticFunctionSelectors_) {
         uint256 selectorIndex;
-        staticFunctionSelectors_ = new bytes4[](7);
+        staticFunctionSelectors_ = new bytes4[](6);
         staticFunctionSelectors_[selectorIndex++] = this.hasRole.selector;
         staticFunctionSelectors_[selectorIndex++] = this.getAccountsWithRole.selector;
         staticFunctionSelectors_[selectorIndex++] = this.getNumberOfAccountsWithRole.selector;
         staticFunctionSelectors_[selectorIndex++] = this.grantRole.selector;
         staticFunctionSelectors_[selectorIndex++] = this.revokeRole.selector;
         staticFunctionSelectors_[selectorIndex++] = this.getRoles.selector;
-        staticFunctionSelectors_[selectorIndex++] = this.getRoleId.selector;
     }
 
     function getStaticInterfaceIds() external pure override returns (bytes4[] memory staticInterfaceIds_) {

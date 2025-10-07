@@ -6,6 +6,7 @@ import {IRoles} from './Interfaces/IRoles.sol';
 import {TokenOwnerStorageWrapper} from './TokenOwnerStorageWrapper.sol';
 import {RolesStorageWrapper} from './RolesStorageWrapper.sol';
 import {_SUPPLIER_ADMIN_STORAGE_POSITION} from '../constants/storagePositions.sol';
+import {_CASHIN_ROLE} from '../constants/roles.sol';
 
 abstract contract SupplierAdminStorageWrapper is
     ISupplierAdminStorageWrapper,
@@ -52,7 +53,7 @@ abstract contract SupplierAdminStorageWrapper is
     function _revokeSupplierRole(address supplier) internal {
         _supplierAdminStorage().supplierAllowances[supplier] = 0;
         _supplierAdminStorage().unlimitedSupplierAllowances[supplier] = false;
-        _revokeRole(_getRoleId(IRoles.RoleName.CASHIN), supplier);
+        _revokeRole(_CASHIN_ROLE, supplier);
     }
 
     /**
@@ -65,7 +66,7 @@ abstract contract SupplierAdminStorageWrapper is
     function _grantUnlimitedSupplierRole(address supplier) internal {
         _supplierAdminStorage().unlimitedSupplierAllowances[supplier] = true;
         _supplierAdminStorage().supplierAllowances[supplier] = 0;
-        _grantRole(_getRoleId(IRoles.RoleName.CASHIN), supplier);
+        _grantRole(_CASHIN_ROLE, supplier);
     }
 
     /**
@@ -81,7 +82,7 @@ abstract contract SupplierAdminStorageWrapper is
         if (_supplierAdminStorage().unlimitedSupplierAllowances[supplier])
             revert AccountHasUnlimitedSupplierAllowance(supplier);
         _supplierAdminStorage().supplierAllowances[supplier] = amount;
-        _grantRole(_getRoleId(IRoles.RoleName.CASHIN), supplier);
+        _grantRole(_CASHIN_ROLE, supplier);
     }
 
     function _supplierAdminStorage() internal pure returns (SupplierAdminStorage storage supplierAdminStorage_) {

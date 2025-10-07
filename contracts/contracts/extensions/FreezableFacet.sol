@@ -9,6 +9,7 @@ import {IFreezable} from './Interfaces/IFreezable.sol';
 import {_FREEZABLE_RESOLVER_KEY} from '../constants/resolverKeys.sol';
 import {IRoles} from './Interfaces/IRoles.sol';
 import {IStaticFunctionSelectors} from '../resolver/interfaces/resolverProxy/IStaticFunctionSelectors.sol';
+import {_FREEZE_ROLE} from '../constants/roles.sol';
 
 contract FreezableFacet is IFreezable, IStaticFunctionSelectors, TokenOwnerStorageWrapper, RolesStorageWrapper {
     /**
@@ -18,13 +19,7 @@ contract FreezableFacet is IFreezable, IStaticFunctionSelectors, TokenOwnerStora
      */
     function freeze(
         address account
-    )
-        external
-        override(IFreezable)
-        onlyRole(_getRoleId(IRoles.RoleName.FREEZE))
-        addressIsNotZero(account)
-        returns (bool)
-    {
+    ) external override(IFreezable) onlyRole(_FREEZE_ROLE) addressIsNotZero(account) returns (bool) {
         address currentTokenAddress = _getTokenAddress();
 
         int64 responseCode = IHederaTokenService(_PRECOMPILED_ADDRESS).freezeToken(currentTokenAddress, account);
@@ -43,13 +38,7 @@ contract FreezableFacet is IFreezable, IStaticFunctionSelectors, TokenOwnerStora
      */
     function unfreeze(
         address account
-    )
-        external
-        override(IFreezable)
-        onlyRole(_getRoleId(IRoles.RoleName.FREEZE))
-        addressIsNotZero(account)
-        returns (bool)
-    {
+    ) external override(IFreezable) onlyRole(_FREEZE_ROLE) addressIsNotZero(account) returns (bool) {
         address currentTokenAddress = _getTokenAddress();
 
         int64 responseCode = IHederaTokenService(_PRECOMPILED_ADDRESS).unfreezeToken(currentTokenAddress, account);

@@ -9,6 +9,7 @@ import {IKYC} from './Interfaces/IKYC.sol';
 import {_KYC_RESOLVER_KEY} from '../constants/resolverKeys.sol';
 import {IRoles} from './Interfaces/IRoles.sol';
 import {IStaticFunctionSelectors} from '../resolver/interfaces/resolverProxy/IStaticFunctionSelectors.sol';
+import {_KYC_ROLE} from '../constants/roles.sol';
 
 contract KYCFacet is IKYC, IStaticFunctionSelectors, TokenOwnerStorageWrapper, RolesStorageWrapper {
     /**
@@ -18,7 +19,7 @@ contract KYCFacet is IKYC, IStaticFunctionSelectors, TokenOwnerStorageWrapper, R
      */
     function grantKyc(
         address account
-    ) external override(IKYC) onlyRole(_getRoleId(IRoles.RoleName.KYC)) addressIsNotZero(account) returns (bool) {
+    ) external override(IKYC) onlyRole(_KYC_ROLE) addressIsNotZero(account) returns (bool) {
         address currentTokenAddress = _getTokenAddress();
 
         int64 responseCode = IHederaTokenService(_PRECOMPILED_ADDRESS).grantTokenKyc(currentTokenAddress, account);
@@ -35,9 +36,7 @@ contract KYCFacet is IKYC, IStaticFunctionSelectors, TokenOwnerStorageWrapper, R
      *
      * @param account The account to which the KYC will be revoked
      */
-    function revokeKyc(
-        address account
-    ) external onlyRole(_getRoleId(IRoles.RoleName.KYC)) addressIsNotZero(account) returns (bool) {
+    function revokeKyc(address account) external onlyRole(_KYC_ROLE) addressIsNotZero(account) returns (bool) {
         address currentTokenAddress = _getTokenAddress();
 
         int64 responseCode = IHederaTokenService(_PRECOMPILED_ADDRESS).revokeTokenKyc(currentTokenAddress, account);
