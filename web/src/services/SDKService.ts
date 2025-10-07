@@ -153,17 +153,27 @@ export class SDKService {
 		let hwcSettings: HWCRequestSettings | undefined;
 
 		if (wallet === SupportedWallets.HWALLETCONNECT) {
+			console.log('🔧 [SDKService] Setting up Hedera Wallet Connect...');
 			const projectId = process.env.REACT_APP_PROJECT_ID ?? '';
 			const dappName = process.env.REACT_APP_DAPP_NAME ?? '';
 			const dappDescription = process.env.REACT_APP_DAPP_DESCRIPTION ?? '';
-			const dappURL = process.env.REACT_APP_DAPP_URLs ?? '';
+			const dappURL = process.env.REACT_APP_DAPP_URL ?? '';
 			let dappIcons = [];
+
+			console.log('[SDKService] HWC Configuration:', {
+				projectId: projectId ? `${projectId.substring(0, 8)}...` : 'MISSING',
+				dappName,
+				dappDescription,
+				dappURL,
+			});
+
 			try {
 				dappIcons = process.env.REACT_APP_DAPP_ICONS
 					? JSON.parse(process.env.REACT_APP_DAPP_ICONS)
 					: [];
+				console.log('[SDKService] DApp Icons parsed:', dappIcons.length, 'icons');
 			} catch (error) {
-				console.error('Invalid JSON in REACT_APP_DAPP_ICONS:', error);
+				console.error('❌ [SDKService] Invalid JSON in REACT_APP_DAPP_ICONS:', error);
 			}
 
 			if (projectId) {
@@ -174,6 +184,9 @@ export class SDKService {
 					dappURL,
 					dappIcons,
 				};
+				console.log('✅ [SDKService] HWC Settings configured successfully');
+			} else {
+				console.error('❌ [SDKService] PROJECT_ID is missing! WalletConnect will not work.');
 			}
 		}
 

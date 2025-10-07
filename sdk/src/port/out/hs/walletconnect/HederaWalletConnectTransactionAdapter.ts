@@ -69,6 +69,8 @@ import Hex from '../../../../core/Hex.js';
 
 let DAppConnector: typeof import('@hashgraph/hedera-wallet-connect').DAppConnector;
 let HederaChainId: typeof import('@hashgraph/hedera-wallet-connect').HederaChainId;
+let HederaSessionEvent: typeof import('@hashgraph/hedera-wallet-connect').HederaSessionEvent;
+let HederaJsonRpcMethod: typeof import('@hashgraph/hedera-wallet-connect').HederaJsonRpcMethod;
 // @ts-ignore
 let SignAndExecuteTransactionParams: typeof import('@hashgraph/hedera-wallet-connect').SignAndExecuteTransactionParams;
 // @ts-ignore
@@ -82,6 +84,8 @@ if (typeof window !== 'undefined') {
 	const hwc = require('@hashgraph/hedera-wallet-connect');
 	DAppConnector = hwc.DAppConnector;
 	HederaChainId = hwc.HederaChainId;
+	HederaSessionEvent = hwc.HederaSessionEvent;
+	HederaJsonRpcMethod = hwc.HederaJsonRpcMethod;
 	SignAndExecuteTransactionParams = hwc.SignAndExecuteTransactionParams;
 	SignTransactionParams = hwc.SignTransactionParams;
 	transactionBodyToBase64String = hwc.transactionBodyToBase64String;
@@ -192,6 +196,19 @@ export class HederaWalletConnectTransactionAdapter extends HederaTransactionAdap
 	}
 
 	/**
+	 * Gets supported chains based on network configuration.
+	 * Returns all available chains to support network switching.
+	 */
+	private getSupportedChains(): (typeof HederaChainId)[keyof typeof HederaChainId][] {
+		// Support all chains to allow network switching
+		return [
+			HederaChainId.Mainnet,
+			HederaChainId.Testnet,
+			HederaChainId.Previewnet,
+		];
+	}
+
+	/**
 	 * Connects to the Hedera WalletConnect.
 	 *
 	 * @param network - Optional. The network to connect to. If not provided, the default network from the network service will be used.
@@ -201,14 +218,36 @@ export class HederaWalletConnectTransactionAdapter extends HederaTransactionAdap
 	public async connectWalletConnect(network?: string): Promise<string> {
 		const currentNetwork = network ?? this.networkService.environment;
 
+		LogService.logInfo(`🚀 [HWC] Starting connectWalletConnect with network: ${currentNetwork}`);
+		LogService.logTrace(`[HWC] DApp Metadata: ${JSON.stringify(this.dappMetadata, null, 2)}`);
+		LogService.logTrace(`[HWC] Project ID: ${this.projectId}`);
+
 		try {
+			LogService.logTrace(`[HWC] Creating DAppConnector instance...`);
+
+			// Get supported chains based on network
+			const supportedChains = this.getSupportedChains();
+			const methods = Object.values(HederaJsonRpcMethod);
+			const events = [HederaSessionEvent.ChainChanged, HederaSessionEvent.AccountsChanged];
+
+			// Debug logging
+			LogService.logTrace(`[HWC] Supported chains: ${JSON.stringify(supportedChains)}`);
+			LogService.logTrace(`[HWC] Methods count: ${methods.length}`);
+			LogService.logTrace(`[HWC] Events count: ${events.length}`);
+			LogService.logTrace(`[HWC] Methods: ${JSON.stringify(methods)}`);
+			LogService.logTrace(`[HWC] Events: ${JSON.stringify(events)}`);
+
 			this.dAppConnector = new DAppConnector(
 				this.dappMetadata,
 				LedgerId.fromString(currentNetwork),
 				this.projectId,
+				methods,
+				events,
+				supportedChains,
 			);
+			LogService.logTrace(`[HWC] Initializing DAppConnector...`);
 			await this.dAppConnector.init({ logger: 'debug' });
-			LogService.logTrace(
+			LogService.logInfo(
 				`✅ HWC Initialized with network: ${currentNetwork} and projectId: ${this.projectId}`,
 			);
 		} catch (error) {
@@ -216,35 +255,55 @@ export class HederaWalletConnectTransactionAdapter extends HederaTransactionAdap
 				`❌ Error initializing HWC with network: ${currentNetwork} and projectId: ${this.projectId}`,
 				error,
 			);
+			LogService.logError(`[HWC] Error details: ${JSON.stringify(error, null, 2)}`);
 			return currentNetwork;
 		}
 
-		LogService.logTrace('🔗 Pairing with Hedera WalletConnect...');
-		// Scan QR code or use WalletConnect URI to connect
-		await this.dAppConnector.openModal();
-		// Get signers from WalletConnect
+		try {
+			LogService.logInfo('🔗 [HWC] Opening modal for pairing...');
+			//TODO: The modal is opening but the wallet is not being paired becase a error is thrown.
+			// message: "Missing or invalid. approve(), namespaces should be an object with data"
+			// data: {code: 1001, message: "Missing or invalid. approve(), namespaces should be an object with data"}
+			await this.dAppConnector.openModal();
+			LogService.logInfo('✅ [HWC] Modal opened successfully');
+		} catch (error) {
+			LogService.logError('❌ [HWC] Error opening modal', error);
+			throw error;
+		}
+
+		LogService.logTrace('[HWC] Retrieving signers from WalletConnect...');
 		const walletConnectSigners = this.dAppConnector.signers;
-		if (!walletConnectSigners) {
-			throw new Error(
-				`❌ No signers retrieved from wallet connect. Signers: ${walletConnectSigners}`,
-			);
+		LogService.logTrace(`[HWC] Signers retrieved: ${walletConnectSigners ? walletConnectSigners.length : 0}`);
+
+		if (!walletConnectSigners || walletConnectSigners.length === 0) {
+			const errorMsg = `❌ No signers retrieved from wallet connect. Signers: ${walletConnectSigners}`;
+			LogService.logError(errorMsg);
+			throw new Error(errorMsg);
 		}
-		// Get account ID from signers
+
+		LogService.logTrace('[HWC] Getting account ID from first signer...');
 		const accountId = walletConnectSigners[0].getAccountId().toString();
+		LogService.logInfo(`[HWC] Account ID retrieved: ${accountId}`);
+
 		if (!accountId) {
-			throw new Error(
-				`❌ No account ID retrieved from signers. Account ID: ${accountId}`,
-			);
+			const errorMsg = `❌ No account ID retrieved from signers. Account ID: ${accountId}`;
+			LogService.logError(errorMsg);
+			throw new Error(errorMsg);
 		}
-		// Get account info from Mirror Node
+
+		LogService.logTrace(`[HWC] Fetching account info from Mirror Node for: ${accountId}`);
 		const accountMirror = await this.mirrorNodeAdapter.getAccountInfo(
 			accountId,
 		);
+
 		if (!accountMirror) {
-			throw new Error(
-				`❌ No account info retrieved from Mirror Node. Account ID: ${accountId}`,
-			);
+			const errorMsg = `❌ No account info retrieved from Mirror Node. Account ID: ${accountId}`;
+			LogService.logError(errorMsg);
+			throw new Error(errorMsg);
 		}
+
+		LogService.logInfo(`✅ [HWC] Account info retrieved from Mirror Node`);
+		LogService.logTrace(`[HWC] Account details: ${JSON.stringify(accountMirror, null, 2)}`)
 
 		// Create account object and set network
 		this.signer = this.dAppConnector.getSigner(
@@ -291,9 +350,23 @@ export class HederaWalletConnectTransactionAdapter extends HederaTransactionAdap
 		this.dAppConnector.walletConnectClient?.on(
 			'session_delete',
 			async () => {
+				LogService.logInfo('📤 Session deleted event received');
 				await this.stop();
 			},
 		);
+
+		// Handle session updates
+		this.dAppConnector.walletConnectClient?.on(
+			'session_update',
+			async (event: any) => {
+				LogService.logInfo('🔄 Session updated event received', event);
+			},
+		);
+
+		// Handle session events (ChainChanged, AccountsChanged)
+		// this.dAppConnector.onSessionEvent((event: any) => {
+		// 	LogService.logInfo('🔔 Session event received:', event);
+		// });
 	}
 
 	/**

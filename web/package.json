@@ -121,9 +121,6 @@
 			"last 1 safari version"
 		]
 	},
-	"overrides": {
-		"react-refresh": "0.11.0"
-	},
 	"jest": {
 		"preset": "ts-jest",
 		"testEnvironment": "jsdom",
