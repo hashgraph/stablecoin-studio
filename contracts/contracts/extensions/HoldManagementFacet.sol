@@ -3,7 +3,6 @@ pragma solidity 0.8.18;
 
 // solhint-disable max-line-length
 import {IHoldManagement} from './Interfaces/IHoldManagement.sol';
-import {IHederaTokenService} from '@hashgraph/smart-contracts/contracts/system-contracts/hedera-token-service/IHederaTokenService.sol';
 import {EnumerableSet} from '@openzeppelin/contracts/utils/structs/EnumerableSet.sol';
 import {IHederaTokenService} from '@hashgraph/smart-contracts/contracts/system-contracts/hedera-token-service/IHederaTokenService.sol';
 import {RolesStorageWrapper} from './RolesStorageWrapper.sol';

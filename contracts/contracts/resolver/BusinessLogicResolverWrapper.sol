@@ -1,7 +1,6 @@
 // SPDX-License-Identifier: MIT
 pragma solidity 0.8.18;
 
-import {IBusinessLogicResolver} from './interfaces/IBusinessLogicResolver.sol';
 import {LibCommon} from '../core/LibCommon.sol';
 import {IBusinessLogicResolverWrapper} from './interfaces/IBusinessLogicResolverWrapper.sol';
 import {IBusinessLogicResolver} from './interfaces/IBusinessLogicResolver.sol';
