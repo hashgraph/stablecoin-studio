@@ -209,6 +209,8 @@ abstract contract BusinessLogicResolverWrapper is IBusinessLogicResolverWrapper 
         for (uint256 index; index < length; ) {
             currentKey = _businessLogicsRegistryDatas[index].businessLogicKey;
             if (uint256(currentKey) == 0) revert ZeroKeyNotValidForBusinessLogic();
+            if (_businessLogicsRegistryDatas[index].businessLogicAddress == address(0))
+                revert ZeroAddressNotValidForBusinessLogic();
 
             if (businessLogicResolverDataStorage.businessLogicActive[currentKey]) ++activesBusinessLogicsKeys;
             unchecked {
