@@ -12,6 +12,7 @@ contract DiamondCutFacet is IDiamondCut, ResolverProxyUnstructured {
         ResolverProxyStorage storage ds = _resolverProxyStorage();
         ds.resolver.checkResolverProxyConfigurationRegistered(ds.resolverProxyConfigurationId, _newVersion);
         _updateVersion(ds, _newVersion);
+        emit ConfigVersionUpdated(msg.sender, _newVersion);
     }
 
     function updateConfig(bytes32 _newConfigurationId, uint256 _newVersion) external override onlyRole(ADMIN_ROLE) {
@@ -19,6 +20,7 @@ contract DiamondCutFacet is IDiamondCut, ResolverProxyUnstructured {
         ds.resolver.checkResolverProxyConfigurationRegistered(_newConfigurationId, _newVersion);
         _updateConfigId(ds, _newConfigurationId);
         _updateVersion(ds, _newVersion);
+        emit ConfigUpdated(msg.sender, _newConfigurationId, _newVersion);
     }
 
     function updateResolver(
@@ -31,6 +33,7 @@ contract DiamondCutFacet is IDiamondCut, ResolverProxyUnstructured {
         _updateResolver(ds, _newResolver);
         _updateConfigId(ds, _newConfigurationId);
         _updateVersion(ds, _newVersion);
+        emit ResolverUpdated(msg.sender, address(_newResolver), _newConfigurationId, _newVersion);
     }
 
     function getConfigInfo() external view returns (address resolver_, bytes32 configurationId_, uint256 version_) {
