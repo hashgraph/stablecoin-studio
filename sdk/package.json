@@ -75,7 +75,7 @@
 		"@hashgraph/hedera-custodians-integration": "^1.4.1",
 		"@hashgraph/hedera-wallet-connect": "2.0.4-canary.3ca04e9.0",
 		"@hashgraph/sdk": "^2.63.0",
-		"@reown/appkit": "^1.8.4",
+		"@reown/appkit": "^1.8.9",
 		"@reown/appkit-adapter-ethers": "^1.8.4",
 		"@reown/appkit-core": "^1.8.4",
 		"@walletconnect/sign-client": "2.19.1",
