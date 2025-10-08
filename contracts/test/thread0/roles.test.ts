@@ -93,12 +93,10 @@ describe('➡️ Roles Tests', function () {
     })
 
     it('Non Admin account can not revoke role from an account', async function () {
-        // Non operator has burn role
-        let hasBurnRole = await rolesFacet.hasRole(ROLES.burn.hash, nonOperator, {
-            gasLimit: GAS_LIMIT.hederaTokenManager.hasRole,
+        await rolesFacet.grantRole(ROLES.burn.hash, nonOperator, {
+            gasLimit: GAS_LIMIT.hederaTokenManager.grantRole,
         })
-        expect(hasBurnRole).to.equals(true)
-        // Non Admin revokes burn role : fail
+
         const revokeRoleResponse = await rolesFacet.connect(nonOperator).revokeRole(ROLES.burn.hash, nonOperator, {
             gasLimit: GAS_LIMIT.hederaTokenManager.revokeRole,
         })
@@ -108,18 +106,17 @@ describe('➡️ Roles Tests', function () {
             }).execute()
         ).to.be.rejectedWith(Error)
         // Non operator stil has burn role
-        hasBurnRole = await rolesFacet.hasRole(ROLES.burn.hash, nonOperator, {
+        const hasBurnRole = await rolesFacet.hasRole(ROLES.burn.hash, nonOperator, {
             gasLimit: GAS_LIMIT.hederaTokenManager.hasRole,
         })
         expect(hasBurnRole).to.equals(true)
     })
 
     it('Admin account can revoke role from an account', async function () {
-        // Non operator has burn role
-        let hasBurnRole = await rolesFacet.hasRole(ROLES.burn.hash, nonOperator, {
-            gasLimit: GAS_LIMIT.hederaTokenManager.hasRole,
+        await rolesFacet.grantRole(ROLES.burn.hash, nonOperator, {
+            gasLimit: GAS_LIMIT.hederaTokenManager.grantRole,
         })
-        expect(hasBurnRole).to.equals(true)
+
         // Admin revokes burn role : success
         const revokeRoleResponse = await rolesFacet.revokeRole(ROLES.burn.hash, nonOperator, {
             gasLimit: GAS_LIMIT.hederaTokenManager.revokeRole,
@@ -131,7 +128,7 @@ describe('➡️ Roles Tests', function () {
 
         // Non operator has not burn role
         await delay({ time: 1, unit: 'sec' })
-        hasBurnRole = await rolesFacet.hasRole(ROLES.burn.hash, nonOperator, {
+        const hasBurnRole = await rolesFacet.hasRole(ROLES.burn.hash, nonOperator, {
             gasLimit: GAS_LIMIT.hederaTokenManager.hasRole,
         })
         expect(hasBurnRole).to.equals(false)
