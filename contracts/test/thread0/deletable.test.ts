@@ -69,7 +69,7 @@ describe('➡️ Delete Tests', function () {
 
     it('Account with DELETE role can delete a token', async function () {
         // We first grant delete role to account
-        const grantRoleResponse = await rolesFacet.grantRole(ROLES.delete.hash, nonOperator.address, {
+        const grantRoleResponse = await rolesFacet.grantRole(ROLES.delete, nonOperator.address, {
             gasLimit: GAS_LIMIT.hederaTokenManager.grantRole,
         })
         await validateTxResponse(new ValidateTxResponseCommand({ txResponse: grantRoleResponse }))

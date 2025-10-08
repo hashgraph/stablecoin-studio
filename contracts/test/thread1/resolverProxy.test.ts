@@ -250,7 +250,7 @@ describe('➡️ ResolverProxy Tests', () => {
     it('GIVEN resolverProxy and admin user WHEN updating to non existing version THEN fails with ResolverProxyConfigurationNoRegistered', async () => {
         const roles = [
             {
-                role: ROLES.defaultAdmin.hash,
+                role: ROLES.defaultAdmin,
                 account: account_A,
             },
         ]
@@ -272,7 +272,7 @@ describe('➡️ ResolverProxy Tests', () => {
     it('GIVEN resolverProxy and admin user WHEN updating version THEN succeeds', async () => {
         const roles = [
             {
-                role: ROLES.defaultAdmin.hash,
+                role: ROLES.defaultAdmin,
                 account: account_A,
             },
         ]
@@ -322,7 +322,7 @@ describe('➡️ ResolverProxy Tests', () => {
     it('GIVEN resolverProxy and admin user WHEN updating to non existing configID THEN fails with ResolverProxyConfigurationNoRegistered', async () => {
         const roles = [
             {
-                role: ROLES.defaultAdmin.hash,
+                role: ROLES.defaultAdmin,
                 account: account_A,
             },
         ]
@@ -347,7 +347,7 @@ describe('➡️ ResolverProxy Tests', () => {
 
         const roles = [
             {
-                role: ROLES.defaultAdmin.hash,
+                role: ROLES.defaultAdmin,
                 account: account_A,
             },
         ]
@@ -396,7 +396,7 @@ describe('➡️ ResolverProxy Tests', () => {
     it('GIVEN resolverProxy and admin user WHEN updating to non existing resolver THEN fails with ResolverProxyConfigurationNoRegistered', async () => {
         const roles = [
             {
-                role: ROLES.defaultAdmin.hash,
+                role: ROLES.defaultAdmin,
                 account: account_A,
             },
         ]
@@ -419,7 +419,7 @@ describe('➡️ ResolverProxy Tests', () => {
     it('GIVEN resolverProxy and admin user WHEN updating resolver THEN succeeds', async () => {
         const roles = [
             {
-                role: ROLES.defaultAdmin.hash,
+                role: ROLES.defaultAdmin,
                 account: account_A,
             },
         ]

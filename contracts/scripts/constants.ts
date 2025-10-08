@@ -21,54 +21,18 @@ export const TWO_HBAR = parseUnits('2', 'ether') // Amount in HBAR (1 HBAR = 1 e
 
 // * Roles
 export const ROLES = {
-    defaultAdmin: {
-        id: 0,
-        hash: '0x0000000000000000000000000000000000000000000000000000000000000000',
-    },
-    cashin: {
-        id: 1,
-        hash: '0x53300d27a2268d3ff3ecb0ec8e628321ecfba1a08aed8b817e8acf589a52d25c',
-    },
-    burn: {
-        id: 2,
-        hash: '0xe97b137254058bd94f28d2f3eb79e2d34074ffb488d042e3bc958e0a57d2fa22',
-    },
-    wipe: {
-        id: 3,
-        hash: '0x515f99f4e5a381c770462a8d9879a01f0fd4a414a168a2404dab62a62e1af0c3',
-    },
-    rescue: {
-        id: 4,
-        hash: '0x43f433f336cda92fbbe5bfbdd344a9fd79b2ef138cd6e6fc49d55e2f54e1d99a',
-    },
-    pause: {
-        id: 5,
-        hash: '0x139c2898040ef16910dc9f44dc697df79363da767d8bc92f2e310312b816e46d',
-    },
-    freeze: {
-        id: 6,
-        hash: '0x5789b43a60de35bcedee40618ae90979bab7d1315fd4b079234241bdab19936d',
-    },
-    delete: {
-        id: 7,
-        hash: '0x2b73f0f98ad60ca619bbdee4bcd175da1127db86346339f8b718e3f8b4a006e2',
-    },
-    kyc: {
-        id: 8,
-        hash: '0xdb11624602202c396fa347735a55e345a3aeb3e60f8885e1a71f1bf8d5886db7',
-    },
-    customFees: {
-        id: 9,
-        hash: '0x6db8586688d24c6a6367d21f709d650b12a2a61dd75e834bd8cd90fd6afa794b',
-    },
-    hold: {
-        id: 10,
-        hash: '0xa0edc074322e33cf8b82b4182ff2827f0fef9412190f0e8417c2669a1e8747e4',
-    },
-    withoutRole: {
-        id: -1,
-        hash: '0xe11b25922c3ff9f0f0a34f0b8929ac96a1f215b99dcb08c2891c220cf3a7e8cc',
-    },
+    defaultAdmin: '0x0000000000000000000000000000000000000000000000000000000000000000',
+    cashin: '0x53300d27a2268d3ff3ecb0ec8e628321ecfba1a08aed8b817e8acf589a52d25c',
+    burn: '0xe97b137254058bd94f28d2f3eb79e2d34074ffb488d042e3bc958e0a57d2fa22',
+    wipe: '0x515f99f4e5a381c770462a8d9879a01f0fd4a414a168a2404dab62a62e1af0c3',
+    rescue: '0x43f433f336cda92fbbe5bfbdd344a9fd79b2ef138cd6e6fc49d55e2f54e1d99a',
+    pause: '0x139c2898040ef16910dc9f44dc697df79363da767d8bc92f2e310312b816e46d',
+    freeze: '0x5789b43a60de35bcedee40618ae90979bab7d1315fd4b079234241bdab19936d',
+    delete: '0x2b73f0f98ad60ca619bbdee4bcd175da1127db86346339f8b718e3f8b4a006e2',
+    kyc: '0xdb11624602202c396fa347735a55e345a3aeb3e60f8885e1a71f1bf8d5886db7',
+    customFees: '0x6db8586688d24c6a6367d21f709d650b12a2a61dd75e834bd8cd90fd6afa794b',
+    hold: '0xa0edc074322e33cf8b82b4182ff2827f0fef9412190f0e8417c2669a1e8747e4',
+    withoutRole: '0xe11b25922c3ff9f0f0a34f0b8929ac96a1f215b99dcb08c2891c220cf3a7e8cc',
 }
 
 // * Gas

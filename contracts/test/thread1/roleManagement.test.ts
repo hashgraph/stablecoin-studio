@@ -62,10 +62,10 @@ describe('➡️ Role Management Tests', function () {
     it('Non operator cannot grant', async function () {
         // Check initial roles for random accounts
         for (const account of randomAccountList) {
-            const hasBurnRole = rolesFacet.hasRole(ROLES.burn.hash, account, {
+            const hasBurnRole = rolesFacet.hasRole(ROLES.burn, account, {
                 gasLimit: GAS_LIMIT.hederaTokenManager.hasRole,
             })
-            const hasFreezeRole = rolesFacet.hasRole(ROLES.freeze.hash, account, {
+            const hasFreezeRole = rolesFacet.hasRole(ROLES.freeze, account, {
                 gasLimit: GAS_LIMIT.hederaTokenManager.hasRole,
             })
             expect(await hasBurnRole).to.eq(false)
@@ -75,17 +75,17 @@ describe('➡️ Role Management Tests', function () {
         // Granting roles with non Admin should fail
         const txResponse = await roleManagementFacet
             .connect(nonOperator)
-            .grantRoles([ROLES.burn.hash, ROLES.freeze.hash], randomAccountList, [], {
+            .grantRoles([ROLES.burn, ROLES.freeze], randomAccountList, [], {
                 gasLimit: GAS_LIMIT.hederaTokenManager.grantRoles,
             })
         await expect(new ValidateTxResponseCommand({ txResponse }).execute()).to.be.rejectedWith(Error)
 
         // Check roles after failed grant
         for (const account of randomAccountList) {
-            const hasBurnRole = rolesFacet.hasRole(ROLES.burn.hash, account, {
+            const hasBurnRole = rolesFacet.hasRole(ROLES.burn, account, {
                 gasLimit: GAS_LIMIT.hederaTokenManager.hasRole,
             })
-            const hasFreezeRole = rolesFacet.hasRole(ROLES.freeze.hash, account, {
+            const hasFreezeRole = rolesFacet.hasRole(ROLES.freeze, account, {
                 gasLimit: GAS_LIMIT.hederaTokenManager.hasRole,
             })
             expect(await hasBurnRole).to.eq(false)
@@ -100,22 +100,22 @@ describe('➡️ Role Management Tests', function () {
                 gasLimit: GAS_LIMIT.hederaTokenManager.getRoles,
             })
             for (const role of roleList) {
-                expect(role.toUpperCase()).to.eq(ROLES.withoutRole.hash.toUpperCase())
+                expect(role.toUpperCase()).to.eq(ROLES.withoutRole.toUpperCase())
             }
         }
         // Grant roles
         const rolesToGrant = [
-            ROLES.burn.hash,
-            ROLES.pause.hash,
-            ROLES.rescue.hash,
-            ROLES.wipe.hash,
-            ROLES.cashin.hash,
-            ROLES.freeze.hash,
-            ROLES.delete.hash,
-            ROLES.defaultAdmin.hash,
-            ROLES.kyc.hash,
-            ROLES.customFees.hash,
-            ROLES.hold.hash,
+            ROLES.burn,
+            ROLES.pause,
+            ROLES.rescue,
+            ROLES.wipe,
+            ROLES.cashin,
+            ROLES.freeze,
+            ROLES.delete,
+            ROLES.defaultAdmin,
+            ROLES.kyc,
+            ROLES.customFees,
+            ROLES.hold,
         ]
         const txResponse = await roleManagementFacet.grantRoles(
             rolesToGrant,
@@ -155,10 +155,10 @@ describe('➡️ Role Management Tests', function () {
     it('Non operator cannot revoke roles', async function () {
         // Check initial roles for random accounts
         for (const account of randomAccountList) {
-            const hasBurnRole = rolesFacet.hasRole(ROLES.burn.hash, account, {
+            const hasBurnRole = rolesFacet.hasRole(ROLES.burn, account, {
                 gasLimit: GAS_LIMIT.hederaTokenManager.hasRole,
             })
-            const hasFreezeRole = rolesFacet.hasRole(ROLES.freeze.hash, account, {
+            const hasFreezeRole = rolesFacet.hasRole(ROLES.freeze, account, {
                 gasLimit: GAS_LIMIT.hederaTokenManager.hasRole,
             })
             expect(await hasBurnRole).to.eq(true)
@@ -168,17 +168,17 @@ describe('➡️ Role Management Tests', function () {
         // Granting roles with non Admin should fail
         const txResponse = await roleManagementFacet
             .connect(nonOperator)
-            .revokeRoles([ROLES.burn.hash, ROLES.freeze.hash], randomAccountList, {
+            .revokeRoles([ROLES.burn, ROLES.freeze], randomAccountList, {
                 gasLimit: GAS_LIMIT.hederaTokenManager.revokeRoles,
             })
         await expect(new ValidateTxResponseCommand({ txResponse }).execute()).to.be.rejectedWith(Error)
         await delay({ time: 2, unit: 'ms' })
         // Check roles after failed grant
         for (const account of randomAccountList) {
-            const hasBurnRole = rolesFacet.hasRole(ROLES.burn.hash, account, {
+            const hasBurnRole = rolesFacet.hasRole(ROLES.burn, account, {
                 gasLimit: GAS_LIMIT.hederaTokenManager.hasRole,
             })
-            const hasFreezeRole = rolesFacet.hasRole(ROLES.freeze.hash, account, {
+            const hasFreezeRole = rolesFacet.hasRole(ROLES.freeze, account, {
                 gasLimit: GAS_LIMIT.hederaTokenManager.hasRole,
             })
             expect(await hasBurnRole).to.eq(true)
@@ -188,17 +188,17 @@ describe('➡️ Role Management Tests', function () {
 
     it('Admin revokes roles from multiple accounts including CashIn role', async function () {
         const rolesToRevoke = [
-            ROLES.burn.hash,
-            ROLES.pause.hash,
-            ROLES.rescue.hash,
-            ROLES.wipe.hash,
-            ROLES.cashin.hash,
-            ROLES.freeze.hash,
-            ROLES.delete.hash,
-            ROLES.defaultAdmin.hash,
-            ROLES.kyc.hash,
-            ROLES.customFees.hash,
-            ROLES.hold.hash,
+            ROLES.burn,
+            ROLES.pause,
+            ROLES.rescue,
+            ROLES.wipe,
+            ROLES.cashin,
+            ROLES.freeze,
+            ROLES.delete,
+            ROLES.defaultAdmin,
+            ROLES.kyc,
+            ROLES.customFees,
+            ROLES.hold,
         ]
         // Check initial roles for random accounts
         for (const account of randomAccountList) {
@@ -223,7 +223,7 @@ describe('➡️ Role Management Tests', function () {
                 gasLimit: GAS_LIMIT.hederaTokenManager.getRoles,
             })
             for (const rol of roles) {
-                expect(rol.toUpperCase()).to.eq(ROLES.withoutRole.hash.toUpperCase())
+                expect(rol.toUpperCase()).to.eq(ROLES.withoutRole.toUpperCase())
             }
 
             const allowance = await supplierAdminFacet.connect(nonOperator).getSupplierAllowance(randomAccountList[i], {
@@ -242,7 +242,7 @@ describe('➡️ Role Management Tests', function () {
 
     it('Admin Cannot grant CashIn role without allowances', async function () {
         // Granting roles with cash in but without allowances
-        const Roles = [ROLES.cashin.hash]
+        const Roles = [ROLES.cashin]
         const amounts: bigint[] = []
 
         const txResponse = await roleManagementFacet.grantRoles(
@@ -258,14 +258,14 @@ describe('➡️ Role Management Tests', function () {
 
     it('An account can get all roles of any account', async function () {
         // Grant roles
-        const Roles = [ROLES.burn.hash]
+        const Roles = [ROLES.burn]
         const grantRoles = await roleManagementFacet.grantRoles(Roles, randomAccountList, [], {
             gasLimit: GAS_LIMIT.hederaTokenManager.grantRoles,
         })
         await new ValidateTxResponseCommand({ txResponse: grantRoles }).execute()
 
         // Get roles
-        const burnRoleAccounts = await rolesFacet.getAccountsWithRole(ROLES.burn.hash, {
+        const burnRoleAccounts = await rolesFacet.getAccountsWithRole(ROLES.burn, {
             gasLimit: GAS_LIMIT.hederaTokenManager.getAccountsWithRole,
         })
         for (const account of randomAccountList) {
@@ -280,7 +280,7 @@ describe('➡️ Role Management Tests', function () {
 
         // Get roles
         await delay({ time: 1, unit: 'sec' })
-        const burnRoleAccountsAfterRevoke = await rolesFacet.getAccountsWithRole(ROLES.burn.hash, {
+        const burnRoleAccountsAfterRevoke = await rolesFacet.getAccountsWithRole(ROLES.burn, {
             gasLimit: GAS_LIMIT.hederaTokenManager.getAccountsWithRole,
         })
 

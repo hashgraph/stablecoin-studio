@@ -205,13 +205,15 @@ describe('➡️ HederaTokenManager Tests', function () {
         expect(isUnlimitedNonOperator).to.eq(true)
 
         for (let i = 0; i < resultOperatorAccount.length; i++) {
-            expect([ROLES.withoutRole.hash.toUpperCase(), ROLES.defaultAdmin.hash.toUpperCase()]).to.include(
+            expect([ROLES.withoutRole.toUpperCase(), ROLES.defaultAdmin.toUpperCase()]).to.include(
                 resultOperatorAccount[i].toUpperCase()
             )
         }
 
+        const ROLES_ARRAY = Object.values(ROLES).map((v) => v.toUpperCase())
+
         for (let i = 0; i < resultNonOperatorAccount.length; i++) {
-            expect(ROLES).to.include(resultNonOperatorAccount[i].toUpperCase())
+            expect(ROLES_ARRAY).to.include(resultNonOperatorAccount[i].toUpperCase())
         }
     })
 

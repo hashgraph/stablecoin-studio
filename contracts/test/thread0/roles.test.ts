@@ -49,14 +49,14 @@ describe('➡️ Roles Tests', function () {
 
     it('Non Admin account can not grant a role to an account', async function () {
         // Non operator has not burn role
-        let hasBurnRole = await rolesFacet.hasRole(ROLES.burn.hash, nonOperator, {
+        let hasBurnRole = await rolesFacet.hasRole(ROLES.burn, nonOperator, {
             gasLimit: GAS_LIMIT.hederaTokenManager.hasRole,
         })
         expect(hasBurnRole).to.equals(false)
         // Non Admin grants burn role : fail
         const nonOperatorGrantRoleResponse = await rolesFacet
             .connect(nonOperator)
-            .grantRole(ROLES.burn.hash, operator.address, {
+            .grantRole(ROLES.burn, operator.address, {
                 gasLimit: GAS_LIMIT.hederaTokenManager.grantRole,
             })
         await expect(
@@ -65,7 +65,7 @@ describe('➡️ Roles Tests', function () {
             }).execute()
         ).to.be.rejectedWith(Error)
         // Non operator stil has not burn role
-        hasBurnRole = await rolesFacet.hasRole(ROLES.burn.hash, nonOperator, {
+        hasBurnRole = await rolesFacet.hasRole(ROLES.burn, nonOperator, {
             gasLimit: GAS_LIMIT.hederaTokenManager.hasRole,
         })
         expect(hasBurnRole).to.equals(false)
@@ -73,12 +73,12 @@ describe('➡️ Roles Tests', function () {
 
     it('Admin account can grant role to an account', async function () {
         // Non operator has not burn role
-        let hasBurnRole = await rolesFacet.hasRole(ROLES.burn.hash, nonOperator, {
+        let hasBurnRole = await rolesFacet.hasRole(ROLES.burn, nonOperator, {
             gasLimit: GAS_LIMIT.hederaTokenManager.hasRole,
         })
         expect(hasBurnRole).to.equals(false)
         // Admin grants burn role : success
-        const grantRoleResponse = await rolesFacet.grantRole(ROLES.burn.hash, nonOperator, {
+        const grantRoleResponse = await rolesFacet.grantRole(ROLES.burn, nonOperator, {
             gasLimit: GAS_LIMIT.hederaTokenManager.grantRole,
         })
         await new ValidateTxResponseCommand({
@@ -86,18 +86,18 @@ describe('➡️ Roles Tests', function () {
             confirmationEvent: 'RoleGranted',
         }).execute()
         // Non operator has burn role
-        hasBurnRole = await rolesFacet.hasRole(ROLES.burn.hash, nonOperator, {
+        hasBurnRole = await rolesFacet.hasRole(ROLES.burn, nonOperator, {
             gasLimit: GAS_LIMIT.hederaTokenManager.hasRole,
         })
         expect(hasBurnRole).to.equals(true)
     })
 
     it('Non Admin account can not revoke role from an account', async function () {
-        await rolesFacet.grantRole(ROLES.burn.hash, nonOperator, {
+        await rolesFacet.grantRole(ROLES.burn, nonOperator, {
             gasLimit: GAS_LIMIT.hederaTokenManager.grantRole,
         })
 
-        const revokeRoleResponse = await rolesFacet.connect(nonOperator).revokeRole(ROLES.burn.hash, nonOperator, {
+        const revokeRoleResponse = await rolesFacet.connect(nonOperator).revokeRole(ROLES.burn, nonOperator, {
             gasLimit: GAS_LIMIT.hederaTokenManager.revokeRole,
         })
         await expect(
@@ -106,19 +106,19 @@ describe('➡️ Roles Tests', function () {
             }).execute()
         ).to.be.rejectedWith(Error)
         // Non operator stil has burn role
-        const hasBurnRole = await rolesFacet.hasRole(ROLES.burn.hash, nonOperator, {
+        const hasBurnRole = await rolesFacet.hasRole(ROLES.burn, nonOperator, {
             gasLimit: GAS_LIMIT.hederaTokenManager.hasRole,
         })
         expect(hasBurnRole).to.equals(true)
     })
 
     it('Admin account can revoke role from an account', async function () {
-        await rolesFacet.grantRole(ROLES.burn.hash, nonOperator, {
+        await rolesFacet.grantRole(ROLES.burn, nonOperator, {
             gasLimit: GAS_LIMIT.hederaTokenManager.grantRole,
         })
 
         // Admin revokes burn role : success
-        const revokeRoleResponse = await rolesFacet.revokeRole(ROLES.burn.hash, nonOperator, {
+        const revokeRoleResponse = await rolesFacet.revokeRole(ROLES.burn, nonOperator, {
             gasLimit: GAS_LIMIT.hederaTokenManager.revokeRole,
         })
         await new ValidateTxResponseCommand({
@@ -128,7 +128,7 @@ describe('➡️ Roles Tests', function () {
 
         // Non operator has not burn role
         await delay({ time: 1, unit: 'sec' })
-        const hasBurnRole = await rolesFacet.hasRole(ROLES.burn.hash, nonOperator, {
+        const hasBurnRole = await rolesFacet.hasRole(ROLES.burn, nonOperator, {
             gasLimit: GAS_LIMIT.hederaTokenManager.hasRole,
         })
         expect(hasBurnRole).to.equals(false)
@@ -141,58 +141,58 @@ describe('➡️ Roles Tests', function () {
             gasLimit: GAS_LIMIT.hederaTokenManager.getRoles,
         })
         for (const role of roles) {
-            expect(role.toUpperCase()).to.equals(ROLES.withoutRole.hash.toUpperCase())
+            expect(role.toUpperCase()).to.equals(ROLES.withoutRole.toUpperCase())
         }
 
         // Assign roles
         const grantRoleResponseList: ContractTransactionResponse[] = []
         grantRoleResponseList.push(
-            await rolesFacet.grantRole(ROLES.defaultAdmin.hash, nonOperator, {
+            await rolesFacet.grantRole(ROLES.defaultAdmin, nonOperator, {
                 gasLimit: GAS_LIMIT.hederaTokenManager.grantRole,
             })
         )
         grantRoleResponseList.push(
-            await rolesFacet.grantRole(ROLES.cashin.hash, nonOperator, {
+            await rolesFacet.grantRole(ROLES.cashin, nonOperator, {
                 gasLimit: GAS_LIMIT.hederaTokenManager.grantRole,
             })
         )
         grantRoleResponseList.push(
-            await rolesFacet.grantRole(ROLES.burn.hash, nonOperator, {
+            await rolesFacet.grantRole(ROLES.burn, nonOperator, {
                 gasLimit: GAS_LIMIT.hederaTokenManager.grantRole,
             })
         )
         grantRoleResponseList.push(
-            await rolesFacet.grantRole(ROLES.delete.hash, nonOperator, {
+            await rolesFacet.grantRole(ROLES.delete, nonOperator, {
                 gasLimit: GAS_LIMIT.hederaTokenManager.grantRole,
             })
         )
         grantRoleResponseList.push(
-            await rolesFacet.grantRole(ROLES.freeze.hash, nonOperator, {
+            await rolesFacet.grantRole(ROLES.freeze, nonOperator, {
                 gasLimit: GAS_LIMIT.hederaTokenManager.grantRole,
             })
         )
         grantRoleResponseList.push(
-            await rolesFacet.grantRole(ROLES.pause.hash, nonOperator, {
+            await rolesFacet.grantRole(ROLES.pause, nonOperator, {
                 gasLimit: GAS_LIMIT.hederaTokenManager.grantRole,
             })
         )
         grantRoleResponseList.push(
-            await rolesFacet.grantRole(ROLES.rescue.hash, nonOperator, {
+            await rolesFacet.grantRole(ROLES.rescue, nonOperator, {
                 gasLimit: GAS_LIMIT.hederaTokenManager.grantRole,
             })
         )
         grantRoleResponseList.push(
-            await rolesFacet.grantRole(ROLES.wipe.hash, nonOperator, {
+            await rolesFacet.grantRole(ROLES.wipe, nonOperator, {
                 gasLimit: GAS_LIMIT.hederaTokenManager.grantRole,
             })
         )
         grantRoleResponseList.push(
-            await rolesFacet.grantRole(ROLES.kyc.hash, nonOperator, {
+            await rolesFacet.grantRole(ROLES.kyc, nonOperator, {
                 gasLimit: GAS_LIMIT.hederaTokenManager.grantRole,
             })
         )
         grantRoleResponseList.push(
-            await rolesFacet.grantRole(ROLES.customFees.hash, nonOperator, {
+            await rolesFacet.grantRole(ROLES.customFees, nonOperator, {
                 gasLimit: GAS_LIMIT.hederaTokenManager.grantRole,
             })
         )
@@ -209,38 +209,38 @@ describe('➡️ Roles Tests', function () {
         })
         for (const rol of rolesAfter) {
             switch (rol.toUpperCase()) {
-                case ROLES.defaultAdmin.hash.toUpperCase():
-                    expect(rol.toUpperCase()).to.equals(ROLES.defaultAdmin.hash.toUpperCase())
+                case ROLES.defaultAdmin.toUpperCase():
+                    expect(rol.toUpperCase()).to.equals(ROLES.defaultAdmin.toUpperCase())
                     break
-                case ROLES.cashin.hash.toUpperCase():
-                    expect(rol.toUpperCase()).to.equals(ROLES.cashin.hash.toUpperCase())
+                case ROLES.cashin.toUpperCase():
+                    expect(rol.toUpperCase()).to.equals(ROLES.cashin.toUpperCase())
                     break
-                case ROLES.burn.hash.toUpperCase():
-                    expect(rol.toUpperCase()).to.equals(ROLES.burn.hash.toUpperCase())
+                case ROLES.burn.toUpperCase():
+                    expect(rol.toUpperCase()).to.equals(ROLES.burn.toUpperCase())
                     break
-                case ROLES.delete.hash.toUpperCase():
-                    expect(rol.toUpperCase()).to.equals(ROLES.delete.hash.toUpperCase())
+                case ROLES.delete.toUpperCase():
+                    expect(rol.toUpperCase()).to.equals(ROLES.delete.toUpperCase())
                     break
-                case ROLES.freeze.hash.toUpperCase():
-                    expect(rol.toUpperCase()).to.equals(ROLES.freeze.hash.toUpperCase())
+                case ROLES.freeze.toUpperCase():
+                    expect(rol.toUpperCase()).to.equals(ROLES.freeze.toUpperCase())
                     break
-                case ROLES.pause.hash.toUpperCase():
-                    expect(rol.toUpperCase()).to.equals(ROLES.pause.hash.toUpperCase())
+                case ROLES.pause.toUpperCase():
+                    expect(rol.toUpperCase()).to.equals(ROLES.pause.toUpperCase())
                     break
-                case ROLES.rescue.hash.toUpperCase():
-                    expect(rol.toUpperCase()).to.equals(ROLES.rescue.hash.toUpperCase())
+                case ROLES.rescue.toUpperCase():
+                    expect(rol.toUpperCase()).to.equals(ROLES.rescue.toUpperCase())
                     break
-                case ROLES.wipe.hash.toUpperCase():
-                    expect(rol.toUpperCase()).to.equals(ROLES.wipe.hash.toUpperCase())
+                case ROLES.wipe.toUpperCase():
+                    expect(rol.toUpperCase()).to.equals(ROLES.wipe.toUpperCase())
                     break
-                case ROLES.kyc.hash.toUpperCase():
-                    expect(rol.toUpperCase()).to.equals(ROLES.kyc.hash.toUpperCase())
+                case ROLES.kyc.toUpperCase():
+                    expect(rol.toUpperCase()).to.equals(ROLES.kyc.toUpperCase())
                     break
-                case ROLES.customFees.hash.toUpperCase():
-                    expect(rol.toUpperCase()).to.equals(ROLES.customFees.hash.toUpperCase())
+                case ROLES.customFees.toUpperCase():
+                    expect(rol.toUpperCase()).to.equals(ROLES.customFees.toUpperCase())
                     break
                 default:
-                    expect(rol.toUpperCase()).to.equals(ROLES.withoutRole.hash.toUpperCase())
+                    expect(rol.toUpperCase()).to.equals(ROLES.withoutRole.toUpperCase())
                     break
             }
         }
@@ -248,52 +248,52 @@ describe('➡️ Roles Tests', function () {
         // Revoke roles
         const revokeRoleResponseList: ContractTransactionResponse[] = []
         revokeRoleResponseList.push(
-            await rolesFacet.revokeRole(ROLES.defaultAdmin.hash, nonOperator, {
+            await rolesFacet.revokeRole(ROLES.defaultAdmin, nonOperator, {
                 gasLimit: GAS_LIMIT.hederaTokenManager.revokeRole,
             })
         )
         revokeRoleResponseList.push(
-            await rolesFacet.revokeRole(ROLES.cashin.hash, nonOperator, {
+            await rolesFacet.revokeRole(ROLES.cashin, nonOperator, {
                 gasLimit: GAS_LIMIT.hederaTokenManager.revokeRole,
             })
         )
         revokeRoleResponseList.push(
-            await rolesFacet.revokeRole(ROLES.burn.hash, nonOperator, {
+            await rolesFacet.revokeRole(ROLES.burn, nonOperator, {
                 gasLimit: GAS_LIMIT.hederaTokenManager.revokeRole,
             })
         )
         revokeRoleResponseList.push(
-            await rolesFacet.revokeRole(ROLES.delete.hash, nonOperator, {
+            await rolesFacet.revokeRole(ROLES.delete, nonOperator, {
                 gasLimit: GAS_LIMIT.hederaTokenManager.revokeRole,
             })
         )
         revokeRoleResponseList.push(
-            await rolesFacet.revokeRole(ROLES.freeze.hash, nonOperator, {
+            await rolesFacet.revokeRole(ROLES.freeze, nonOperator, {
                 gasLimit: GAS_LIMIT.hederaTokenManager.revokeRole,
             })
         )
         revokeRoleResponseList.push(
-            await rolesFacet.revokeRole(ROLES.pause.hash, nonOperator, {
+            await rolesFacet.revokeRole(ROLES.pause, nonOperator, {
                 gasLimit: GAS_LIMIT.hederaTokenManager.revokeRole,
             })
         )
         revokeRoleResponseList.push(
-            await rolesFacet.revokeRole(ROLES.rescue.hash, nonOperator, {
+            await rolesFacet.revokeRole(ROLES.rescue, nonOperator, {
                 gasLimit: GAS_LIMIT.hederaTokenManager.revokeRole,
             })
         )
         revokeRoleResponseList.push(
-            await rolesFacet.revokeRole(ROLES.wipe.hash, nonOperator, {
+            await rolesFacet.revokeRole(ROLES.wipe, nonOperator, {
                 gasLimit: GAS_LIMIT.hederaTokenManager.revokeRole,
             })
         )
         revokeRoleResponseList.push(
-            await rolesFacet.revokeRole(ROLES.kyc.hash, nonOperator, {
+            await rolesFacet.revokeRole(ROLES.kyc, nonOperator, {
                 gasLimit: GAS_LIMIT.hederaTokenManager.revokeRole,
             })
         )
         revokeRoleResponseList.push(
-            await rolesFacet.revokeRole(ROLES.customFees.hash, nonOperator, {
+            await rolesFacet.revokeRole(ROLES.customFees, nonOperator, {
                 gasLimit: GAS_LIMIT.hederaTokenManager.revokeRole,
             })
         )
@@ -309,7 +309,7 @@ describe('➡️ Roles Tests', function () {
             gasLimit: GAS_LIMIT.hederaTokenManager.getRoles,
         })
         for (const rol of rolesAfterRevoke) {
-            expect(rol.toUpperCase()).to.equals(ROLES.withoutRole.hash.toUpperCase())
+            expect(rol.toUpperCase()).to.equals(ROLES.withoutRole.toUpperCase())
         }
     })
 })

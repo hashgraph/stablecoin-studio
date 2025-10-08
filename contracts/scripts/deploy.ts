@@ -227,7 +227,7 @@ export async function deployFullInfrastructure({
             DEFAULT_CONFIG_VERSION,
             [
                 {
-                    role: ROLES.defaultAdmin.hash,
+                    role: ROLES.defaultAdmin,
                     account: await signer.getAddress(),
                 },
             ],

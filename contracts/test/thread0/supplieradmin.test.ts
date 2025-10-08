@@ -62,7 +62,7 @@ describe('➡️ Supplier Admin Tests', function () {
     })
 
     it('should confirm nonOperator has no supplier role initially', async function () {
-        const role = await rolesFacet.hasRole(ROLES.cashin.hash, nonOperator, {
+        const role = await rolesFacet.hasRole(ROLES.cashin, nonOperator, {
             gasLimit: GAS_LIMIT.hederaTokenManager.hasRole,
         })
         expect(role).to.equal(false)
@@ -83,7 +83,7 @@ describe('➡️ Supplier Admin Tests', function () {
 
         await delay({ time: 1, unit: 'sec' })
 
-        const role = await rolesFacet.hasRole(ROLES.cashin.hash, nonOperator, {
+        const role = await rolesFacet.hasRole(ROLES.cashin, nonOperator, {
             gasLimit: GAS_LIMIT.hederaTokenManager.hasRole,
         })
         expect(role).to.equal(true)
@@ -102,7 +102,7 @@ describe('➡️ Supplier Admin Tests', function () {
 
         await delay({ time: 1, unit: 'sec' })
 
-        const role = await rolesFacet.hasRole(ROLES.cashin.hash, nonOperator, {
+        const role = await rolesFacet.hasRole(ROLES.cashin, nonOperator, {
             gasLimit: GAS_LIMIT.hederaTokenManager.hasRole,
         })
         expect(role).to.equal(false)
@@ -131,7 +131,7 @@ describe('➡️ Supplier Admin Tests', function () {
         })
         expect(isUnlimited).to.eq(true)
 
-        const role = await rolesFacet.hasRole(ROLES.cashin.hash, nonOperator, {
+        const role = await rolesFacet.hasRole(ROLES.cashin, nonOperator, {
             gasLimit: GAS_LIMIT.hederaTokenManager.hasRole,
         })
         expect(role).to.equal(true)
@@ -150,7 +150,7 @@ describe('➡️ Supplier Admin Tests', function () {
         })
         expect(isUnlimited).to.eq(false)
 
-        const role = await rolesFacet.hasRole(ROLES.cashin.hash, nonOperator, {
+        const role = await rolesFacet.hasRole(ROLES.cashin, nonOperator, {
             gasLimit: GAS_LIMIT.hederaTokenManager.hasRole,
         })
         expect(role).to.equal(false)

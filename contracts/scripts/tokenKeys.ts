@@ -105,39 +105,39 @@ export function rolesToAccounts({
 
     return [
         {
-            role: ROLES.burn.hash,
+            role: ROLES.burn,
             account: RoleToAccount,
         },
         {
-            role: ROLES.pause.hash,
+            role: ROLES.pause,
             account: RoleToAccount,
         },
         {
-            role: ROLES.wipe.hash,
+            role: ROLES.wipe,
             account: RoleToAccount,
         },
         {
-            role: ROLES.freeze.hash,
+            role: ROLES.freeze,
             account: RoleToAccount,
         },
         {
-            role: ROLES.rescue.hash,
+            role: ROLES.rescue,
             account: RoleToAccount,
         },
         {
-            role: ROLES.delete.hash,
+            role: ROLES.delete,
             account: RoleToAccount,
         },
         {
-            role: ROLES.kyc.hash,
+            role: ROLES.kyc,
             account: RoleToAccount,
         },
         {
-            role: ROLES.customFees.hash,
+            role: ROLES.customFees,
             account: RoleToAccount,
         },
         {
-            role: ROLES.hold.hash,
+            role: ROLES.hold,
             account: RoleToAccount,
         },
     ]
