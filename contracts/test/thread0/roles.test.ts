@@ -138,18 +138,19 @@ describe('➡️ Roles Tests', function () {
     })
 
     it('Can not revoke all admin role from a token', async function () {
-        // Non operator has burn role
         const Admins = await rolesFacet.getAccountsWithRole(ROLES.defaultAdmin.hash, {
             gasLimit: GAS_LIMIT.hederaTokenManager.getAccountsWithRole,
         })
 
-        for (let i = 0; i < Admins.length - 1; i++) {
+        const Length = Admins.length
+
+        for (let i = 0; i < Length - 1; i++) {
             await rolesFacet.revokeRole(ROLES.defaultAdmin.hash, Admins[i], {
                 gasLimit: GAS_LIMIT.hederaTokenManager.revokeRole,
             })
         }
 
-        const revokeRoleResponse = await rolesFacet.revokeRole(ROLES.defaultAdmin.hash, Admins[length - 1], {
+        const revokeRoleResponse = await rolesFacet.revokeRole(ROLES.defaultAdmin.hash, Admins[Length - 1], {
             gasLimit: GAS_LIMIT.hederaTokenManager.revokeRole,
         })
         await expect(
