@@ -24,7 +24,7 @@ contract BusinessLogicResolver is IBusinessLogicResolver, DiamondCutManager, Ini
     function registerBusinessLogics(
         BusinessLogicRegistryData[] calldata _businessLogics
     ) external override onlyValidKeys(_businessLogics) onlyRole(ADMIN_ROLE) {
-        uint256 latestVersion = _registerBusinessLogics(_businessLogics);
+        uint256[] memory latestVersion = _registerBusinessLogics(_businessLogics);
 
         emit BusinessLogicsRegistered(_businessLogics, latestVersion);
     }
@@ -44,13 +44,14 @@ contract BusinessLogicResolver is IBusinessLogicResolver, DiamondCutManager, Ini
     }
 
     function getVersionStatus(
+        bytes32 _businessLogicKey,
         uint256 _version
-    ) external view override validVersion(_version) returns (VersionStatus status_) {
-        status_ = _getVersionStatus(_version);
+    ) external view override validVersion(_businessLogicKey, _version) returns (VersionStatus status_) {
+        status_ = _getVersionStatus(_businessLogicKey, _version);
     }
 
-    function getLatestVersion() external view override returns (uint256 latestVersion_) {
-        latestVersion_ = _getLatestVersion();
+    function getLatestVersion(bytes32 _businessLogicKey) external view override returns (uint256 latestVersion_) {
+        latestVersion_ = _getLatestVersion(_businessLogicKey);
     }
 
     function resolveLatestBusinessLogic(
@@ -62,7 +63,7 @@ contract BusinessLogicResolver is IBusinessLogicResolver, DiamondCutManager, Ini
     function resolveBusinessLogicByVersion(
         bytes32 _businessLogicKey,
         uint256 _version
-    ) external view override validVersion(_version) returns (address businessLogicAddress_) {
+    ) external view override validVersion(_businessLogicKey, _version) returns (address businessLogicAddress_) {
         businessLogicAddress_ = _resolveBusinessLogicByVersion(_businessLogicKey, _version);
     }
 

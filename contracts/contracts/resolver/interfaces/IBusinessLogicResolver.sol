@@ -41,7 +41,7 @@ interface IBusinessLogicResolver is IDiamondCutManager {
     /// @notice Event emitted when Business Logic(s) are registered (updated or added).
     /// @param businessLogics list of registered Business Logics.
     /// @param newLatestVersion new latest version = previous latest version + 1.
-    event BusinessLogicsRegistered(BusinessLogicRegistryData[] businessLogics, uint256 newLatestVersion);
+    event BusinessLogicsRegistered(BusinessLogicRegistryData[] businessLogics, uint256[] newLatestVersion);
 
     // solhint-disable-next-line func-name-mixedcase
     function initialize_BusinessLogicResolver() external returns (bool success_);
@@ -63,10 +63,13 @@ interface IBusinessLogicResolver is IDiamondCutManager {
     function removeSelectorsFromBlacklist(bytes32 _configurationId, bytes4[] calldata _selectors) external;
 
     /// @notice Returns the current status of a given version
-    function getVersionStatus(uint256 _version) external view returns (VersionStatus status_);
+    function getVersionStatus(
+        bytes32 _businessLogicKey,
+        uint256 _version
+    ) external view returns (VersionStatus status_);
 
     /// @notice Returns the current latest version for all business logics
-    function getLatestVersion() external view returns (uint256 latestVersion_);
+    function getLatestVersion(bytes32 _businessLogicKey) external view returns (uint256 latestVersion_);
 
     /// @notice Returns the business logic address for the latest version
     /// @param _businessLogicKey key of the business logic. Business Logic must be active.

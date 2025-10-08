@@ -36,7 +36,7 @@ describe('➡️ DiamondCutManager Tests', () => {
     before(async () => {
         // mute | mock console.log
         // eslint-disable-next-line @typescript-eslint/no-empty-function
-        console.log = () => {}
+        //console.log = () => {}
         console.info(MESSAGES.deploy.info.deployFullInfrastructureInTests)
         // eslint-disable-next-line no-extra-semi
         ;[operator, nonOperator] = await ethers.getSigners()
@@ -461,22 +461,13 @@ describe('➡️ DiamondCutManager Tests', () => {
         await delay({ time: 1, unit: 'sec' })
         diamondCutManager = diamondCutManager.connect(operator)
 
-        const businessLogics: IBusinessLogicResolver.BusinessLogicRegistryDataStruct[] = []
-
         const facetConfigurations: IDiamondCutManager.FacetConfigurationStruct[] = []
+
         stableCoinFacetIdList.forEach((id, index) => {
             facetConfigurations.push({
                 id,
-                version: stableCoinFacetIdList[index],
-            }),
-                businessLogics.push({
-                    businessLogicKey: id,
-                    businessLogicAddress: '0x0000000000000000000000000000000000000001',
-                })
-        })
-
-        await businessLogicResolver.registerBusinessLogics(businessLogics, {
-            gasLimit: GAS_LIMIT.businessLogicResolver.registerBusinessLogics,
+                version: stableCoinFacetVersionList[index],
+            })
         })
 
         await expect(diamondCutManager.createConfiguration(CONFIG_ID.stableCoin, facetConfigurations))

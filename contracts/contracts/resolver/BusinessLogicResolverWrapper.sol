@@ -10,7 +10,7 @@ import {EnumerableSetBytes4} from '../core/EnumerableSetBytes4.sol';
 
 abstract contract BusinessLogicResolverWrapper is IBusinessLogicResolverWrapper {
     struct BusinessLogicResolverDataStorage {
-        uint256 latestVersion;
+        mapping(bytes32 => uint256) latestVersion;
         // list of facetIds
         bytes32[] activeBusinessLogics;
         // facetId -> bool
@@ -20,12 +20,12 @@ abstract contract BusinessLogicResolverWrapper is IBusinessLogicResolverWrapper 
         // keccaak256(facetId, version) -> position
         mapping(bytes32 => uint256) businessLogicVersionIndex;
         // version to status
-        mapping(uint256 => IBusinessLogicResolver.VersionStatus) versionStatuses;
+        mapping(bytes32 => mapping(uint256 => IBusinessLogicResolver.VersionStatus)) versionStatuses;
         mapping(bytes32 => EnumerableSetBytes4.Bytes4Set) selectorBlacklist;
     }
 
-    modifier validVersion(uint256 _version) {
-        _checkValidVersion(_version);
+    modifier validVersion(bytes32 _businessLogicKey, uint256 _version) {
+        _checkValidVersion(_businessLogicKey, _version);
         _;
     }
 
@@ -36,13 +36,17 @@ abstract contract BusinessLogicResolverWrapper is IBusinessLogicResolverWrapper 
 
     function _registerBusinessLogics(
         IBusinessLogicResolver.BusinessLogicRegistryData[] calldata _businessLogicsRegistryDatas
-    ) internal returns (uint256 latestVersion_) {
+    ) internal returns (uint256[] memory latestVersion_) {
         BusinessLogicResolverDataStorage storage businessLogicResolverDataStorage = _businessLogicResolverStorage();
 
-        businessLogicResolverDataStorage.latestVersion++;
         IBusinessLogicResolver.BusinessLogicRegistryData memory _businessLogicsRegistryData;
+
+        latestVersion_ = new uint256[](_businessLogicsRegistryDatas.length);
+
         for (uint256 index; index < _businessLogicsRegistryDatas.length; index++) {
             _businessLogicsRegistryData = _businessLogicsRegistryDatas[index];
+
+            businessLogicResolverDataStorage.latestVersion[_businessLogicsRegistryData.businessLogicKey]++;
 
             if (!businessLogicResolverDataStorage.businessLogicActive[_businessLogicsRegistryData.businessLogicKey]) {
                 businessLogicResolverDataStorage.businessLogicActive[
@@ -59,7 +63,9 @@ abstract contract BusinessLogicResolverWrapper is IBusinessLogicResolverWrapper 
             versions.push(
                 IBusinessLogicResolver.BusinessLogicVersion({
                     versionData: IBusinessLogicResolver.VersionData({
-                        version: businessLogicResolverDataStorage.latestVersion,
+                        version: businessLogicResolverDataStorage.latestVersion[
+                            _businessLogicsRegistryData.businessLogicKey
+                        ],
                         status: IBusinessLogicResolver.VersionStatus.ACTIVATED
                     }),
                     businessLogicAddress: _businessLogicsRegistryData.businessLogicAddress
@@ -69,17 +75,19 @@ abstract contract BusinessLogicResolverWrapper is IBusinessLogicResolverWrapper 
                 keccak256(
                     abi.encodePacked(
                         _businessLogicsRegistryData.businessLogicKey,
-                        businessLogicResolverDataStorage.latestVersion
+                        businessLogicResolverDataStorage.latestVersion[_businessLogicsRegistryData.businessLogicKey]
                     )
                 )
             ] = versions.length;
+
+            businessLogicResolverDataStorage.versionStatuses[_businessLogicsRegistryData.businessLogicKey][
+                businessLogicResolverDataStorage.latestVersion[_businessLogicsRegistryData.businessLogicKey]
+            ] = IBusinessLogicResolver.VersionStatus.ACTIVATED;
+
+            latestVersion_[index] = businessLogicResolverDataStorage.latestVersion[
+                _businessLogicsRegistryData.businessLogicKey
+            ];
         }
-
-        businessLogicResolverDataStorage.versionStatuses[
-            businessLogicResolverDataStorage.latestVersion
-        ] = IBusinessLogicResolver.VersionStatus.ACTIVATED;
-
-        return businessLogicResolverDataStorage.latestVersion;
     }
 
     function _addSelectorsToBlacklist(bytes32 _configurationId, bytes4[] calldata _selectors) internal {
@@ -114,12 +122,15 @@ abstract contract BusinessLogicResolverWrapper is IBusinessLogicResolverWrapper 
         }
     }
 
-    function _getVersionStatus(uint256 _version) internal view returns (IBusinessLogicResolver.VersionStatus status_) {
-        status_ = _businessLogicResolverStorage().versionStatuses[_version];
+    function _getVersionStatus(
+        bytes32 _key,
+        uint256 _version
+    ) internal view returns (IBusinessLogicResolver.VersionStatus status_) {
+        status_ = _businessLogicResolverStorage().versionStatuses[_key][_version];
     }
 
-    function _getLatestVersion() internal view returns (uint256 latestVersion_) {
-        latestVersion_ = _businessLogicResolverStorage().latestVersion;
+    function _getLatestVersion(bytes32 _key) internal view returns (uint256 latestVersion_) {
+        latestVersion_ = _businessLogicResolverStorage().latestVersion[_key];
     }
 
     function _resolveLatestBusinessLogic(
@@ -127,7 +138,7 @@ abstract contract BusinessLogicResolverWrapper is IBusinessLogicResolverWrapper 
     ) internal view returns (address businessLogicAddress_) {
         businessLogicAddress_ = _resolveBusinessLogicByVersion(
             _businessLogicKey,
-            _businessLogicResolverStorage().latestVersion
+            _businessLogicResolverStorage().latestVersion[_businessLogicKey]
         );
     }
 
@@ -196,8 +207,8 @@ abstract contract BusinessLogicResolverWrapper is IBusinessLogicResolverWrapper 
         }
     }
 
-    function _checkValidVersion(uint256 _version) private view {
-        if (_version == 0 || _version > _businessLogicResolverStorage().latestVersion)
+    function _checkValidVersion(bytes32 _businessLogicKey, uint256 _version) private view {
+        if (_version == 0 || _version > _businessLogicResolverStorage().latestVersion[_businessLogicKey])
             revert BusinessLogicVersionDoesNotExist(_version);
     }
 
