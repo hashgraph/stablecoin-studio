@@ -1,7 +1,6 @@
 // SPDX-License-Identifier: MIT
 pragma solidity 0.8.18;
 
-import {IBusinessLogicResolver} from './interfaces/IBusinessLogicResolver.sol';
 import {LibCommon} from '../core/LibCommon.sol';
 import {IBusinessLogicResolverWrapper} from './interfaces/IBusinessLogicResolverWrapper.sol';
 import {IBusinessLogicResolver} from './interfaces/IBusinessLogicResolver.sol';
@@ -210,6 +209,8 @@ abstract contract BusinessLogicResolverWrapper is IBusinessLogicResolverWrapper 
         for (uint256 index; index < length; ) {
             currentKey = _businessLogicsRegistryDatas[index].businessLogicKey;
             if (uint256(currentKey) == 0) revert ZeroKeyNotValidForBusinessLogic();
+            if (_businessLogicsRegistryDatas[index].businessLogicAddress == address(0))
+                revert ZeroAddressNotValidForBusinessLogic();
 
             if (businessLogicResolverDataStorage.businessLogicActive[currentKey]) ++activesBusinessLogicsKeys;
             unchecked {

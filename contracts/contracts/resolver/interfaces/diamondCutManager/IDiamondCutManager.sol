@@ -59,6 +59,9 @@ interface IDiamondCutManager {
     /// @notice error that occurs when trying to assign an already assigned selector to a new facet address
     error SelectorAlreadyRegistered(address firstAddress, address secondAddress);
 
+    /// @notice error that occurs when defining a configuration with an empty facet array list
+    error EmptyConfiguration();
+
     /// @notice Create a new configuration to the latest version of all facets.
     /// @param _configurationId unused identifier to the configuration.
     /// @param _facetConfigurations.id list of business logics to be registered.
