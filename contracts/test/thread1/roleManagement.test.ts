@@ -262,9 +262,16 @@ describe('➡️ Role Management Tests', function () {
             gasLimit: GAS_LIMIT.hederaTokenManager.getAccountsWithRole,
         })
 
-        const txResponse = await roleManagementFacet.revokeRoles([ROLES.defaultAdmin.hash], Admins, {
+        const adminAccounts: string[] = []
+
+        for (let i = 0; i < Admins.length; i++) {
+            adminAccounts.push(Admins[i])
+        }
+
+        const txResponse = await roleManagementFacet.revokeRoles([ROLES.defaultAdmin.hash], adminAccounts, {
             gasLimit: GAS_LIMIT.hederaTokenManager.revokeRoles,
         })
+
         await expect(new ValidateTxResponseCommand({ txResponse }).execute()).to.be.rejectedWith(Error)
     })
 
