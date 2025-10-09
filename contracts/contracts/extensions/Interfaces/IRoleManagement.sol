@@ -13,6 +13,9 @@ interface IRoleManagement {
     // emitted when trying to remove all admin accounts
     error NoAdminsLeft();
 
+    // emitted when assigning supplier role with 0 amount
+    error AmountIsZero();
+
     /**
      * @dev Grant the provided "roles" to all the "accounts", if CASHIN then "amounts" are the allowances
      *
