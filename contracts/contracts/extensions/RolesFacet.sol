@@ -6,8 +6,9 @@ import {IRoles} from './Interfaces/IRoles.sol';
 import {RolesStorageWrapper} from './RolesStorageWrapper.sol';
 import {_ROLES_RESOLVER_KEY} from '../constants/resolverKeys.sol';
 import {IStaticFunctionSelectors} from '../resolver/interfaces/resolverProxy/IStaticFunctionSelectors.sol';
+import {Common} from '../core/Common.sol';
 
-contract RolesFacet is IRoles, IStaticFunctionSelectors, RolesStorageWrapper {
+contract RolesFacet is IRoles, IStaticFunctionSelectors, Common, RolesStorageWrapper {
     /**
      * @dev Checks if the account has been granted a role
      *
@@ -45,7 +46,7 @@ contract RolesFacet is IRoles, IStaticFunctionSelectors, RolesStorageWrapper {
      * @param role The role to be granted
      * @param account The account to wich the role is granted
      */
-    function grantRole(bytes32 role, address account) external onlyRole(ADMIN_ROLE) {
+    function grantRole(bytes32 role, address account) external onlyRole(ADMIN_ROLE) addressIsNotZero(account) {
         _grantRole(role, account);
     }
 

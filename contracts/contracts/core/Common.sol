@@ -50,6 +50,16 @@ abstract contract Common is Initializable, ICommon {
         _;
     }
 
+    modifier addressesAreNotZero(address[] calldata addrs) {
+        for (uint256 i = 0; i < addrs.length; ) {
+            _addressIsNotZero(addrs[i]);
+            unchecked {
+                i++;
+            }
+        }
+        _;
+    }
+
     /**
      * @dev Checks if the calling account is the contract admin
      *

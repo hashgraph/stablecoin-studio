@@ -10,6 +10,7 @@ import {
     SupplierAdminFacet__factory,
 } from '@contracts'
 import {
+    ADDRESS_ZERO,
     delay,
     deployFullInfrastructure,
     DeployFullInfrastructureCommand,
@@ -306,5 +307,14 @@ describe('➡️ Role Management Tests', function () {
         for (const account of randomAccountList) {
             expect(burnRoleAccountsAfterRevoke).to.not.include(account)
         }
+    })
+
+    it('Granting role to account 0 fails', async function () {
+        const listOfAccounts = randomAccountList
+        listOfAccounts.push(ADDRESS_ZERO)
+
+        await expect(
+            roleManagementFacet.grantRoles([ROLES.burn.hash], listOfAccounts, [])
+        ).to.be.revertedWithCustomError(roleManagementFacet, 'AddressZero')
     })
 })
