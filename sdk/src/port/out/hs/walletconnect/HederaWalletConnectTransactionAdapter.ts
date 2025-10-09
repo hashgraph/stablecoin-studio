@@ -101,7 +101,7 @@ export class HederaWalletConnectTransactionAdapter extends HederaTransactionAdap
 	protected projectId: string;
 	protected hederaAdapter: InstanceType<typeof HederaAdapter> | undefined;
 	protected appKit: any;
-	protected universalProvider: any;
+	protected universalProvider: InstanceType<typeof UniversalProvider> | undefined;
 	protected hederaProvider: InstanceType<typeof HederaProvider> | undefined;
 	protected dappMetadata: {
 		name: string;
@@ -308,12 +308,12 @@ export class HederaWalletConnectTransactionAdapter extends HederaTransactionAdap
 				},
 			};
 
-			this.universalProvider = await HederaProvider.init(providerOpts)
-			this.hederaProvider = this.universalProvider;
+			this.hederaProvider = await HederaProvider.init(providerOpts)
+			this.universalProvider = this.hederaProvider
 
 			this.appKit = createAppKit({
 				adapters: [this.hederaAdapter, eip155HederaAdapter],
-				universalProvider: this.universalProvider as any,
+				universalProvider: this.universalProvider,
 				projectId: this.projectId,
 				metadata: this.dappMetadata,
 				networks: [HederaChainDefinition.Native.Testnet],
@@ -376,16 +376,16 @@ export class HederaWalletConnectTransactionAdapter extends HederaTransactionAdap
 			throw new Error('❌ HederaProvider is not initialized after connection');
 		}
 
-		// Try to get the updated provider from the adapter after connection
-		try {
-			const adapterProvider = this.hederaAdapter?.getProvider?.();
-			if (adapterProvider) {
-				console.log('[HWC] Updating provider reference from adapter');
-				this.hederaProvider = adapterProvider as any;
-			}
-		} catch (e) {
-			console.log('[HWC] Could not get provider from adapter, using existing provider');
-		}
+		// // Try to get the updated provider from the adapter after connection
+		// try {
+		// 	const adapterProvider = this.hederaAdapter?.getProvider?.();
+		// 	if (adapterProvider) {
+		// 		console.log('[HWC] Updating provider reference from adapter');
+		// 		this.hederaProvider = adapterProvider as any;
+		// 	}
+		// } catch (e) {
+		// 	console.log('[HWC] Could not get provider from adapter, using existing provider');
+		// }
 
 		console.log('[HWC] Getting connected account from session...');
 		console.log(`[HWC] HederaProvider session available: ${!!this.hederaProvider.session}`);
@@ -396,7 +396,7 @@ export class HederaWalletConnectTransactionAdapter extends HederaTransactionAdap
 		if (!hederaAccount) {
 			const errorMsg = `❌ No Hedera account retrieved from wallet connect session.`;
 			console.log(errorMsg);
-			console.log(`[HWC] Session namespaces: ${JSON.stringify(this.hederaProvider?.session?.namespaces, null, 2)}`);
+			console.log(`[HWC] Session namespaces: ${hederaAccount}`);
 			throw new Error(errorMsg);
 		}
 
