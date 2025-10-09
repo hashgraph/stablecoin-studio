@@ -51,8 +51,15 @@ contract HoldManagementFacet is
      * @param expirationTimestamp The expiration timestamp of the hold
      */
     modifier nonExpired(uint256 expirationTimestamp) {
-        if (expirationTimestamp < block.timestamp) {
+        if (expirationTimestamp <= block.timestamp) {
             revert HoldExpired(expirationTimestamp);
+        }
+        _;
+    }
+
+    modifier expired(uint256 expirationTimestamp) {
+        if (expirationTimestamp > block.timestamp) {
+            revert HoldNotExpired(expirationTimestamp);
         }
         _;
     }
@@ -264,14 +271,18 @@ contract HoldManagementFacet is
      */
     function reclaimHold(
         HoldIdentifier calldata _holdIdentifier
-    ) external validHold(_holdIdentifier) returns (bool success_) {
+    )
+        external
+        validHold(_holdIdentifier)
+        expired(
+            _holdDataStorage()
+            .holdsByAccountAndId[_holdIdentifier.tokenHolder][_holdIdentifier.holdId].expirationTimestamp
+        )
+        returns (bool success_)
+    {
         HoldData storage holdData = _holdDataStorage().holdsByAccountAndId[_holdIdentifier.tokenHolder][
             _holdIdentifier.holdId
         ];
-
-        if (holdData.expirationTimestamp > block.timestamp) {
-            revert HoldNotExpired(holdData.expirationTimestamp);
-        }
 
         int64 amount = holdData.amount;
         _decreaseHoldAmount(_holdIdentifier.tokenHolder, _holdIdentifier.holdId, amount);
