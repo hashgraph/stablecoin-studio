@@ -256,6 +256,25 @@ describe('➡️ Role Management Tests', function () {
         await expect(new ValidateTxResponseCommand({ txResponse }).execute()).to.be.rejectedWith(Error)
     })
 
+    it('Can not revoke all admin role from a token', async function () {
+        // Non operator has burn role
+        const Admins = await rolesFacet.getAccountsWithRole(ROLES.defaultAdmin.hash, {
+            gasLimit: GAS_LIMIT.hederaTokenManager.getAccountsWithRole,
+        })
+
+        const adminAccounts: string[] = []
+
+        for (let i = 0; i < Admins.length; i++) {
+            adminAccounts.push(Admins[i])
+        }
+
+        const txResponse = await roleManagementFacet.revokeRoles([ROLES.defaultAdmin.hash], adminAccounts, {
+            gasLimit: GAS_LIMIT.hederaTokenManager.revokeRoles,
+        })
+
+        await expect(new ValidateTxResponseCommand({ txResponse }).execute()).to.be.rejectedWith(Error)
+    })
+
     it('An account can get all roles of any account', async function () {
         // Grant roles
         const Roles = [ROLES.burn.hash]
