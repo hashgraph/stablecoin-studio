@@ -21,12 +21,18 @@ abstract contract ResolverProxyUnstructured is RolesStorageWrapper {
         uint256 version;
     }
 
+    error ResolverAddressIsZero();
+    error ConfigurationIdIsZero();
+
     function _initialize(
         IBusinessLogicResolver _resolver,
         bytes32 _resolverProxyConfigurationId,
         uint256 _version,
         RolesStruct[] memory _roles
     ) internal {
+        if (address(_resolver) == address(0)) revert ResolverAddressIsZero();
+        if (_resolverProxyConfigurationId == bytes32(0)) revert ConfigurationIdIsZero();
+
         _resolver.checkResolverProxyConfigurationRegistered(_resolverProxyConfigurationId, _version);
         ResolverProxyStorage storage ds = _resolverProxyStorage();
         _updateResolver(ds, _resolver);
