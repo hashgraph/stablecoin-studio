@@ -95,7 +95,6 @@ abstract contract DiamondCutManagerWrapper is IDiamondCutManager, BusinessLogicR
 
             address addr = _resolveBusinessLogicByVersion(facetId, facetVersion);
 
-            // TODO: is better a checkFacetRegistered in BusinessLogicResolverWrapper??
             if (addr == address(0)) {
                 revert FacetIdNotRegistered(_configurationId, facetId);
             }
@@ -473,7 +472,6 @@ abstract contract DiamondCutManagerWrapper is IDiamondCutManager, BusinessLogicR
         }
     }
 
-    // TODO: Move to a separate file.
     function _buildHash(bytes32 _configurationId, uint256 _version) private pure returns (bytes32 hash_) {
         hash_ = keccak256(abi.encodePacked(_configurationId, _version));
     }

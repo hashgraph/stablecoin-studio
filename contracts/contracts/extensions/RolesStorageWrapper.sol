@@ -27,7 +27,6 @@ abstract contract RolesStorageWrapper {
         bytes32[] listOfRoles;
     }
 
-    // TODO: Better at interface
     /**
      * @dev Emitted when a role is granted to an account
      *

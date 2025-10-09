@@ -109,15 +109,5 @@ describe('➡️ Custom Fees Tests', function () {
         await validateTxResponse(
             new ValidateTxResponseCommand({ txResponse: response, confirmationEvent: 'TokenCustomFeesUpdated' })
         )
-
-        // TODO: update
-        // const customFees = await getTokenCustomFees(
-        //     proxyAddress,
-        //     operatorClient
-        // )
-        // expect(customFees.fixedFees[0].amount).to.equal(bigNumberOne.toString())
-        // expect(customFees.fractionalFees[0].numerator).to.equal(
-        //     bigNumberOne.toString()
-        // )
     })
 })
