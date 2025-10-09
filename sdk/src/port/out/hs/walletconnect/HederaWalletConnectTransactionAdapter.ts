@@ -32,6 +32,7 @@
 import { singleton } from 'tsyringe';
 import {
 	AccountId,
+	LedgerId,
 	Signer,
 	Transaction,
 } from '@hashgraph/sdk';
@@ -62,6 +63,7 @@ import HWCSettings from '../../../../domain/context/hwalletconnectsettings/HWCSe
 import { HederaTransactionResponseAdapter } from '../HederaTransactionResponseAdapter';
 import { SigningError } from '../error/SigningError';
 import Hex from '../../../../core/Hex.js';
+import type {PublicStateControllerState} from "@reown/appkit-controllers";
 
 let HederaAdapter: typeof import('@hashgraph/hedera-wallet-connect').HederaAdapter;
 let HederaChainDefinition: typeof import('@hashgraph/hedera-wallet-connect').HederaChainDefinition;
@@ -146,7 +148,7 @@ export class HederaWalletConnectTransactionAdapter extends HederaTransactionAdap
 			wallet: SupportedWallets.HWALLETCONNECT,
 		};
 		this.eventService.emit(WalletEvents.walletInit, eventData);
-		LogService.logInfo('✅ Hedera Wallet Connect Handler Initialized');
+		console.log('✅ Hedera Wallet Connect Handler Initialized');
 		return currentNetwork;
 	}
 
@@ -160,7 +162,7 @@ export class HederaWalletConnectTransactionAdapter extends HederaTransactionAdap
 		hWCSettings: HWCSettings,
 	): Promise<InitializationData> {
 		Injectable.registerTransactionHandler(this);
-		LogService.logTrace('Hedera WalletConnect registered as handler');
+		console.log('Hedera WalletConnect registered as handler');
 
 		if (!hWCSettings)
 			throw new Error('hedera wallet connect settings not set');
@@ -174,7 +176,9 @@ export class HederaWalletConnectTransactionAdapter extends HederaTransactionAdap
 
 		await this.connectWalletConnect();
 
-		return { account: this.getAccount() };
+		return Promise.resolve({
+			account: this.getAccount(),
+		});
 	}
 
 	private getChainDefinition(network: Environment): any {
@@ -210,147 +214,135 @@ export class HederaWalletConnectTransactionAdapter extends HederaTransactionAdap
 	public async connectWalletConnect(network?: string): Promise<string> {
 		const currentNetwork = network ?? this.networkService.environment;
 
-		LogService.logInfo(`🚀 [HWC] Starting connectWalletConnect with network: ${currentNetwork}`);
-		LogService.logTrace(`[HWC] DApp Metadata: ${JSON.stringify(this.dappMetadata, null, 2)}`);
-		LogService.logTrace(`[HWC] Project ID: ${this.projectId}`);
+		console.log(`🚀 [HWC] Starting connectWalletConnect with network: ${currentNetwork}`);
+		console.log(`[HWC] DApp Metadata: ${JSON.stringify(this.dappMetadata, null, 2)}`);
+		console.log(`[HWC] Project ID: ${this.projectId}`);
+		console.log(`[HWC] NetworkService Configuration:`);
+		console.log(`  - Factory Address: ${this.networkService.configuration?.factoryAddress || 'NOT SET'}`);
+		console.log(`  - Resolver Address: ${this.networkService.configuration?.resolverAddress || 'NOT SET'}`);
+		console.log(`  - RPC URL: ${this.networkService.rpcNode?.baseUrl || 'NOT SET'}`);
+		console.log(`  - Mirror Node: ${this.networkService.mirrorNode?.baseUrl || 'NOT SET'}`);
 
 		try {
-
-			/*
-			LogService.logTrace(`[HWC] Creating HederaAdapter instance...`);
+			console.log(`[HWC] Creating HederaAdapter instances...`);
 			const supportedChains = this.getSupportedChains();
 
+			// Determine if we're on testnet or mainnet
+			const isTestnet = currentNetwork === testnet;
+			console.log(`[HWC] Network detected: ${isTestnet ? 'Testnet' : 'Mainnet'}`);
+
+			// Order chains based on current network - first chain is used by HashPack
+			const nativeNetworks = isTestnet
+				? [HederaChainDefinition.Native.Testnet, HederaChainDefinition.Native.Mainnet]
+				: [HederaChainDefinition.Native.Mainnet, HederaChainDefinition.Native.Testnet];
+
+			const evmNetworks = isTestnet
+				? [HederaChainDefinition.EVM.Testnet, HederaChainDefinition.EVM.Mainnet]
+				: [HederaChainDefinition.EVM.Mainnet, HederaChainDefinition.EVM.Testnet];
+
+			// Create Native Hedera adapter
 			this.hederaAdapter = new HederaAdapter({
 				projectId: this.projectId,
-				networks: supportedChains,
-				namespace: hederaNamespace,
+				networks: nativeNetworks,
+				namespace: hederaNamespace, // 'hedera' as ChainNamespace
 			});
 
-			LogService.logTrace(`[HWC] Supported chains: ${JSON.stringify(supportedChains)}`);
+			// Create EIP155 Hedera adapter
+			const eip155HederaAdapter = new HederaAdapter({
+				projectId: this.projectId,
+				networks: evmNetworks,
+				namespace: 'eip155',
+			});
 
-			LogService.logTrace(`[HWC] Creating AppKit...`);
+			console.log(`[HWC] Supported chains: ${JSON.stringify(supportedChains)}`);
 
+			console.log(`[HWC] Creating HederaProvider with optionalNamespaces...`);
 
-			this.appKit = createAppKit({
-				adapters: [this.hederaAdapter],
-				networks: [supportedChains[0], ...supportedChains.slice(1)],
+			// Order chains based on current network - HashPack uses the first chain
+			const eip155Chains = ['eip155:296']//isTestnet ? ['eip155:296', 'eip155:295'] : ['eip155:295', 'eip155:296'];
+			const hederaChains = ['hedera:testnet']//isTestnet ? ['hedera:testnet', 'hedera:mainnet'] : ['hedera:mainnet', 'hedera:testnet'];
+
+			// Get RPC URL from networkService configuration
+			const rpcUrl = this.networkService.rpcNode?.baseUrl ||
+				(isTestnet ? 'https://testnet.hashio.io/api' : 'https://mainnet.hashio.io/api');
+
+			console.log(`[HWC] Using RPC URL: ${rpcUrl}`);
+			console.log(`[HWC] Factory Address: ${this.networkService.configuration?.factoryAddress || 'Not set'}`);
+
+			const providerOpts = {
 				projectId: this.projectId,
 				metadata: this.dappMetadata,
-			});
-			 */
-
-			try {
-				LogService.logTrace(`[HWC] Creating HederaAdapter instance...`);
-				const supportedChains = this.getSupportedChains();
-
-				/*this.hederaAdapter = new HederaAdapter({
-					projectId: this.projectId,
-					networks: supportedChains,
-					namespace: hederaNamespace,
-				});*/
-
-				// Create adapters
-				this.hederaAdapter = new HederaAdapter({
-					projectId: this.projectId,
-					networks: [HederaChainDefinition.Native.Testnet, HederaChainDefinition.Native.Mainnet],
-					namespace: hederaNamespace, // 'hedera' as ChainNamespace
-				})
-
-				LogService.logTrace(`[HWC] Supported chains: ${JSON.stringify(supportedChains)}`);
-
-				LogService.logTrace(`[HWC] Creating AppKit...`);
-
-				const providerOpts = {
-					projectId: this.projectId,
-					metadata: this.dappMetadata,
-					logger: 'error' as const,
-					optionalNamespaces: {
-						// hashpack only uses the first namespace in the list
-						eip155: {
-							methods: [
-								'eth_sendTransaction',
-								'eth_signTransaction',
-								'eth_sign',
-								'personal_sign',
-								'eth_signTypedData',
-								'eth_signTypedData_v4',
-								'eth_accounts',
-								'eth_chainId',
-							],
-							chains: ['eip155:296', 'eip155:295'], // Testnet first, then mainnet
-							events: ['chainChanged', 'accountsChanged'],
-							rpcMap: {
-								'eip155:296': 'https://testnet.hashio.io/api',
-								'eip155:295': 'https://mainnet.hashio.io/api',
-							},
-						},
-						hedera: {
-							methods: [
-								'hedera_getNodeAddresses',
-								'hedera_executeTransaction',
-								'hedera_signMessage',
-								'hedera_signAndExecuteQuery',
-								'hedera_signAndExecuteTransaction',
-								'hedera_signTransaction',
-							],
-							chains: ['hedera:testnet', 'hedera:mainnet'], // Hashpack only uses the first chain in the list, also this seems to dictate testnet vs mainnet for EIP155
-							events: ['chainChanged', 'accountsChanged'],
+				logger: 'error' as const,
+				optionalNamespaces: {
+					// HashPack only uses the first namespace in the list
+					eip155: {
+						methods: [
+							'eth_sendTransaction',
+							'eth_signTransaction',
+							'eth_sign',
+							'personal_sign',
+							'eth_signTypedData',
+							'eth_signTypedData_v4',
+							'eth_accounts',
+							'eth_chainId',
+						],
+						chains: eip155Chains,
+						events: ['chainChanged', 'accountsChanged'],
+						rpcMap: {
+							'eip155:296': isTestnet ? rpcUrl : 'https://testnet.hashio.io/api',
+							'eip155:295': isTestnet ? rpcUrl : 'https://mainnet.hashio.io/api',
 						},
 					},
-				}
-
-				//const jsonRpcProvider = new JsonRpcProvider(rpcUrl)
-
-
-				const eip155HederaAdapter = new HederaAdapter({
-					projectId: this.projectId,
-					networks: [HederaChainDefinition.EVM.Testnet, HederaChainDefinition.EVM.Mainnet],
-					namespace: 'eip155',
-				})
-
-				const universalProvider = await HederaProvider.init(providerOpts)
-
-				createAppKit({
-					adapters: [this.hederaAdapter, eip155HederaAdapter],
-					logger: 'error' as const,
-					// @ts-expect-error universalProvider type compatibility
-					universalProvider,
-					projectId: this.projectId,
-					metadata: this.dappMetadata,
-					networks: [supportedChains[0], ...supportedChains.slice(1)],
-					enableReconnect: true,
-					features: {
-						analytics: true,
-						socials: false,
-						swaps: false,
-						onramp: false,
-						email: false,
+					hedera: {
+						methods: [
+							'hedera_getNodeAddresses',
+							'hedera_executeTransaction',
+							'hedera_signMessage',
+							'hedera_signAndExecuteQuery',
+							'hedera_signAndExecuteTransaction',
+							'hedera_signTransaction',
+						],
+						chains: hederaChains,
+						events: ['chainChanged', 'accountsChanged'],
 					},
-					chainImages: {
-						'hedera:testnet': '/hedera.svg',
-						'hedera:mainnet': '/hedera.svg',
-						'eip155:296': '/hedera.svg',
-						'eip155:295': '/hedera.svg',
-					},
-				})
+				},
+			};
+
+			this.universalProvider = await HederaProvider.init(providerOpts)
+			this.hederaProvider = this.universalProvider;
+
+			this.appKit = createAppKit({
+				adapters: [this.hederaAdapter, eip155HederaAdapter],
+				universalProvider: this.universalProvider as any,
+				projectId: this.projectId,
+				metadata: this.dappMetadata,
+				networks: [HederaChainDefinition.Native.Testnet],
+				features: {
+					analytics: true,
+					socials: false,
+					swaps: false,
+					onramp: false,
+					email: false,
+				},
+			})
 
 
-				LogService.logInfo(
+			console.log(
 				`✅ HWC v2 Initialized with network: ${currentNetwork} and projectId: ${this.projectId}`,
 			);
 		} catch (error) {
-			LogService.logError(
+			console.log(
 				`❌ Error initializing HWC v2 with network: ${currentNetwork} and projectId: ${this.projectId}`,
 				error,
 			);
-			LogService.logError(`[HWC] Error details: ${JSON.stringify(error, null, 2)}`);
+			console.log(`[HWC] Error details: ${JSON.stringify(error, null, 2)}`);
 			return currentNetwork;
 		}
 
 		try {
-			LogService.logInfo('🔗 [HWC] Opening AppKit modal for pairing...');
+			console.log('🔗 [HWC] Opening AppKit modal for pairing...');
 			await this.appKit.open();
-			LogService.logInfo('✅ [HWC] AppKit modal opened successfully');
+			console.log('✅ [HWC] AppKit modal opened successfully');
 
 			// Wait for connection to be fully established
 			await new Promise<void>((resolve, reject) => {
@@ -359,14 +351,13 @@ export class HederaWalletConnectTransactionAdapter extends HederaTransactionAdap
 					reject(new Error('Connection timeout'));
 				}, 300000); // 5 minutes timeout
 
-				const unsubscribe = this.appKit.subscribeState((state: any) => {
-					LogService.logTrace(`[HWC] AppKit state: open=${state.open}, address=${state.address}, selectedNetworkId=${state.selectedNetworkId}`);
+				const unsubscribe = this.appKit.subscribeState((state: PublicStateControllerState) => {
+					console.log(`[HWC] AppKit state: open=${state.open}, address=${state}, selectedNetworkId=${state.selectedNetworkId}`);
 
 					// Wait for the modal to close AND have a connected address
-					if (state.open === false && state.address) {
+					if (state.open === false) {
 						clearTimeout(timeout);
 						unsubscribe();
-						LogService.logInfo(`[HWC] Connection established with address: ${state.address}`);
 						resolve();
 					}
 				});
@@ -376,47 +367,56 @@ export class HederaWalletConnectTransactionAdapter extends HederaTransactionAdap
 			await new Promise(resolve => setTimeout(resolve, 1000));
 
 		} catch (error) {
-			LogService.logError('❌ [HWC] Error during connection', error);
+			console.log('❌ [HWC] Error during connection', error);
 			throw error;
 		}
 
-		LogService.logTrace('[HWC] Getting UniversalProvider from HederaAdapter...');
-		this.universalProvider = this.hederaAdapter.getWalletConnectProvider();
-
-		if (!this.universalProvider) {
-			throw new Error('❌ Failed to get UniversalProvider from HederaAdapter');
+		// Verify provider is still available
+		if (!this.hederaProvider) {
+			throw new Error('❌ HederaProvider is not initialized after connection');
 		}
 
-		LogService.logTrace('[HWC] Creating HederaProvider...');
-		this.hederaProvider = new HederaProvider(
-			this.universalProvider,
-		);
+		// Try to get the updated provider from the adapter after connection
+		try {
+			const adapterProvider = this.hederaAdapter?.getProvider?.();
+			if (adapterProvider) {
+				console.log('[HWC] Updating provider reference from adapter');
+				this.hederaProvider = adapterProvider as any;
+			}
+		} catch (e) {
+			console.log('[HWC] Could not get provider from adapter, using existing provider');
+		}
 
-		LogService.logTrace('[HWC] Getting connected accounts...');
-		const accounts = this.hederaProvider.getAccountAddresses();
+		console.log('[HWC] Getting connected account from session...');
+		console.log(`[HWC] HederaProvider session available: ${!!this.hederaProvider.session}`);
 
-		if (!accounts || accounts.length === 0) {
-			const errorMsg = `❌ No accounts retrieved from wallet connect.`;
-			LogService.logError(errorMsg);
+		// Get the hedera account from the session namespaces (format: hedera:testnet:0.0.12345)
+		const hederaAccount = this.hederaProvider?.getAccountAddresses()[0]
+
+		if (!hederaAccount) {
+			const errorMsg = `❌ No Hedera account retrieved from wallet connect session.`;
+			console.log(errorMsg);
+			console.log(`[HWC] Session namespaces: ${JSON.stringify(this.hederaProvider?.session?.namespaces, null, 2)}`);
 			throw new Error(errorMsg);
 		}
 
-		const accountId = accounts[0];
-		LogService.logInfo(`[HWC] Account ID retrieved: ${accountId}`);
+		console.log(`[HWC] Account ID retrieved: ${hederaAccount}`);
 
-		LogService.logTrace(`[HWC] Fetching account info from Mirror Node for: ${accountId}`);
+
 		const accountMirror = await this.mirrorNodeAdapter.getAccountInfo(
-			accountId,
+			hederaAccount,
 		);
 
 		if (!accountMirror) {
-			const errorMsg = `❌ No account info retrieved from Mirror Node. Account ID: ${accountId}`;
-			LogService.logError(errorMsg);
+			const errorMsg = `❌ No account info retrieved from Mirror Node. Account ID: ${hederaAccount}`;
+			console.log(errorMsg);
 			throw new Error(errorMsg);
 		}
+		const accountId = accountMirror.id!;
+		console.log(`[HWC] Account ID retrieved: ${accountId}`);
 
-		LogService.logInfo(`✅ [HWC] Account info retrieved from Mirror Node`);
-		LogService.logTrace(`[HWC] Account details: ${JSON.stringify(accountMirror, null, 2)}`)
+		console.log(`✅ [HWC] Account info retrieved from Mirror Node`);
+		console.log(`[HWC] Account details: ${JSON.stringify(accountMirror, null, 2)}`)
 
 		// Create account object and set network
 		// Note: The signer will be created through HederaProvider methods
@@ -426,7 +426,7 @@ export class HederaWalletConnectTransactionAdapter extends HederaTransactionAdap
 			evmAddress: accountMirror.accountEvmAddress,
 		});
 		this.network = currentNetwork;
-		LogService.logInfo(
+		console.log(
 			`✅ Hedera WalletConnect v2 paired with account: ${accountId}`,
 		);
 		const eventData: WalletPairedEvent = {
@@ -451,7 +451,7 @@ export class HederaWalletConnectTransactionAdapter extends HederaTransactionAdap
 
 	public subscribe(): void {
 		if (!this.universalProvider) {
-			LogService.logError(
+			console.log(
 				`❌ Hedera WalletConnect not initialized. Cannot subscribe to events`,
 			);
 			return;
@@ -461,7 +461,7 @@ export class HederaWalletConnectTransactionAdapter extends HederaTransactionAdap
 		this.universalProvider.on(
 			'session_delete',
 			async () => {
-				LogService.logInfo('📤 Session deleted event received');
+				console.log('📤 Session deleted event received');
 				await this.stop();
 			},
 		);
@@ -470,20 +470,20 @@ export class HederaWalletConnectTransactionAdapter extends HederaTransactionAdap
 		this.universalProvider.on(
 			'session_update',
 			async (event: any) => {
-				LogService.logInfo('🔄 Session updated event received', event);
+				console.log('🔄 Session updated event received', event);
 			},
 		);
 
 		// Handle disconnect
 		this.universalProvider.on('disconnect', async () => {
-			LogService.logInfo('🔌 Disconnect event received');
+			console.log('🔌 Disconnect event received');
 			await this.stop();
 		});
 
 		// Subscribe to AppKit state changes
 		if (this.appKit) {
 			this.appKit.subscribeState((state: any) => {
-				LogService.logTrace(`[HWC] AppKit state changed: ${JSON.stringify(state)}`);
+				console.log(`[HWC] AppKit state changed: ${JSON.stringify(state)}`);
 			});
 		}
 	}
@@ -504,7 +504,7 @@ export class HederaWalletConnectTransactionAdapter extends HederaTransactionAdap
 			this.appKit = undefined;
 			this.universalProvider = undefined;
 			this.hederaProvider = undefined;
-			LogService.logInfo(
+			console.log(
 				`🛑 🏁 Hedera WalletConnect v2 stopped successfully`,
 			);
 			this.eventService.emit(WalletEvents.walletDisconnect, {
@@ -516,11 +516,11 @@ export class HederaWalletConnectTransactionAdapter extends HederaTransactionAdap
 				(error as Error).message.includes('No active session') ||
 				(error as Error).message.includes('No matching key')
 			) {
-				LogService.logInfo(
+				console.log(
 					`🔍 No active session found for Hedera WalletConnect`,
 				);
 			} else {
-				LogService.logError(
+				console.log(
 					`❌ Error stopping Hedera WalletConnect: ${
 						(error as Error).message
 					}`,
@@ -530,44 +530,42 @@ export class HederaWalletConnectTransactionAdapter extends HederaTransactionAdap
 		}
 	}
 
-	/**
-	 * Restarts the transaction adapter with the specified network.
-	 * @param network The network name to initialize the adapter with.
-	 * @returns A promise that resolves when the adapter has been restarted.
-	 */
-	public async restart(network: NetworkName): Promise<void> {
-		await this.stop();
-		await this.init(network);
-	}
-
 	public async signAndSendTransaction(
 		transaction: Transaction,
 		transactionType: TransactionType,
 		nameFunction?: string | undefined,
 		abi?: object[] | undefined,
 	): Promise<TransactionResponse> {
-		LogService.logInfo(`🔏 Signing and sending transaction from HWC v2...`);
+		console.log(`🔏 Signing and sending transaction from HWC v2...`);
 		this.ensureInitialized();
+
+		// Verify session is still active
+		if (!this.hederaProvider?.session) {
+			throw new Error('❌ WalletConnect session is not active. Please reconnect.');
+		}
 
 		try {
 			this.ensureTransactionFrozen(transaction);
 
-			LogService.logTrace(`🖋️ [HWC] Signing and executing transaction with HederaProvider...`);
+			console.log(`🖋️ [HWC] Signing and executing transaction with HederaProvider...`);
 
 			// Convert transaction to base64 and prepare params
 			const transactionBase64 = transactionToBase64String(transaction);
 			const ledgerId = this.networkService.environment === testnet ?
-				require('@hashgraph/sdk').LedgerId.TESTNET :
-				require('@hashgraph/sdk').LedgerId.MAINNET;
+				LedgerId.TESTNET :
+				LedgerId.MAINNET;
 			const signerAccountId = ledgerIdToCAIPChainId(ledgerId) + ':' + this.account.id.toString();
+
+			console.log(`[HWC] Signing with account: ${signerAccountId}`);
+			console.log(`[HWC] Transaction base64 length: ${transactionBase64.length}`);
 
 			const transactionResponse = await this.hederaProvider!.hedera_signAndExecuteTransaction({
 				signerAccountId,
 				transactionList: transactionBase64,
 			});
 
-			LogService.logInfo(`✅ Transaction signed and sent successfully!`);
-			LogService.logTrace(
+			console.log(`✅ Transaction signed and sent successfully!`);
+			console.log(
 				`Transaction response: ${JSON.stringify(
 					transactionResponse,
 					null,
@@ -585,7 +583,7 @@ export class HederaWalletConnectTransactionAdapter extends HederaTransactionAdap
 			);
 		} catch (error) {
 			if (error instanceof Error) {
-				LogService.logError(error.stack);
+				console.log(error.stack);
 			}
 			throw new Error(
 				`Error signing and sending transaction: ${
@@ -605,7 +603,7 @@ export class HederaWalletConnectTransactionAdapter extends HederaTransactionAdap
 
 	private ensureTransactionFrozen(transaction: Transaction): void {
 		if (!transaction.isFrozen()) {
-			LogService.logTrace(`🔒 Tx not frozen, freezing transaction...`);
+			console.log(`🔒 Tx not frozen, freezing transaction...`);
 			transaction._freezeWithAccountId(
 				AccountId.fromString(this.account.id.toString()),
 			);
@@ -625,7 +623,7 @@ export class HederaWalletConnectTransactionAdapter extends HederaTransactionAdap
 	 * @throws SigningError if an error occurs during the signing process.
 	 */
 	async sign(message: string | Transaction): Promise<string> {
-		LogService.logInfo('🔏 Signing transaction from HWC v2...');
+		console.log('🔏 Signing transaction from HWC v2...');
 		this.ensureInitialized();
 
 		if (!(message instanceof Transaction))
@@ -645,13 +643,13 @@ export class HederaWalletConnectTransactionAdapter extends HederaTransactionAdap
 		try {
 			this.ensureTransactionFrozen(message);
 
-			LogService.logTrace(`🖋️ [HWC] Signing transaction with HederaProvider...`);
+			console.log(`🖋️ [HWC] Signing transaction with HederaProvider...`);
 
 			// Convert transaction to base64 and prepare params
 			const transactionBase64 = transactionToBase64String(message);
 			const ledgerId = this.networkService.environment === testnet ?
-				require('@hashgraph/sdk').LedgerId.TESTNET :
-				require('@hashgraph/sdk').LedgerId.MAINNET;
+				LedgerId.TESTNET :
+				LedgerId.MAINNET;
 			const signerAccountId = ledgerIdToCAIPChainId(ledgerId) + ':' + this.account.id.toString();
 
 			const signedTransaction = await this.hederaProvider!.hedera_signTransaction({
@@ -659,7 +657,7 @@ export class HederaWalletConnectTransactionAdapter extends HederaTransactionAdap
 				transactionBody: transactionBase64,
 			});
 
-			LogService.logInfo(`✅ Transaction signed successfully!`);
+			console.log(`✅ Transaction signed successfully!`);
 
 			if (!signedTransaction) {
 				throw new Error(
@@ -694,7 +692,7 @@ export class HederaWalletConnectTransactionAdapter extends HederaTransactionAdap
 
 			const hexSignature = Hex.fromUint8Array(firstSignature);
 
-			LogService.logTrace(
+			console.log(
 				`Final hexadecimal signature: ${JSON.stringify(
 					hexSignature,
 					null,
