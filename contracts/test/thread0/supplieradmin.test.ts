@@ -13,6 +13,7 @@ import {
     SupplierAdminFacet__factory,
 } from '@contracts'
 import {
+    ADDRESS_ZERO,
     DEFAULT_TOKEN,
     delay,
     deployFullInfrastructure,
@@ -333,6 +334,7 @@ describe('➡️ Supplier Admin Tests - (Unlimited)', function () {
     let supplierAdminFacet: SupplierAdminFacet
     let hederaTokenManagerFacet: HederaTokenManagerFacet
     let cashInFacet: CashInFacet
+    let rolesFacet: RolesFacet
     // Accounts
     let operator: SignerWithAddress
     let nonOperator: SignerWithAddress
@@ -341,6 +343,7 @@ describe('➡️ Supplier Admin Tests - (Unlimited)', function () {
         supplierAdminFacet = SupplierAdminFacet__factory.connect(address, operator)
         hederaTokenManagerFacet = HederaTokenManagerFacet__factory.connect(address, operator)
         cashInFacet = CashInFacet__factory.connect(address, operator)
+        rolesFacet = RolesFacet__factory.connect(address, operator)
     }
 
     before(async () => {
@@ -467,6 +470,18 @@ describe('➡️ Supplier Admin Tests - (Unlimited)', function () {
             gasLimit: GAS_LIMIT.hederaTokenManager.grantUnlimitedSupplierRole,
         })
         await validateTxResponse(new ValidateTxResponseCommand({ txResponse: grantUnlimitedRoleResponse }))
+    })
+
+    it('Granting unlimited or limited supplier role to address 0 fails', async function () {
+        await expect(supplierAdminFacet.grantUnlimitedSupplierRole(ADDRESS_ZERO)).to.be.revertedWithCustomError(
+            supplierAdminFacet,
+            'AddressZero'
+        )
+
+        await expect(supplierAdminFacet.grantSupplierRole(ADDRESS_ZERO, 1)).to.be.revertedWithCustomError(
+            supplierAdminFacet,
+            'AddressZero'
+        )
     })
 
     it('An account with unlimited supplier role can not increase supplier allowance', async function () {

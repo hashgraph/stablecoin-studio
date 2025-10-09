@@ -3,6 +3,7 @@ import { SignerWithAddress } from '@nomicfoundation/hardhat-ethers/signers'
 import { ethers } from 'hardhat'
 import { RolesFacet, RolesFacet__factory } from '@contracts'
 import {
+    ADDRESS_ZERO,
     delay,
     deployFullInfrastructure,
     DeployFullInfrastructureCommand,
@@ -90,6 +91,13 @@ describe('➡️ Roles Tests', function () {
             gasLimit: GAS_LIMIT.hederaTokenManager.hasRole,
         })
         expect(hasBurnRole).to.equals(true)
+    })
+
+    it('Granting role to account 0 fails', async function () {
+        await expect(rolesFacet.grantRole(ROLES.burn.hash, ADDRESS_ZERO)).to.be.revertedWithCustomError(
+            rolesFacet,
+            'AddressZero'
+        )
     })
 
     it('Non Admin account can not revoke role from an account', async function () {

@@ -19,7 +19,7 @@ contract RoleManagementFacet is IRoleManagement, IStaticFunctionSelectors, Suppl
         bytes32[] calldata roles,
         address[] calldata accounts,
         uint256[] calldata amounts
-    ) external override(IRoleManagement) onlyRole(_getRoleId(IRoles.RoleName.ADMIN)) {
+    ) external override(IRoleManagement) onlyRole(_getRoleId(IRoles.RoleName.ADMIN)) addressesAreNotZero(accounts) {
         bytes32 cashInRole = _getRoleId(IRoles.RoleName.CASHIN);
 
         for (uint256 i = 0; i < roles.length; i++) {
