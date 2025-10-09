@@ -60,6 +60,11 @@ abstract contract Common is Initializable, ICommon {
         _;
     }
 
+    modifier bytes32IsNotZero(bytes32 value) {
+        _bytes32IsNotZero(value);
+        _;
+    }
+
     /**
      * @dev Checks if the calling account is the contract admin
      *
@@ -106,6 +111,10 @@ abstract contract Common is Initializable, ICommon {
      */
     function _addressIsNotZero(address addr) private pure {
         if (addr == address(0)) revert AddressZero(addr);
+    }
+
+    function _bytes32IsNotZero(bytes32 value) private pure {
+        if (value == bytes32(0)) revert Bytes32Zero(value);
     }
 
     /**

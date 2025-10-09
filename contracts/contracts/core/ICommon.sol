@@ -23,6 +23,8 @@ interface ICommon {
      */
     error AddressZero(address addr);
 
+    error Bytes32Zero(bytes32 value);
+
     /**
      * @dev Emitted when the provided `code` is not success
      *
