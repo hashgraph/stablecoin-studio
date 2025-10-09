@@ -490,7 +490,6 @@ export class HederaWalletConnectTransactionAdapter extends HederaTransactionAdap
 			this.hederaAdapter = undefined;
 			this.appKit = undefined;
 			this.hederaProvider = undefined;
-			this.hederaProvider = undefined;
 			console.log(
 				`🛑 🏁 Hedera WalletConnect v2 stopped successfully`,
 			);
@@ -546,10 +545,35 @@ export class HederaWalletConnectTransactionAdapter extends HederaTransactionAdap
 			console.log(`[HWC] Signing with account: ${signerAccountId}`);
 			console.log(`[HWC] Transaction base64 length: ${transactionBase64.length}`);
 
+
+			/* TODO: ERROR
+			 * TypeError: Cannot read properties of undefined (reading 'request')
+				at HIP820Provider.request (bundle.js:873367:38)
+				at HederaProvider.request (bundle.js:873492:81)
+				at HederaProvider.hedera_signAndExecuteTransaction (bundle.js:873611:23)
+				at HederaWalletConnectTransactionAdapter.signAndSendTransaction (bundle.js:867677:61)
+				at HederaWalletConnectTransactionAdapter.contractCall (bundle.js:865650:23)
+				at HederaWalletConnectTransactionAdapter.create (bundle.js:865145:25)
+				at async CreateCommandHandler.execute (bundle.js:832079:17)
+				at async StableCoinInPort.create (bundle.js:854784:28)
+				at async LogError.descriptor.value (bundle.js:846606:22)
+				at async SDKService.createStableCoin (bundle.js:949912:12)
+			 */
 			const transactionResponse = await this.hederaProvider!.hedera_signAndExecuteTransaction({
 				signerAccountId,
 				transactionList: transactionBase64,
 			});
+
+			// const transactionResponse = await this.hederaProvider!.request(
+			// 	{
+			// 		method: 'hedera_signAndExecuteTransaction',
+			// 		params: {
+			// 			signerAccountId,
+			// 			transactionList: transactionBase64,
+			// 		},
+			// 	},
+			// 	ledgerIdToCAIPChainId(ledgerId),
+			// );
 
 			console.log(`✅ Transaction signed and sent successfully!`);
 			console.log(
