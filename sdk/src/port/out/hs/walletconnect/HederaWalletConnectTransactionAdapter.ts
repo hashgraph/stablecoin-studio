@@ -70,7 +70,6 @@ let HederaChainDefinition: typeof import('@hashgraph/hedera-wallet-connect').Hed
 let hederaNamespace: typeof import('@hashgraph/hedera-wallet-connect').hederaNamespace;
 let HederaProvider: typeof import('@hashgraph/hedera-wallet-connect').HederaProvider;
 let createAppKit: typeof import('@reown/appkit').createAppKit;
-let UniversalProvider: typeof import('@walletconnect/universal-provider').default;
 let transactionToBase64String: typeof import('@hashgraph/hedera-wallet-connect').transactionToBase64String;
 let ledgerIdToCAIPChainId: typeof import('@hashgraph/hedera-wallet-connect').ledgerIdToCAIPChainId;
 
@@ -86,8 +85,8 @@ if (typeof window !== 'undefined') {
 	const appkit = require('@reown/appkit');
 	createAppKit = appkit.createAppKit;
 
-	const universalProvider = require('@walletconnect/universal-provider');
-	UniversalProvider = universalProvider.default;
+	// const universalProvider = require('@walletconnect/universal-provider');
+	// UniversalProvider = universalProvider.default;
 }
 
 @singleton()
@@ -101,7 +100,6 @@ export class HederaWalletConnectTransactionAdapter extends HederaTransactionAdap
 	protected projectId: string;
 	protected hederaAdapter: InstanceType<typeof HederaAdapter> | undefined;
 	protected appKit: any;
-	protected universalProvider: InstanceType<typeof UniversalProvider> | undefined;
 	protected hederaProvider: InstanceType<typeof HederaProvider> | undefined;
 	protected dappMetadata: {
 		name: string;
@@ -309,11 +307,10 @@ export class HederaWalletConnectTransactionAdapter extends HederaTransactionAdap
 			};
 
 			this.hederaProvider = await HederaProvider.init(providerOpts)
-			this.universalProvider = this.hederaProvider
 
 			this.appKit = createAppKit({
 				adapters: [this.hederaAdapter, eip155HederaAdapter],
-				universalProvider: this.universalProvider,
+				universalProvider: this.hederaProvider,
 				projectId: this.projectId,
 				metadata: this.dappMetadata,
 				networks: [HederaChainDefinition.Native.Testnet],
@@ -376,16 +373,6 @@ export class HederaWalletConnectTransactionAdapter extends HederaTransactionAdap
 			throw new Error('❌ HederaProvider is not initialized after connection');
 		}
 
-		// // Try to get the updated provider from the adapter after connection
-		// try {
-		// 	const adapterProvider = this.hederaAdapter?.getProvider?.();
-		// 	if (adapterProvider) {
-		// 		console.log('[HWC] Updating provider reference from adapter');
-		// 		this.hederaProvider = adapterProvider as any;
-		// 	}
-		// } catch (e) {
-		// 	console.log('[HWC] Could not get provider from adapter, using existing provider');
-		// }
 
 		console.log('[HWC] Getting connected account from session...');
 		console.log(`[HWC] HederaProvider session available: ${!!this.hederaProvider.session}`);
@@ -450,7 +437,7 @@ export class HederaWalletConnectTransactionAdapter extends HederaTransactionAdap
 	}
 
 	public subscribe(): void {
-		if (!this.universalProvider) {
+		if (!this.hederaProvider) {
 			console.log(
 				`❌ Hedera WalletConnect not initialized. Cannot subscribe to events`,
 			);
@@ -458,7 +445,7 @@ export class HederaWalletConnectTransactionAdapter extends HederaTransactionAdap
 		}
 
 		// Handle session deletions
-		this.universalProvider.on(
+		this.hederaProvider.on(
 			'session_delete',
 			async () => {
 				console.log('📤 Session deleted event received');
@@ -467,7 +454,7 @@ export class HederaWalletConnectTransactionAdapter extends HederaTransactionAdap
 		);
 
 		// Handle session updates
-		this.universalProvider.on(
+		this.hederaProvider.on(
 			'session_update',
 			async (event: any) => {
 				console.log('🔄 Session updated event received', event);
@@ -475,7 +462,7 @@ export class HederaWalletConnectTransactionAdapter extends HederaTransactionAdap
 		);
 
 		// Handle disconnect
-		this.universalProvider.on('disconnect', async () => {
+		this.hederaProvider.on('disconnect', async () => {
 			console.log('🔌 Disconnect event received');
 			await this.stop();
 		});
@@ -494,15 +481,15 @@ export class HederaWalletConnectTransactionAdapter extends HederaTransactionAdap
 	 */
 	public async stop(): Promise<boolean> {
 		try {
-			if (this.universalProvider) {
-				await this.universalProvider.disconnect();
+			if (this.hederaProvider) {
+				await this.hederaProvider.disconnect();
 			}
 			if (this.appKit) {
 				await this.appKit.disconnect();
 			}
 			this.hederaAdapter = undefined;
 			this.appKit = undefined;
-			this.universalProvider = undefined;
+			this.hederaProvider = undefined;
 			this.hederaProvider = undefined;
 			console.log(
 				`🛑 🏁 Hedera WalletConnect v2 stopped successfully`,

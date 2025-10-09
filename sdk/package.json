@@ -79,7 +79,7 @@
 		"@reown/appkit-adapter-ethers": "^1.8.4",
 		"@reown/appkit-core": "^1.8.4",
 		"@walletconnect/sign-client": "2.19.1",
-		"@walletconnect/universal-provider": "2.21.5",
+		"@walletconnect/universal-provider": "2.21.9",
 		"@walletconnect/utils": "2.19.1",
 		"@hashgraph/stablecoin-npm-contracts": "*",
 		"@metamask/detect-provider": "^2.0.0",
