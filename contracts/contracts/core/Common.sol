@@ -50,6 +50,16 @@ abstract contract Common is Initializable, ICommon {
         _;
     }
 
+    modifier addressesAreNotZero(address[] calldata addrs) {
+        for (uint256 i = 0; i < addrs.length; ) {
+            _addressIsNotZero(addrs[i]);
+            unchecked {
+                i++;
+            }
+        }
+        _;
+    }
+
     modifier bytes32IsNotZero(bytes32 value) {
         _bytes32IsNotZero(value);
         _;
