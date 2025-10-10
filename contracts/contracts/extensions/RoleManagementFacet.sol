@@ -45,10 +45,8 @@ contract RoleManagementFacet is IRoleManagement, IStaticFunctionSelectors, Suppl
         bytes32[] calldata roles,
         address[] calldata accounts
     ) external override(IRoleManagement) onlyRole(ADMIN_ROLE) {
-        bytes32 cashInRole = _CASHIN_ROLE;
-
         for (uint256 i = 0; i < roles.length; i++) {
-            if (roles[i] == cashInRole) {
+            if (roles[i] == _CASHIN_ROLE) {
                 for (uint256 j = 0; j < accounts.length; j++) {
                     _revokeSupplierRole(accounts[j]);
                 }
