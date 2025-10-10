@@ -190,17 +190,6 @@ export class HederaWalletConnectTransactionAdapter extends HederaTransactionAdap
 		}
 	}
 
-	/**
-	 * Gets supported chains based on network configuration.
-	 * Returns all available chains to support network switching.
-	 */
-	private getSupportedChains(): any[] {
-		// Support all chains to allow network switching
-		return [
-			HederaChainDefinition.Native.Mainnet,
-			HederaChainDefinition.Native.Testnet
-		];
-	}
 
 	/**
 	 * Connects to the Hedera WalletConnect.
@@ -223,7 +212,6 @@ export class HederaWalletConnectTransactionAdapter extends HederaTransactionAdap
 
 		try {
 			console.log(`[HWC] Creating HederaAdapter instances...`);
-			const supportedChains = this.getSupportedChains();
 
 			// Determine if we're on testnet or mainnet
 			const isTestnet = currentNetwork === testnet;
@@ -252,13 +240,11 @@ export class HederaWalletConnectTransactionAdapter extends HederaTransactionAdap
 				namespace: 'eip155',
 			});
 
-			console.log(`[HWC] Supported chains: ${JSON.stringify(supportedChains)}`);
-
 			console.log(`[HWC] Creating HederaProvider with optionalNamespaces...`);
 
 			// Order chains based on current network - HashPack uses the first chain
-			const eip155Chains = ['eip155:296']//isTestnet ? ['eip155:296', 'eip155:295'] : ['eip155:295', 'eip155:296'];
-			const hederaChains = ['hedera:testnet']//isTestnet ? ['hedera:testnet', 'hedera:mainnet'] : ['hedera:mainnet', 'hedera:testnet'];
+			const eip155Chains = isTestnet ? ['eip155:296', 'eip155:295'] : ['eip155:295', 'eip155:296'];
+			const hederaChains = isTestnet ? ['hedera:testnet', 'hedera:mainnet'] : ['hedera:mainnet', 'hedera:testnet'];
 
 			// Get RPC URL from networkService configuration
 			const rpcUrl = this.networkService.rpcNode?.baseUrl ||
@@ -273,6 +259,18 @@ export class HederaWalletConnectTransactionAdapter extends HederaTransactionAdap
 				logger: 'error' as const,
 				optionalNamespaces: {
 					// HashPack only uses the first namespace in the list
+					hedera: {
+						methods: [
+							'hedera_getNodeAddresses',
+							'hedera_executeTransaction',
+							'hedera_signMessage',
+							'hedera_signAndExecuteQuery',
+							'hedera_signAndExecuteTransaction',
+							'hedera_signTransaction',
+						],
+						chains: hederaChains,
+						events: ['chainChanged', 'accountsChanged'],
+					},
 					eip155: {
 						methods: [
 							'eth_sendTransaction',
@@ -290,19 +288,7 @@ export class HederaWalletConnectTransactionAdapter extends HederaTransactionAdap
 							'eip155:296': isTestnet ? rpcUrl : 'https://testnet.hashio.io/api',
 							'eip155:295': isTestnet ? rpcUrl : 'https://mainnet.hashio.io/api',
 						},
-					},
-					hedera: {
-						methods: [
-							'hedera_getNodeAddresses',
-							'hedera_executeTransaction',
-							'hedera_signMessage',
-							'hedera_signAndExecuteQuery',
-							'hedera_signAndExecuteTransaction',
-							'hedera_signTransaction',
-						],
-						chains: hederaChains,
-						events: ['chainChanged', 'accountsChanged'],
-					},
+					}
 				},
 			};
 
@@ -313,7 +299,12 @@ export class HederaWalletConnectTransactionAdapter extends HederaTransactionAdap
 				universalProvider: this.hederaProvider,
 				projectId: this.projectId,
 				metadata: this.dappMetadata,
-				networks: [HederaChainDefinition.Native.Testnet],
+				networks: [
+					HederaChainDefinition.Native.Testnet,
+					HederaChainDefinition.Native.Mainnet,
+					HederaChainDefinition.EVM.Testnet,
+					HederaChainDefinition.EVM.Mainnet,
+				],
 				features: {
 					analytics: true,
 					socials: false,
@@ -349,7 +340,7 @@ export class HederaWalletConnectTransactionAdapter extends HederaTransactionAdap
 				}, 300000); // 5 minutes timeout
 
 				const unsubscribe = this.appKit.subscribeState((state: PublicStateControllerState) => {
-					console.log(`[HWC] AppKit state: open=${state.open}, address=${state}, selectedNetworkId=${state.selectedNetworkId}`);
+					console.log(`[HWC] AppKit state: open=${state.open}, chain=${state.activeChain}, selectedNetworkId=${state.selectedNetworkId}`);
 
 					// Wait for the modal to close AND have a connected address
 					if (state.open === false) {
@@ -540,6 +531,7 @@ export class HederaWalletConnectTransactionAdapter extends HederaTransactionAdap
 			const ledgerId = this.networkService.environment === testnet ?
 				LedgerId.TESTNET :
 				LedgerId.MAINNET;
+
 			const signerAccountId = ledgerIdToCAIPChainId(ledgerId) + ':' + this.account.id.toString();
 
 			console.log(`[HWC] Signing with account: ${signerAccountId}`);
@@ -559,10 +551,20 @@ export class HederaWalletConnectTransactionAdapter extends HederaTransactionAdap
 				at async LogError.descriptor.value (bundle.js:846606:22)
 				at async SDKService.createStableCoin (bundle.js:949912:12)
 			 */
+			const ns = this.hederaProvider?.session?.namespaces
+			if (!ns?.hedera) throw new Error('La sesión no tiene namespace "hedera" aprobado.')
+
 			const transactionResponse = await this.hederaProvider!.hedera_signAndExecuteTransaction({
 				signerAccountId,
 				transactionList: transactionBase64,
 			});
+
+			// const signedTx = await this.hederaProvider!.eth_signMessage(
+			// 	transactionBase64,
+			// 	this.account.id.toString()
+			// );
+
+			// console.log(`[HWC] Transaction signed successfully. Signature length: ${signedTx.length}`);
 
 			// const transactionResponse = await this.hederaProvider!.request(
 			// 	{
@@ -634,86 +636,89 @@ export class HederaWalletConnectTransactionAdapter extends HederaTransactionAdap
 	 * @throws SigningError if an error occurs during the signing process.
 	 */
 	async sign(message: string | Transaction): Promise<string> {
-		console.log('🔏 Signing transaction from HWC v2...');
-		this.ensureInitialized();
-
-		if (!(message instanceof Transaction))
-			throw new SigningError(
-				'❌ Hedera WalletConnect must sign a transaction not a string',
-			);
-
-		if (
-			!this.networkService.consensusNodes ||
-			this.networkService.consensusNodes.length === 0
-		) {
-			throw new Error(
-				'❌ In order to create sign multisignature transactions you must set consensus nodes for the environment',
-			);
-		}
-
-		try {
-			this.ensureTransactionFrozen(message);
-
-			console.log(`🖋️ [HWC] Signing transaction with HederaProvider...`);
-
-			// Convert transaction to base64 and prepare params
-			const transactionBase64 = transactionToBase64String(message);
-			const ledgerId = this.networkService.environment === testnet ?
-				LedgerId.TESTNET :
-				LedgerId.MAINNET;
-			const signerAccountId = ledgerIdToCAIPChainId(ledgerId) + ':' + this.account.id.toString();
-
-			const signedTransaction = await this.hederaProvider!.hedera_signTransaction({
-				signerAccountId,
-				transactionBody: transactionBase64,
-			});
-
-			console.log(`✅ Transaction signed successfully!`);
-
-			if (!signedTransaction) {
-				throw new Error(
-					'❌ No signed transaction returned from WalletConnect',
-				);
-			}
-
-			const signatureMap = signedTransaction.getSignatures();
-
-			const flatSigList = signatureMap.getFlatSignatureList();
-
-			if (flatSigList.length === 0) {
-				throw new Error('No signatures found');
-			}
-
-			const firstSigPair = flatSigList[0];
-
-			const iterator = firstSigPair[Symbol.iterator]();
-			const firstEntry = iterator.next();
-
-			if (firstEntry.done) {
-				throw new Error(
-					'No signatures found in first SignaturePairMap',
-				);
-			}
-
-			const [, firstSignature] = firstEntry.value;
-
-			if (!firstSignature) {
-				throw new Error('Signature is empty');
-			}
-
-			const hexSignature = Hex.fromUint8Array(firstSignature);
-
-			console.log(
-				`Final hexadecimal signature: ${JSON.stringify(
-					hexSignature,
-					null,
-					2,
-				)}`,
-			);
-
-			return hexSignature;
-		} catch (error) {
-			throw new SigningError(JSON.stringify(error, null, 2));
-		}
+		throw new Error('Method not implemented.');
+		// console.log('🔏 Signing transaction from HWC v2...');
+		// this.ensureInitialized();
+		//
+		// if (!(message instanceof Transaction))
+		// 	throw new SigningError(
+		// 		'❌ Hedera WalletConnect must sign a transaction not a string',
+		// 	);
+		//
+		// if (
+		// 	!this.networkService.consensusNodes ||
+		// 	this.networkService.consensusNodes.length === 0
+		// ) {
+		// 	throw new Error(
+		// 		'❌ In order to create sign multisignature transactions you must set consensus nodes for the environment',
+		// 	);
+		// }
+		//
+		// try {
+		// 	this.ensureTransactionFrozen(message);
+		//
+		// 	console.log(`🖋️ [HWC] Signing transaction with HederaProvider...`);
+		//
+		// 	// Convert transaction to base64 and prepare params
+		// 	const transactionBase64 = transactionToBase64String(message);
+		// 	const ledgerId = this.networkService.environment === testnet ?
+		// 		LedgerId.TESTNET :
+		// 		LedgerId.MAINNET;
+		// 	const signerAccountId = ledgerIdToCAIPChainId(ledgerId) + ':' + this.account.id.toString();
+		//
+		//
+		//
+		// 	const signedTransaction = await this.hederaProvider!.hedera_signTransaction({
+		// 		signerAccountId,
+		// 		transactionBody: transactionBase64,
+		// 	});
+		//
+		// 	console.log(`✅ Transaction signed successfully!`);
+		//
+		// 	if (!signedTransaction) {
+		// 		throw new Error(
+		// 			'❌ No signed transaction returned from WalletConnect',
+		// 		);
+		// 	}
+		//
+		// 	const signatureMap = signedTransaction.getSignatures();
+		//
+		// 	const flatSigList = signatureMap.getFlatSignatureList();
+		//
+		// 	if (flatSigList.length === 0) {
+		// 		throw new Error('No signatures found');
+		// 	}
+		//
+		// 	const firstSigPair = flatSigList[0];
+		//
+		// 	const iterator = firstSigPair[Symbol.iterator]();
+		// 	const firstEntry = iterator.next();
+		//
+		// 	if (firstEntry.done) {
+		// 		throw new Error(
+		// 			'No signatures found in first SignaturePairMap',
+		// 		);
+		// 	}
+		//
+		// 	const [, firstSignature] = firstEntry.value;
+		//
+		// 	if (!firstSignature) {
+		// 		throw new Error('Signature is empty');
+		// 	}
+		//
+		// 	const hexSignature = Hex.fromUint8Array(firstSignature);
+		//
+		// 	console.log(
+		// 		`Final hexadecimal signature: ${JSON.stringify(
+		// 			hexSignature,
+		// 			null,
+		// 			2,
+		// 		)}`,
+		// 	);
+		//
+		// 	return hexSignature;
+		// } catch (error) {
+		// 	throw new SigningError(JSON.stringify(error, null, 2));
+		// }
 	}
 }
