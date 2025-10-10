@@ -12,6 +12,15 @@ interface IRoles {
     error AccountHasNoRole(address account, bytes32 role);
 
     /**
+     * @dev Emitted when trying to remove a role from the role list passing an out of bound position
+     *
+     * @param length The roles list length
+     * @param position The 0 based index we are trying to access in the role list
+     *
+     */
+    error RolePositionOutOfBounds(uint256 length, uint256 position);
+
+    /**
      * @dev Returns an array of roles the account currently has
      *
      * @param account The account address

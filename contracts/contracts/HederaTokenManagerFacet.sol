@@ -5,7 +5,6 @@ import {IHederaTokenManager, RolesStruct} from './Interfaces/IHederaTokenManager
 import {_HEDERA_TOKEN_MANAGER_RESOLVER_KEY} from './constants/resolverKeys.sol';
 import {SupplierAdminStorageWrapper} from './extensions/SupplierAdminStorageWrapper.sol';
 import {ReserveStorageWrapper} from './extensions/ReserveStorageWrapper.sol';
-import {IRoles} from './extensions/Interfaces/IRoles.sol';
 // solhint-disable-next-line max-line-length
 import {IHederaTokenService} from '@hashgraph/smart-contracts/contracts/system-contracts/hedera-token-service/IHederaTokenService.sol';
 import {KeysLib} from './library/KeysLib.sol';

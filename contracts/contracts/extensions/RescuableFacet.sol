@@ -9,7 +9,6 @@ import {IHederaTokenService} from '@hashgraph/smart-contracts/contracts/system-c
 import {ReentrancyGuard} from '@openzeppelin/contracts/security/ReentrancyGuard.sol';
 import {SafeCast} from '@openzeppelin/contracts/utils/math/SafeCast.sol';
 import {_RESCUABLE_RESOLVER_KEY} from '../constants/resolverKeys.sol';
-import {IRoles} from './Interfaces/IRoles.sol';
 import {IStaticFunctionSelectors} from '../resolver/interfaces/resolverProxy/IStaticFunctionSelectors.sol';
 import {_RESCUE_ROLE} from '../constants/roles.sol';
 

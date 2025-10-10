@@ -334,7 +334,6 @@ describe('➡️ Supplier Admin Tests - (Unlimited)', function () {
     let supplierAdminFacet: SupplierAdminFacet
     let hederaTokenManagerFacet: HederaTokenManagerFacet
     let cashInFacet: CashInFacet
-    let rolesFacet: RolesFacet
     // Accounts
     let operator: SignerWithAddress
     let nonOperator: SignerWithAddress
@@ -343,7 +342,6 @@ describe('➡️ Supplier Admin Tests - (Unlimited)', function () {
         supplierAdminFacet = SupplierAdminFacet__factory.connect(address, operator)
         hederaTokenManagerFacet = HederaTokenManagerFacet__factory.connect(address, operator)
         cashInFacet = CashInFacet__factory.connect(address, operator)
-        rolesFacet = RolesFacet__factory.connect(address, operator)
     }
 
     before(async () => {

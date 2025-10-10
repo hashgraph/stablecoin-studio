@@ -10,6 +10,64 @@ import {Common} from '../core/Common.sol';
 
 contract RolesFacet is IRoles, IStaticFunctionSelectors, Common, RolesStorageWrapper {
     /**
+     * @dev Grants a role to an account
+     *
+     * Only the 'ADMIN ROLE` can execute
+     * Emits a RoleGranted event
+     *
+     * @param role The role to be granted
+     * @param account The account to wich the role is granted
+     */
+    function grantRole(bytes32 role, address account) external onlyRole(ADMIN_ROLE) addressIsNotZero(account) {
+        _grantRole(role, account);
+    }
+
+    /**
+     * @dev Revokes a role from an account
+     *
+     * Only the 'ADMIN ROLE` can execute
+     * Emits a RoleRevoked event
+     *
+     * @param role The role to be revoked
+     * @param account The account to wich the role is revoked
+     */
+    function revokeRole(bytes32 role, address account) external onlyRole(ADMIN_ROLE) {
+        _revokeRole(role, account);
+    }
+
+    /**
+     * @dev Adds a role to the role list
+     *
+     * Only the 'ADMIN ROLE` can execute
+     * Emits a RoleAdded event
+     *
+     * @param role The role to be added
+     */
+    function addRoleToList(bytes32 role) external onlyRole(ADMIN_ROLE) {
+        _addRoleToList(role);
+    }
+
+    /**
+     * @dev Removes the role at position pos from the role list
+     *
+     * Only the 'ADMIN ROLE` can execute
+     * Emits a RoleRemoved event
+     *
+     * @param pos The 0 based pos where the role to be removed is
+     */
+    function removeRoleFromListByPosition(uint256 pos) external onlyRole(ADMIN_ROLE) {
+        _removeRoleFromListByPosition(pos);
+    }
+
+    /**
+     * @dev Returns the full list of roles
+     *
+     */
+    function getRolesList() external view returns (bytes32[] memory rolesToReturn) {
+        return _getRolesList();
+    }
+
+    /**
      * @dev Checks if the account has been granted a role
      *
      * @param role The role the check if was granted
@@ -38,32 +96,6 @@ contract RolesFacet is IRoles, IStaticFunctionSelectors, Common, RolesStorageWra
     }
 
     /**
-     * @dev Grants a role to an account
-     *
-     * Only the 'ADMIN ROLE` can execute
-     * Emits a RoleGranted event
-     *
-     * @param role The role to be granted
-     * @param account The account to wich the role is granted
-     */
-    function grantRole(bytes32 role, address account) external onlyRole(ADMIN_ROLE) addressIsNotZero(account) {
-        _grantRole(role, account);
-    }
-
-    /**
-     * @dev Revokes a role from an account
-     *
-     * Only the 'ADMIN ROLE` can execute
-     * Emits a RoleRevoked event
-     *
-     * @param role The role to be revoked
-     * @param account The account to wich the role is revoked
-     */
-    function revokeRole(bytes32 role, address account) external onlyRole(ADMIN_ROLE) {
-        _revokeRole(role, account);
-    }
-
-    /**
      * @dev Returns an array of roles the account currently has
      *
      * @param account The account address
@@ -78,13 +110,16 @@ contract RolesFacet is IRoles, IStaticFunctionSelectors, Common, RolesStorageWra
 
     function getStaticFunctionSelectors() external pure override returns (bytes4[] memory staticFunctionSelectors_) {
         uint256 selectorIndex;
-        staticFunctionSelectors_ = new bytes4[](6);
+        staticFunctionSelectors_ = new bytes4[](9);
         staticFunctionSelectors_[selectorIndex++] = this.hasRole.selector;
         staticFunctionSelectors_[selectorIndex++] = this.getAccountsWithRole.selector;
         staticFunctionSelectors_[selectorIndex++] = this.getNumberOfAccountsWithRole.selector;
         staticFunctionSelectors_[selectorIndex++] = this.grantRole.selector;
         staticFunctionSelectors_[selectorIndex++] = this.revokeRole.selector;
         staticFunctionSelectors_[selectorIndex++] = this.getRoles.selector;
+        staticFunctionSelectors_[selectorIndex++] = this.addRoleToList.selector;
+        staticFunctionSelectors_[selectorIndex++] = this.removeRoleFromListByPosition.selector;
+        staticFunctionSelectors_[selectorIndex++] = this.getRolesList.selector;
     }
 
     function getStaticInterfaceIds() external pure override returns (bytes4[] memory staticInterfaceIds_) {

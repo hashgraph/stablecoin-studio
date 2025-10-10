@@ -2,7 +2,6 @@
 pragma solidity 0.8.18;
 
 import {IReserve} from './Interfaces/IReserve.sol';
-import {IRoles} from './Interfaces/IRoles.sol';
 import {ReserveStorageWrapper} from './ReserveStorageWrapper.sol';
 import {_RESERVE_RESOLVER_KEY} from '../constants/resolverKeys.sol';
 import {IStaticFunctionSelectors} from '../resolver/interfaces/resolverProxy/IStaticFunctionSelectors.sol';

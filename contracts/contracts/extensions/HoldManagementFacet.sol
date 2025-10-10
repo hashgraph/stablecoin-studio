@@ -9,7 +9,6 @@ import {RolesStorageWrapper} from './RolesStorageWrapper.sol';
 import {TokenOwnerStorageWrapper} from './TokenOwnerStorageWrapper.sol';
 import {HoldManagementStorageWrapper} from './HoldManagementStorageWrapper.sol';
 import {_HOLD_MANAGEMENT_RESOLVER_KEY} from '../constants/resolverKeys.sol';
-import {IRoles} from './Interfaces/IRoles.sol';
 import {IStaticFunctionSelectors} from '../resolver/interfaces/resolverProxy/IStaticFunctionSelectors.sol';
 import {_HOLD_CREATOR_ROLE} from '../constants/roles.sol';
 

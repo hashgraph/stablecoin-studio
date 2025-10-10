@@ -2,7 +2,6 @@
 pragma solidity 0.8.18;
 
 import {ISupplierAdminStorageWrapper} from './Interfaces/ISupplierAdminStorageWrapper.sol';
-import {IRoles} from './Interfaces/IRoles.sol';
 import {TokenOwnerStorageWrapper} from './TokenOwnerStorageWrapper.sol';
 import {RolesStorageWrapper} from './RolesStorageWrapper.sol';
 import {_SUPPLIER_ADMIN_STORAGE_POSITION} from '../constants/storagePositions.sol';

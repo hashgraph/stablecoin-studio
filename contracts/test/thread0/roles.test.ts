@@ -22,6 +22,8 @@ describe('➡️ Roles Tests', function () {
     let operator: SignerWithAddress
     let nonOperator: SignerWithAddress
 
+    const randomRole = '0xe11b25922c3ff9f0f0a34f0b8929a00001f215b99dcb08c2891c220cf3a7e8cc'
+
     async function setFacets(address: string) {
         rolesFacet = RolesFacet__factory.connect(address, operator)
     }
@@ -345,5 +347,65 @@ describe('➡️ Roles Tests', function () {
         for (const rol of rolesAfterRevoke) {
             expect(rol.toUpperCase()).to.equals(ROLES.withoutRole.hash.toUpperCase())
         }
+    })
+
+    it('Non Admin can not add role to list', async function () {
+        await expect(rolesFacet.connect(nonOperator).addRoleToList(randomRole)).to.be.revertedWithCustomError(
+            rolesFacet,
+            'AccountHasNoRole'
+        )
+    })
+
+    it('Non Admin can not remove role from list', async function () {
+        await expect(rolesFacet.connect(nonOperator).removeRoleFromListByPosition(0)).to.be.revertedWithCustomError(
+            rolesFacet,
+            'AccountHasNoRole'
+        )
+    })
+
+    it('Admin can add role to list', async function () {
+        const initialList = await rolesFacet.getRolesList()
+
+        for (let i = 0; i < initialList.length; i++) {
+            expect(initialList[i].toString().toUpperCase()).to.be.not.equal(randomRole.toUpperCase())
+        }
+
+        await rolesFacet.addRoleToList(randomRole)
+
+        const finalList = await rolesFacet.getRolesList()
+        let found = false
+
+        for (let i = 0; i < finalList.length; i++) {
+            if (finalList[i].toString().toUpperCase() == randomRole.toUpperCase()) found = true
+        }
+
+        expect(found).to.be.true
+        expect(initialList.length + 1).to.equal(finalList.length)
+    })
+
+    it('Can not remove role from list if out of bounds', async function () {
+        const initialList = await rolesFacet.getRolesList()
+        const RoleToRemovePos = initialList.length
+
+        await expect(rolesFacet.removeRoleFromListByPosition(RoleToRemovePos)).to.be.revertedWithCustomError(
+            rolesFacet,
+            'RolePositionOutOfBounds'
+        )
+    })
+
+    it('Admin can remove role from list', async function () {
+        const initialList = await rolesFacet.getRolesList()
+        const RoleToRemovePos = initialList.length - 2
+        const RoleToRemove = initialList[RoleToRemovePos]
+
+        await rolesFacet.removeRoleFromListByPosition(RoleToRemovePos)
+
+        const finalList = await rolesFacet.getRolesList()
+
+        for (let i = 0; i < finalList.length; i++) {
+            expect(finalList[i].toString().toUpperCase()).to.be.not.equal(RoleToRemove.toUpperCase())
+        }
+
+        expect(finalList.length + 1).to.equal(initialList.length)
     })
 })

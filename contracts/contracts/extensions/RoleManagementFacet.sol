@@ -1,7 +1,6 @@
 // SPDX-License-Identifier: MIT
 pragma solidity 0.8.18;
 
-import {IRoles} from './Interfaces/IRoles.sol';
 import {IRoleManagement} from './Interfaces/IRoleManagement.sol';
 import {SupplierAdminStorageWrapper} from './SupplierAdminStorageWrapper.sol';
 import {_ROLE_MANAGEMENT_RESOLVER_KEY} from '../constants/resolverKeys.sol';

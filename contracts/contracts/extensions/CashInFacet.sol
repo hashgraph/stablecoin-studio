@@ -2,7 +2,6 @@
 pragma solidity 0.8.18;
 
 import {ICashIn} from './Interfaces/ICashIn.sol';
-import {IRoles} from './Interfaces/IRoles.sol';
 import {SupplierAdminStorageWrapper} from './SupplierAdminStorageWrapper.sol';
 // solhint-disable-next-line max-line-length
 import {IHederaTokenService} from '@hashgraph/smart-contracts/contracts/system-contracts/hedera-token-service/IHederaTokenService.sol';

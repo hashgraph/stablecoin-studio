@@ -7,7 +7,6 @@ import {RolesStorageWrapper} from './RolesStorageWrapper.sol';
 // solhint-disable-next-line max-line-length
 import {IHederaTokenService} from '@hashgraph/smart-contracts/contracts/system-contracts/hedera-token-service/IHederaTokenService.sol';
 import {_CUSTOM_FEES_RESOLVER_KEY} from '../constants/resolverKeys.sol';
-import {IRoles} from './Interfaces/IRoles.sol';
 import {IStaticFunctionSelectors} from '../resolver/interfaces/resolverProxy/IStaticFunctionSelectors.sol';
 import {_CUSTOM_FEES_ROLE} from '../constants/roles.sol';
 

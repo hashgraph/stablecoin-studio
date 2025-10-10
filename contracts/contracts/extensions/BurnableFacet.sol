@@ -4,7 +4,6 @@ pragma solidity 0.8.18;
 // solhint-disable-next-line max-line-length
 import {HoldManagementStorageWrapper} from './HoldManagementStorageWrapper.sol';
 import {IBurnable} from './Interfaces/IBurnable.sol';
-import {IRoles} from './Interfaces/IRoles.sol';
 import {SafeCast} from '@openzeppelin/contracts/utils/math/SafeCast.sol';
 import {_BURNABLE_RESOLVER_KEY} from '../constants/resolverKeys.sol';
 import {RolesStorageWrapper} from './RolesStorageWrapper.sol';

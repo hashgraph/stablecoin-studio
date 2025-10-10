@@ -7,7 +7,6 @@ import {RolesStorageWrapper} from './RolesStorageWrapper.sol';
 import {IHederaTokenService} from '@hashgraph/smart-contracts/contracts/system-contracts/hedera-token-service/IHederaTokenService.sol';
 import {IFreezable} from './Interfaces/IFreezable.sol';
 import {_FREEZABLE_RESOLVER_KEY} from '../constants/resolverKeys.sol';
-import {IRoles} from './Interfaces/IRoles.sol';
 import {IStaticFunctionSelectors} from '../resolver/interfaces/resolverProxy/IStaticFunctionSelectors.sol';
 import {_FREEZE_ROLE} from '../constants/roles.sol';
 
