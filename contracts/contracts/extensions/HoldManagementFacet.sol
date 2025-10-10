@@ -9,8 +9,8 @@ import {RolesStorageWrapper} from './RolesStorageWrapper.sol';
 import {TokenOwnerStorageWrapper} from './TokenOwnerStorageWrapper.sol';
 import {HoldManagementStorageWrapper} from './HoldManagementStorageWrapper.sol';
 import {_HOLD_MANAGEMENT_RESOLVER_KEY} from '../constants/resolverKeys.sol';
-import {IRoles} from './Interfaces/IRoles.sol';
 import {IStaticFunctionSelectors} from '../resolver/interfaces/resolverProxy/IStaticFunctionSelectors.sol';
+import {_HOLD_CREATOR_ROLE} from '../constants/roles.sol';
 
 // solhint-enable max-line-length
 
@@ -156,7 +156,7 @@ contract HoldManagementFacet is
         validExpiration(_hold.expirationTimestamp)
         addressIsNotZero(_hold.escrow)
         addressIsNotZero(_from)
-        onlyRole(_getRoleId(IRoles.RoleName.HOLD_CREATOR))
+        onlyRole(_HOLD_CREATOR_ROLE)
         amountIsNotNegative(_hold.amount, false)
         returns (bool success_, uint256 holdId_)
     {

@@ -22,6 +22,8 @@ describe('➡️ Roles Tests', function () {
     let operator: SignerWithAddress
     let nonOperator: SignerWithAddress
 
+    const randomRole = '0xe11b25922c3ff9f0f0a34f0b8929a00001f215b99dcb08c2891c220cf3a7e8cc'
+
     async function setFacets(address: string) {
         rolesFacet = RolesFacet__factory.connect(address, operator)
     }
@@ -347,49 +349,89 @@ describe('➡️ Roles Tests', function () {
         }
     })
 
-    it('Getting roles Id', async function () {
-        // Retreive role Ids
-        const roleAdmin = rolesFacet.getRoleId(ROLES.defaultAdmin.id, {
-            gasLimit: GAS_LIMIT.hederaTokenManager.getRoles,
-        })
-        const roleCashin = rolesFacet.getRoleId(ROLES.cashin.id, {
-            gasLimit: GAS_LIMIT.hederaTokenManager.getRoles,
-        })
-        const roleBurn = rolesFacet.getRoleId(ROLES.burn.id, {
-            gasLimit: GAS_LIMIT.hederaTokenManager.getRoles,
-        })
-        const rolePause = rolesFacet.getRoleId(ROLES.pause.id, {
-            gasLimit: GAS_LIMIT.hederaTokenManager.getRoles,
-        })
-        const roleWipe = rolesFacet.getRoleId(ROLES.wipe.id, {
-            gasLimit: GAS_LIMIT.hederaTokenManager.getRoles,
-        })
-        const roleRescue = rolesFacet.getRoleId(ROLES.rescue.id, {
-            gasLimit: GAS_LIMIT.hederaTokenManager.getRoles,
-        })
-        const roleFreeze = rolesFacet.getRoleId(ROLES.freeze.id, {
-            gasLimit: GAS_LIMIT.hederaTokenManager.getRoles,
-        })
-        const roleDelete = rolesFacet.getRoleId(ROLES.delete.id, {
-            gasLimit: GAS_LIMIT.hederaTokenManager.getRoles,
-        })
-        const roleKyc = rolesFacet.getRoleId(ROLES.kyc.id, {
-            gasLimit: GAS_LIMIT.hederaTokenManager.getRoles,
-        })
-        const roleCustomFees = rolesFacet.getRoleId(ROLES.customFees.id, {
-            gasLimit: GAS_LIMIT.hederaTokenManager.getRoles,
+    it('Non Admin can not add role to list', async function () {
+        await expect(rolesFacet.connect(nonOperator).addRoleToList(randomRole)).to.be.revertedWithCustomError(
+            rolesFacet,
+            'AccountHasNoRole'
+        )
+    })
+
+    it('Non Admin can not remove role from list', async function () {
+        await expect(rolesFacet.connect(nonOperator).removeRoleFromListByPosition(0)).to.be.revertedWithCustomError(
+            rolesFacet,
+            'AccountHasNoRole'
+        )
+    })
+
+    it('Admin can add role to list', async function () {
+        const initialList = await rolesFacet.getRolesList({
+            gasLimit: GAS_LIMIT.hederaTokenManager.getRoleList,
         })
 
-        // Check
-        expect((await roleAdmin).toUpperCase()).to.equals(ROLES.defaultAdmin.hash.toUpperCase())
-        expect((await roleCashin).toUpperCase()).to.equals(ROLES.cashin.hash.toUpperCase())
-        expect((await roleBurn).toUpperCase()).to.equals(ROLES.burn.hash.toUpperCase())
-        expect((await rolePause).toUpperCase()).to.equals(ROLES.pause.hash.toUpperCase())
-        expect((await roleWipe).toUpperCase()).to.equals(ROLES.wipe.hash.toUpperCase())
-        expect((await roleRescue).toUpperCase()).to.equals(ROLES.rescue.hash.toUpperCase())
-        expect((await roleFreeze).toUpperCase()).to.equals(ROLES.freeze.hash.toUpperCase())
-        expect((await roleDelete).toUpperCase()).to.equals(ROLES.delete.hash.toUpperCase())
-        expect((await roleKyc).toUpperCase()).to.equals(ROLES.kyc.hash.toUpperCase())
-        expect((await roleCustomFees).toUpperCase()).to.equals(ROLES.customFees.hash.toUpperCase())
+        for (let i = 0; i < initialList.length; i++) {
+            expect(initialList[i].toString().toUpperCase()).to.be.not.equal(randomRole.toUpperCase())
+        }
+
+        const addRoleResponse = await rolesFacet.addRoleToList(randomRole, {
+            gasLimit: GAS_LIMIT.hederaTokenManager.addRoleToList,
+        })
+
+        await new ValidateTxResponseCommand({
+            txResponse: addRoleResponse,
+            confirmationEvent: 'RoleAdded',
+        }).execute()
+
+        await delay({ time: 1, unit: 'sec' })
+
+        const finalList = await rolesFacet.getRolesList({
+            gasLimit: GAS_LIMIT.hederaTokenManager.getRoleList,
+        })
+        let found = false
+
+        for (let i = 0; i < finalList.length; i++) {
+            if (finalList[i].toString().toUpperCase() == randomRole.toUpperCase()) found = true
+        }
+
+        expect(found).to.be.true
+        expect(initialList.length + 1).to.equal(finalList.length)
+    })
+
+    it('Can not remove role from list if out of bounds', async function () {
+        const initialList = await rolesFacet.getRolesList()
+        const RoleToRemovePos = initialList.length
+
+        await expect(rolesFacet.removeRoleFromListByPosition(RoleToRemovePos)).to.be.revertedWithCustomError(
+            rolesFacet,
+            'RolePositionOutOfBounds'
+        )
+    })
+
+    it('Admin can remove role from list', async function () {
+        const initialList = await rolesFacet.getRolesList({
+            gasLimit: GAS_LIMIT.hederaTokenManager.getRoleList,
+        })
+        const RoleToRemovePos = initialList.length - 2
+        const RoleToRemove = initialList[RoleToRemovePos]
+
+        const removeRoleResponse = await rolesFacet.removeRoleFromListByPosition(RoleToRemovePos, {
+            gasLimit: GAS_LIMIT.hederaTokenManager.removeRoleFromList,
+        })
+
+        await new ValidateTxResponseCommand({
+            txResponse: removeRoleResponse,
+            confirmationEvent: 'RoleRemoved',
+        }).execute()
+
+        await delay({ time: 1, unit: 'sec' })
+
+        const finalList = await rolesFacet.getRolesList({
+            gasLimit: GAS_LIMIT.hederaTokenManager.getRoleList,
+        })
+
+        for (let i = 0; i < finalList.length; i++) {
+            expect(finalList[i].toString().toUpperCase()).to.be.not.equal(RoleToRemove.toUpperCase())
+        }
+
+        expect(finalList.length + 1).to.equal(initialList.length)
     })
 })

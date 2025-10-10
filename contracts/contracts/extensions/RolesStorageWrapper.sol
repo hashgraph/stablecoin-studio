@@ -46,6 +46,22 @@ abstract contract RolesStorageWrapper {
     event RoleRevoked(bytes32 indexed role, address indexed account, address indexed sender);
 
     /**
+     * @dev Emitted when a role is added to the role list
+     *
+     * @param role The role to be added
+     * @param sender The caller of the function that emitted the event
+     */
+    event RoleAdded(bytes32 indexed role, address indexed sender);
+
+    /**
+     * @dev Emitted when the role at position pos is removed from the role list
+     *
+     * @param pos The pos where the role to be removed is
+     * @param sender The caller of the function that emitted the event
+     */
+    event RoleRemoved(uint256 indexed pos, address indexed sender);
+
+    /**
      * @dev Checks if a roles is granted for the calling account
      *
      * @param role The role to check if is granted for the calling account
@@ -72,16 +88,6 @@ abstract contract RolesStorageWrapper {
         listOfRoles.push(_KYC_ROLE);
         listOfRoles.push(_CUSTOM_FEES_ROLE);
         listOfRoles.push(_HOLD_CREATOR_ROLE);
-    }
-
-    /**
-     * @dev Checks if a role is granted to an account
-     *
-     * @param role The role to check if is granted
-     * @param account The account for which the role is checked for
-     */
-    function _hasRole(bytes32 role, address account) internal view returns (bool) {
-        return _rolesStorage().roles[role].members[account].active;
     }
 
     /**
@@ -123,7 +129,45 @@ abstract contract RolesStorageWrapper {
         rolesStorage.roles[role].accounts.pop();
         delete (rolesStorage.roles[role].members[account]);
         emit RoleRevoked(role, account, msg.sender);
-        if (_getNumberOfAccountsWithRole(_getRoleId(IRoles.RoleName.ADMIN)) == 0) revert IRoleManagement.NoAdminsLeft();
+        if (_getNumberOfAccountsWithRole(ADMIN_ROLE) == 0) revert IRoleManagement.NoAdminsLeft();
+    }
+
+    function _addRoleToList(bytes32 role) internal {
+        _rolesStorage().listOfRoles.push(role);
+        emit RoleAdded(role, msg.sender);
+    }
+
+    function _removeRoleFromListByPosition(uint256 pos) internal {
+        uint256 length = _getRolesListLength();
+        if (pos >= length) revert IRoles.RolePositionOutOfBounds(length, pos);
+
+        bytes32[] storage listOfRoles = _rolesStorage().listOfRoles;
+
+        if (pos < length - 1) {
+            listOfRoles[pos] = listOfRoles[length - 1];
+        }
+
+        listOfRoles.pop();
+
+        emit RoleRemoved(pos, msg.sender);
+    }
+
+    function _getRolesList() internal view returns (bytes32[] memory) {
+        return _rolesStorage().listOfRoles;
+    }
+
+    function _getRolesListLength() internal view returns (uint256) {
+        return _rolesStorage().listOfRoles.length;
+    }
+
+    /**
+     * @dev Checks if a role is granted to an account
+     *
+     * @param role The role to check if is granted
+     * @param account The account for which the role is checked for
+     */
+    function _hasRole(bytes32 role, address account) internal view returns (bool) {
+        return _rolesStorage().roles[role].members[account].active;
     }
 
     function _getAccountsWithRole(bytes32 role) internal view returns (address[] memory) {
@@ -132,15 +176,6 @@ abstract contract RolesStorageWrapper {
 
     function _getNumberOfAccountsWithRole(bytes32 role) internal view returns (uint256) {
         return _rolesStorage().roles[role].accounts.length;
-    }
-
-    /**
-     * @dev Returns a role bytes32 representation
-     *
-     * @param role The role we want to retrieve the bytes32 for
-     */
-    function _getRoleId(IRoles.RoleName role) internal view returns (bytes32) {
-        return _rolesStorage().listOfRoles[uint256(role)];
     }
 
     function _getRoles(address account) internal view returns (bytes32[] memory rolesToReturn_) {
