@@ -329,7 +329,7 @@ describe('➡️ Role Management Tests', function () {
         ).to.be.revertedWithCustomError(roleManagementFacet, 'AmountIsZero')
     })
 
-    it('Granting CashInRole with 0 amount fails', async function () {
+    it('Granting CashInRole with max uint256 amount grants unlimited rights', async function () {
         await roleManagementFacet.grantRoles(
             [ROLES.cashin.hash],
             randomAccountList,
