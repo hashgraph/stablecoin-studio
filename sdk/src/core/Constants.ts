@@ -78,3 +78,6 @@ export const CONFIG_RESERVE =
 export const DEFAULT_VERSION = 1;
 
 export const ONE_THOUSAND = 1000;
+
+export const UINT256_MAX =
+	'0xffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff';
