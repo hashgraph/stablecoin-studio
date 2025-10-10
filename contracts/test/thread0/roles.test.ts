@@ -364,15 +364,28 @@ describe('➡️ Roles Tests', function () {
     })
 
     it('Admin can add role to list', async function () {
-        const initialList = await rolesFacet.getRolesList()
+        const initialList = await rolesFacet.getRolesList({
+            gasLimit: GAS_LIMIT.hederaTokenManager.getRoleList,
+        })
 
         for (let i = 0; i < initialList.length; i++) {
             expect(initialList[i].toString().toUpperCase()).to.be.not.equal(randomRole.toUpperCase())
         }
 
-        await rolesFacet.addRoleToList(randomRole)
+        const addRoleResponse = await rolesFacet.addRoleToList(randomRole, {
+            gasLimit: GAS_LIMIT.hederaTokenManager.addRoleToList,
+        })
 
-        const finalList = await rolesFacet.getRolesList()
+        await new ValidateTxResponseCommand({
+            txResponse: addRoleResponse,
+            confirmationEvent: 'RoleAdded',
+        }).execute()
+
+        await delay({ time: 1, unit: 'sec' })
+
+        const finalList = await rolesFacet.getRolesList({
+            gasLimit: GAS_LIMIT.hederaTokenManager.getRoleList,
+        })
         let found = false
 
         for (let i = 0; i < finalList.length; i++) {
@@ -394,13 +407,26 @@ describe('➡️ Roles Tests', function () {
     })
 
     it('Admin can remove role from list', async function () {
-        const initialList = await rolesFacet.getRolesList()
+        const initialList = await rolesFacet.getRolesList({
+            gasLimit: GAS_LIMIT.hederaTokenManager.getRoleList,
+        })
         const RoleToRemovePos = initialList.length - 2
         const RoleToRemove = initialList[RoleToRemovePos]
 
-        await rolesFacet.removeRoleFromListByPosition(RoleToRemovePos)
+        const removeRoleResponse = await rolesFacet.removeRoleFromListByPosition(RoleToRemovePos, {
+            gasLimit: GAS_LIMIT.hederaTokenManager.removeRoleFromList,
+        })
 
-        const finalList = await rolesFacet.getRolesList()
+        await new ValidateTxResponseCommand({
+            txResponse: removeRoleResponse,
+            confirmationEvent: 'RoleRemoved',
+        }).execute()
+
+        await delay({ time: 1, unit: 'sec' })
+
+        const finalList = await rolesFacet.getRolesList({
+            gasLimit: GAS_LIMIT.hederaTokenManager.getRoleList,
+        })
 
         for (let i = 0; i < finalList.length; i++) {
             expect(finalList[i].toString().toUpperCase()).to.be.not.equal(RoleToRemove.toUpperCase())
