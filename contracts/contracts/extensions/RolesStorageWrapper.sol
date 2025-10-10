@@ -123,7 +123,7 @@ abstract contract RolesStorageWrapper {
         rolesStorage.roles[role].accounts.pop();
         delete (rolesStorage.roles[role].members[account]);
         emit RoleRevoked(role, account, msg.sender);
-        if (_getNumberOfAccountsWithRole(_getRoleId(IRoles.RoleName.ADMIN)) == 0) revert IRoleManagement.NoAdminsLeft();
+        if (_getNumberOfAccountsWithRole(ADMIN_ROLE) == 0) revert IRoleManagement.NoAdminsLeft();
     }
 
     function _getAccountsWithRole(bytes32 role) internal view returns (address[] memory) {
@@ -132,15 +132,6 @@ abstract contract RolesStorageWrapper {
 
     function _getNumberOfAccountsWithRole(bytes32 role) internal view returns (uint256) {
         return _rolesStorage().roles[role].accounts.length;
-    }
-
-    /**
-     * @dev Returns a role bytes32 representation
-     *
-     * @param role The role we want to retrieve the bytes32 for
-     */
-    function _getRoleId(IRoles.RoleName role) internal view returns (bytes32) {
-        return _rolesStorage().listOfRoles[uint256(role)];
     }
 
     function _getRoles(address account) internal view returns (bytes32[] memory rolesToReturn_) {

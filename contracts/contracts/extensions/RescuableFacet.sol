@@ -11,6 +11,7 @@ import {SafeCast} from '@openzeppelin/contracts/utils/math/SafeCast.sol';
 import {_RESCUABLE_RESOLVER_KEY} from '../constants/resolverKeys.sol';
 import {IRoles} from './Interfaces/IRoles.sol';
 import {IStaticFunctionSelectors} from '../resolver/interfaces/resolverProxy/IStaticFunctionSelectors.sol';
+import {_RESCUE_ROLE} from '../constants/roles.sol';
 
 contract RescuableFacet is
     ReentrancyGuard,
@@ -31,7 +32,7 @@ contract RescuableFacet is
     )
         external
         override(IRescuable)
-        onlyRole(_getRoleId(IRoles.RoleName.RESCUE))
+        onlyRole(_RESCUE_ROLE)
         amountIsNotNegative(amount, false)
         valueIsNotGreaterThan(SafeCast.toUint256(amount), _balanceOf(address(this)), true)
         returns (bool)
@@ -64,7 +65,7 @@ contract RescuableFacet is
     )
         external
         override(IRescuable)
-        onlyRole(_getRoleId(IRoles.RoleName.RESCUE))
+        onlyRole(_RESCUE_ROLE)
         valueIsNotGreaterThan(amount, address(this).balance, true)
         nonReentrant
         returns (bool)

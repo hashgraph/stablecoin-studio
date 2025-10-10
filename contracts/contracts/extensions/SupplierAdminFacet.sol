@@ -6,6 +6,7 @@ import {IRoles} from './Interfaces/IRoles.sol';
 import {SupplierAdminStorageWrapper} from './SupplierAdminStorageWrapper.sol';
 import {_SUPPLIER_ADMIN_RESOLVER_KEY} from '../constants/resolverKeys.sol';
 import {IStaticFunctionSelectors} from '../resolver/interfaces/resolverProxy/IStaticFunctionSelectors.sol';
+import {ADMIN_ROLE} from '../constants/roles.sol';
 
 contract SupplierAdminFacet is ISupplierAdmin, IStaticFunctionSelectors, SupplierAdminStorageWrapper {
     /**
@@ -45,7 +46,7 @@ contract SupplierAdminFacet is ISupplierAdmin, IStaticFunctionSelectors, Supplie
     )
         external
         override(ISupplierAdmin)
-        onlyRole(_getRoleId(IRoles.RoleName.ADMIN))
+        onlyRole(ADMIN_ROLE)
         addressIsNotZero(supplier)
         valueIsNotLessThan(amount, 0, false)
     {
@@ -61,7 +62,7 @@ contract SupplierAdminFacet is ISupplierAdmin, IStaticFunctionSelectors, Supplie
      */
     function grantUnlimitedSupplierRole(
         address supplier
-    ) external override(ISupplierAdmin) onlyRole(_getRoleId(IRoles.RoleName.ADMIN)) addressIsNotZero(supplier) {
+    ) external override(ISupplierAdmin) onlyRole(ADMIN_ROLE) addressIsNotZero(supplier) {
         _grantUnlimitedSupplierRole(supplier);
     }
 
@@ -74,7 +75,7 @@ contract SupplierAdminFacet is ISupplierAdmin, IStaticFunctionSelectors, Supplie
      */
     function revokeSupplierRole(
         address supplier
-    ) external override(ISupplierAdmin) onlyRole(_getRoleId(IRoles.RoleName.ADMIN)) addressIsNotZero(supplier) {
+    ) external override(ISupplierAdmin) onlyRole(ADMIN_ROLE) addressIsNotZero(supplier) {
         _revokeSupplierRole(supplier);
     }
 
@@ -87,7 +88,7 @@ contract SupplierAdminFacet is ISupplierAdmin, IStaticFunctionSelectors, Supplie
      */
     function resetSupplierAllowance(
         address supplier
-    ) external override(ISupplierAdmin) onlyRole(_getRoleId(IRoles.RoleName.ADMIN)) addressIsNotZero(supplier) {
+    ) external override(ISupplierAdmin) onlyRole(ADMIN_ROLE) addressIsNotZero(supplier) {
         uint256 oldAllowance = _supplierAdminStorage().supplierAllowances[supplier];
         uint256 newAllowance = 0;
         _supplierAdminStorage().supplierAllowances[supplier] = newAllowance;
@@ -110,7 +111,7 @@ contract SupplierAdminFacet is ISupplierAdmin, IStaticFunctionSelectors, Supplie
     )
         external
         override(ISupplierAdmin)
-        onlyRole(_getRoleId(IRoles.RoleName.ADMIN))
+        onlyRole(ADMIN_ROLE)
         addressIsNotZero(supplier)
         valueIsNotLessThan(amount, 0, false)
     {
@@ -138,7 +139,7 @@ contract SupplierAdminFacet is ISupplierAdmin, IStaticFunctionSelectors, Supplie
     )
         external
         override(ISupplierAdmin)
-        onlyRole(_getRoleId(IRoles.RoleName.ADMIN))
+        onlyRole(ADMIN_ROLE)
         addressIsNotZero(supplier)
         valueIsNotLessThan(amount, 0, false)
     {

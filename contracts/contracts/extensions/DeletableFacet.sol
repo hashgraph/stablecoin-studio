@@ -9,13 +9,14 @@ import {IDeletable} from './Interfaces/IDeletable.sol';
 import {_DELETABLE_RESOLVER_KEY} from '../constants/resolverKeys.sol';
 import {IRoles} from './Interfaces/IRoles.sol';
 import {IStaticFunctionSelectors} from '../resolver/interfaces/resolverProxy/IStaticFunctionSelectors.sol';
+import {_DELETE_ROLE} from '../constants/roles.sol';
 
 contract DeletableFacet is IDeletable, IStaticFunctionSelectors, TokenOwnerStorageWrapper, RolesStorageWrapper {
     /**
      * @dev Deletes the token
      *
      */
-    function deleteToken() external override(IDeletable) onlyRole(_getRoleId(IRoles.RoleName.DELETE)) returns (bool) {
+    function deleteToken() external override(IDeletable) onlyRole(_DELETE_ROLE) returns (bool) {
         address currentTokenAddress = _getTokenAddress();
 
         int64 responseCode = IHederaTokenService(_PRECOMPILED_ADDRESS).deleteToken(currentTokenAddress);
