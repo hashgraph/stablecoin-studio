@@ -311,7 +311,12 @@ describe('➡️ Role Management Tests', function () {
     })
 
     it('Granting role to account 0 fails', async function () {
-        const listOfAccounts = randomAccountList
+        const listOfAccounts: string[] = []
+
+        for (let i = 0; i < randomAccountList.length; i++) {
+            listOfAccounts.push(randomAccountList[i])
+        }
+
         listOfAccounts.push(ADDRESS_ZERO)
 
         await expect(
