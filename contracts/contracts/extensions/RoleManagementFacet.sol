@@ -26,8 +26,9 @@ contract RoleManagementFacet is IRoleManagement, IStaticFunctionSelectors, Suppl
             if (roles[i] == cashInRole) {
                 if (accounts.length != amounts.length) revert ArraysLengthNotEqual(accounts.length, amounts.length);
                 for (uint256 j = 0; j < accounts.length; j++) {
-                    if (amounts[j] != 0) _grantSupplierRole(accounts[j], amounts[j]);
-                    else _grantUnlimitedSupplierRole(accounts[j]);
+                    if (amounts[j] == 0) revert AmountIsZero();
+                    if (amounts[j] == type(uint256).max) _grantUnlimitedSupplierRole(accounts[j]);
+                    else _grantSupplierRole(accounts[j], amounts[j]);
                 }
             } else {
                 for (uint256 p = 0; p < accounts.length; p++) {

@@ -12,6 +12,7 @@ export const DEFAULT_CONFIG_VERSION = 1
 // * Ethereum
 export const ADDRESS_ZERO = ZeroAddress
 export const NUMBER_ZERO = 0n
+export const UINT256_MAX = (1n << 256n) - 1n
 
 // * Hedera
 export const HBAR_DECIMALS = 8n
