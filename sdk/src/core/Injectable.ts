@@ -99,7 +99,7 @@ import { RemoveCommandHandler } from '../app/usecase/command/stablecoin/backend/
 import { SetBackendCommandHandler } from '../app/usecase/command/network/setBackend/SetBackendCommandHandler.js';
 import { GetTransactionsQueryHandler } from '../app/usecase/query/stablecoin/backend/getTransactions/GetTransactionsQueryHandler.js';
 import { AWSKMSTransactionAdapter } from '../port/out/hs/hts/custodial/AWSKMSTransactionAdapter.js';
-import { HederaWalletConnectTransactionAdapter } from '../port/out/hs/walletconnect/HederaWalletConnectTransactionAdapter.js';
+import { HederaWalletConnectTransactionAdapter } from '../port/out/walletconnect/HederaWalletConnectTransactionAdapter.js';
 import { GetConfigInfoQueryHandler } from '../app/usecase/query/stablecoin/management/getConfigInfo/GetConfigInfoQueryHandler.js';
 import { UpdateConfigVersionCommandHandler } from '../app/usecase/command/stablecoin/management/updateConfigVersion/updateConfigVersionCommandHandler.js';
 import { UpdateConfigCommandHandler } from '../app/usecase/command/stablecoin/management/updateConfig/updateConfigCommandHandler.js';

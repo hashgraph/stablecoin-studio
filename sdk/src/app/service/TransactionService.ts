@@ -55,7 +55,7 @@ import { HederaTokenManagerFacet__factory } from '@hashgraph/stablecoin-npm-cont
 import { ethers } from 'ethers';
 import Hex from '../../core/Hex.js';
 import { AWSKMSTransactionAdapter } from '../../port/out/hs/hts/custodial/AWSKMSTransactionAdapter';
-import { HederaWalletConnectTransactionAdapter } from '../../port/out/hs/walletconnect/HederaWalletConnectTransactionAdapter.js';
+import { HederaWalletConnectTransactionAdapter } from '../../port/out/walletconnect/HederaWalletConnectTransactionAdapter.js';
 import TransactionResponse from '../../domain/context/transaction/TransactionResponse';
 import { Response } from '../../domain/context/transaction/Response';
 import { EmptyResponse } from './error/EmptyResponse.js';

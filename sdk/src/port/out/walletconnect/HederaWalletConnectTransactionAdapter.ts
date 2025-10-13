@@ -46,17 +46,19 @@ import {ResolverProxyConfiguration} from "../../../domain/context/factory/Resolv
 import {FactoryRole} from "../../../domain/context/factory/FactoryRole";
 import {FactoryStableCoin} from "../../../domain/context/factory/FactoryStableCoin";
 import {TokenSupplyType} from "../../../domain/context/stablecoin/TokenSupply";
-import {StableCoinFactoryFacet__factory} from "@hashgraph/stablecoin-npm-contracts";
+import {StableCoinFactoryFacet__factory, IHRC__factory} from "@hashgraph/stablecoin-npm-contracts";
 import LogService from "../../../app/service/LogService";
 import {ethers, Provider} from "ethers";
-import {CREATE_SC_GAS, TOKEN_CREATION_COST_HBAR} from "../../../core/Constants";
+import {CREATE_SC_GAS, TOKEN_CREATION_COST_HBAR, ASSOCIATE_GAS} from "../../../core/Constants";
+import CheckEvmAddress from "../../../core/checks/evmaddress/CheckEvmAddress";
+import {TransactionResponseError} from "../error/TransactionResponseError";
 import {RPCTransactionResponseAdapter} from "../rpc/RPCTransactionResponseAdapter";
 import HWCSettings from "../../../domain/context/hwalletconnectsettings/HWCSettings";
 import {Environment, testnet} from "../../../domain/context/network/Environment";
 import Account from "../../../domain/context/account/Account";
 import {lazyInject} from "../../../core/decorator/LazyInjectDecorator";
 import EventService from "../../../app/service/event/EventService";
-import NetworkService from "app/service/NetworkService";
+import NetworkService from "../../../app/service/NetworkService";
 import {MirrorNodeAdapter} from "../mirror/MirrorNodeAdapter";
 import {QueryBus} from "../../../core/query/QueryBus";
 import {SupportedWallets} from "@hashgraph/stablecoin-npm-sdk";
@@ -547,22 +549,22 @@ export class HederaWalletConnectTransactionAdapter extends TransactionAdapter {
 			const ns = this.hederaProvider?.session?.namespaces
 			let transactionResponse;
 
-			if(!ns?.hedera){
-				console.log(`[HWC] No namespace "hedera" found in session. Attempting to sign and execute transaction...`);
-				const transaction = await this.hederaProvider.eth_signMessage(
-					transactionBase64, this.account.evmAddress
-				)
-				transactionResponse = await this.hederaProvider.eth_sendTransaction(
-					transaction, this.account.evmAddress, ledgerId
-				)
-
-			} else {
-				console.log(`[HWC] Namespace "hedera" found in session. Attempting to sign and execute transaction...`);
-				transactionResponse = await this.hederaProvider!.hedera_signAndExecuteTransaction({
-					signerAccountId,
-					transactionList: transactionBase64,
-				});
-			}
+			// if(!ns?.hedera){
+			// 	console.log(`[HWC] No namespace "hedera" found in session. Attempting to sign and execute transaction...`);
+			// 	const transaction = await this.hederaProvider.eth_signMessage(
+			// 		transactionBase64, this.account.evmAddress
+			// 	)
+			// 	transactionResponse = await this.hederaProvider.eth_sendTransaction(
+			// 		transaction, this.account.evmAddress, ledgerId
+			// 	)
+			//
+			// } else {
+			// 	console.log(`[HWC] Namespace "hedera" found in session. Attempting to sign and execute transaction...`);
+			// 	transactionResponse = await this.hederaProvider!.hedera_signAndExecuteTransaction({
+			// 		signerAccountId,
+			// 		transactionList: transactionBase64,
+			// 	});
+			// }
 
 
 
@@ -645,7 +647,7 @@ export class HederaWalletConnectTransactionAdapter extends TransactionAdapter {
 	 * @throws SigningError if an error occurs during the signing process.
 	 */
 	async sign(message: string | Transaction): Promise<string> {
-		throw new Error('Method not implemented.');
+		throw new Error('Method not implemented SIGN.');
 		// console.log('🔏 Signing transaction from HWC v2...');
 		// this.ensureInitialized();
 		//
@@ -872,35 +874,164 @@ export class HederaWalletConnectTransactionAdapter extends TransactionAdapter {
 				reserveConfigurationId,
 			);
 
-			const factoryInstance = StableCoinFactoryFacet__factory.connect(
-				(await this.mirrorNodeAdapter.getContractInfo(factory.value))
-					.evmAddress,
-				this.signerOrProvider,
-			);
-			LogService.logTrace('Deploying factory: ', {
-				stableCoin: stableCoinToCreate,
-			});
-			const res = await factoryInstance.deployStableCoin(
-				stableCoinToCreate,
-				{
-					value: ethers.parseEther(
-						TOKEN_CREATION_COST_HBAR.toString(),
-					),
-					gasLimit: CREATE_SC_GAS,
-				},
-			);
+			// Check if we're using Hedera or Ethereum operations
+			const hasHederaNamespace = !!this.hederaProvider?.session?.namespaces?.hedera;
 
-			// Put it into an array since structs change the response from the event and its not a simple array
-			return await RPCTransactionResponseAdapter.manageResponse(
-				res,
-				this.networkService.environment,
-				{ eventName: 'Deployed', contract: factoryInstance },
-			);
+			if (hasHederaNamespace) {
+				// TODO: Implement Hedera native operations when needed
+				throw new Error('Hedera native operations not yet implemented for create');
+			} else {
+				// Use Ethereum operations (EIP-155)
+				console.log('[HWC] Using Ethereum operations for create');
+
+				if (!this.account.evmAddress) {
+					throw new Error('Account EVM address is not set');
+				}
+
+				const factoryEvmAddress = (
+					await this.mirrorNodeAdapter.getContractInfo(factory.value)
+				).evmAddress;
+
+				// Create the contract interface to encode the function call
+				const factoryInterface = StableCoinFactoryFacet__factory.createInterface();
+				const data = factoryInterface.encodeFunctionData('deployStableCoin', [stableCoinToCreate]);
+
+				// Get the current network chainId (CAIP-2 format uses decimal numbers)
+				const ledgerId = this.networkService.environment === testnet ?
+					LedgerId.TESTNET :
+					LedgerId.MAINNET;
+				const chainId = ledgerId === LedgerId.TESTNET ? '296' : '295'; // testnet or mainnet
+
+				// Prepare the transaction object for eth_sendTransaction
+				const txParams = {
+					from: this.account.evmAddress,
+					to: factoryEvmAddress,
+					data: data,
+					value: ethers.toBeHex(ethers.parseEther(TOKEN_CREATION_COST_HBAR.toString())),
+					gas: ethers.toBeHex(CREATE_SC_GAS),
+				};
+
+				console.log('[HWC] Sending transaction with params:', txParams);
+				console.log('[HWC] Chain ID:', `eip155:${chainId}`);
+
+				// Use HederaProvider to send the transaction
+				const txHash = await this.hederaProvider!.request({
+					method: 'eth_sendTransaction',
+					params: [txParams],
+				}, `eip155:${chainId}`);
+
+				console.log('[HWC] Transaction sent with hash:', txHash);
+
+				// Wait for the transaction receipt
+				const provider = new ethers.JsonRpcProvider(this.networkService.rpcNode?.baseUrl);
+				const receipt = await provider.waitForTransaction(txHash as string);
+
+				console.log('[HWC] Transaction receipt:', receipt);
+
+				// Parse the events from the receipt to get the deployed address
+				const factoryInstance = StableCoinFactoryFacet__factory.connect(
+					factoryEvmAddress,
+					provider,
+				);
+
+				// Return response in the expected format
+				return await RPCTransactionResponseAdapter.manageResponse(
+					{ hash: txHash, wait: () => Promise.resolve(receipt) } as any,
+					this.networkService.environment,
+					{ eventName: 'Deployed', contract: factoryInstance },
+				);
+			}
 		} catch (error) {
 			LogService.logError(error);
 			throw new SigningError(
-				`Unexpected error in RPCTransactionAdapter create operation : ${error}`,
+				`Unexpected error in HederaWalletConnectTransactionAdapter create operation : ${error}`,
 			);
+		}
+	}
+
+	getMirrorNodeAdapter(): MirrorNodeAdapter {
+		return this.mirrorNodeAdapter;
+	}
+
+	async associateToken(tokenId: HederaId, targetId: HederaId): Promise<TransactionResponse<any, Error>> {
+		try {
+			// Check if we're using Hedera or Ethereum operations
+			const hasHederaNamespace = !!this.hederaProvider?.session?.namespaces?.hedera;
+
+			if (hasHederaNamespace) {
+				// TODO: Implement Hedera native operations when needed
+				throw new Error('Hedera native operations not yet implemented for associateToken');
+			} else {
+				// Use Ethereum operations (EIP-155)
+				console.log('[HWC] Using Ethereum operations for associateToken');
+
+				if (!this.account.evmAddress) {
+					throw new Error('Account EVM address is not set');
+				}
+
+				const HTSTokenEVMAddress = tokenId
+					.toHederaAddress()
+					.toSolidityAddress();
+
+				// Create the contract interface to encode the function call
+				const hrcInterface = IHRC__factory.createInterface();
+				const data = hrcInterface.encodeFunctionData('associate');
+
+				// Get the current network chainId (CAIP-2 format uses decimal numbers)
+				const ledgerId = this.networkService.environment === testnet ?
+					LedgerId.TESTNET :
+					LedgerId.MAINNET;
+				const chainId = ledgerId === LedgerId.TESTNET ? '296' : '295';
+
+				// Prepare the transaction object for eth_sendTransaction
+				const txParams = {
+					from: this.account.evmAddress,
+					to: CheckEvmAddress.toEvmAddress(HTSTokenEVMAddress),
+					data: data,
+					gas: ethers.toBeHex(ASSOCIATE_GAS),
+				};
+
+				console.log('[HWC] Sending associate transaction with params:', txParams);
+
+				// Use HederaProvider to send the transaction
+				const txHash = await this.hederaProvider!.request({
+					method: 'eth_sendTransaction',
+					params: [txParams],
+				}, `eip155:${chainId}`);
+
+				console.log('[HWC] Associate transaction sent with hash:', txHash);
+
+				// Wait for the transaction receipt
+				const provider = new ethers.JsonRpcProvider(this.networkService.rpcNode?.baseUrl);
+				const receipt = await provider.waitForTransaction(txHash as string);
+
+				console.log('[HWC] Associate transaction receipt:', receipt);
+
+				// Return response in the expected format
+				const response = await RPCTransactionResponseAdapter.manageResponse(
+					{ hash: txHash, wait: () => Promise.resolve(receipt) } as any,
+					this.networkService.environment,
+				);
+
+				this.logTransaction(
+					response.id ?? '',
+					this.networkService.environment,
+				);
+
+				return response;
+			}
+		} catch (error) {
+			LogService.logError(error);
+			this.logTransaction(
+				(error as any).error?.transactionHash ?? '',
+				this.networkService.environment,
+			);
+			throw new TransactionResponseError({
+				network: this.networkService.environment,
+				RPC_relay: true,
+				message: `Unexpected error in HederaWalletConnectTransactionAdapter association operation : ${error}`,
+				transactionId: (error as any).error?.transactionHash,
+			});
 		}
 	}
 }
