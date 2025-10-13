@@ -34,10 +34,26 @@ import { ResolverProxyConfiguration } from '../../../domain/context/factory/Reso
 import { FactoryRole } from '../../../domain/context/factory/FactoryRole';
 import { FactoryStableCoin } from '../../../domain/context/factory/FactoryStableCoin';
 import { TokenSupplyType } from '../../../domain/context/stablecoin/TokenSupply';
-import { StableCoinFactoryFacet__factory, IHRC__factory } from '@hashgraph/stablecoin-npm-contracts';
+import {
+	StableCoinFactoryFacet__factory,
+	IHRC__factory,
+	WipeableFacet__factory, CashInFacet__factory, BurnableFacet__factory, RolesFacet__factory, DeletableFacet__factory,
+	RescuableFacet__factory,
+	PausableFacet__factory, KYCFacet__factory, FreezableFacet__factory
+} from '@hashgraph/stablecoin-npm-contracts';
 import LogService from '../../../app/service/LogService';
 import { ethers, Provider } from 'ethers';
-import { CREATE_SC_GAS, TOKEN_CREATION_COST_HBAR, ASSOCIATE_GAS } from '../../../core/Constants';
+import {
+	CREATE_SC_GAS,
+	TOKEN_CREATION_COST_HBAR,
+	ASSOCIATE_GAS,
+	WIPE_GAS,
+	CASHIN_GAS,
+	BURN_GAS,
+	REVOKE_ROLES_GAS,
+	GRANT_ROLES_GAS, DELETE_GAS, RESCUE_HBAR_GAS,
+	RESCUE_GAS, UNPAUSE_GAS, PAUSE_GAS, REVOKE_KYC_GAS, GRANT_KYC_GAS, UNFREEZE_GAS, FREEZE_GAS
+} from '../../../core/Constants';
 import CheckEvmAddress from '../../../core/checks/evmaddress/CheckEvmAddress';
 import { TransactionResponseError } from '../error/TransactionResponseError';
 import { RPCTransactionResponseAdapter } from '../rpc/RPCTransactionResponseAdapter';
@@ -56,6 +72,7 @@ import { TransactionType } from '../TransactionResponseEnums';
 import TransactionResponse from '../../../domain/context/transaction/TransactionResponse';
 import { WalletPairedEvent } from '../../../app/service/event/WalletEvent';
 import { SigningError } from '../hs/error/SigningError';
+import StableCoinCapabilities from "../../../domain/context/stablecoin/StableCoinCapabilities";
 
 let HederaAdapter: typeof import('@hashgraph/hedera-wallet-connect').HederaAdapter;
 let HederaChainDefinition: typeof import('@hashgraph/hedera-wallet-connect').HederaChainDefinition;
@@ -219,11 +236,12 @@ export class HederaWalletConnectTransactionAdapter extends TransactionAdapter {
 		reserveConfigId?: string,
 		reserveConfigVersion?: number,
 	): Promise<TransactionResponse<any, Error>> {
+		this.ensureInitialized();
 		try {
 			const cashinRole: FactoryCashinRole = {
 				account:
 					!coin.cashInRoleAccount || coin.cashInRoleAccount.toString() === '0.0.0'
-						? '0x0000000000000000000000000000000000000000'
+						? '0x0000000000000000000000000000000000000000' // Dirección cero si no se especifica
 						: await this.getEVMAddress(coin.cashInRoleAccount),
 				allowance: coin.cashInRoleAllowance?.toFixedNumber() ?? BigDecimal.ZERO.toFixedNumber(),
 			};
@@ -295,33 +313,23 @@ export class HederaWalletConnectTransactionAdapter extends TransactionAdapter {
 				reserveConfigurationId,
 			);
 
-			// Require EVM path for now
 			if (!this.isEvmSession()) throw new Error('Hedera native operations not implemented for create');
 			if (!this.account.evmAddress) throw new Error('Account EVM address is not set');
 
 			const factoryEvmAddress = (await this.mirrorNodeAdapter.getContractInfo(factory.value)).evmAddress;
-			const iface = new ethers.Interface(StableCoinFactoryFacet__factory.abi);
-			const data = iface.encodeFunctionData('deployStableCoin', [stableCoinToCreate]);
-
-			const chainRef = this.currentEvmChainRef();
-			const txParams = {
-				from: this.account.evmAddress,
-				to: factoryEvmAddress,
-				data,
-				value: ethers.toBeHex(ethers.parseEther(TOKEN_CREATION_COST_HBAR.toString())),
-				gas: ethers.toBeHex(CREATE_SC_GAS),
-			};
-
-			const txHash = await this.hederaProvider!.request({ method: 'eth_sendTransaction', params: [txParams] }, chainRef);
 			const provider = this.rpcProvider();
-			const receipt = await provider.waitForTransaction(txHash as string);
-
 			const factoryInstance = StableCoinFactoryFacet__factory.connect(factoryEvmAddress, provider);
-			return RPCTransactionResponseAdapter.manageResponse(
-				{ hash: txHash, wait: () => Promise.resolve(receipt) } as any,
-				this.networkService.environment,
-				{ eventName: 'Deployed', contract: factoryInstance },
+
+			return await this.performOperation(
+				factoryEvmAddress,
+				new ethers.Interface(StableCoinFactoryFacet__factory.abi),
+				'deployStableCoin',
+				[stableCoinToCreate],
+				CREATE_SC_GAS,
+				TOKEN_CREATION_COST_HBAR.toString(),
+				{ eventName: 'Deployed', contract: factoryInstance }
 			);
+
 		} catch (error) {
 			LogService.logError(error);
 			throw new SigningError(`Unexpected error in create(): ${error}`);
@@ -330,28 +338,24 @@ export class HederaWalletConnectTransactionAdapter extends TransactionAdapter {
 
 	/** Associate HTS token via EVM (IHRC.associate) */
 	async associateToken(tokenId: HederaId, _targetId: HederaId): Promise<TransactionResponse<any, Error>> {
+		this.ensureInitialized();
 		try {
 			if (!this.isEvmSession()) throw new Error('Hedera native operations not implemented for associateToken');
 			if (!this.account.evmAddress) throw new Error('Account EVM address is not set');
 
 			const tokenEvm = CheckEvmAddress.toEvmAddress(tokenId.toHederaAddress().toSolidityAddress());
-			const iface = new ethers.Interface(IHRC__factory.abi);
-			const data = iface.encodeFunctionData('associate');
 
-			const chainRef = this.currentEvmChainRef();
-			const txParams = { from: this.account.evmAddress, to: tokenEvm, data, gas: ethers.toBeHex(ASSOCIATE_GAS) };
-
-			const txHash = await this.hederaProvider!.request({ method: 'eth_sendTransaction', params: [txParams] }, chainRef);
-			const provider = this.rpcProvider();
-			const receipt = await provider.waitForTransaction(txHash as string);
-
-			const response = await RPCTransactionResponseAdapter.manageResponse(
-				{ hash: txHash, wait: () => Promise.resolve(receipt) } as any,
-				this.networkService.environment,
+			const response = await this.performOperation(
+				tokenEvm,
+				new ethers.Interface(IHRC__factory.abi),
+				'associate',
+				[],
+				ASSOCIATE_GAS
 			);
 
 			this.logTransaction(response.id ?? '', this.networkService.environment);
 			return response;
+
 		} catch (error: any) {
 			LogService.logError(error);
 			this.logTransaction(error?.error?.transactionHash ?? '', this.networkService.environment);
@@ -364,11 +368,295 @@ export class HederaWalletConnectTransactionAdapter extends TransactionAdapter {
 		}
 	}
 
+	async wipe(coin: StableCoinCapabilities, targetId: HederaId, amount: BigDecimal): Promise<TransactionResponse> {
+		try {
+			const proxyAddress = this.getProxyAddress(coin);
+			const targetEvm = await this.getEVMAddress(targetId);
+			return await this.performOperation(
+				proxyAddress,
+				new ethers.Interface(WipeableFacet__factory.abi),
+				'wipe',
+				[targetEvm, amount.toBigInt()],
+				WIPE_GAS
+			);
+		} catch (error) {
+			LogService.logError(error);
+			throw new SigningError(`Unexpected error in wipe(): ${error}`);
+		}
+	}
+
+	async cashin(coin: StableCoinCapabilities, targetId: HederaId, amount: BigDecimal): Promise<TransactionResponse> {
+		try {
+			const proxyAddress = this.getProxyAddress(coin);
+			const targetEvm = await this.getEVMAddress(targetId);
+			return await this.performOperation(
+				proxyAddress,
+				new ethers.Interface(CashInFacet__factory.abi),
+				'mint',
+				[targetEvm, amount.toBigInt()],
+				CASHIN_GAS
+			);
+		} catch (error) {
+			LogService.logError(error);
+			throw new SigningError(`Unexpected error in cashin(): ${error}`);
+		}
+	}
+
+	async burn(coin: StableCoinCapabilities, amount: BigDecimal): Promise<TransactionResponse> {
+		try {
+			const proxyAddress = this.getProxyAddress(coin);
+			return await this.performOperation(
+				proxyAddress,
+				new ethers.Interface(BurnableFacet__factory.abi),
+				'burn',
+				[amount.toBigInt()],
+				BURN_GAS
+			);
+		} catch (error) {
+			LogService.logError(error);
+			throw new SigningError(`Unexpected error in burn(): ${error}`);
+		}
+	}
+
+	async freeze(coin: StableCoinCapabilities, targetId: HederaId): Promise<TransactionResponse> {
+		try {
+			const proxyAddress = this.getProxyAddress(coin);
+			const targetEvm = await this.getEVMAddress(targetId);
+			return await this.performOperation(
+				proxyAddress,
+				new ethers.Interface(FreezableFacet__factory.abi),
+				'freeze',
+				[targetEvm],
+				FREEZE_GAS
+			);
+		} catch (error) {
+			LogService.logError(error);
+			throw new SigningError(`Unexpected error in freeze(): ${error}`);
+		}
+	}
+
+	async unfreeze(coin: StableCoinCapabilities, targetId: HederaId): Promise<TransactionResponse> {
+		try {
+			const proxyAddress = this.getProxyAddress(coin);
+			const targetEvm = await this.getEVMAddress(targetId);
+			return await this.performOperation(
+				proxyAddress,
+				new ethers.Interface(FreezableFacet__factory.abi),
+				'unfreeze',
+				[targetEvm],
+				UNFREEZE_GAS
+			);
+		} catch (error) {
+			LogService.logError(error);
+			throw new SigningError(`Unexpected error in unfreeze(): ${error}`);
+		}
+	}
+
+	async grantKyc(coin: StableCoinCapabilities, targetId: HederaId): Promise<TransactionResponse> {
+		try {
+			const proxyAddress = this.getProxyAddress(coin);
+			const targetEvm = await this.getEVMAddress(targetId);
+			return await this.performOperation(
+				proxyAddress,
+				new ethers.Interface(KYCFacet__factory.abi),
+				'grantKyc',
+				[targetEvm],
+				GRANT_KYC_GAS
+			);
+		} catch (error) {
+			LogService.logError(error);
+			throw new SigningError(`Unexpected error in grantKyc(): ${error}`);
+		}
+	}
+
+	async revokeKyc(coin: StableCoinCapabilities, targetId: HederaId): Promise<TransactionResponse> {
+		try {
+			const proxyAddress = this.getProxyAddress(coin);
+			const targetEvm = await this.getEVMAddress(targetId);
+			return await this.performOperation(
+				proxyAddress,
+				new ethers.Interface(KYCFacet__factory.abi),
+				'revokeKyc',
+				[targetEvm],
+				REVOKE_KYC_GAS
+			);
+		} catch (error) {
+			LogService.logError(error);
+			throw new SigningError(`Unexpected error in revokeKyc(): ${error}`);
+		}
+	}
+
+	async pause(coin: StableCoinCapabilities): Promise<TransactionResponse> {
+		try {
+			const proxyAddress = this.getProxyAddress(coin);
+			return await this.performOperation(
+				proxyAddress,
+				new ethers.Interface(PausableFacet__factory.abi),
+				'pause',
+				[],
+				PAUSE_GAS
+			);
+		} catch (error) {
+			LogService.logError(error);
+			throw new SigningError(`Unexpected error in pause(): ${error}`);
+		}
+	}
+
+	async unpause(coin: StableCoinCapabilities): Promise<TransactionResponse> {
+		try {
+			const proxyAddress = this.getProxyAddress(coin);
+			return await this.performOperation(
+				proxyAddress,
+				new ethers.Interface(PausableFacet__factory.abi),
+				'unpause',
+				[],
+				UNPAUSE_GAS
+			);
+		} catch (error) {
+			LogService.logError(error);
+			throw new SigningError(`Unexpected error in unpause(): ${error}`);
+		}
+	}
+
+	async rescue(coin: StableCoinCapabilities, amount: BigDecimal): Promise<TransactionResponse> {
+		try {
+			const proxyAddress = this.getProxyAddress(coin);
+			return await this.performOperation(
+				proxyAddress,
+				new ethers.Interface(RescuableFacet__factory.abi),
+				'rescue',
+				[amount.toBigInt()],
+				RESCUE_GAS
+			);
+		} catch (error) {
+			LogService.logError(error);
+			throw new SigningError(`Unexpected error in rescue(): ${error}`);
+		}
+	}
+
+	async rescueHBAR(coin: StableCoinCapabilities, amount: BigDecimal): Promise<TransactionResponse> {
+		try {
+			const proxyAddress = this.getProxyAddress(coin);
+			return await this.performOperation(
+				proxyAddress,
+				new ethers.Interface(RescuableFacet__factory.abi),
+				'rescueHBAR',
+				[amount.toBigInt()],
+				RESCUE_HBAR_GAS
+			);
+		} catch (error) {
+			LogService.logError(error);
+			throw new SigningError(`Unexpected error in rescueHBAR(): ${error}`);
+		}
+	}
+
+	async delete(coin: StableCoinCapabilities): Promise<TransactionResponse> {
+		try {
+			const proxyAddress = this.getProxyAddress(coin);
+			return await this.performOperation(
+				proxyAddress,
+				new ethers.Interface(DeletableFacet__factory.abi),
+				'deleteToken',
+				[],
+				DELETE_GAS
+			);
+		} catch (error) {
+			LogService.logError(error);
+			throw new SigningError(`Unexpected error in delete(): ${error}`);
+		}
+	}
+
+	async grantRole(coin: StableCoinCapabilities, targetId: HederaId, role: StableCoinRole): Promise<TransactionResponse> {
+		try {
+			const proxyAddress = this.getProxyAddress(coin);
+			const targetEvm = await this.getEVMAddress(targetId);
+			return await this.performOperation(
+				proxyAddress,
+				new ethers.Interface(RolesFacet__factory.abi),
+				'grantRole',
+				[role, targetEvm],
+				GRANT_ROLES_GAS
+			);
+		} catch (error) {
+			LogService.logError(error);
+			throw new SigningError(`Unexpected error in grantRole(): ${error}`);
+		}
+	}
+
+	async revokeRole(coin: StableCoinCapabilities, targetId: HederaId, role: StableCoinRole): Promise<TransactionResponse> {
+		try {
+			const proxyAddress = this.getProxyAddress(coin);
+			const targetEvm = await this.getEVMAddress(targetId);
+			return await this.performOperation(
+				proxyAddress,
+				new ethers.Interface(RolesFacet__factory.abi),
+				'revokeRole',
+				[role, targetEvm],
+				REVOKE_ROLES_GAS
+			);
+		} catch (error) {
+			LogService.logError(error);
+			throw new SigningError(`Unexpected error in revokeRole(): ${error}`);
+		}
+	}
+
+
 	getMirrorNodeAdapter(): MirrorNodeAdapter {
 		return this.mirrorNodeAdapter;
 	}
 
+	getAccount(): Account {
+		return this.account;
+	}
+
 	// ===== Helpers ============================================================
+
+	private getProxyAddress(coin: StableCoinCapabilities): string {
+		const proxyAddress = coin.coin.evmProxyAddress?.toString();
+		if (!proxyAddress) {
+			throw new Error(`StableCoin ${coin.coin.name} does not have a proxy address.`);
+		}
+		return proxyAddress;
+	}
+
+	private async performOperation(
+		proxyAddress: string,
+		iface: ethers.Interface,
+		functionName: string,
+		params: any[],
+		gasLimit: number,
+		payableAmountHbar?: string,
+		responseOptions?: { eventName: string; contract: ethers.BaseContract }
+	): Promise<TransactionResponse> {
+		this.ensureInitialized();
+		if (!this.account.evmAddress) throw new Error('Account EVM address is not set');
+
+		const data = iface.encodeFunctionData(functionName, params);
+		const chainRef = this.currentEvmChainRef();
+
+		const txParams: any = {
+			from: this.account.evmAddress,
+			to: proxyAddress,
+			data,
+			gas: ethers.toBeHex(gasLimit),
+		};
+
+		if (payableAmountHbar) {
+			txParams.value = ethers.toBeHex(ethers.parseEther(payableAmountHbar));
+		}
+
+		const txHash = await this.hederaProvider!.request({ method: 'eth_sendTransaction', params: [txParams] }, chainRef);
+		const provider = this.rpcProvider();
+		const receipt = await provider.waitForTransaction(txHash as string);
+
+		const responsePayload = { hash: txHash, wait: () => Promise.resolve(receipt) } as any;
+
+		return RPCTransactionResponseAdapter.manageResponse(
+			responsePayload,
+			this.networkService.environment,
+			responseOptions
+		);
+	}
 
 	private ensureInitialized(): void {
 		if (!this.hederaProvider) throw new Error('Hedera WalletConnect not initialized');
