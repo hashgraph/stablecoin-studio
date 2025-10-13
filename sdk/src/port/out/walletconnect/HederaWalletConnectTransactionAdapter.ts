@@ -29,41 +29,44 @@
 /* eslint-disable @typescript-eslint/ban-ts-comment */
 /* eslint-disable @typescript-eslint/no-unused-vars */
 
-import { singleton } from 'tsyringe';
-import {
-	AccountId,
-	LedgerId,
-	Signer,
-	Transaction,
-} from '@hashgraph/sdk';
-import { NetworkName } from '@hashgraph/sdk/lib/client/Client';
-import { HederaTransactionAdapter } from '../HederaTransactionAdapter';
-import { TransactionType } from '../../TransactionResponseEnums';
-import { InitializationData } from '../../TransactionAdapter';
-import { MirrorNodeAdapter } from '../../mirror/MirrorNodeAdapter';
-import {
-	WalletEvents,
-	WalletPairedEvent,
-} from '../../../../app/service/event/WalletEvent';
-import LogService from '../../../../app/service/LogService';
-import EventService from '../../../../app/service/event/EventService';
-import NetworkService from '../../../../app/service/NetworkService';
-import { lazyInject } from '../../../../core/decorator/LazyInjectDecorator';
-import Injectable from '../../../../core/Injectable';
-import { QueryBus } from '../../../../core/query/QueryBus';
-import Account from '../../../../domain/context/account/Account';
-import TransactionResponse from '../../../../domain/context/transaction/TransactionResponse.js';
-import {
-	Environment,
-	mainnet,
-	testnet,
-} from '../../../../domain/context/network/Environment';
-import { SupportedWallets } from '../../../../domain/context/network/Wallet';
-import HWCSettings from '../../../../domain/context/hwalletconnectsettings/HWCSettings.js';
-import { HederaTransactionResponseAdapter } from '../HederaTransactionResponseAdapter';
-import { SigningError } from '../error/SigningError';
-import Hex from '../../../../core/Hex.js';
+import {singleton} from 'tsyringe';
+import {AccountId, LedgerId, Signer, Transaction,} from '@hashgraph/sdk';
+import {NetworkName} from '@hashgraph/sdk/lib/client/Client';
+import TransactionAdapter, {InitializationData} from "../TransactionAdapter";
 import type {PublicStateControllerState} from "@reown/appkit-controllers";
+import {HederaTransactionAdapter} from "../hs/HederaTransactionAdapter";
+import {StableCoinProps} from "../../../domain/context/stablecoin/StableCoin";
+import ContractId from "../../../domain/context/contract/ContractId";
+import {HederaId} from "../../../domain/context/shared/HederaId";
+import BigDecimal from "../../../domain/context/shared/BigDecimal";
+import {FactoryCashinRole} from "../../../domain/context/factory/FactoryCashinRole";
+import {KeysStruct} from "../../../domain/context/factory/FactoryKey";
+import {StableCoinRole} from "../../../domain/context/stablecoin/StableCoinRole";
+import {ResolverProxyConfiguration} from "../../../domain/context/factory/ResolverProxyConfiguration";
+import {FactoryRole} from "../../../domain/context/factory/FactoryRole";
+import {FactoryStableCoin} from "../../../domain/context/factory/FactoryStableCoin";
+import {TokenSupplyType} from "../../../domain/context/stablecoin/TokenSupply";
+import {StableCoinFactoryFacet__factory} from "@hashgraph/stablecoin-npm-contracts";
+import LogService from "../../../app/service/LogService";
+import {ethers, Provider} from "ethers";
+import {CREATE_SC_GAS, TOKEN_CREATION_COST_HBAR} from "../../../core/Constants";
+import {RPCTransactionResponseAdapter} from "../rpc/RPCTransactionResponseAdapter";
+import HWCSettings from "../../../domain/context/hwalletconnectsettings/HWCSettings";
+import {Environment, testnet} from "../../../domain/context/network/Environment";
+import Account from "../../../domain/context/account/Account";
+import {lazyInject} from "../../../core/decorator/LazyInjectDecorator";
+import EventService from "../../../app/service/event/EventService";
+import NetworkService from "app/service/NetworkService";
+import {MirrorNodeAdapter} from "../mirror/MirrorNodeAdapter";
+import {QueryBus} from "../../../core/query/QueryBus";
+import {SupportedWallets} from "@hashgraph/stablecoin-npm-sdk";
+import {WalletEvents} from "../../in";
+import Injectable from "../../../core/Injectable";
+import {TransactionType} from "../TransactionResponseEnums";
+import TransactionResponse from "../../../domain/context/transaction/TransactionResponse";
+import {WalletPairedEvent} from "../../../app/service/event/WalletEvent";
+import {HederaTransactionResponseAdapter} from "../hs/HederaTransactionResponseAdapter";
+import {SigningError} from "../hs/error/SigningError";
 
 let HederaAdapter: typeof import('@hashgraph/hedera-wallet-connect').HederaAdapter;
 let HederaChainDefinition: typeof import('@hashgraph/hedera-wallet-connect').HederaChainDefinition;
@@ -93,9 +96,9 @@ if (typeof window !== 'undefined') {
 /**
  * Represents a transaction adapter for Hedera Wallet Connect.
  */
-export class HederaWalletConnectTransactionAdapter extends HederaTransactionAdapter {
+export class HederaWalletConnectTransactionAdapter extends TransactionAdapter {
 	public account: Account;
-	public signer: Signer;
+	signerOrProvider: Signer | Provider;
 	protected network: Environment;
 	protected projectId: string;
 	protected hederaAdapter: InstanceType<typeof HederaAdapter> | undefined;
@@ -118,7 +121,7 @@ export class HederaWalletConnectTransactionAdapter extends HederaTransactionAdap
 		@lazyInject(QueryBus)
 		public readonly queryBus: QueryBus,
 	) {
-		super(mirrorNodeAdapter, networkService);
+		super();
 		this.projectId = '';
 		this.dappMetadata = {
 			name: '',
@@ -157,19 +160,19 @@ export class HederaWalletConnectTransactionAdapter extends HederaTransactionAdap
 	 * @returns A promise that resolves to an object containing the account information.
 	 */
 	public async register(
-		hWCSettings: HWCSettings,
+		hwcSettings: HWCSettings,
 	): Promise<InitializationData> {
 		Injectable.registerTransactionHandler(this);
 		console.log('Hedera WalletConnect registered as handler');
 
-		if (!hWCSettings)
+		if (!hwcSettings)
 			throw new Error('hedera wallet connect settings not set');
-		this.projectId = hWCSettings.projectId ?? '';
+		this.projectId = hwcSettings.projectId ?? '';
 		this.dappMetadata = {
-			name: hWCSettings.dappName ?? '',
-			description: hWCSettings.dappDescription ?? '',
-			url: hWCSettings.dappURL ?? '',
-			icons: hWCSettings.dappIcons,
+			name: hwcSettings.dappName ?? '',
+			description: hwcSettings.dappDescription ?? '',
+			url: hwcSettings.dappURL ?? '',
+			icons: hwcSettings.dappIcons,
 		};
 
 		await this.connectWalletConnect();
@@ -179,16 +182,6 @@ export class HederaWalletConnectTransactionAdapter extends HederaTransactionAdap
 		});
 	}
 
-	private getChainDefinition(network: Environment): any {
-		switch (network) {
-			case testnet:
-				return HederaChainDefinition.Native.Testnet;
-			case mainnet:
-				return HederaChainDefinition.Native.Mainnet;
-			default:
-				throw new Error(`❌ Invalid network name: ${network}`);
-		}
-	}
 
 
 	/**
@@ -552,12 +545,28 @@ export class HederaWalletConnectTransactionAdapter extends HederaTransactionAdap
 				at async SDKService.createStableCoin (bundle.js:949912:12)
 			 */
 			const ns = this.hederaProvider?.session?.namespaces
-			if (!ns?.hedera) throw new Error('La sesión no tiene namespace "hedera" aprobado.')
+			let transactionResponse;
 
-			const transactionResponse = await this.hederaProvider!.hedera_signAndExecuteTransaction({
-				signerAccountId,
-				transactionList: transactionBase64,
-			});
+			if(!ns?.hedera){
+				console.log(`[HWC] No namespace "hedera" found in session. Attempting to sign and execute transaction...`);
+				const transaction = await this.hederaProvider.eth_signMessage(
+					transactionBase64, this.account.evmAddress
+				)
+				transactionResponse = await this.hederaProvider.eth_sendTransaction(
+					transaction, this.account.evmAddress, ledgerId
+				)
+
+			} else {
+				console.log(`[HWC] Namespace "hedera" found in session. Attempting to sign and execute transaction...`);
+				transactionResponse = await this.hederaProvider!.hedera_signAndExecuteTransaction({
+					signerAccountId,
+					transactionList: transactionBase64,
+				});
+			}
+
+
+
+
 
 			// const signedTx = await this.hederaProvider!.eth_signMessage(
 			// 	transactionBase64,
@@ -720,5 +729,178 @@ export class HederaWalletConnectTransactionAdapter extends HederaTransactionAdap
 		// } catch (error) {
 		// 	throw new SigningError(JSON.stringify(error, null, 2));
 		// }
+	}
+
+
+	public async create(
+		coin: StableCoinProps,
+		factory: ContractId,
+		createReserve: boolean,
+		resolver: ContractId,
+		configId: string,
+		configVersion: number,
+		proxyOwnerAccount: HederaId,
+		reserveAddress?: ContractId,
+		reserveInitialAmount?: BigDecimal,
+		reserveConfigId?: string,
+		reserveConfigVersion?: number,
+	): Promise<TransactionResponse<any, Error>> {
+		try {
+			const cashinRole: FactoryCashinRole = {
+				account:
+					coin.cashInRoleAccount == undefined ||
+					coin.cashInRoleAccount.toString() == '0.0.0'
+						? '0x0000000000000000000000000000000000000000'
+						: await this.getEVMAddress(coin.cashInRoleAccount),
+				allowance: coin.cashInRoleAllowance
+					? coin.cashInRoleAllowance.toFixedNumber()
+					: BigDecimal.ZERO.toFixedNumber(),
+			};
+
+			const providedKeys = [
+				coin.adminKey,
+				coin.kycKey,
+				coin.freezeKey,
+				coin.wipeKey,
+				coin.supplyKey,
+				coin.feeScheduleKey,
+				coin.pauseKey,
+			];
+
+			const keys: KeysStruct[] =
+				this.setKeysForSmartContract(providedKeys);
+
+			const providedRoles = [
+				{
+					account: proxyOwnerAccount,
+					role: StableCoinRole.DEFAULT_ADMIN_ROLE,
+				},
+				{
+					account: coin.burnRoleAccount,
+					role: StableCoinRole.BURN_ROLE,
+				},
+				{
+					account: coin.wipeRoleAccount,
+					role: StableCoinRole.WIPE_ROLE,
+				},
+				{
+					account: coin.rescueRoleAccount,
+					role: StableCoinRole.RESCUE_ROLE,
+				},
+				{
+					account: coin.pauseRoleAccount,
+					role: StableCoinRole.PAUSE_ROLE,
+				},
+				{
+					account: coin.freezeRoleAccount,
+					role: StableCoinRole.FREEZE_ROLE,
+				},
+				{
+					account: coin.deleteRoleAccount,
+					role: StableCoinRole.DELETE_ROLE,
+				},
+				{ account: coin.kycRoleAccount, role: StableCoinRole.KYC_ROLE },
+				{
+					account: coin.feeRoleAccount,
+					role: StableCoinRole.CUSTOM_FEES_ROLE,
+				},
+				{
+					account: coin.holdCreatorRoleAccount,
+					role: StableCoinRole.HOLD_CREATOR_ROLE,
+				},
+			];
+
+			const stableCoinConfigurationId: ResolverProxyConfiguration = {
+				key: configId,
+				version: configVersion,
+			};
+
+			const reserveConfigurationId = ResolverProxyConfiguration.empty();
+
+			if (createReserve) {
+				reserveConfigurationId.key = reserveConfigId!;
+				reserveConfigurationId.version = reserveConfigVersion!;
+			}
+
+			const roles = await Promise.all(
+				providedRoles
+					.filter((item) => {
+						return (
+							item.account &&
+							item.account.value !== HederaId.NULL.value
+						);
+					})
+					.map(async (item) => {
+						const role = new FactoryRole();
+						role.role = item.role;
+						role.account = await this.getEVMAddress(item.account!);
+						return role;
+					}),
+			);
+
+			const stableCoinToCreate = new FactoryStableCoin(
+				coin.name,
+				coin.symbol,
+				coin.freezeDefault ?? false,
+				coin.supplyType == TokenSupplyType.FINITE,
+				coin.maxSupply
+					? coin.maxSupply.toFixedNumber()
+					: BigDecimal.ZERO.toFixedNumber(),
+				coin.initialSupply
+					? coin.initialSupply.toFixedNumber()
+					: BigDecimal.ZERO.toFixedNumber(),
+				coin.decimals,
+				reserveAddress?.toString?.() === '0.0.0' || !reserveAddress
+					? '0x0000000000000000000000000000000000000000'
+					: (
+						await this.mirrorNodeAdapter.getContractInfo(
+							reserveAddress.value,
+						)
+					).evmAddress,
+				reserveInitialAmount
+					? reserveInitialAmount.toFixedNumber()
+					: BigDecimal.ZERO.toFixedNumber(),
+				createReserve,
+				keys,
+				roles,
+				cashinRole,
+				coin.metadata ?? '',
+				(
+					await this.mirrorNodeAdapter.getContractInfo(resolver.value)
+				).evmAddress,
+				stableCoinConfigurationId,
+				reserveConfigurationId,
+			);
+
+			const factoryInstance = StableCoinFactoryFacet__factory.connect(
+				(await this.mirrorNodeAdapter.getContractInfo(factory.value))
+					.evmAddress,
+				this.signerOrProvider,
+			);
+			LogService.logTrace('Deploying factory: ', {
+				stableCoin: stableCoinToCreate,
+			});
+			const res = await factoryInstance.deployStableCoin(
+				stableCoinToCreate,
+				{
+					value: ethers.parseEther(
+						TOKEN_CREATION_COST_HBAR.toString(),
+					),
+					gasLimit: CREATE_SC_GAS,
+				},
+			);
+
+			// Put it into an array since structs change the response from the event and its not a simple array
+			return await RPCTransactionResponseAdapter.manageResponse(
+				res,
+				this.networkService.environment,
+				{ eventName: 'Deployed', contract: factoryInstance },
+			);
+		} catch (error) {
+			LogService.logError(error);
+			throw new SigningError(
+				`Unexpected error in RPCTransactionAdapter create operation : ${error}`,
+			);
+		}
 	}
 }
