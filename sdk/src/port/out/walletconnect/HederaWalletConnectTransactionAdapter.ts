@@ -893,7 +893,7 @@ export class HederaWalletConnectTransactionAdapter extends TransactionAdapter {
 				).evmAddress;
 
 				// Create the contract interface to encode the function call
-				const factoryInterface = StableCoinFactoryFacet__factory.createInterface();
+				const factoryInterface = new ethers.Interface(StableCoinFactoryFacet__factory.abi);
 				const data = factoryInterface.encodeFunctionData('deployStableCoin', [stableCoinToCreate]);
 
 				// Get the current network chainId (CAIP-2 format uses decimal numbers)
@@ -974,7 +974,7 @@ export class HederaWalletConnectTransactionAdapter extends TransactionAdapter {
 					.toSolidityAddress();
 
 				// Create the contract interface to encode the function call
-				const hrcInterface = IHRC__factory.createInterface();
+				const hrcInterface = new ethers.Interface(IHRC__factory.abi);
 				const data = hrcInterface.encodeFunctionData('associate');
 
 				// Get the current network chainId (CAIP-2 format uses decimal numbers)
