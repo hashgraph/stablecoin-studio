@@ -22,8 +22,6 @@ describe('➡️ Roles Tests', function () {
     let operator: SignerWithAddress
     let nonOperator: SignerWithAddress
 
-    const randomRole = '0xe11b25922c3ff9f0f0a34f0b8929a00001f215b99dcb08c2891c220cf3a7e8cc'
-
     async function setFacets(address: string) {
         rolesFacet = RolesFacet__factory.connect(address, operator)
     }
@@ -350,9 +348,7 @@ describe('➡️ Roles Tests', function () {
     })
 
     it('Retrieve list of existing Roles', async function () {
-        const rolesList = await rolesFacet.getRolesList({
-            gasLimit: GAS_LIMIT.hederaTokenManager.getRoleList,
-        })
+        const rolesList = await rolesFacet.getRolesList()
 
         expect(rolesList.length).to.be.equal(11)
 

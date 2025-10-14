@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: MIT
 pragma solidity 0.8.18;
 
-import {ADMIN_ROLE} from '../constants/roles.sol';
+import {ADMIN_ROLE, _NUMBER_OF_ROLES} from '../constants/roles.sol';
 import {IRoles} from './Interfaces/IRoles.sol';
 import {RolesStorageWrapper} from './RolesStorageWrapper.sol';
 import {_ROLES_RESOLVER_KEY} from '../constants/resolverKeys.sol';
@@ -39,7 +39,7 @@ contract RolesFacet is IRoles, IStaticFunctionSelectors, Common, RolesStorageWra
      * @dev Returns the full list of roles
      *
      */
-    function getRolesList() external pure returns (bytes32[] memory rolesToReturn) {
+    function getRolesList() external pure returns (bytes32[_NUMBER_OF_ROLES] memory rolesToReturn) {
         return _getRolesList();
     }
 

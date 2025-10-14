@@ -3,7 +3,7 @@ pragma solidity 0.8.18;
 
 import {IRoles} from './Interfaces/IRoles.sol';
 // solhint-disable-next-line max-line-length
-import {ADMIN_ROLE, _CASHIN_ROLE, _BURN_ROLE, _WIPE_ROLE, _RESCUE_ROLE, _PAUSE_ROLE, _FREEZE_ROLE, _DELETE_ROLE, _WITHOUT_ROLE, _KYC_ROLE, _CUSTOM_FEES_ROLE, _HOLD_CREATOR_ROLE} from '../constants/roles.sol';
+import {ADMIN_ROLE, _CASHIN_ROLE, _BURN_ROLE, _WIPE_ROLE, _RESCUE_ROLE, _PAUSE_ROLE, _FREEZE_ROLE, _DELETE_ROLE, _WITHOUT_ROLE, _KYC_ROLE, _CUSTOM_FEES_ROLE, _HOLD_CREATOR_ROLE, _NUMBER_OF_ROLES} from '../constants/roles.sol';
 import {_ROLES_STORAGE_POSITION} from '../constants/storagePositions.sol';
 import {IRoleManagement} from './Interfaces/IRoleManagement.sol';
 
@@ -132,12 +132,11 @@ abstract contract RolesStorageWrapper {
     }
 
     function _getRoles(address account) internal view returns (bytes32[] memory rolesToReturn_) {
-        bytes32[] memory listOfRoles = _getRolesList();
-        uint256 rolesLength = listOfRoles.length;
+        bytes32[_NUMBER_OF_ROLES] memory listOfRoles = _getRolesList();
 
-        rolesToReturn_ = new bytes32[](rolesLength);
+        rolesToReturn_ = new bytes32[](_NUMBER_OF_ROLES);
 
-        for (uint256 index; index < rolesLength; index++) {
+        for (uint256 index; index < _NUMBER_OF_ROLES; index++) {
             bytes32 role = listOfRoles[index];
 
             rolesToReturn_[index] = _hasRole(role, account) ? role : _WITHOUT_ROLE;
@@ -148,7 +147,7 @@ abstract contract RolesStorageWrapper {
      * @dev Populates the array of existing roles
      *
      */
-    function _getRolesList() internal pure returns (bytes32[] memory listOfRoles_) {
+    function _getRolesList() internal pure returns (bytes32[_NUMBER_OF_ROLES] memory listOfRoles_) {
         listOfRoles_[0] = ADMIN_ROLE;
         listOfRoles_[1] = _CASHIN_ROLE;
         listOfRoles_[2] = _BURN_ROLE;
