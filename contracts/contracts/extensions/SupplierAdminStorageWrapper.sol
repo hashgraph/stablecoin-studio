@@ -13,8 +13,8 @@ abstract contract SupplierAdminStorageWrapper is
     RolesStorageWrapper
 {
     struct SupplierAdminStorage {
-        mapping(address => uint256) supplierAllowances;
-        mapping(address => bool) unlimitedSupplierAllowances;
+        mapping(address supplier => uint256 allowance) supplierAllowances;
+        mapping(address supplier => bool hasUnlimitedAllowance) unlimitedSupplierAllowances;
     }
 
     function _getSupplierAllowance(address supplier) internal view returns (uint256) {

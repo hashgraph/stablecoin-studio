@@ -14,12 +14,12 @@ abstract contract RolesStorageWrapper {
     }
 
     struct RoleData {
-        mapping(address => MemberData) members;
+        mapping(address account => MemberData data) members;
         address[] accounts;
     }
 
     struct RolesStorage {
-        mapping(bytes32 => RoleData) roles;
+        mapping(bytes32 role => RoleData data) roles;
         /**
          * @dev Array containing all roles
          *

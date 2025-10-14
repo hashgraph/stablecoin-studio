@@ -12,15 +12,11 @@ abstract contract BusinessLogicResolverWrapper is IBusinessLogicResolverWrapper 
         uint256 latestVersion;
         // list of facetIds
         bytes32[] activeBusinessLogics;
-        // facetId -> bool
-        mapping(bytes32 => bool) businessLogicActive;
-        // facetId -> pos (one per vesion) -> version + status + address
-        mapping(bytes32 => IBusinessLogicResolver.BusinessLogicVersion[]) businessLogics;
-        // keccaak256(facetId, version) -> position
-        mapping(bytes32 => uint256) businessLogicVersionIndex;
-        // version to status
-        mapping(uint256 => IBusinessLogicResolver.VersionStatus) versionStatuses;
-        mapping(bytes32 => EnumerableSetBytes4.Bytes4Set) selectorBlacklist;
+        mapping(bytes32 facetId => bool isActive) businessLogicActive;
+        mapping(bytes32 facetId => IBusinessLogicResolver.BusinessLogicVersion[] versions) businessLogics;
+        mapping(bytes32 facetIdAndVersion => uint256 index) businessLogicVersionIndex;
+        mapping(uint256 version => IBusinessLogicResolver.VersionStatus status) versionStatuses;
+        mapping(bytes32 configId => EnumerableSetBytes4.Bytes4Set list) selectorBlacklist;
     }
 
     modifier validVersion(uint256 _version) {

@@ -12,25 +12,17 @@ import {EnumerableSetBytes4} from '../../core/EnumerableSetBytes4.sol';
 abstract contract DiamondCutManagerWrapper is IDiamondCutManager, BusinessLogicResolverWrapper {
     struct DiamondCutManagerStorage {
         bytes32[] configurations;
-        mapping(bytes32 => bool) activeConfigurations;
-        mapping(bytes32 => uint256) latestVersion;
-        mapping(bytes32 => uint256) batchVersion;
-        // keccak256(configurationId, version)
-        mapping(bytes32 => bytes32[]) facetIds;
-        // keccak256(configurationId, version)
-        mapping(bytes32 => uint256[]) facetVersions;
-        // keccak256(configurationId, version, selector)
-        mapping(bytes32 => address) facetAddress;
-        // keccak256(configurationId, version, facetId)
-        mapping(bytes32 => address) addr;
-        // keccak256(configurationId, version, facetId)
-        mapping(bytes32 => bytes4[]) selectors;
-        // keccak256(configurationId, version, selector)
-        mapping(bytes32 => bytes32) selectorToFacetId;
-        // keccak256(configurationId, version, facetId)
-        mapping(bytes32 => bytes4[]) interfaceIds;
-        // keccak256(configurationId, version, interfaceId)
-        mapping(bytes32 => bool) supportsInterface;
+        mapping(bytes32 configId => bool isActive) activeConfigurations;
+        mapping(bytes32 configId => uint256 lastVersion) latestVersion;
+        mapping(bytes32 configId => uint256 pendingVersion) batchVersion;
+        mapping(bytes32 configIdAndVersion => bytes32[] facetIdList) facetIds;
+        mapping(bytes32 configIdAndVersion => uint256[] facetVersions) facetVersions;
+        mapping(bytes32 configIdAndVersionAndSelector => address facetAddress) facetAddress;
+        mapping(bytes32 configIdAndVersionAndFacetId => address facetAddress) addr;
+        mapping(bytes32 configIdAndVersionAndFacetId => bytes4[] selectorList) selectors;
+        mapping(bytes32 configIdAndVersionAndSelector => bytes32 facetId) selectorToFacetId;
+        mapping(bytes32 configIdAndVersionAndFacetId => bytes4[] interfaceList) interfaceIds;
+        mapping(bytes32 configIdAndVersionAndInterfaceId => bool isSupported) supportsInterface;
     }
 
     function _createConfiguration(
