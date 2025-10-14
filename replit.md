@@ -12,19 +12,22 @@ Preferred communication style: Simple, everyday language.
 
 ## Mobile Money Management Feature (October 14, 2025)
 
-Added a new "Mobile Money Management" section to the Network settings page for analyzing mobile money transaction data.
+Added a new "Mobile Money Management" section as a dedicated sidebar item for analyzing mobile money transaction data.
 
 **Files Created**:
 - `web/src/utils/mobileMoneyUtils.ts` - CSV parsing and transaction type definitions
 - `web/src/utils/csvProcessor.ts` - Data analysis functions (activity analysis, daily flows, balance calculations)
-- `web/src/views/AppSettings/MobileMoneyManagement.tsx` - React component with CSV upload and interactive charts
+- `web/src/views/MobileMoneyManagement/index.tsx` - Dedicated page component with CSV upload and interactive charts
 
 **Files Modified**:
-- `web/src/views/AppSettings/index.tsx` - Added "Mobile Money Management" tab
-- `web/src/translations/en/appSettings.json` - Added English translations
-- `web/src/Router/Router.tsx` - Moved AppSettings route to public zone (no wallet connection required)
+- `web/src/Router/NamedRoutes.ts` - Added MobileMoneyManagement route name
+- `web/src/Router/RoutesMappingUrl.ts` - Added /mobile-money-management URL mapping
+- `web/src/Router/Router.tsx` - Added MobileMoneyManagement route in public zone (no wallet connection required)
+- `web/src/layout/sidebar/Sidebar.tsx` - Added Mobile Money Management button with ChartLine icon
+- `web/src/translations/en/global.json` - Added sidebar and mobileMoney translations
 
 **Features**:
+- Dedicated sidebar button with ChartLine icon
 - CSV file upload for mobile money transactions
 - Frequency-based activity analysis (15min, 30min, 1H, 6H, 1D intervals)
 - Three interactive Recharts visualizations:
@@ -35,7 +38,8 @@ Added a new "Mobile Money Management" section to the Network settings page for a
 
 **Technical Notes**:
 - Uses native JavaScript date functions instead of date-fns library to avoid dependency conflicts
-- Network settings page accessible without wallet connection for better UX
+- Accessible without wallet connection for better UX
+- Standalone page, not nested within Network settings
 
 # System Architecture
 
