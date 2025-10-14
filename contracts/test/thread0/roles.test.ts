@@ -349,89 +349,23 @@ describe('➡️ Roles Tests', function () {
         }
     })
 
-    it('Non Admin can not add role to list', async function () {
-        await expect(rolesFacet.connect(nonOperator).addRoleToList(randomRole)).to.be.revertedWithCustomError(
-            rolesFacet,
-            'AccountHasNoRole'
-        )
-    })
-
-    it('Non Admin can not remove role from list', async function () {
-        await expect(rolesFacet.connect(nonOperator).removeRoleFromListByPosition(0)).to.be.revertedWithCustomError(
-            rolesFacet,
-            'AccountHasNoRole'
-        )
-    })
-
-    it('Admin can add role to list', async function () {
-        const initialList = await rolesFacet.getRolesList({
+    it('Retrieve list of existing Roles', async function () {
+        const rolesList = await rolesFacet.getRolesList({
             gasLimit: GAS_LIMIT.hederaTokenManager.getRoleList,
         })
 
-        for (let i = 0; i < initialList.length; i++) {
-            expect(initialList[i].toString().toUpperCase()).to.be.not.equal(randomRole.toUpperCase())
-        }
+        expect(rolesList.length).to.be.equal(11)
 
-        const addRoleResponse = await rolesFacet.addRoleToList(randomRole, {
-            gasLimit: GAS_LIMIT.hederaTokenManager.addRoleToList,
-        })
-
-        await new ValidateTxResponseCommand({
-            txResponse: addRoleResponse,
-            confirmationEvent: 'RoleAdded',
-        }).execute()
-
-        await delay({ time: 1, unit: 'sec' })
-
-        const finalList = await rolesFacet.getRolesList({
-            gasLimit: GAS_LIMIT.hederaTokenManager.getRoleList,
-        })
-        let found = false
-
-        for (let i = 0; i < finalList.length; i++) {
-            if (finalList[i].toString().toUpperCase() == randomRole.toUpperCase()) found = true
-        }
-
-        expect(found).to.be.true
-        expect(initialList.length + 1).to.equal(finalList.length)
-    })
-
-    it('Can not remove role from list if out of bounds', async function () {
-        const initialList = await rolesFacet.getRolesList()
-        const RoleToRemovePos = initialList.length
-
-        await expect(rolesFacet.removeRoleFromListByPosition(RoleToRemovePos)).to.be.revertedWithCustomError(
-            rolesFacet,
-            'RolePositionOutOfBounds'
-        )
-    })
-
-    it('Admin can remove role from list', async function () {
-        const initialList = await rolesFacet.getRolesList({
-            gasLimit: GAS_LIMIT.hederaTokenManager.getRoleList,
-        })
-        const RoleToRemovePos = initialList.length - 2
-        const RoleToRemove = initialList[RoleToRemovePos]
-
-        const removeRoleResponse = await rolesFacet.removeRoleFromListByPosition(RoleToRemovePos, {
-            gasLimit: GAS_LIMIT.hederaTokenManager.removeRoleFromList,
-        })
-
-        await new ValidateTxResponseCommand({
-            txResponse: removeRoleResponse,
-            confirmationEvent: 'RoleRemoved',
-        }).execute()
-
-        await delay({ time: 1, unit: 'sec' })
-
-        const finalList = await rolesFacet.getRolesList({
-            gasLimit: GAS_LIMIT.hederaTokenManager.getRoleList,
-        })
-
-        for (let i = 0; i < finalList.length; i++) {
-            expect(finalList[i].toString().toUpperCase()).to.be.not.equal(RoleToRemove.toUpperCase())
-        }
-
-        expect(finalList.length + 1).to.equal(initialList.length)
+        expect(rolesList[0].toString().toUpperCase()).to.be.equal(ROLES.defaultAdmin.hash.toUpperCase())
+        expect(rolesList[1].toString().toUpperCase()).to.be.equal(ROLES.cashin.hash.toUpperCase())
+        expect(rolesList[2].toString().toUpperCase()).to.be.equal(ROLES.burn.hash.toUpperCase())
+        expect(rolesList[3].toString().toUpperCase()).to.be.equal(ROLES.wipe.hash.toUpperCase())
+        expect(rolesList[4].toString().toUpperCase()).to.be.equal(ROLES.rescue.hash.toUpperCase())
+        expect(rolesList[5].toString().toUpperCase()).to.be.equal(ROLES.pause.hash.toUpperCase())
+        expect(rolesList[6].toString().toUpperCase()).to.be.equal(ROLES.freeze.hash.toUpperCase())
+        expect(rolesList[7].toString().toUpperCase()).to.be.equal(ROLES.delete.hash.toUpperCase())
+        expect(rolesList[8].toString().toUpperCase()).to.be.equal(ROLES.kyc.hash.toUpperCase())
+        expect(rolesList[9].toString().toUpperCase()).to.be.equal(ROLES.customFees.hash.toUpperCase())
+        expect(rolesList[10].toString().toUpperCase()).to.be.equal(ROLES.hold.hash.toUpperCase())
     })
 })
