@@ -8,6 +8,7 @@ export type TransactionType =
         | 'AIRTIME'
         | 'OTP'
         | 'FAIL'
+        | 'AUTRE'
         | 'OTHER';
 
 export interface TransactionRow {
@@ -39,21 +40,82 @@ function normalizeType(val: string): TransactionType {
         
         const validTypes: TransactionType[] = [
                 'P2P_IN', 'P2P_IN_INTL', 'CASHIN', 'B2W',
-                'P2P_OUT', 'MERCHANT', 'AIRTIME', 'OTP', 'FAIL', 'OTHER'
+                'P2P_OUT', 'MERCHANT', 'AIRTIME', 'OTP', 'FAIL', 'AUTRE', 'OTHER'
         ];
         
         return validTypes.includes(normalized as TransactionType) ? (normalized as TransactionType) : 'OTHER';
 }
 
-function detectSeparator(content: string): string {
-        const candidates = [',', ';', '\t', '|'];
-        const counts = candidates.map(sep => ({
-                sep,
-                count: content.split('\n')[0].split(sep).length
-        }));
+function parseFrenchDate(dateStr: string, timeStr?: string): Date | null {
+        const monthMap: Record<string, number> = {
+                'janvier': 0, 'jan': 0, 'février': 1, 'fév': 1, 'fevrier': 1, 'fev': 1,
+                'mars': 2, 'mar': 2, 'avril': 3, 'avr': 3, 'mai': 4,
+                'juin': 5, 'juillet': 6, 'juil': 6, 'août': 7, 'aout': 7,
+                'septembre': 8, 'sept': 8, 'octobre': 9, 'oct': 9,
+                'novembre': 10, 'nov': 10, 'décembre': 11, 'déc': 11, 'decembre': 11, 'dec': 11
+        };
         
-        const best = counts.reduce((max, curr) => curr.count > max.count ? curr : max);
-        return best.count > 1 ? best.sep : ',';
+        const frenchPattern = /(\d{1,2})\s+([\wéû]+)[,.]?\s+(\d{4})/i;
+        const match = dateStr.match(frenchPattern);
+        
+        if (match) {
+                const day = parseInt(match[1], 10);
+                const monthStr = match[2].toLowerCase().replace(/[éèê]/g, 'e');
+                const year = parseInt(match[3], 10);
+                
+                const month = monthMap[monthStr];
+                if (month !== undefined) {
+                        let hours = 0;
+                        let minutes = 0;
+                        
+                        if (timeStr) {
+                                const timePattern = /(\d{1,2}):(\d{2})\s*(AM|PM)?/i;
+                                const timeMatch = timeStr.match(timePattern);
+                                
+                                if (timeMatch) {
+                                        hours = parseInt(timeMatch[1], 10);
+                                        minutes = parseInt(timeMatch[2], 10);
+                                        
+                                        if (timeMatch[3]) {
+                                                const meridiem = timeMatch[3].toUpperCase();
+                                                if (meridiem === 'PM' && hours !== 12) {
+                                                        hours += 12;
+                                                } else if (meridiem === 'AM' && hours === 12) {
+                                                        hours = 0;
+                                                }
+                                        }
+                                }
+                        }
+                        
+                        const date = new Date(year, month, day, hours, minutes);
+                        return isNaN(date.getTime()) ? null : date;
+                }
+        }
+        
+        const standardDate = new Date(dateStr + (timeStr ? ' ' + timeStr : ''));
+        return isNaN(standardDate.getTime()) ? null : standardDate;
+}
+
+function parseCSVLine(line: string): string[] {
+        const result: string[] = [];
+        let current = '';
+        let inQuotes = false;
+        
+        for (let i = 0; i < line.length; i++) {
+                const char = line[i];
+                
+                if (char === '"') {
+                        inQuotes = !inQuotes;
+                } else if (char === ',' && !inQuotes) {
+                        result.push(current.trim());
+                        current = '';
+                } else {
+                        current += char;
+                }
+        }
+        
+        result.push(current.trim());
+        return result;
 }
 
 export function parseCSV(csvText: string): TransactionRow[] {
@@ -64,31 +126,27 @@ export function parseCSV(csvText: string): TransactionRow[] {
                 throw new Error('CSV file is empty or invalid');
         }
 
-        const separator = detectSeparator(content);
-        const headers = lines[0].split(separator).map((h) => h.trim().toLowerCase());
+        const headers = parseCSVLine(lines[0]).map((h) => h.trim().toLowerCase());
         const transactions: TransactionRow[] = [];
 
-        const timestampIdx = headers.findIndex(h => h.includes('timestamp') || h === 'date');
+        const dateIdx = headers.findIndex(h => h === 'date');
         const timeIdx = headers.findIndex(h => h === 'time');
         const typeIdx = headers.findIndex(h => h === 'type');
-        const amountIdx = headers.findIndex(h => h.includes('amount') || h.includes('montant'));
-        const soldeIdx = headers.findIndex(h => h.includes('solde') || h.includes('balance'));
+        const amountIdx = headers.findIndex(h => h === 'amount');
+        const soldeIdx = headers.findIndex(h => h === 'solde');
 
         for (let i = 1; i < lines.length; i++) {
                 const line = lines[i].trim();
                 if (!line) continue;
                 
-                const values = line.split(separator).map((v) => v.trim());
+                const values = parseCSVLine(line);
                 
                 let timestamp: Date | null = null;
                 
-                if (timestampIdx >= 0 && values[timestampIdx]) {
-                        if (timeIdx >= 0 && values[timeIdx]) {
-                                const dateTimeStr = `${values[timestampIdx]} ${values[timeIdx]}`;
-                                timestamp = new Date(dateTimeStr);
-                        } else {
-                                timestamp = new Date(values[timestampIdx]);
-                        }
+                if (dateIdx >= 0 && values[dateIdx]) {
+                        const dateStr = values[dateIdx];
+                        const timeStr = timeIdx >= 0 ? values[timeIdx] : undefined;
+                        timestamp = parseFrenchDate(dateStr, timeStr);
                 }
                 
                 if (!timestamp || isNaN(timestamp.getTime())) {
@@ -99,23 +157,25 @@ export function parseCSV(csvText: string): TransactionRow[] {
                         ? normalizeType(values[typeIdx])
                         : 'OTHER';
                 
-                const amount = amountIdx >= 0 && values[amountIdx]
-                        ? parseFloat(values[amountIdx].replace(/[^\d.-]/g, ''))
+                const amountStr = amountIdx >= 0 ? values[amountIdx] : '';
+                const amount = amountStr
+                        ? parseFloat(amountStr.replace(/[^\d.-]/g, ''))
                         : undefined;
                 
-                const solde = soldeIdx >= 0 && values[soldeIdx]
-                        ? parseFloat(values[soldeIdx].replace(/[^\d.-]/g, ''))
+                const soldeStr = soldeIdx >= 0 ? values[soldeIdx] : '';
+                const solde = soldeStr
+                        ? parseFloat(soldeStr.replace(/[^\d.-]/g, ''))
                         : undefined;
                 
                 const row: TransactionRow = {
                         timestamp,
                         type,
-                        amount: !isNaN(amount!) ? amount : undefined,
-                        solde: !isNaN(solde!) ? solde : undefined,
+                        amount: amount !== undefined && !isNaN(amount) ? amount : undefined,
+                        solde: solde !== undefined && !isNaN(solde) ? solde : undefined,
                 };
                 
                 headers.forEach((header, idx) => {
-                        if (idx !== timestampIdx && idx !== timeIdx && idx !== typeIdx && 
+                        if (idx !== dateIdx && idx !== timeIdx && idx !== typeIdx && 
                             idx !== amountIdx && idx !== soldeIdx) {
                                 row[header] = values[idx];
                         }
