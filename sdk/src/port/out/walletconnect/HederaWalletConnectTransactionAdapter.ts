@@ -37,14 +37,22 @@ import {TokenSupplyType} from '../../../domain/context/stablecoin/TokenSupply';
 import {
 	BurnableFacet__factory,
 	CashInFacet__factory,
+	CustomFeesFacet__factory,
 	DeletableFacet__factory,
-	FreezableFacet__factory, HederaTokenManagerFacet__factory,
+	DiamondFacet__factory,
+	FreezableFacet__factory,
+	HederaReserveFacet__factory,
+	HederaTokenManagerFacet__factory,
+	HoldManagementFacet__factory,
 	IHRC__factory,
 	KYCFacet__factory,
 	PausableFacet__factory,
 	RescuableFacet__factory,
+	ReserveFacet__factory,
+	RoleManagementFacet__factory,
 	RolesFacet__factory,
-	StableCoinFactoryFacet__factory, SupplierAdminFacet__factory,
+	StableCoinFactoryFacet__factory,
+	SupplierAdminFacet__factory,
 	WipeableFacet__factory
 } from '@hashgraph/stablecoin-npm-contracts';
 import LogService from '../../../app/service/LogService';
@@ -53,19 +61,36 @@ import {
 	ASSOCIATE_GAS,
 	BURN_GAS,
 	CASHIN_GAS,
-	CREATE_SC_GAS, DECREASE_SUPPLY_GAS,
+	CONTROLLER_CREATE_HOLD_GAS,
+	CREATE_HOLD_GAS,
+	CREATE_SC_GAS,
+	DECREASE_SUPPLY_GAS,
 	DELETE_GAS,
+	EVM_ZERO_ADDRESS,
+	EXECUTE_HOLD_GAS,
 	FREEZE_GAS,
 	GRANT_KYC_GAS,
-	GRANT_ROLES_GAS, INCREASE_SUPPLY_GAS,
+	GRANT_ROLES_GAS,
+	INCREASE_SUPPLY_GAS,
+	MAX_ROLES_GAS,
 	PAUSE_GAS,
+	RECLAIM_HOLD_GAS,
+	RELEASE_HOLD_GAS,
 	RESCUE_GAS,
-	RESCUE_HBAR_GAS, RESET_SUPPLY_GAS,
+	RESCUE_HBAR_GAS,
+	RESET_SUPPLY_GAS,
 	REVOKE_KYC_GAS,
 	REVOKE_ROLES_GAS,
 	TOKEN_CREATION_COST_HBAR,
 	UNFREEZE_GAS,
 	UNPAUSE_GAS,
+	UPDATE_CONFIG_GAS,
+	UPDATE_CONFIG_VERSION_GAS,
+	UPDATE_CUSTOM_FEES_GAS,
+	UPDATE_RESERVE_ADDRESS_GAS,
+	UPDATE_RESERVE_AMOUNT_GAS,
+	UPDATE_RESOLVER_GAS,
+	UPDATE_TOKEN_GAS,
 	WIPE_GAS
 } from '../../../core/Constants';
 import CheckEvmAddress from '../../../core/checks/evmaddress/CheckEvmAddress';
@@ -90,6 +115,8 @@ import StableCoinCapabilities from "../../../domain/context/stablecoin/StableCoi
 import {CapabilityDecider, Decision} from "../CapabilityDecider";
 import {CustomFee as HCustomFee} from "@hashgraph/sdk/lib/exports";
 import {fromHCustomFeeToSCFee, SC_FixedFee, SC_FractionalFee} from "../../../domain/context/fee/CustomFee";
+import PublicKey from "../../../domain/context/account/PublicKey";
+import {RESERVE_DECIMALS} from "../../../domain/context/reserve/Reserve";
 
 let HederaAdapter: typeof import('@hashgraph/hedera-wallet-connect').HederaAdapter;
 let HederaChainDefinition: typeof import('@hashgraph/hedera-wallet-connect').HederaChainDefinition;
@@ -595,6 +622,8 @@ export class HederaWalletConnectTransactionAdapter extends TransactionAdapter {
 		}
 	}
 
+	//-- ROLES
+
 	async grantRole(coin: StableCoinCapabilities, targetId: HederaId, role: StableCoinRole): Promise<TransactionResponse> {
 		try {
 			CapabilityDecider.checkContractOperation(coin, Operation.GRANT_ROLE);
@@ -707,9 +736,517 @@ export class HederaWalletConnectTransactionAdapter extends TransactionAdapter {
 		}
 	}
 
+	async grantRoles(
+		coin: StableCoinCapabilities,
+		targetsId: HederaId[],
+		roles: StableCoinRole[],
+		amounts: BigDecimal[]
+	): Promise<TransactionResponse> {
+		try {
+			CapabilityDecider.checkContractOperation(coin, Operation.GRANT_ROLES);
+			const proxyAddress = this.getProxyAddress(coin);
+
+			const accounts: string[] = [];
+			for (const id of targetsId) accounts.push(await this.getEVMAddress(id));
+			const amountsFormatted = amounts.map(a => a.toBigInt());
+
+			let gas = targetsId.length * roles.length * GRANT_ROLES_GAS;
+			gas = gas > MAX_ROLES_GAS ? MAX_ROLES_GAS : gas;
+
+			return await this.performOperation(
+				proxyAddress,
+				new ethers.Interface(RoleManagementFacet__factory.abi),
+				'grantRoles',
+				[roles, accounts, amountsFormatted],
+				gas
+			);
+		} catch (error) {
+			LogService.logError(error);
+			throw new SigningError(`Unexpected error in grantRoles(): ${error}`);
+		}
+	}
+
+	async revokeRoles(coin: StableCoinCapabilities, targetsId: HederaId[], roles: StableCoinRole[]): Promise<TransactionResponse> {
+		try {
+			CapabilityDecider.checkContractOperation(coin, Operation.REVOKE_ROLES);
+			const proxyAddress = this.getProxyAddress(coin);
+
+			const accounts: string[] = [];
+			for (const id of targetsId) accounts.push(await this.getEVMAddress(id));
+
+			let gas = targetsId.length * roles.length * REVOKE_ROLES_GAS;
+			gas = gas > MAX_ROLES_GAS ? MAX_ROLES_GAS : gas;
+
+			return await this.performOperation(
+				proxyAddress,
+				new ethers.Interface(RoleManagementFacet__factory.abi),
+				'revokeRoles',
+				[roles, accounts],
+				gas
+			);
+		} catch (error) {
+			LogService.logError(error);
+			throw new SigningError(`Unexpected error in revokeRoles(): ${error}`);
+		}
+	}
+
+	async revokeSupplierRole(coin: StableCoinCapabilities, targetId: HederaId): Promise<TransactionResponse> {
+		try {
+			CapabilityDecider.checkContractOperation(coin, Operation.REVOKE_SUPPLIER_ROLE);
+			const proxyAddress = this.getProxyAddress(coin);
+			const targetEvm = await this.getEVMAddress(targetId);
+			return await this.performOperation(
+				proxyAddress,
+				new ethers.Interface(SupplierAdminFacet__factory.abi),
+				'revokeSupplierRole',
+				[targetEvm],
+				REVOKE_ROLES_GAS
+			);
+		} catch (error) {
+			LogService.logError(error);
+			throw new SigningError(`Unexpected error in revokeSupplierRole(): ${error}`);
+		}
+	}
+
+	async resetSupplierAllowance(coin: StableCoinCapabilities, targetId: HederaId): Promise<TransactionResponse> {
+		try {
+			CapabilityDecider.checkContractOperation(coin, Operation.RESET_SUPPLIER_ALLOWANCE);
+			const proxyAddress = this.getProxyAddress(coin);
+			const targetEvm = await this.getEVMAddress(targetId);
+			return await this.performOperation(
+				proxyAddress,
+				new ethers.Interface(SupplierAdminFacet__factory.abi),
+				'resetSupplierAllowance',
+				[targetEvm],
+				RESET_SUPPLY_GAS
+			);
+		} catch (error) {
+			LogService.logError(error);
+			throw new SigningError(`Unexpected error in resetSupplierAllowance(): ${error}`);
+		}
+	}
+
+
+	//---- CUSTOM FEES
+	async updateCustomFees(coin: StableCoinCapabilities, customFees: HCustomFee[]): Promise<TransactionResponse> {
+		try {
+			CapabilityDecider.checkContractOperation(coin, Operation.CREATE_CUSTOM_FEE);
+			const proxyAddress = this.getProxyAddress(coin);
+
+			const fixedFees: SC_FixedFee[] = [];
+			const fractionalFees: SC_FractionalFee[] = [];
+
+			for (const cf of customFees) {
+				const feeCollector = cf.feeCollectorAccountId
+					? (await this.mirrorNodeAdapter.getAccountInfo(cf.feeCollectorAccountId.toString())).accountEvmAddress!
+					: EVM_ZERO_ADDRESS;
+
+				const scFee = fromHCustomFeeToSCFee(cf, coin.coin.tokenId!.toString(), feeCollector);
+				if (scFee instanceof SC_FixedFee) fixedFees.push(scFee);
+				else fractionalFees.push(scFee as SC_FractionalFee);
+			}
+
+			return await this.performOperation(
+				proxyAddress,
+				new ethers.Interface(CustomFeesFacet__factory.abi),
+				'setCustomFees',
+				[fixedFees, fractionalFees],
+				UPDATE_CUSTOM_FEES_GAS
+			);
+		} catch (error) {
+			LogService.logError(error);
+			throw new SigningError(`Unexpected error in updateCustomFees(): ${error}`);
+		}
+	}
+
+
+	//---- HOLDS
+	async createHold(
+		coin: StableCoinCapabilities,
+		amount: BigDecimal,
+		escrow: HederaId,
+		expirationDate: BigDecimal,
+		targetId?: HederaId
+	): Promise<TransactionResponse> {
+		try {
+			CapabilityDecider.checkContractOperation(coin, Operation.CREATE_HOLD);
+			const proxyAddress = this.getProxyAddress(coin);
+			const hold = {
+				amount: amount.toBigInt(),
+				expirationDate: expirationDate.toBigInt(),
+				escrow: await this.getEVMAddress(escrow),
+				to: targetId ? await this.getEVMAddress(targetId) : EVM_ZERO_ADDRESS,
+				data: '0x',
+			};
+			return await this.performOperation(
+				proxyAddress,
+				new ethers.Interface(HoldManagementFacet__factory.abi),
+				'createHold',
+				[hold],
+				CREATE_HOLD_GAS
+			);
+		} catch (error) {
+			LogService.logError(error);
+			throw new SigningError(`Unexpected error in createHold(): ${error}`);
+		}
+	}
+
+	async createHold(
+		coin: StableCoinCapabilities,
+		amount: BigDecimal,
+		escrow: HederaId,
+		expirationDate: BigDecimal,
+		targetId?: HederaId
+	): Promise<TransactionResponse> {
+		try {
+			CapabilityDecider.checkContractOperation(coin, Operation.CREATE_HOLD);
+
+			const proxyAddress = this.getProxyAddress(coin);
+
+			const amountBn = amount?.toBigInt?.();
+			const expBn    = expirationDate?.toBigInt?.();
+			if (amountBn == null || expBn == null) {
+				throw new Error("amount or expirationDate invalid");
+			}
+
+			const escrowAddr = await this.getEVMAddress(escrow);
+			const toAddr     = targetId ? await this.getEVMAddress(targetId) : EVM_ZERO_ADDRESS;
+
+			const holdTuple: [bigint, string, string, bigint, string] = [
+				amountBn,
+				escrowAddr,
+				toAddr,
+				expBn,
+				"0x",
+			];
+
+			return await this.performOperation(
+				proxyAddress,
+				HoldManagementFacet__factory.createInterface(),
+				"createHold",
+				[holdTuple],
+				CREATE_HOLD_GAS
+			);
+		} catch (error) {
+			LogService.logError(error);
+			throw new SigningError(`Unexpected error in createHold(): ${error}`);
+		}
+	}
+
+
+	async executeHold(
+		coin: StableCoinCapabilities,
+		amount: BigDecimal,
+		sourceId: HederaId,
+		holdId: number,
+		targetId?: HederaId
+	): Promise<TransactionResponse> {
+		try {
+			CapabilityDecider.checkContractOperation(coin, Operation.EXECUTE_HOLD);
+			const proxyAddress = this.getProxyAddress(coin);
+			const holdIdentifier = { tokenHolder: await this.getEVMAddress(sourceId), holdId };
+			const target = targetId ? await this.getEVMAddress(targetId) : EVM_ZERO_ADDRESS;
+			return await this.performOperation(
+				proxyAddress,
+				new ethers.Interface(HoldManagementFacet__factory.abi),
+				'executeHold',
+				[amount.toBigInt(), holdIdentifier, target],
+				EXECUTE_HOLD_GAS
+			);
+		} catch (error) {
+			LogService.logError(error);
+			throw new SigningError(`Unexpected error in executeHold(): ${error}`);
+		}
+	}
+
+	async releaseHold(
+		coin: StableCoinCapabilities,
+		amount: BigDecimal,
+		sourceId: HederaId,
+		holdId: number
+	): Promise<TransactionResponse> {
+		try {
+			CapabilityDecider.checkContractOperation(coin, Operation.RELEASE_HOLD);
+			const proxyAddress = this.getProxyAddress(coin);
+			const holdIdentifier = { tokenHolder: await this.getEVMAddress(sourceId), holdId };
+			return await this.performOperation(
+				proxyAddress,
+				new ethers.Interface(HoldManagementFacet__factory.abi),
+				'releaseHold',
+				[amount.toBigInt(), holdIdentifier],
+				RELEASE_HOLD_GAS
+			);
+		} catch (error) {
+			LogService.logError(error);
+			throw new SigningError(`Unexpected error in releaseHold(): ${error}`);
+		}
+	}
+
+	async reclaimHold(coin: StableCoinCapabilities, sourceId: HederaId, holdId: number): Promise<TransactionResponse> {
+		try {
+			CapabilityDecider.checkContractOperation(coin, Operation.RECLAIM_HOLD);
+			const proxyAddress = this.getProxyAddress(coin);
+			const holdIdentifier = { tokenHolder: await this.getEVMAddress(sourceId), holdId };
+			return await this.performOperation(
+				proxyAddress,
+				new ethers.Interface(HoldManagementFacet__factory.abi),
+				'reclaimHold',
+				[holdIdentifier],
+				RECLAIM_HOLD_GAS
+			);
+		} catch (error) {
+			LogService.logError(error);
+			throw new SigningError(`Unexpected error in reclaimHold(): ${error}`);
+		}
+	}
+
+	//-- RESERVE
+	async getReserveAddress(coin: StableCoinCapabilities): Promise<TransactionResponse> {
+		try {
+			const proxyAddress = this.getProxyAddress(coin);
+			const res = await ReserveFacet__factory
+				.connect(proxyAddress, this.rpcProvider())
+				.getReserveAddress();
+
+			return new TransactionResponse(undefined, res.toString());
+		} catch (error) {
+			LogService.logError(error);
+			throw new SigningError(`Unexpected error in getReserveAddress(): ${error}`);
+		}
+	}
+
+	async updateReserveAddress(coin: StableCoinCapabilities, reserveAddress: ContractId): Promise<TransactionResponse> {
+		try {
+			CapabilityDecider.checkContractOperation(coin, Operation.UPDATE_RESERVE_ADDRESS);
+			const proxyAddress = this.getProxyAddress(coin);
+			const evm = (await this.mirrorNodeAdapter.getContractInfo(reserveAddress.toHederaAddress().toString())).evmAddress;
+			return await this.performOperation(
+				proxyAddress,
+				new ethers.Interface(ReserveFacet__factory.abi),
+				'updateReserveAddress',
+				[evm],
+				UPDATE_RESERVE_ADDRESS_GAS
+			);
+		} catch (error) {
+			LogService.logError(error);
+			throw new SigningError(`Unexpected error in updateReserveAddress(): ${error}`);
+		}
+	}
+
+	async getReserveAmount(coin: StableCoinCapabilities): Promise<TransactionResponse> {
+		try {
+			const proxyAddress = this.getProxyAddress(coin);
+			const res = await ReserveFacet__factory
+				.connect(proxyAddress, this.rpcProvider())
+				.getReserveAmount();
+
+			return new TransactionResponse(
+				undefined,
+				BigDecimal.fromStringFixed(res.toString(), RESERVE_DECIMALS)
+			);
+		} catch (error) {
+			LogService.logError(error);
+			throw new SigningError(`Unexpected error in getReserveAmount(): ${error}`);
+		}
+	}
+
+	async updateReserveAmount(reserveAddress: ContractId, amount: BigDecimal): Promise<TransactionResponse> {
+		try {
+			const evm = (await this.mirrorNodeAdapter.getContractInfo(reserveAddress.toHederaAddress().toString())).evmAddress;
+			return await this.performOperation(
+				evm,
+				new ethers.Interface(HederaReserveFacet__factory.abi),
+				'setAmount',
+				[amount.toBigInt()],
+				UPDATE_RESERVE_AMOUNT_GAS
+			);
+		} catch (error) {
+			LogService.logError(error);
+			throw new SigningError(`Unexpected error in updateReserveAmount(): ${error}`);
+		}
+	}
+
+
 	//----QUERIES
+	async hasRole(coin: StableCoinCapabilities, targetId: HederaId, role: StableCoinRole): Promise<TransactionResponse> {
+		try {
+			const proxyAddress = this.getProxyAddress(coin);
+			const targetEvm = await this.getEVMAddress(targetId);
+			const res = await RolesFacet__factory
+				.connect(proxyAddress, this.rpcProvider())
+				.hasRole(role, targetEvm);
 
+			return new TransactionResponse(undefined, !!res);
+		} catch (error) {
+			LogService.logError(error);
+			throw new SigningError(`Unexpected error in hasRole(): ${error}`);
+		}
+	}
 
+	async getRoles(coin: StableCoinCapabilities, targetId: HederaId): Promise<TransactionResponse> {
+		try {
+			const proxyAddress = this.getProxyAddress(coin);
+			const targetEvm = await this.getEVMAddress(targetId);
+			const res = await RolesFacet__factory
+				.connect(proxyAddress, this.rpcProvider())
+				.getRoles(targetEvm);
+
+			return new TransactionResponse(undefined, res);
+		} catch (error) {
+			LogService.logError(error);
+			throw new SigningError(`Unexpected error in getRoles(): ${error}`);
+		}
+	}
+
+	async balanceOf(coin: StableCoinCapabilities, targetId: HederaId): Promise<TransactionResponse> {
+		try {
+			const proxyAddress = this.getProxyAddress(coin);
+			const targetEvm = await this.getEVMAddress(targetId);
+			const res = await HederaTokenManagerFacet__factory
+				.connect(proxyAddress, this.rpcProvider())
+				.balanceOf(targetEvm);
+
+			return new TransactionResponse(
+				undefined,
+				BigDecimal.fromStringFixed(res.toString(), coin.coin.decimals)
+			);
+		} catch (error) {
+			LogService.logError(error);
+			throw new SigningError(`Unexpected error in balanceOf(): ${error}`);
+		}
+	}
+
+	async isUnlimitedSupplierAllowance(coin: StableCoinCapabilities, targetId: HederaId): Promise<TransactionResponse> {
+		try {
+			const proxyAddress = this.getProxyAddress(coin);
+			const targetEvm = await this.getEVMAddress(targetId);
+			const res = await SupplierAdminFacet__factory
+				.connect(proxyAddress, this.rpcProvider())
+				.isUnlimitedSupplierAllowance(targetEvm);
+
+			return new TransactionResponse(undefined, res);
+		} catch (error) {
+			LogService.logError(error);
+			throw new SigningError(`Unexpected error in isUnlimitedSupplierAllowance(): ${error}`);
+		}
+	}
+
+	async supplierAllowance(coin: StableCoinCapabilities, targetId: HederaId): Promise<TransactionResponse> {
+		try {
+			const proxyAddress = this.getProxyAddress(coin);
+			const targetEvm = await this.getEVMAddress(targetId);
+			const res = await SupplierAdminFacet__factory
+				.connect(proxyAddress, this.rpcProvider())
+				.getSupplierAllowance(targetEvm);
+
+			return new TransactionResponse(
+				undefined,
+				BigDecimal.fromStringFixed(res.toString(), coin.coin.decimals)
+			);
+		} catch (error) {
+			LogService.logError(error);
+			throw new SigningError(`Unexpected error in supplierAllowance(): ${error}`);
+		}
+	}
+
+	//-- BLR
+	async update(
+		coin: StableCoinCapabilities,
+		name?: string,
+		symbol?: string,
+		autoRenewPeriod?: number,
+		expirationTime?: number,
+		kycKey?: PublicKey,
+		freezeKey?: PublicKey,
+		feeScheduleKey?: PublicKey,
+		pauseKey?: PublicKey,
+		wipeKey?: PublicKey,
+		metadata?: string
+	): Promise<TransactionResponse> {
+		try {
+			CapabilityDecider.checkContractOperation(coin, Operation.UPDATE);
+			const proxyAddress = this.getProxyAddress(coin);
+			const iface = new ethers.Interface(HederaTokenManagerFacet__factory.abi);
+
+			const pkToAddr = async (pk?: PublicKey) =>
+				pk ? (await this.mirrorNodeAdapter.getAccountInfo(pk.toString())).accountEvmAddress! : EVM_ZERO_ADDRESS;
+
+			const args = [
+				name ?? '',
+				symbol ?? '',
+				autoRenewPeriod ?? 0,
+				expirationTime ?? 0,
+				await pkToAddr(kycKey),
+				await pkToAddr(freezeKey),
+				await pkToAddr(feeScheduleKey),
+				await pkToAddr(pauseKey),
+				await pkToAddr(wipeKey),
+				metadata ?? '',
+			];
+
+			return await this.performOperation(proxyAddress, iface, 'updateToken', args, UPDATE_TOKEN_GAS);
+		} catch (error) {
+			LogService.logError(error);
+			throw new SigningError(`Unexpected error in update(): ${error}`);
+		}
+	}
+
+	async updateConfigVersion(coin: StableCoinCapabilities, configVersion: number): Promise<TransactionResponse> {
+		try {
+			CapabilityDecider.checkContractOperation(coin, Operation.UPDATE_CONFIG_VERSION);
+			const proxyAddress = this.getProxyAddress(coin);
+			return await this.performOperation(
+				proxyAddress,
+				new ethers.Interface(DiamondFacet__factory.abi),
+				'updateConfigVersion',
+				[configVersion],
+				UPDATE_CONFIG_VERSION_GAS
+			);
+		} catch (error) {
+			LogService.logError(error);
+			throw new SigningError(`Unexpected error in updateConfigVersion(): ${error}`);
+		}
+	}
+
+	async updateConfig(coin: StableCoinCapabilities, configId: string, configVersion: number): Promise<TransactionResponse> {
+		try {
+			CapabilityDecider.checkContractOperation(coin, Operation.UPDATE_CONFIG);
+			const proxyAddress = this.getProxyAddress(coin);
+			return await this.performOperation(
+				proxyAddress,
+				new ethers.Interface(DiamondFacet__factory.abi),
+				'updateConfig',
+				[configId, configVersion],
+				UPDATE_CONFIG_GAS
+			);
+		} catch (error) {
+			LogService.logError(error);
+			throw new SigningError(`Unexpected error in updateConfig(): ${error}`);
+		}
+	}
+
+	async updateResolver(
+		coin: StableCoinCapabilities,
+		resolver: ContractId,
+		configVersion: number,
+		configId: string
+	): Promise<TransactionResponse> {
+		try {
+			CapabilityDecider.checkContractOperation(coin, Operation.UPDATE_RESOLVER);
+			const proxyAddress = this.getProxyAddress(coin);
+			const resolverEvm = (await this.mirrorNodeAdapter.getContractInfo(resolver.toHederaAddress().toString())).evmAddress;
+			return await this.performOperation(
+				proxyAddress,
+				new ethers.Interface(DiamondFacet__factory.abi),
+				'updateResolver',
+				[resolverEvm, configVersion, configId],
+				UPDATE_RESOLVER_GAS
+			);
+		} catch (error) {
+			LogService.logError(error);
+			throw new SigningError(`Unexpected error in updateResolver(): ${error}`);
+		}
+	}
 
 
 

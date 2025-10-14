@@ -18,10 +18,6 @@
  *
  */
 
-import StableCoinCapabilities from "./StableCoinCapabilities";
-import {CapabilityDecider, Decision} from "../../../port/out/CapabilityDecider";
-import {CapabilityError} from "../../../port/out/hs/error/CapabilityError";
-
 export enum Operation {
 	CASH_IN = 'Cash_in',
 	BURN = 'Burn',
@@ -51,12 +47,18 @@ export enum Operation {
 	TRANSFERS = 'Transfers',
 	UPDATE = 'Update',
 	GRANT_ROLE = 'Grant_Role',
-	REVOKE_ROLE = 'Revoke_Role',
+	//TODO: review capabilities names from SCs
+	GRANT_ROLES = 'Role_Management',
+	REVOKE_ROLE = 'Role_Management',
+	REVOKE_ROLES = 'Role_Management',
+	REVOKE_SUPPLIER_ROLE = 'Role_Management',
+	RESET_SUPPLIER_ALLOWANCE = 'Role_Management',
+	GRANT_SUPPLIER_ROLE = 'Role_Management',
+	GRANT_UNLIMITED_SUPPLIER_ROLE = 'Role_Management',
 	ASSOCIATE = 'Associate',
-	GRANT_SUPPLIER_ROLE = 'grantSupplierRole',
-	GRANT_UNLIMITED_SUPPLIER_ROLE = 'grantUnlimitedSupplierRole',
 	INCREASE_SUPPLIER_ALLOWANCE = 'increaseSupplierAllowance',
 	DECREASE_SUPPLIER_ALLOWANCE = 'decreaseSupplierAllowance',
+	UPDATE_RESERVE_ADDRESS = 'updateReserveAddress'
 }
 
 export enum Access {
