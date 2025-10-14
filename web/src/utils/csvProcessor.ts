@@ -1,0 +1,249 @@
+import type { TransactionRow, TransactionType } from './mobileMoneyUtils';
+import { IN_TYPES, OUT_TYPES } from './mobileMoneyUtils';
+
+export type FrequencyLabel = '15min' | '30min' | '1H' | '6H' | '1D';
+
+function startOfHour(date: Date): Date {
+        return new Date(date.getFullYear(), date.getMonth(), date.getDate(), date.getHours());
+}
+
+function startOfDay(date: Date): Date {
+        return new Date(date.getFullYear(), date.getMonth(), date.getDate());
+}
+
+export interface ProcessedData {
+        transactions: TransactionRow[];
+        fullIndex: Date[];
+        binaryActivity: number[];
+        tmin: Date;
+        tmax: Date;
+        freq: FrequencyLabel;
+        typeMatrix?: number[][];
+        txTypes?: TransactionType[];
+}
+
+export interface ActivityStats {
+        period: string;
+        granularity: FrequencyLabel;
+        totalSlots: number;
+        activeSlots: number;
+        inactive: number;
+}
+
+function floorToFrequency(date: Date, freq: FrequencyLabel): Date {
+        let mins15, mins30, hours6;
+        
+        switch (freq) {
+                case '15min':
+                        mins15 = Math.floor(date.getMinutes() / 15) * 15;
+                        return new Date(date.getFullYear(), date.getMonth(), date.getDate(), date.getHours(), mins15);
+                case '30min':
+                        mins30 = Math.floor(date.getMinutes() / 30) * 30;
+                        return new Date(date.getFullYear(), date.getMonth(), date.getDate(), date.getHours(), mins30);
+                case '1H':
+                        return startOfHour(date);
+                case '6H':
+                        hours6 = Math.floor(date.getHours() / 6) * 6;
+                        return new Date(date.getFullYear(), date.getMonth(), date.getDate(), hours6);
+                case '1D':
+                        return startOfDay(date);
+                default:
+                        return date;
+        }
+}
+
+function ceilToFrequency(date: Date, freq: FrequencyLabel): Date {
+        const floored = floorToFrequency(date, freq);
+        if (floored.getTime() === date.getTime()) return date;
+        
+        switch (freq) {
+                case '15min':
+                        return new Date(floored.getTime() + 15 * 60 * 1000);
+                case '30min':
+                        return new Date(floored.getTime() + 30 * 60 * 1000);
+                case '1H':
+                        return new Date(floored.getTime() + 60 * 60 * 1000);
+                case '6H':
+                        return new Date(floored.getTime() + 6 * 60 * 60 * 1000);
+                case '1D':
+                        return new Date(floored.getTime() + 24 * 60 * 60 * 1000);
+                default:
+                        return date;
+        }
+}
+
+function generateFullIndex(start: Date, end: Date, freq: FrequencyLabel): Date[] {
+        const msStep = {
+                '15min': 15 * 60 * 1000,
+                '30min': 30 * 60 * 1000,
+                '1H': 60 * 60 * 1000,
+                '6H': 6 * 60 * 60 * 1000,
+                '1D': 24 * 60 * 60 * 1000,
+        }[freq];
+        
+        const index: Date[] = [];
+        let current = start.getTime();
+        const endTime = end.getTime();
+        
+        while (current <= endTime) {
+                index.push(new Date(current));
+                current += msStep;
+        }
+        
+        return index;
+}
+
+export function processCSVActivity(
+        transactions: TransactionRow[],
+        freq: FrequencyLabel
+): ProcessedData {
+        if (transactions.length === 0) {
+                throw new Error('No transactions to process');
+        }
+        
+        const timestamps = transactions.map((t) => t.timestamp);
+        const tmin = new Date(Math.min(...timestamps.map(d => d.getTime())));
+        const tmax = new Date(Math.max(...timestamps.map(d => d.getTime())));
+        
+        const tminFloor = floorToFrequency(tmin, freq);
+        const tmaxCeil = ceilToFrequency(tmax, freq);
+        
+        const fullIndex = generateFullIndex(tminFloor, tmaxCeil, freq);
+        
+        const activityMap = new Map<number, number>();
+        fullIndex.forEach((d) => activityMap.set(d.getTime(), 0));
+        
+        transactions.forEach((tx) => {
+                const slotTime = floorToFrequency(tx.timestamp, freq).getTime();
+                activityMap.set(slotTime, (activityMap.get(slotTime) || 0) + 1);
+        });
+        
+        const binaryActivity = fullIndex.map((d) => (activityMap.get(d.getTime()) || 0) > 0 ? 1 : 0);
+        
+        return {
+                transactions,
+                fullIndex,
+                binaryActivity,
+                tmin: tminFloor,
+                tmax: tmaxCeil,
+                freq,
+        };
+}
+
+export function getBinaryActivityStats(
+        binaryActivity: number[],
+        tmin: Date,
+        tmax: Date,
+        freq: FrequencyLabel
+): ActivityStats {
+        const activeSlots = binaryActivity.reduce((sum, val) => sum + val, 0);
+        
+        return {
+                period: `${tmin.toLocaleString()} → ${tmax.toLocaleString()}`,
+                granularity: freq,
+                totalSlots: binaryActivity.length,
+                activeSlots,
+                inactive: binaryActivity.length - activeSlots,
+        };
+}
+
+export function computeTypeMatrix(
+        transactions: TransactionRow[],
+        fullIndex: Date[],
+        freq: FrequencyLabel,
+        txTypes: TransactionType[]
+): number[][] {
+        const typeSlotMap = new Map<string, Map<number, number>>();
+        
+        txTypes.forEach((type) => {
+                const slotMap = new Map<number, number>();
+                fullIndex.forEach((d) => slotMap.set(d.getTime(), 0));
+                typeSlotMap.set(type, slotMap);
+        });
+        
+        transactions.forEach((tx) => {
+                const slotTime = floorToFrequency(tx.timestamp, freq).getTime();
+                const typeMap = typeSlotMap.get(tx.type);
+                if (typeMap) {
+                        typeMap.set(slotTime, (typeMap.get(slotTime) || 0) + 1);
+                }
+        });
+        
+        const matrix: number[][] = [];
+        txTypes.forEach((type) => {
+                const typeMap = typeSlotMap.get(type)!;
+                const row = fullIndex.map((d) => (typeMap.get(d.getTime()) || 0) > 0 ? 1 : 0);
+                matrix.push(row);
+        });
+        
+        return matrix;
+}
+
+export interface DailyFlows {
+        dates: Date[];
+        inflows: number[];
+        outflows: number[];
+        balance?: number[];
+        balanceMA7?: number[];
+}
+
+export function computeDailyFlows(transactions: TransactionRow[]): DailyFlows {
+        if (transactions.length === 0) {
+                return { dates: [], inflows: [], outflows: [] };
+        }
+        
+        const dailyMap = new Map<number, { in: number; out: number; balance?: number }>();
+        
+        transactions.forEach((tx) => {
+                const dayStart = startOfDay(tx.timestamp).getTime();
+                const entry = dailyMap.get(dayStart) || { in: 0, out: 0 };
+                
+                const amount = tx.amount || 0;
+                
+                if (IN_TYPES.has(tx.type)) {
+                        entry.in += amount;
+                } else if (OUT_TYPES.has(tx.type)) {
+                        entry.out += amount;
+                }
+                
+                if (tx.solde !== undefined) {
+                        entry.balance = tx.solde;
+                }
+                
+                dailyMap.set(dayStart, entry);
+        });
+        
+        const sortedDates = Array.from(dailyMap.keys()).sort((a, b) => a - b);
+        const dates = sortedDates.map((t) => new Date(t));
+        const inflows = sortedDates.map((t) => dailyMap.get(t)!.in);
+        const outflows = sortedDates.map((t) => -dailyMap.get(t)!.out);
+        
+        const balance: number[] = [];
+        const balanceMA7: number[] = [];
+        
+        sortedDates.forEach((t, idx) => {
+                const entry = dailyMap.get(t)!;
+                if (entry.balance !== undefined) {
+                        balance.push(entry.balance);
+                } else if (idx > 0 && balance.length > 0) {
+                        balance.push(balance[balance.length - 1]);
+                } else {
+                        balance.push(0);
+                }
+        });
+        
+        for (let i = 0; i < balance.length; i++) {
+                const start = Math.max(0, i - 6);
+                const window = balance.slice(start, i + 1);
+                const avg = window.reduce((sum, val) => sum + val, 0) / window.length;
+                balanceMA7.push(avg);
+        }
+        
+        return {
+                dates,
+                inflows,
+                outflows,
+                balance: balance.length > 0 ? balance : undefined,
+                balanceMA7: balanceMA7.length > 0 ? balanceMA7 : undefined,
+        };
+}

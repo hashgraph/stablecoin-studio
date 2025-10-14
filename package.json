@@ -65,7 +65,9 @@
     "rimraf": "^4.1.1"
   },
   "dependencies": {
-    "husky": "^9.1.7"
+    "date-fns": "^4.1.0",
+    "husky": "^9.1.7",
+    "recharts": "^3.2.1"
   },
   "overrides": {
     "@walletconnect/core": "2.19.0",
