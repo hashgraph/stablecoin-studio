@@ -37,9 +37,13 @@ export function parseCSV(csvText: string): TransactionRow[] {
                         const value = values[index];
 
                         if (header.toLowerCase().includes('date') || header.toLowerCase().includes('timestamp')) {
-                                row.timestamp = new Date(value);
+                                if (value) {
+                                        row.timestamp = new Date(value);
+                                }
                         } else if (header.toLowerCase().includes('type')) {
-                                row.type = value.toUpperCase() as TransactionType;
+                                if (value) {
+                                        row.type = value.toUpperCase() as TransactionType;
+                                }
                         } else if (header.toLowerCase().includes('amount') || header.toLowerCase().includes('montant')) {
                                 row.amount = parseFloat(value) || 0;
                         } else if (header.toLowerCase().includes('solde') || header.toLowerCase().includes('balance')) {
