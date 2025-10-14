@@ -8,6 +8,35 @@ The system is built around a modular architecture using the Diamond pattern for 
 
 Preferred communication style: Simple, everyday language.
 
+# Recent Changes
+
+## Mobile Money Management Feature (October 14, 2025)
+
+Added a new "Mobile Money Management" section to the Network settings page for analyzing mobile money transaction data.
+
+**Files Created**:
+- `web/src/utils/mobileMoneyUtils.ts` - CSV parsing and transaction type definitions
+- `web/src/utils/csvProcessor.ts` - Data analysis functions (activity analysis, daily flows, balance calculations)
+- `web/src/views/AppSettings/MobileMoneyManagement.tsx` - React component with CSV upload and interactive charts
+
+**Files Modified**:
+- `web/src/views/AppSettings/index.tsx` - Added "Mobile Money Management" tab
+- `web/src/translations/en/appSettings.json` - Added English translations
+- `web/src/Router/Router.tsx` - Moved AppSettings route to public zone (no wallet connection required)
+
+**Features**:
+- CSV file upload for mobile money transactions
+- Frequency-based activity analysis (15min, 30min, 1H, 6H, 1D intervals)
+- Three interactive Recharts visualizations:
+  - Transaction activity over time
+  - Daily cash flows (inflows vs outflows)
+  - Balance evolution with 7-day moving average
+- Statistics display (total slots, active slots, inactive slots)
+
+**Technical Notes**:
+- Uses native JavaScript date functions instead of date-fns library to avoid dependency conflicts
+- Network settings page accessible without wallet connection for better UX
+
 # System Architecture
 
 ## Monorepo Structure
