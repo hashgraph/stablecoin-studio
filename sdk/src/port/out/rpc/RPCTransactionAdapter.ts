@@ -1730,7 +1730,7 @@ export default class RPCTransactionAdapter extends TransactionAdapter {
 	): Promise<TransactionResponse> {
 		try {
 			let response;
-			switch (CapabilityDecider.decide(coin, operation)) {
+				switch (CapabilityDecider.getAccessDecision(coin, operation)) {
 				case Decision.CONTRACT:
 					if (!coin.coin.evmProxyAddress?.toString())
 						throw new Error(

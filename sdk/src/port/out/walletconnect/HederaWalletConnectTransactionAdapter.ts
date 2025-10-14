@@ -18,61 +18,78 @@
  *
  */
 
-import { singleton } from 'tsyringe';
-import { AccountId, Signer, Transaction } from '@hashgraph/sdk';
-import { NetworkName } from '@hashgraph/sdk/lib/client/Client';
-import TransactionAdapter, { InitializationData } from '../TransactionAdapter';
-import type { PublicStateControllerState } from '@reown/appkit-controllers';
-import { StableCoinProps } from '../../../domain/context/stablecoin/StableCoin';
+import {singleton} from 'tsyringe';
+import {AccountId, Signer, Transaction} from '@hashgraph/sdk';
+import {NetworkName} from '@hashgraph/sdk/lib/client/Client';
+import TransactionAdapter, {InitializationData} from '../TransactionAdapter';
+import type {PublicStateControllerState} from '@reown/appkit-controllers';
+import {StableCoinProps} from '../../../domain/context/stablecoin/StableCoin';
 import ContractId from '../../../domain/context/contract/ContractId';
-import { HederaId } from '../../../domain/context/shared/HederaId';
+import {HederaId} from '../../../domain/context/shared/HederaId';
 import BigDecimal from '../../../domain/context/shared/BigDecimal';
-import { FactoryCashinRole } from '../../../domain/context/factory/FactoryCashinRole';
-import { KeysStruct } from '../../../domain/context/factory/FactoryKey';
-import { StableCoinRole } from '../../../domain/context/stablecoin/StableCoinRole';
-import { ResolverProxyConfiguration } from '../../../domain/context/factory/ResolverProxyConfiguration';
-import { FactoryRole } from '../../../domain/context/factory/FactoryRole';
-import { FactoryStableCoin } from '../../../domain/context/factory/FactoryStableCoin';
-import { TokenSupplyType } from '../../../domain/context/stablecoin/TokenSupply';
+import {FactoryCashinRole} from '../../../domain/context/factory/FactoryCashinRole';
+import {KeysStruct} from '../../../domain/context/factory/FactoryKey';
+import {StableCoinRole} from '../../../domain/context/stablecoin/StableCoinRole';
+import {ResolverProxyConfiguration} from '../../../domain/context/factory/ResolverProxyConfiguration';
+import {FactoryRole} from '../../../domain/context/factory/FactoryRole';
+import {FactoryStableCoin} from '../../../domain/context/factory/FactoryStableCoin';
+import {TokenSupplyType} from '../../../domain/context/stablecoin/TokenSupply';
 import {
-	StableCoinFactoryFacet__factory,
+	BurnableFacet__factory,
+	CashInFacet__factory,
+	DeletableFacet__factory,
+	FreezableFacet__factory, HederaTokenManagerFacet__factory,
 	IHRC__factory,
-	WipeableFacet__factory, CashInFacet__factory, BurnableFacet__factory, RolesFacet__factory, DeletableFacet__factory,
+	KYCFacet__factory,
+	PausableFacet__factory,
 	RescuableFacet__factory,
-	PausableFacet__factory, KYCFacet__factory, FreezableFacet__factory
+	RolesFacet__factory,
+	StableCoinFactoryFacet__factory, SupplierAdminFacet__factory,
+	WipeableFacet__factory
 } from '@hashgraph/stablecoin-npm-contracts';
 import LogService from '../../../app/service/LogService';
-import { ethers, Provider } from 'ethers';
+import {ethers, Provider} from 'ethers';
 import {
-	CREATE_SC_GAS,
-	TOKEN_CREATION_COST_HBAR,
 	ASSOCIATE_GAS,
-	WIPE_GAS,
-	CASHIN_GAS,
 	BURN_GAS,
+	CASHIN_GAS,
+	CREATE_SC_GAS, DECREASE_SUPPLY_GAS,
+	DELETE_GAS,
+	FREEZE_GAS,
+	GRANT_KYC_GAS,
+	GRANT_ROLES_GAS, INCREASE_SUPPLY_GAS,
+	PAUSE_GAS,
+	RESCUE_GAS,
+	RESCUE_HBAR_GAS, RESET_SUPPLY_GAS,
+	REVOKE_KYC_GAS,
 	REVOKE_ROLES_GAS,
-	GRANT_ROLES_GAS, DELETE_GAS, RESCUE_HBAR_GAS,
-	RESCUE_GAS, UNPAUSE_GAS, PAUSE_GAS, REVOKE_KYC_GAS, GRANT_KYC_GAS, UNFREEZE_GAS, FREEZE_GAS
+	TOKEN_CREATION_COST_HBAR,
+	UNFREEZE_GAS,
+	UNPAUSE_GAS,
+	WIPE_GAS
 } from '../../../core/Constants';
 import CheckEvmAddress from '../../../core/checks/evmaddress/CheckEvmAddress';
-import { TransactionResponseError } from '../error/TransactionResponseError';
-import { RPCTransactionResponseAdapter } from '../rpc/RPCTransactionResponseAdapter';
+import {TransactionResponseError} from '../error/TransactionResponseError';
+import {RPCTransactionResponseAdapter} from '../rpc/RPCTransactionResponseAdapter';
 import HWCSettings from '../../../domain/context/hwalletconnectsettings/HWCSettings';
-import { Environment, testnet } from '../../../domain/context/network/Environment';
+import {Environment, testnet} from '../../../domain/context/network/Environment';
 import Account from '../../../domain/context/account/Account';
-import { lazyInject } from '../../../core/decorator/LazyInjectDecorator';
+import {lazyInject} from '../../../core/decorator/LazyInjectDecorator';
 import EventService from '../../../app/service/event/EventService';
 import NetworkService from '../../../app/service/NetworkService';
-import { MirrorNodeAdapter } from '../mirror/MirrorNodeAdapter';
-import { QueryBus } from '../../../core/query/QueryBus';
-import { SupportedWallets } from '@hashgraph/stablecoin-npm-sdk';
-import { WalletEvents } from '../../in';
+import {MirrorNodeAdapter} from '../mirror/MirrorNodeAdapter';
+import {QueryBus} from '../../../core/query/QueryBus';
+import {SupportedWallets} from '@hashgraph/stablecoin-npm-sdk';
+import {Operation, WalletEvents} from '../../in';
 import Injectable from '../../../core/Injectable';
-import { TransactionType } from '../TransactionResponseEnums';
+import {TransactionType} from '../TransactionResponseEnums';
 import TransactionResponse from '../../../domain/context/transaction/TransactionResponse';
-import { WalletPairedEvent } from '../../../app/service/event/WalletEvent';
-import { SigningError } from '../hs/error/SigningError';
+import {WalletPairedEvent} from '../../../app/service/event/WalletEvent';
+import {SigningError} from '../hs/error/SigningError';
 import StableCoinCapabilities from "../../../domain/context/stablecoin/StableCoinCapabilities";
+import {CapabilityDecider, Decision} from "../CapabilityDecider";
+import {CustomFee as HCustomFee} from "@hashgraph/sdk/lib/exports";
+import {fromHCustomFeeToSCFee, SC_FixedFee, SC_FractionalFee} from "../../../domain/context/fee/CustomFee";
 
 let HederaAdapter: typeof import('@hashgraph/hedera-wallet-connect').HederaAdapter;
 let HederaChainDefinition: typeof import('@hashgraph/hedera-wallet-connect').HederaChainDefinition;
@@ -370,6 +387,7 @@ export class HederaWalletConnectTransactionAdapter extends TransactionAdapter {
 
 	async wipe(coin: StableCoinCapabilities, targetId: HederaId, amount: BigDecimal): Promise<TransactionResponse> {
 		try {
+			CapabilityDecider.checkContractOperation(coin, Operation.WIPE);
 			const proxyAddress = this.getProxyAddress(coin);
 			const targetEvm = await this.getEVMAddress(targetId);
 			return await this.performOperation(
@@ -387,6 +405,7 @@ export class HederaWalletConnectTransactionAdapter extends TransactionAdapter {
 
 	async cashin(coin: StableCoinCapabilities, targetId: HederaId, amount: BigDecimal): Promise<TransactionResponse> {
 		try {
+			CapabilityDecider.checkContractOperation(coin, Operation.CASH_IN);
 			const proxyAddress = this.getProxyAddress(coin);
 			const targetEvm = await this.getEVMAddress(targetId);
 			return await this.performOperation(
@@ -404,6 +423,7 @@ export class HederaWalletConnectTransactionAdapter extends TransactionAdapter {
 
 	async burn(coin: StableCoinCapabilities, amount: BigDecimal): Promise<TransactionResponse> {
 		try {
+			CapabilityDecider.checkContractOperation(coin, Operation.BURN);
 			const proxyAddress = this.getProxyAddress(coin);
 			return await this.performOperation(
 				proxyAddress,
@@ -420,6 +440,7 @@ export class HederaWalletConnectTransactionAdapter extends TransactionAdapter {
 
 	async freeze(coin: StableCoinCapabilities, targetId: HederaId): Promise<TransactionResponse> {
 		try {
+			CapabilityDecider.checkContractOperation(coin, Operation.FREEZE);
 			const proxyAddress = this.getProxyAddress(coin);
 			const targetEvm = await this.getEVMAddress(targetId);
 			return await this.performOperation(
@@ -437,6 +458,7 @@ export class HederaWalletConnectTransactionAdapter extends TransactionAdapter {
 
 	async unfreeze(coin: StableCoinCapabilities, targetId: HederaId): Promise<TransactionResponse> {
 		try {
+			CapabilityDecider.checkContractOperation(coin, Operation.UNFREEZE);
 			const proxyAddress = this.getProxyAddress(coin);
 			const targetEvm = await this.getEVMAddress(targetId);
 			return await this.performOperation(
@@ -454,6 +476,7 @@ export class HederaWalletConnectTransactionAdapter extends TransactionAdapter {
 
 	async grantKyc(coin: StableCoinCapabilities, targetId: HederaId): Promise<TransactionResponse> {
 		try {
+			CapabilityDecider.checkContractOperation(coin, Operation.GRANT_KYC);
 			const proxyAddress = this.getProxyAddress(coin);
 			const targetEvm = await this.getEVMAddress(targetId);
 			return await this.performOperation(
@@ -471,6 +494,7 @@ export class HederaWalletConnectTransactionAdapter extends TransactionAdapter {
 
 	async revokeKyc(coin: StableCoinCapabilities, targetId: HederaId): Promise<TransactionResponse> {
 		try {
+			CapabilityDecider.checkContractOperation(coin, Operation.REVOKE_KYC);
 			const proxyAddress = this.getProxyAddress(coin);
 			const targetEvm = await this.getEVMAddress(targetId);
 			return await this.performOperation(
@@ -488,6 +512,7 @@ export class HederaWalletConnectTransactionAdapter extends TransactionAdapter {
 
 	async pause(coin: StableCoinCapabilities): Promise<TransactionResponse> {
 		try {
+			CapabilityDecider.checkContractOperation(coin, Operation.PAUSE);
 			const proxyAddress = this.getProxyAddress(coin);
 			return await this.performOperation(
 				proxyAddress,
@@ -504,6 +529,7 @@ export class HederaWalletConnectTransactionAdapter extends TransactionAdapter {
 
 	async unpause(coin: StableCoinCapabilities): Promise<TransactionResponse> {
 		try {
+			CapabilityDecider.checkContractOperation(coin, Operation.UNPAUSE);
 			const proxyAddress = this.getProxyAddress(coin);
 			return await this.performOperation(
 				proxyAddress,
@@ -520,6 +546,7 @@ export class HederaWalletConnectTransactionAdapter extends TransactionAdapter {
 
 	async rescue(coin: StableCoinCapabilities, amount: BigDecimal): Promise<TransactionResponse> {
 		try {
+			CapabilityDecider.checkContractOperation(coin, Operation.RESCUE);
 			const proxyAddress = this.getProxyAddress(coin);
 			return await this.performOperation(
 				proxyAddress,
@@ -536,6 +563,7 @@ export class HederaWalletConnectTransactionAdapter extends TransactionAdapter {
 
 	async rescueHBAR(coin: StableCoinCapabilities, amount: BigDecimal): Promise<TransactionResponse> {
 		try {
+			CapabilityDecider.checkContractOperation(coin, Operation.RESCUE_HBAR);
 			const proxyAddress = this.getProxyAddress(coin);
 			return await this.performOperation(
 				proxyAddress,
@@ -552,6 +580,7 @@ export class HederaWalletConnectTransactionAdapter extends TransactionAdapter {
 
 	async delete(coin: StableCoinCapabilities): Promise<TransactionResponse> {
 		try {
+			CapabilityDecider.checkContractOperation(coin, Operation.DELETE);
 			const proxyAddress = this.getProxyAddress(coin);
 			return await this.performOperation(
 				proxyAddress,
@@ -568,6 +597,7 @@ export class HederaWalletConnectTransactionAdapter extends TransactionAdapter {
 
 	async grantRole(coin: StableCoinCapabilities, targetId: HederaId, role: StableCoinRole): Promise<TransactionResponse> {
 		try {
+			CapabilityDecider.checkContractOperation(coin, Operation.GRANT_ROLE);
 			const proxyAddress = this.getProxyAddress(coin);
 			const targetEvm = await this.getEVMAddress(targetId);
 			return await this.performOperation(
@@ -585,6 +615,7 @@ export class HederaWalletConnectTransactionAdapter extends TransactionAdapter {
 
 	async revokeRole(coin: StableCoinCapabilities, targetId: HederaId, role: StableCoinRole): Promise<TransactionResponse> {
 		try {
+			CapabilityDecider.checkContractOperation(coin, Operation.REVOKE_ROLE);
 			const proxyAddress = this.getProxyAddress(coin);
 			const targetEvm = await this.getEVMAddress(targetId);
 			return await this.performOperation(
@@ -599,6 +630,87 @@ export class HederaWalletConnectTransactionAdapter extends TransactionAdapter {
 			throw new SigningError(`Unexpected error in revokeRole(): ${error}`);
 		}
 	}
+
+	async grantSupplierRole(coin: StableCoinCapabilities, targetId: HederaId, amount: BigDecimal): Promise<TransactionResponse> {
+		try {
+			CapabilityDecider.checkContractOperation(coin, Operation.GRANT_SUPPLIER_ROLE); // Asumiendo
+			const proxyAddress = this.getProxyAddress(coin);
+			const targetEvm = await this.getEVMAddress(targetId);
+
+			return await this.performOperation(
+				proxyAddress,
+				new ethers.Interface(SupplierAdminFacet__factory.abi),
+				'grantSupplierRole',
+				[targetEvm, amount.toBigInt()],
+				GRANT_ROLES_GAS
+			);
+		} catch (error) {
+			LogService.logError(error);
+			throw new SigningError(`Unexpected error in grantSupplierRole(): ${error}`);
+		}
+	}
+
+	async grantUnlimitedSupplierRole(coin: StableCoinCapabilities, targetId: HederaId): Promise<TransactionResponse> {
+		try {
+			CapabilityDecider.checkContractOperation(coin, Operation.GRANT_UNLIMITED_SUPPLIER_ROLE);
+			const proxyAddress = this.getProxyAddress(coin);
+			const targetEvm = await this.getEVMAddress(targetId);
+
+			return await this.performOperation(
+				proxyAddress,
+				new ethers.Interface(SupplierAdminFacet__factory.abi),
+				'grantUnlimitedSupplierRole',
+				[targetEvm],
+				GRANT_ROLES_GAS
+			);
+		} catch (error) {
+			LogService.logError(error);
+			throw new SigningError(`Unexpected error in grantUnlimitedSupplierRole(): ${error}`);
+		}
+	}
+
+	async increaseSupplierAllowance(coin: StableCoinCapabilities, targetId: HederaId, amount: BigDecimal): Promise<TransactionResponse> {
+		try {
+			CapabilityDecider.checkContractOperation(coin, Operation.INCREASE_SUPPLIER_ALLOWANCE);
+			const proxyAddress = this.getProxyAddress(coin);
+			const targetEvm = await this.getEVMAddress(targetId);
+
+			return await this.performOperation(
+				proxyAddress,
+				new ethers.Interface(SupplierAdminFacet__factory.abi),
+				'increaseSupplierAllowance',
+				[targetEvm, amount.toBigInt()],
+				INCREASE_SUPPLY_GAS
+			);
+		} catch (error) {
+			LogService.logError(error);
+			throw new SigningError(`Unexpected error in increaseSupplierAllowance(): ${error}`);
+		}
+	}
+
+	async decreaseSupplierAllowance(coin: StableCoinCapabilities, targetId: HederaId, amount: BigDecimal): Promise<TransactionResponse> {
+		try {
+			CapabilityDecider.checkContractOperation(coin, Operation.DECREASE_SUPPLIER_ALLOWANCE);
+			const proxyAddress = this.getProxyAddress(coin);
+			const targetEvm = await this.getEVMAddress(targetId);
+
+			return await this.performOperation(
+				proxyAddress,
+				new ethers.Interface(SupplierAdminFacet__factory.abi),
+				'decreaseSupplierAllowance',
+				[targetEvm, amount.toBigInt()],
+				DECREASE_SUPPLY_GAS
+			);
+		} catch (error) {
+			LogService.logError(error);
+			throw new SigningError(`Unexpected error in decreaseSupplierAllowance(): ${error}`);
+		}
+	}
+
+	//----QUERIES
+
+
+
 
 
 	getMirrorNodeAdapter(): MirrorNodeAdapter {

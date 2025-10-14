@@ -1251,7 +1251,7 @@ export abstract class HederaTransactionAdapter extends TransactionAdapter {
 	): Promise<TransactionResponse> {
 		try {
 			console.log('performOperation', coin, operation, operationName);
-			switch (CapabilityDecider.decide(coin, operation)) {
+			switch (CapabilityDecider.getAccessDecision(coin, operation)) {
 				case Decision.CONTRACT:
 					if (!coin.coin.proxyAddress)
 						throw new Error(

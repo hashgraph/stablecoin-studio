@@ -18,6 +18,10 @@
  *
  */
 
+import StableCoinCapabilities from "./StableCoinCapabilities";
+import {CapabilityDecider, Decision} from "../../../port/out/CapabilityDecider";
+import {CapabilityError} from "../../../port/out/hs/error/CapabilityError";
+
 export enum Operation {
 	CASH_IN = 'Cash_in',
 	BURN = 'Burn',
@@ -46,6 +50,13 @@ export enum Operation {
 	REMOVE_CUSTOM_FEE = 'Remove_Custom_Fee',
 	TRANSFERS = 'Transfers',
 	UPDATE = 'Update',
+	GRANT_ROLE = 'Grant_Role',
+	REVOKE_ROLE = 'Revoke_Role',
+	ASSOCIATE = 'Associate',
+	GRANT_SUPPLIER_ROLE = 'grantSupplierRole',
+	GRANT_UNLIMITED_SUPPLIER_ROLE = 'grantUnlimitedSupplierRole',
+	INCREASE_SUPPLIER_ALLOWANCE = 'increaseSupplierAllowance',
+	DECREASE_SUPPLIER_ALLOWANCE = 'decreaseSupplierAllowance',
 }
 
 export enum Access {
