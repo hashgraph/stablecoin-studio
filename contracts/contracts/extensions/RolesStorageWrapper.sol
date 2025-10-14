@@ -3,7 +3,7 @@ pragma solidity 0.8.18;
 
 import {IRoles} from './Interfaces/IRoles.sol';
 // solhint-disable-next-line max-line-length
-import {ADMIN_ROLE, _CASHIN_ROLE, _BURN_ROLE, _WIPE_ROLE, _RESCUE_ROLE, _PAUSE_ROLE, _FREEZE_ROLE, _DELETE_ROLE, _WITHOUT_ROLE, _KYC_ROLE, _CUSTOM_FEES_ROLE, _HOLD_CREATOR_ROLE} from '../constants/roles.sol';
+import {ADMIN_ROLE, _CASHIN_ROLE, _BURN_ROLE, _WIPE_ROLE, _RESCUE_ROLE, _PAUSE_ROLE, _FREEZE_ROLE, _DELETE_ROLE, _WITHOUT_ROLE, _KYC_ROLE, _CUSTOM_FEES_ROLE, _HOLD_CREATOR_ROLE, _NUMBER_OF_ROLES} from '../constants/roles.sol';
 import {_ROLES_STORAGE_POSITION} from '../constants/storagePositions.sol';
 import {IRoleManagement} from './Interfaces/IRoleManagement.sol';
 
@@ -24,7 +24,7 @@ abstract contract RolesStorageWrapper {
          * @dev Array containing all roles
          *
          */
-        bytes32[] listOfRoles;
+        bytes32[] deprecatedlistOfRoles; // not used anymore but left for retrocompatibility
     }
 
     /**
@@ -72,25 +72,6 @@ abstract contract RolesStorageWrapper {
     }
 
     /**
-     * @dev Populates the array of existing roles
-     *
-     */
-    function __rolesInit() internal {
-        bytes32[] storage listOfRoles = _rolesStorage().listOfRoles;
-        listOfRoles.push(ADMIN_ROLE);
-        listOfRoles.push(_CASHIN_ROLE);
-        listOfRoles.push(_BURN_ROLE);
-        listOfRoles.push(_WIPE_ROLE);
-        listOfRoles.push(_RESCUE_ROLE);
-        listOfRoles.push(_PAUSE_ROLE);
-        listOfRoles.push(_FREEZE_ROLE);
-        listOfRoles.push(_DELETE_ROLE);
-        listOfRoles.push(_KYC_ROLE);
-        listOfRoles.push(_CUSTOM_FEES_ROLE);
-        listOfRoles.push(_HOLD_CREATOR_ROLE);
-    }
-
-    /**
      * @dev Grants a role to an account
      *
      * @param role The role to be granted
@@ -132,34 +113,6 @@ abstract contract RolesStorageWrapper {
         if (_getNumberOfAccountsWithRole(ADMIN_ROLE) == 0) revert IRoleManagement.NoAdminsLeft();
     }
 
-    function _addRoleToList(bytes32 role) internal {
-        _rolesStorage().listOfRoles.push(role);
-        emit RoleAdded(role, msg.sender);
-    }
-
-    function _removeRoleFromListByPosition(uint256 pos) internal {
-        uint256 length = _getRolesListLength();
-        if (pos >= length) revert IRoles.RolePositionOutOfBounds(length, pos);
-
-        bytes32[] storage listOfRoles = _rolesStorage().listOfRoles;
-
-        if (pos < length - 1) {
-            listOfRoles[pos] = listOfRoles[length - 1];
-        }
-
-        listOfRoles.pop();
-
-        emit RoleRemoved(pos, msg.sender);
-    }
-
-    function _getRolesList() internal view returns (bytes32[] memory) {
-        return _rolesStorage().listOfRoles;
-    }
-
-    function _getRolesListLength() internal view returns (uint256) {
-        return _rolesStorage().listOfRoles.length;
-    }
-
     /**
      * @dev Checks if a role is granted to an account
      *
@@ -179,16 +132,33 @@ abstract contract RolesStorageWrapper {
     }
 
     function _getRoles(address account) internal view returns (bytes32[] memory rolesToReturn_) {
-        bytes32[] storage listOfRoles = _rolesStorage().listOfRoles;
-        uint256 rolesLength = listOfRoles.length;
+        bytes32[_NUMBER_OF_ROLES] memory listOfRoles = _getRolesList();
 
-        rolesToReturn_ = new bytes32[](rolesLength);
+        rolesToReturn_ = new bytes32[](_NUMBER_OF_ROLES);
 
-        for (uint256 index; index < rolesLength; index++) {
+        for (uint256 index; index < _NUMBER_OF_ROLES; index++) {
             bytes32 role = listOfRoles[index];
 
             rolesToReturn_[index] = _hasRole(role, account) ? role : _WITHOUT_ROLE;
         }
+    }
+
+    /**
+     * @dev Populates the array of existing roles
+     *
+     */
+    function _getRolesList() internal pure returns (bytes32[_NUMBER_OF_ROLES] memory listOfRoles_) {
+        listOfRoles_[0] = ADMIN_ROLE;
+        listOfRoles_[1] = _CASHIN_ROLE;
+        listOfRoles_[2] = _BURN_ROLE;
+        listOfRoles_[3] = _WIPE_ROLE;
+        listOfRoles_[4] = _RESCUE_ROLE;
+        listOfRoles_[5] = _PAUSE_ROLE;
+        listOfRoles_[6] = _FREEZE_ROLE;
+        listOfRoles_[7] = _DELETE_ROLE;
+        listOfRoles_[8] = _KYC_ROLE;
+        listOfRoles_[9] = _CUSTOM_FEES_ROLE;
+        listOfRoles_[10] = _HOLD_CREATOR_ROLE;
     }
 
     /**

@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: MIT
 pragma solidity 0.8.18;
 
-import {ADMIN_ROLE} from '../constants/roles.sol';
+import {ADMIN_ROLE, _NUMBER_OF_ROLES} from '../constants/roles.sol';
 import {IRoles} from './Interfaces/IRoles.sol';
 import {RolesStorageWrapper} from './RolesStorageWrapper.sol';
 import {_ROLES_RESOLVER_KEY} from '../constants/resolverKeys.sol';
@@ -36,34 +36,10 @@ contract RolesFacet is IRoles, IStaticFunctionSelectors, Common, RolesStorageWra
     }
 
     /**
-     * @dev Adds a role to the role list
-     *
-     * Only the 'ADMIN ROLE` can execute
-     * Emits a RoleAdded event
-     *
-     * @param role The role to be added
-     */
-    function addRoleToList(bytes32 role) external onlyRole(ADMIN_ROLE) {
-        _addRoleToList(role);
-    }
-
-    /**
-     * @dev Removes the role at position pos from the role list
-     *
-     * Only the 'ADMIN ROLE` can execute
-     * Emits a RoleRemoved event
-     *
-     * @param pos The 0 based pos where the role to be removed is
-     */
-    function removeRoleFromListByPosition(uint256 pos) external onlyRole(ADMIN_ROLE) {
-        _removeRoleFromListByPosition(pos);
-    }
-
-    /**
      * @dev Returns the full list of roles
      *
      */
-    function getRolesList() external view returns (bytes32[] memory rolesToReturn) {
+    function getRolesList() external pure returns (bytes32[_NUMBER_OF_ROLES] memory rolesToReturn) {
         return _getRolesList();
     }
 
@@ -110,15 +86,13 @@ contract RolesFacet is IRoles, IStaticFunctionSelectors, Common, RolesStorageWra
 
     function getStaticFunctionSelectors() external pure override returns (bytes4[] memory staticFunctionSelectors_) {
         uint256 selectorIndex;
-        staticFunctionSelectors_ = new bytes4[](9);
+        staticFunctionSelectors_ = new bytes4[](7);
         staticFunctionSelectors_[selectorIndex++] = this.hasRole.selector;
         staticFunctionSelectors_[selectorIndex++] = this.getAccountsWithRole.selector;
         staticFunctionSelectors_[selectorIndex++] = this.getNumberOfAccountsWithRole.selector;
         staticFunctionSelectors_[selectorIndex++] = this.grantRole.selector;
         staticFunctionSelectors_[selectorIndex++] = this.revokeRole.selector;
         staticFunctionSelectors_[selectorIndex++] = this.getRoles.selector;
-        staticFunctionSelectors_[selectorIndex++] = this.addRoleToList.selector;
-        staticFunctionSelectors_[selectorIndex++] = this.removeRoleFromListByPosition.selector;
         staticFunctionSelectors_[selectorIndex++] = this.getRolesList.selector;
     }
 
