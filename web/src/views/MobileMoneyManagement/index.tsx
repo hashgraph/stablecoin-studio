@@ -108,7 +108,9 @@ const MobileMoneyManagement = () => {
 
         const binaryHeatmapData = processedData ? [{
                 z: [processedData.binaryActivity],
-                x: processedData.fullIndex.map(d => d.toISOString()),
+                x: processedData.fullIndex
+                        .filter(d => d && !isNaN(d.getTime()))
+                        .map(d => d.toISOString()),
                 y: ['Activity'],
                 type: 'heatmap' as const,
                 colorscale: [[0, GRAY_INACTIVE], [1, GREEN_IN]] as any,
@@ -117,46 +119,53 @@ const MobileMoneyManagement = () => {
                 xgap: 1,
         }] : [];
 
-        const balanceFlowsData = dailyFlows && processedData ? [
-                {
-                        x: dailyFlows.dates.map(d => d.toISOString()),
-                        y: dailyFlows.balance || [],
-                        type: 'scatter' as const,
-                        mode: 'lines' as const,
-                        name: 'Balance',
-                        line: { color: CYAN_BALANCE, width: 2.5 },
-                        yaxis: 'y2',
-                        hovertemplate: 'Date: %{x|%Y-%m-%d}<br>Balance: %{y:,.2f}<extra></extra>',
-                },
-                {
-                        x: dailyFlows.dates.map(d => d.toISOString()),
-                        y: dailyFlows.balanceMA7 || [],
-                        type: 'scatter' as const,
-                        mode: 'lines' as const,
-                        name: 'Balance (7-day MA)',
-                        line: { color: CYAN_BALANCE, width: 1.5, dash: 'dot' as any },
-                        yaxis: 'y2',
-                        hovertemplate: 'Date: %{x|%Y-%m-%d}<br>Balance (MA7): %{y:,.2f}<extra></extra>',
-                },
-                {
-                        x: dailyFlows.dates.map(d => d.toISOString()),
-                        y: dailyFlows.inflows,
-                        type: 'bar' as const,
-                        name: 'Inflows',
-                        marker: { color: GREEN_IN },
-                        yaxis: 'y',
-                        hovertemplate: 'Date: %{x|%Y-%m-%d}<br>Inflows: %{y:,.2f}<extra></extra>',
-                },
-                {
-                        x: dailyFlows.dates.map(d => d.toISOString()),
-                        y: dailyFlows.outflows.map(v => -Math.abs(v)),
-                        type: 'bar' as const,
-                        name: 'Outflows',
-                        marker: { color: RED_OUT },
-                        yaxis: 'y',
-                        hovertemplate: 'Date: %{x|%Y-%m-%d}<br>Outflows: %{y:,.2f}<extra></extra>',
-                },
-        ] : [];
+        const balanceFlowsData = dailyFlows && processedData ? (() => {
+                const validDates = dailyFlows.dates.filter(d => d && !isNaN(d.getTime()));
+                const validIndices = dailyFlows.dates
+                        .map((d, i) => (d && !isNaN(d.getTime()) ? i : -1))
+                        .filter(i => i !== -1);
+                
+                return [
+                        {
+                                x: validDates.map(d => d.toISOString()),
+                                y: validIndices.map(i => dailyFlows.balance?.[i] || 0),
+                                type: 'scatter' as const,
+                                mode: 'lines' as const,
+                                name: 'Balance',
+                                line: { color: CYAN_BALANCE, width: 2.5 },
+                                yaxis: 'y2',
+                                hovertemplate: 'Date: %{x|%Y-%m-%d}<br>Balance: %{y:,.2f}<extra></extra>',
+                        },
+                        {
+                                x: validDates.map(d => d.toISOString()),
+                                y: validIndices.map(i => dailyFlows.balanceMA7?.[i] || 0),
+                                type: 'scatter' as const,
+                                mode: 'lines' as const,
+                                name: 'Balance (7-day MA)',
+                                line: { color: CYAN_BALANCE, width: 1.5, dash: 'dot' as any },
+                                yaxis: 'y2',
+                                hovertemplate: 'Date: %{x|%Y-%m-%d}<br>Balance (MA7): %{y:,.2f}<extra></extra>',
+                        },
+                        {
+                                x: validDates.map(d => d.toISOString()),
+                                y: validIndices.map(i => dailyFlows.inflows[i]),
+                                type: 'bar' as const,
+                                name: 'Inflows',
+                                marker: { color: GREEN_IN },
+                                yaxis: 'y',
+                                hovertemplate: 'Date: %{x|%Y-%m-%d}<br>Inflows: %{y:,.2f}<extra></extra>',
+                        },
+                        {
+                                x: validDates.map(d => d.toISOString()),
+                                y: validIndices.map(i => -Math.abs(dailyFlows.outflows[i])),
+                                type: 'bar' as const,
+                                name: 'Outflows',
+                                marker: { color: RED_OUT },
+                                yaxis: 'y',
+                                hovertemplate: 'Date: %{x|%Y-%m-%d}<br>Outflows: %{y:,.2f}<extra></extra>',
+                        },
+                ];
+        })() : [];
 
         return (
                 <Stack spacing={6} maxW='100%'>
