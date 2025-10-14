@@ -1,92 +1,108 @@
 {
-	"common": {
-		"accept": "Accept",
-		"account": "Account",
-		"cancel": "Cancel",
-		"goBack": "Go back",
-		"no": "No",
-		"yes": "Yes",
-		"unknown": "-",
-		"copy": "Copy",
-		"copied": "Copied!",
-		"see-transaction": "See transaction"
-	},
-	"mobile": {
-		"message": "This app is for desktop use only"
-	},
-	"innactivity": {
-		"title": "Your session has expired!",
-		"description": "Please, reconnect your wallet"
-	},
-	"hashpack-no-installed": {
-		"title": "Extensions are not installed yet",
-		"description": "Click on the button bellow to download the extension",
-		"button": "Download Hashpack",
-		"metamaskButton": "Download Metamask"
-	},
-	"hashpack-no-connected": {
-		"title": "Your wallet is not connected yet",
-		"description": "Click on the button bellow to connect to your wallet",
-		"button": "Connect your wallet"
-	},
-	"topbar": {
-		"network": "Op. network",
-		"account": "Op. account",
-		"coinDropdown": {
-			"placeholder": "Choose stablecoin",
-			"noStableCoin": "No stablecoins found with that id, would you like to import it?",
-			"invalidStableCoinId": "Enter a valid token id",
-			"importToken": "Import stablecoin: {{ tokenId }}"
-		},
-		"createSC": "Create coin",
-		"alertNoEnv": "You have not configured a factory address. Without it you can not create a stablecoin.",
-		"alertNoEnvLink": "Go to documentation",
-		"alertNotHederaAccount": "Not a Hedera Account in this network",
-		"alertNotHederaNetwork": "Current network is not an hedera network"
-	},
-	"sidebar": {
-		"operations": "Operations",
-		"role": "Role Management",
-		"details": "Stablecoin Details",
-		"proofOfReserve": "Proof-of-Reserve",
-		"feesManagement": "Fees Management",
-		"settings": "Settings",
-		"appSettings": "Network settings",
-		"multiSigTransactions": "Multi-sig transactions"
-	},
-	"validations": {
-		"required": "This field is required",
-		"invalidAccount": "Incorrect account",
-		"invalidAmount": "Invalid amount",
-		"invalidCoinId": "Invalid stablecoin id",
-		"decimalsValidation": "The amount has an invalid number of decimals",
-		"tokenIdNotExists": "Token {{ tokenId }} not exists",
-		"invalidOwner": "Invalid owner, is the current account owner",
-		"invalidFactoryOwner": "Invalid factory owner, is the current account factory owner"
-	},
-	"multiSig": {
-		"title": "Multi-sig transactions"
-	},
-	"operations": {
-		"title": "Operations"
-	},
-	"stepper": {
-		"goBack": "Go back",
-		"finish": "Finish",
-		"nextStep": "Next step"
-	},
-	"pairing": {
-		"error": "There was an error pairing the wallet.",
-		"rejected": "The pairing request has been rejected.",
-		"loading": "Loading"
-	},
-	"walletActions": {
-		"awaitingSignatureTitle": "Awaiting wallet action",
-		"loading": "Loading data",
-		"selectWallet": "Select an option",
-		"selectNetwork": "Select a network"
-	},
-	"multiSigActions": {
-		"title": "Enter your Hedera Multi-sig account Id"
-	}
+        "common": {
+                "accept": "Accept",
+                "account": "Account",
+                "cancel": "Cancel",
+                "goBack": "Go back",
+                "no": "No",
+                "yes": "Yes",
+                "unknown": "-",
+                "copy": "Copy",
+                "copied": "Copied!",
+                "see-transaction": "See transaction"
+        },
+        "mobile": {
+                "message": "This app is for desktop use only"
+        },
+        "innactivity": {
+                "title": "Your session has expired!",
+                "description": "Please, reconnect your wallet"
+        },
+        "hashpack-no-installed": {
+                "title": "Extensions are not installed yet",
+                "description": "Click on the button bellow to download the extension",
+                "button": "Download Hashpack",
+                "metamaskButton": "Download Metamask"
+        },
+        "hashpack-no-connected": {
+                "title": "Your wallet is not connected yet",
+                "description": "Click on the button bellow to connect to your wallet",
+                "button": "Connect your wallet"
+        },
+        "topbar": {
+                "network": "Op. network",
+                "account": "Op. account",
+                "coinDropdown": {
+                        "placeholder": "Choose stablecoin",
+                        "noStableCoin": "No stablecoins found with that id, would you like to import it?",
+                        "invalidStableCoinId": "Enter a valid token id",
+                        "importToken": "Import stablecoin: {{ tokenId }}"
+                },
+                "createSC": "Create coin",
+                "alertNoEnv": "You have not configured a factory address. Without it you can not create a stablecoin.",
+                "alertNoEnvLink": "Go to documentation",
+                "alertNotHederaAccount": "Not a Hedera Account in this network",
+                "alertNotHederaNetwork": "Current network is not an hedera network"
+        },
+        "sidebar": {
+                "operations": "Operations",
+                "role": "Role Management",
+                "details": "Stablecoin Details",
+                "proofOfReserve": "Proof-of-Reserve",
+                "feesManagement": "Fees Management",
+                "settings": "Settings",
+                "appSettings": "Network settings",
+                "multiSigTransactions": "Multi-sig transactions",
+                "mobileMoneyManagement": "Mobile Money Management"
+        },
+        "validations": {
+                "required": "This field is required",
+                "invalidAccount": "Incorrect account",
+                "invalidAmount": "Invalid amount",
+                "invalidCoinId": "Invalid stablecoin id",
+                "decimalsValidation": "The amount has an invalid number of decimals",
+                "tokenIdNotExists": "Token {{ tokenId }} not exists",
+                "invalidOwner": "Invalid owner, is the current account owner",
+                "invalidFactoryOwner": "Invalid factory owner, is the current account factory owner"
+        },
+        "multiSig": {
+                "title": "Multi-sig transactions"
+        },
+        "operations": {
+                "title": "Operations"
+        },
+        "stepper": {
+                "goBack": "Go back",
+                "finish": "Finish",
+                "nextStep": "Next step"
+        },
+        "pairing": {
+                "error": "There was an error pairing the wallet.",
+                "rejected": "The pairing request has been rejected.",
+                "loading": "Loading"
+        },
+        "walletActions": {
+                "awaitingSignatureTitle": "Awaiting wallet action",
+                "loading": "Loading data",
+                "selectWallet": "Select an option",
+                "selectNetwork": "Select a network"
+        },
+        "multiSigActions": {
+                "title": "Enter your Hedera Multi-sig account Id"
+        },
+        "mobileMoney": {
+                "title": "Mobile Money Management",
+                "description": "Upload a CSV file to analyze mobile money transaction patterns and view analytics",
+                "uploadCSV": "Upload CSV File",
+                "frequency": "Frequency",
+                "activityStats": "Activity Statistics",
+                "totalSlots": "Total Slots",
+                "activeSlots": "Active Slots",
+                "inactiveSlots": "Inactive Slots",
+                "activityChart": "Transaction Activity",
+                "flowsChart": "Daily Flows (Inflows & Outflows)",
+                "balanceChart": "Balance Over Time",
+                "csvLoaded": "CSV Loaded Successfully",
+                "csvError": "Error Loading CSV"
+        }
 }

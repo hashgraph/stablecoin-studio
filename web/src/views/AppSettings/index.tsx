@@ -35,7 +35,6 @@ import {
 } from '../../store/slices/walletSlice';
 import SDKService from '../../services/SDKService';
 import { type IMirrorRPCNode } from '../../interfaces/IMirrorRPCNode';
-import MobileMoneyManagement from './MobileMoneyManagement';
 
 const AppSettings = () => {
         const { t } = useTranslation(['appSettings', 'errorPage']);
@@ -373,7 +372,6 @@ const AppSettings = () => {
                                         <TabList>
                                                 <Tab>{t('MirrorNode')}</Tab>
                                                 <Tab>{t('rpc')}</Tab>
-                                                <Tab>{t('mobileMoney.title')}</Tab>
                                         </TabList>
                                         <TabPanels>
                                                 <TabPanel>
@@ -574,9 +572,6 @@ const AppSettings = () => {
                                                                         </Button>
                                                                 </Stack>
                                                         </Stack>
-                                                </TabPanel>
-                                                <TabPanel>
-                                                        <MobileMoneyManagement />
                                                 </TabPanel>
                                         </TabPanels>
                                 </Tabs>
