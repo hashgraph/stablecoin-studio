@@ -9,14 +9,6 @@ import {ADMIN_ROLE} from '../constants/roles.sol';
 
 contract ReserveFacet is IReserve, IStaticFunctionSelectors, ReserveStorageWrapper {
     /**
-     * @dev Gets the current reserve amount
-     *
-     */
-    function getReserveAmount() external view override(IReserve) returns (int256) {
-        return _getReserveAmount();
-    }
-
-    /**
      * @dev Updates de reserve address
      *
      * @param newAddress The new reserve address. Can be set to 0.0.0 (zero address) to disable the reserve.
@@ -27,6 +19,20 @@ contract ReserveFacet is IReserve, IStaticFunctionSelectors, ReserveStorageWrapp
         emit ReserveAddressChanged(previous, newAddress);
     }
 
+    function updateUpdatedAtThreshold(uint256 newThreshold) external override(IReserve) onlyRole(ADMIN_ROLE) {
+        uint256 previous = _getUpdatedAtThreshold();
+        _reserveStorage().updatedAtThreshold = newThreshold;
+        emit UpdatedAtThresholdChanged(previous, newThreshold);
+    }
+
+    /**
+     * @dev Gets the current reserve amount
+     *
+     */
+    function getReserveAmount() external view override(IReserve) returns (int256 amount, uint256 updatedAt) {
+        return _getReserveAmount();
+    }
+
     /**
      * @dev Gets the current reserve address
      *
@@ -35,16 +41,22 @@ contract ReserveFacet is IReserve, IStaticFunctionSelectors, ReserveStorageWrapp
         return _reserveStorage().reserveAddress;
     }
 
+    function getUpdatedAtThreshold() external view returns (uint256) {
+        return _getUpdatedAtThreshold();
+    }
+
     function getStaticResolverKey() external pure override returns (bytes32 staticResolverKey_) {
         staticResolverKey_ = _RESERVE_RESOLVER_KEY;
     }
 
     function getStaticFunctionSelectors() external pure override returns (bytes4[] memory staticFunctionSelectors_) {
         uint256 selectorIndex;
-        staticFunctionSelectors_ = new bytes4[](3);
+        staticFunctionSelectors_ = new bytes4[](5);
         staticFunctionSelectors_[selectorIndex++] = this.getReserveAmount.selector;
         staticFunctionSelectors_[selectorIndex++] = this.updateReserveAddress.selector;
         staticFunctionSelectors_[selectorIndex++] = this.getReserveAddress.selector;
+        staticFunctionSelectors_[selectorIndex++] = this.updateUpdatedAtThreshold.selector;
+        staticFunctionSelectors_[selectorIndex++] = this.getUpdatedAtThreshold.selector;
     }
 
     function getStaticInterfaceIds() external pure override returns (bytes4[] memory staticInterfaceIds_) {
