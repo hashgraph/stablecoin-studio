@@ -128,9 +128,10 @@ describe('➡️ Reserve Tests', function () {
     })
 
     it('Update datafeed', async () => {
-        const beforeReserve = reserveFacet.getReserveAmount({
+        const beforeResult = await reserveFacet.getReserveAmount({
             gasLimit: GAS_LIMIT.hederaTokenManager.getReserveAmount,
         })
+        const beforeReserve = beforeResult[0]
         const beforeDataFeed = reserveFacet.getReserveAddress({
             gasLimit: GAS_LIMIT.hederaTokenManager.getReserveAddress,
         })
@@ -145,9 +146,10 @@ describe('➡️ Reserve Tests', function () {
         })
         await new ValidateTxResponseCommand({ txResponse: updateResponse }).execute()
 
-        const afterReserve = reserveFacet.getReserveAmount({
+        const afterResult = await reserveFacet.getReserveAmount({
             gasLimit: GAS_LIMIT.hederaTokenManager.getReserveAmount,
         })
+        const afterReserve = afterResult[0]
         const afterDataFeed = reserveFacet.getReserveAddress({
             gasLimit: GAS_LIMIT.hederaTokenManager.getReserveAddress,
         })
