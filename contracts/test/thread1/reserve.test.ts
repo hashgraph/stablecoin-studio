@@ -109,6 +109,8 @@ describe('➡️ Reserve Tests', function () {
 
         const finalUpdatedAtThreshold = await reserveFacet.getUpdatedAtThreshold()
         expect(finalUpdatedAtThreshold.toString()).to.equals(FINAL_THRESHOLD.toString())
+
+        await reserveFacet.updateUpdatedAtThreshold('0')
     })
 
     it('Set updatedAt threshold fails if set by non Admin', async () => {
@@ -399,5 +401,7 @@ describe('Reserve Tests with reserve decimals lower than token decimals', functi
             cashInFacet,
             'ReserveAmountOutdated'
         )
+
+        await reserveFacet.updateUpdatedAtThreshold('0')
     })
 })
