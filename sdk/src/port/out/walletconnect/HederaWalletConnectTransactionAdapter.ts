@@ -117,6 +117,7 @@ import {CustomFee as HCustomFee} from "@hashgraph/sdk/lib/exports";
 import {fromHCustomFeeToSCFee, SC_FixedFee, SC_FractionalFee} from "../../../domain/context/fee/CustomFee";
 import PublicKey from "../../../domain/context/account/PublicKey";
 import {RESERVE_DECIMALS} from "../../../domain/context/reserve/Reserve";
+import {Hold} from "../../../domain/context/hold/Hold";
 
 let HederaAdapter: typeof import('@hashgraph/hedera-wallet-connect').HederaAdapter;
 let HederaChainDefinition: typeof import('@hashgraph/hedera-wallet-connect').HederaChainDefinition;
@@ -861,7 +862,7 @@ export class HederaWalletConnectTransactionAdapter extends TransactionAdapter {
 
 
 	//---- HOLDS
-	async createHold(
+	public async createHold(
 		coin: StableCoinCapabilities,
 		amount: BigDecimal,
 		escrow: HederaId,
@@ -870,61 +871,24 @@ export class HederaWalletConnectTransactionAdapter extends TransactionAdapter {
 	): Promise<TransactionResponse> {
 		try {
 			CapabilityDecider.checkContractOperation(coin, Operation.CREATE_HOLD);
+
 			const proxyAddress = this.getProxyAddress(coin);
+			const evmEscrow = await this.getEVMAddress(escrow);
+			const evmTo = await this.getEVMAddress(targetId ?? HederaId.NULL);
+
 			const hold = {
 				amount: amount.toBigInt(),
-				expirationDate: expirationDate.toBigInt(),
-				escrow: await this.getEVMAddress(escrow),
-				to: targetId ? await this.getEVMAddress(targetId) : EVM_ZERO_ADDRESS,
-				data: '0x',
+				expirationTimestamp: expirationDate.toBigInt(),
+				escrow: evmEscrow,
+				to: evmTo,
+				data: "0x",
 			};
+
 			return await this.performOperation(
 				proxyAddress,
 				new ethers.Interface(HoldManagementFacet__factory.abi),
-				'createHold',
-				[hold],
-				CREATE_HOLD_GAS
-			);
-		} catch (error) {
-			LogService.logError(error);
-			throw new SigningError(`Unexpected error in createHold(): ${error}`);
-		}
-	}
-
-	async createHold(
-		coin: StableCoinCapabilities,
-		amount: BigDecimal,
-		escrow: HederaId,
-		expirationDate: BigDecimal,
-		targetId?: HederaId
-	): Promise<TransactionResponse> {
-		try {
-			CapabilityDecider.checkContractOperation(coin, Operation.CREATE_HOLD);
-
-			const proxyAddress = this.getProxyAddress(coin);
-
-			const amountBn = amount?.toBigInt?.();
-			const expBn    = expirationDate?.toBigInt?.();
-			if (amountBn == null || expBn == null) {
-				throw new Error("amount or expirationDate invalid");
-			}
-
-			const escrowAddr = await this.getEVMAddress(escrow);
-			const toAddr     = targetId ? await this.getEVMAddress(targetId) : EVM_ZERO_ADDRESS;
-
-			const holdTuple: [bigint, string, string, bigint, string] = [
-				amountBn,
-				escrowAddr,
-				toAddr,
-				expBn,
-				"0x",
-			];
-
-			return await this.performOperation(
-				proxyAddress,
-				HoldManagementFacet__factory.createInterface(),
 				"createHold",
-				[holdTuple],
+				[hold],
 				CREATE_HOLD_GAS
 			);
 		} catch (error) {
