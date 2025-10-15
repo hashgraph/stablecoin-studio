@@ -5,7 +5,6 @@ import {IHederaTokenManager, RolesStruct} from './Interfaces/IHederaTokenManager
 import {_HEDERA_TOKEN_MANAGER_RESOLVER_KEY} from './constants/resolverKeys.sol';
 import {SupplierAdminStorageWrapper} from './extensions/SupplierAdminStorageWrapper.sol';
 import {ReserveStorageWrapper} from './extensions/ReserveStorageWrapper.sol';
-import {IRoles} from './extensions/Interfaces/IRoles.sol';
 // solhint-disable-next-line max-line-length
 import {IHederaTokenService} from '@hashgraph/smart-contracts/contracts/system-contracts/hedera-token-service/IHederaTokenService.sol';
 import {KeysLib} from './library/KeysLib.sol';
@@ -13,6 +12,7 @@ import {KeysLib} from './library/KeysLib.sol';
 import {IERC20MetadataUpgradeable} from '@openzeppelin/contracts-upgradeable/token/ERC20/extensions/IERC20MetadataUpgradeable.sol';
 import {HederaTokenManagerStorageWrapper} from './HederaTokenManagerStorageWrapper.sol';
 import {IStaticFunctionSelectors} from './resolver/interfaces/resolverProxy/IStaticFunctionSelectors.sol';
+import {ADMIN_ROLE} from './constants/roles.sol';
 
 contract HederaTokenManagerFacet is
     IStaticFunctionSelectors,
@@ -60,7 +60,6 @@ contract HederaTokenManagerFacet is
     {
         _setMetadata(init.tokenMetadataURI);
         __reserveInit(init.reserveAddress); // Initialize reserve
-        __rolesInit();
         _grantInitialRoles(init.originalSender, init.roles, init.cashinRole);
 
         (int64 responseCode, address createdTokenAddress) = IHederaTokenService(_PRECOMPILED_ADDRESS)
@@ -129,12 +128,7 @@ contract HederaTokenManagerFacet is
      */
     function updateToken(
         UpdateTokenStruct calldata updatedToken
-    )
-        external
-        override(IHederaTokenManager)
-        lessThan100(updatedToken.tokenMetadataURI)
-        onlyRole(_getRoleId(IRoles.RoleName.ADMIN))
-    {
+    ) external override(IHederaTokenManager) lessThan100(updatedToken.tokenMetadataURI) onlyRole(ADMIN_ROLE) {
         _setMetadata(updatedToken.tokenMetadataURI);
 
         address currentTokenAddress = _getTokenAddress();
@@ -207,7 +201,7 @@ contract HederaTokenManagerFacet is
         }
 
         // granting admin role, always to the SC creator
-        _grantRole(_getRoleId(IRoles.RoleName.ADMIN), originalSender);
+        _grantRole(ADMIN_ROLE, originalSender);
     }
 
     /**

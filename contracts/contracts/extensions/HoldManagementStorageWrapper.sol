@@ -11,10 +11,10 @@ abstract contract HoldManagementStorageWrapper {
      */
     struct HoldDataStorage {
         int64 totalHeldAmount;
-        mapping(address => int64) totalHeldAmountByAccount;
-        mapping(address => mapping(uint256 => IHoldManagement.HoldData)) holdsByAccountAndId;
-        mapping(address => EnumerableSet.UintSet) holdIdsByAccount;
-        mapping(address => uint256) nextHoldIdByAccount;
+        mapping(address tokenHolder => int64 totalHeldAmount) totalHeldAmountByAccount;
+        mapping(address tokenHolder => mapping(uint256 holdId => IHoldManagement.HoldData holdData)) holdsByAccountAndId;
+        mapping(address tokenHolder => EnumerableSet.UintSet holdIdSet) holdIdsByAccount;
+        mapping(address tokenHolder => uint256 nextHoldId) nextHoldIdByAccount;
     }
 
     function _holdDataStorage() internal pure returns (HoldDataStorage storage holdDataStorage_) {

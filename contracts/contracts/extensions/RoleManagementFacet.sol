@@ -1,11 +1,11 @@
 // SPDX-License-Identifier: MIT
 pragma solidity 0.8.18;
 
-import {IRoles} from './Interfaces/IRoles.sol';
 import {IRoleManagement} from './Interfaces/IRoleManagement.sol';
 import {SupplierAdminStorageWrapper} from './SupplierAdminStorageWrapper.sol';
 import {_ROLE_MANAGEMENT_RESOLVER_KEY} from '../constants/resolverKeys.sol';
 import {IStaticFunctionSelectors} from '../resolver/interfaces/resolverProxy/IStaticFunctionSelectors.sol';
+import {ADMIN_ROLE, _CASHIN_ROLE} from '../constants/roles.sol';
 
 contract RoleManagementFacet is IRoleManagement, IStaticFunctionSelectors, SupplierAdminStorageWrapper {
     /**
@@ -19,15 +19,14 @@ contract RoleManagementFacet is IRoleManagement, IStaticFunctionSelectors, Suppl
         bytes32[] calldata roles,
         address[] calldata accounts,
         uint256[] calldata amounts
-    ) external override(IRoleManagement) onlyRole(_getRoleId(IRoles.RoleName.ADMIN)) {
-        bytes32 cashInRole = _getRoleId(IRoles.RoleName.CASHIN);
-
+    ) external override(IRoleManagement) onlyRole(ADMIN_ROLE) addressesAreNotZero(accounts) {
         for (uint256 i = 0; i < roles.length; i++) {
-            if (roles[i] == cashInRole) {
+            if (roles[i] == _CASHIN_ROLE) {
                 if (accounts.length != amounts.length) revert ArraysLengthNotEqual(accounts.length, amounts.length);
                 for (uint256 j = 0; j < accounts.length; j++) {
-                    if (amounts[j] != 0) _grantSupplierRole(accounts[j], amounts[j]);
-                    else _grantUnlimitedSupplierRole(accounts[j]);
+                    if (amounts[j] == 0) revert AmountIsZero();
+                    if (amounts[j] == type(uint256).max) _grantUnlimitedSupplierRole(accounts[j]);
+                    else _grantSupplierRole(accounts[j], amounts[j]);
                 }
             } else {
                 for (uint256 p = 0; p < accounts.length; p++) {
@@ -46,11 +45,9 @@ contract RoleManagementFacet is IRoleManagement, IStaticFunctionSelectors, Suppl
     function revokeRoles(
         bytes32[] calldata roles,
         address[] calldata accounts
-    ) external override(IRoleManagement) onlyRole(_getRoleId(IRoles.RoleName.ADMIN)) {
-        bytes32 cashInRole = _getRoleId(IRoles.RoleName.CASHIN);
-
+    ) external override(IRoleManagement) onlyRole(ADMIN_ROLE) {
         for (uint256 i = 0; i < roles.length; i++) {
-            if (roles[i] == cashInRole) {
+            if (roles[i] == _CASHIN_ROLE) {
                 for (uint256 j = 0; j < accounts.length; j++) {
                     _revokeSupplierRole(accounts[j]);
                 }

@@ -19,6 +19,7 @@
  */
 
 import { ICommandHandler } from '../../../../../../core/command/CommandHandler.js';
+import { UINT256_MAX } from '../../../../../../core/Constants.js';
 import { CommandHandler } from '../../../../../../core/decorator/CommandHandlerDecorator.js';
 import { lazyInject } from '../../../../../../core/decorator/LazyInjectDecorator.js';
 import BigDecimal from '../../../../../../domain/context/shared/BigDecimal.js';
@@ -72,9 +73,13 @@ export class GrantMultiRolesCommandHandler
 
 		const amountsFormatted: BigDecimal[] = [];
 		amounts.forEach((amount) => {
-			amountsFormatted.push(
-				BigDecimal.fromString(amount, capabilities.coin.decimals),
-			);
+			if (amount == '0') {
+				amountsFormatted.push(BigDecimal.fromString(UINT256_MAX));
+			} else {
+				amountsFormatted.push(
+					BigDecimal.fromString(amount, capabilities.coin.decimals),
+				);
+			}
 		});
 
 		const res = await handler.grantRoles(

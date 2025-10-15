@@ -9,7 +9,7 @@ abstract contract Initializable {
         /**
          * @dev Indicates that the contract is in the process of being initialized.
          */
-        mapping(bytes32 => bool) initialized;
+        mapping(bytes32 facetKey => bool isInitialized) initialized;
     }
 
     /**

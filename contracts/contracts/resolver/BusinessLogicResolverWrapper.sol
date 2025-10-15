@@ -1,7 +1,6 @@
 // SPDX-License-Identifier: MIT
 pragma solidity 0.8.18;
 
-import {IBusinessLogicResolver} from './interfaces/IBusinessLogicResolver.sol';
 import {LibCommon} from '../core/LibCommon.sol';
 import {IBusinessLogicResolverWrapper} from './interfaces/IBusinessLogicResolverWrapper.sol';
 import {IBusinessLogicResolver} from './interfaces/IBusinessLogicResolver.sol';
@@ -10,18 +9,14 @@ import {EnumerableSetBytes4} from '../core/EnumerableSetBytes4.sol';
 
 abstract contract BusinessLogicResolverWrapper is IBusinessLogicResolverWrapper {
     struct BusinessLogicResolverDataStorage {
-        mapping(bytes32 => uint256) latestVersion;
+        mapping(bytes32 facetId => uint256 lastVersion) latestVersion;
         // list of facetIds
         bytes32[] activeBusinessLogics;
-        // facetId -> bool
-        mapping(bytes32 => bool) businessLogicActive;
-        // facetId -> pos (one per vesion) -> version + status + address
-        mapping(bytes32 => IBusinessLogicResolver.BusinessLogicVersion[]) businessLogics;
-        // keccaak256(facetId, version) -> position
-        mapping(bytes32 => uint256) businessLogicVersionIndex;
-        // version to status
-        mapping(bytes32 => mapping(uint256 => IBusinessLogicResolver.VersionStatus)) versionStatuses;
-        mapping(bytes32 => EnumerableSetBytes4.Bytes4Set) selectorBlacklist;
+        mapping(bytes32 facetId => bool isActive) businessLogicActive;
+        mapping(bytes32 facetId => IBusinessLogicResolver.BusinessLogicVersion[] versions) businessLogics;
+        mapping(bytes32 facetIdAndVersion => uint256 index) businessLogicVersionIndex;
+        mapping(bytes32 facetIdAndVersion => IBusinessLogicResolver.VersionStatus status) versionStatuses;
+        mapping(bytes32 configId => EnumerableSetBytes4.Bytes4Set list) selectorBlacklist;
     }
 
     modifier validVersion(bytes32 _businessLogicKey, uint256 _version) {
@@ -71,18 +66,19 @@ abstract contract BusinessLogicResolverWrapper is IBusinessLogicResolverWrapper 
                     businessLogicAddress: _businessLogicsRegistryData.businessLogicAddress
                 })
             );
-            businessLogicResolverDataStorage.businessLogicVersionIndex[
-                keccak256(
-                    abi.encodePacked(
-                        _businessLogicsRegistryData.businessLogicKey,
-                        businessLogicResolverDataStorage.latestVersion[_businessLogicsRegistryData.businessLogicKey]
-                    )
-                )
-            ] = versions.length;
 
-            businessLogicResolverDataStorage.versionStatuses[_businessLogicsRegistryData.businessLogicKey][
-                businessLogicResolverDataStorage.latestVersion[_businessLogicsRegistryData.businessLogicKey]
-            ] = IBusinessLogicResolver.VersionStatus.ACTIVATED;
+            bytes32 facetIdAndVersion = keccak256(
+                abi.encodePacked(
+                    _businessLogicsRegistryData.businessLogicKey,
+                    businessLogicResolverDataStorage.latestVersion[_businessLogicsRegistryData.businessLogicKey]
+                )
+            );
+
+            businessLogicResolverDataStorage.businessLogicVersionIndex[facetIdAndVersion] = versions.length;
+
+            businessLogicResolverDataStorage.versionStatuses[facetIdAndVersion] = IBusinessLogicResolver
+                .VersionStatus
+                .ACTIVATED;
 
             latestVersion_[index] = businessLogicResolverDataStorage.latestVersion[
                 _businessLogicsRegistryData.businessLogicKey
@@ -98,7 +94,9 @@ abstract contract BusinessLogicResolverWrapper is IBusinessLogicResolverWrapper 
         for (uint256 index; index < length; ) {
             bytes4 selector = _selectors[index];
             if (!EnumerableSetBytes4.contains(selectorBlacklist, selector)) {
-                EnumerableSetBytes4.add(selectorBlacklist, selector);
+                if (!EnumerableSetBytes4.add(selectorBlacklist, selector)) {
+                    revert ErrorAddingSelectorToBlacklist(selector);
+                }
             }
             unchecked {
                 ++index;
@@ -114,7 +112,9 @@ abstract contract BusinessLogicResolverWrapper is IBusinessLogicResolverWrapper 
         for (uint256 index; index < length; ) {
             bytes4 selector = _selectors[index];
             if (EnumerableSetBytes4.contains(selectorBlacklist, selector)) {
-                EnumerableSetBytes4.remove(selectorBlacklist, selector);
+                if (!EnumerableSetBytes4.remove(selectorBlacklist, selector)) {
+                    revert ErrorRemovingSelectorFromBlacklist(selector);
+                }
             }
             unchecked {
                 ++index;
@@ -126,7 +126,8 @@ abstract contract BusinessLogicResolverWrapper is IBusinessLogicResolverWrapper 
         bytes32 _key,
         uint256 _version
     ) internal view returns (IBusinessLogicResolver.VersionStatus status_) {
-        status_ = _businessLogicResolverStorage().versionStatuses[_key][_version];
+        bytes32 facetIdAndVersion = keccak256(abi.encodePacked(_key, _version));
+        status_ = _businessLogicResolverStorage().versionStatuses[facetIdAndVersion];
     }
 
     function _getLatestVersion(bytes32 _key) internal view returns (uint256 latestVersion_) {
@@ -226,6 +227,8 @@ abstract contract BusinessLogicResolverWrapper is IBusinessLogicResolverWrapper 
         for (uint256 index; index < length; ) {
             currentKey = _businessLogicsRegistryDatas[index].businessLogicKey;
             if (uint256(currentKey) == 0) revert ZeroKeyNotValidForBusinessLogic();
+            if (_businessLogicsRegistryDatas[index].businessLogicAddress == address(0))
+                revert ZeroAddressNotValidForBusinessLogic();
 
             if (businessLogicResolverDataStorage.businessLogicActive[currentKey]) ++activesBusinessLogicsKeys;
             unchecked {

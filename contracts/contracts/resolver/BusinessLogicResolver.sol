@@ -10,6 +10,13 @@ import {_BUSINESS_LOGIC_RESOLVER_KEY} from '../constants/resolverKeys.sol';
 contract BusinessLogicResolver is IBusinessLogicResolver, DiamondCutManager, Initializable {
     error Unimplemented();
 
+    error EmptyBusinessLogicList();
+
+    modifier noEmptyLogics(BusinessLogicRegistryData[] calldata _businessLogics) {
+        if (_businessLogics.length == 0) revert EmptyBusinessLogicList();
+        _;
+    }
+
     // solhint-disable-next-line func-name-mixedcase
     function initialize_BusinessLogicResolver()
         external
@@ -23,7 +30,7 @@ contract BusinessLogicResolver is IBusinessLogicResolver, DiamondCutManager, Ini
 
     function registerBusinessLogics(
         BusinessLogicRegistryData[] calldata _businessLogics
-    ) external override onlyValidKeys(_businessLogics) onlyRole(ADMIN_ROLE) {
+    ) external override onlyValidKeys(_businessLogics) onlyRole(ADMIN_ROLE) noEmptyLogics(_businessLogics) {
         uint256[] memory latestVersion = _registerBusinessLogics(_businessLogics);
 
         emit BusinessLogicsRegistered(_businessLogics, latestVersion);

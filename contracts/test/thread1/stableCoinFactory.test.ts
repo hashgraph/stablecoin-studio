@@ -222,7 +222,6 @@ describe('StableCoinFactory Tests', function () {
         await expect(deployStableCoin(command)).to.be.rejectedWith(Error)
     })
 
-    // TODO: Check, it does not revert in prevouos versions too if comment the expect()
     it.skip('Create StableCoin setting an initial supply over the reserve, expect it to fail with a very close number', async function () {
         // Deploy Token using Client
         const command = await DeployStableCoinCommand.newInstance({

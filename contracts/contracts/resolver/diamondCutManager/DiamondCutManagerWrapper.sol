@@ -12,25 +12,17 @@ import {EnumerableSetBytes4} from '../../core/EnumerableSetBytes4.sol';
 abstract contract DiamondCutManagerWrapper is IDiamondCutManager, BusinessLogicResolverWrapper {
     struct DiamondCutManagerStorage {
         bytes32[] configurations;
-        mapping(bytes32 => bool) activeConfigurations;
-        mapping(bytes32 => uint256) latestVersion;
-        mapping(bytes32 => uint256) batchVersion;
-        // keccak256(configurationId, version)
-        mapping(bytes32 => bytes32[]) facetIds;
-        // keccak256(configurationId, version)
-        mapping(bytes32 => uint256[]) facetVersions;
-        // keccak256(configurationId, version, selector)
-        mapping(bytes32 => address) facetAddress;
-        // keccak256(configurationId, version, facetId)
-        mapping(bytes32 => address) addr;
-        // keccak256(configurationId, version, facetId)
-        mapping(bytes32 => bytes4[]) selectors;
-        // keccak256(configurationId, version, selector)
-        mapping(bytes32 => bytes32) selectorToFacetId;
-        // keccak256(configurationId, version, facetId)
-        mapping(bytes32 => bytes4[]) interfaceIds;
-        // keccak256(configurationId, version, interfaceId)
-        mapping(bytes32 => bool) supportsInterface;
+        mapping(bytes32 configId => bool isActive) activeConfigurations;
+        mapping(bytes32 configId => uint256 lastVersion) latestVersion;
+        mapping(bytes32 configId => uint256 pendingVersion) batchVersion;
+        mapping(bytes32 configIdAndVersion => bytes32[] facetIdList) facetIds;
+        mapping(bytes32 configIdAndVersion => uint256[] facetVersions) facetVersions;
+        mapping(bytes32 configIdAndVersionAndSelector => address facetAddress) facetAddress;
+        mapping(bytes32 configIdAndVersionAndFacetId => address facetAddress) addr;
+        mapping(bytes32 configIdAndVersionAndFacetId => bytes4[] selectorList) selectors;
+        mapping(bytes32 configIdAndVersionAndSelector => bytes32 facetId) selectorToFacetId;
+        mapping(bytes32 configIdAndVersionAndFacetId => bytes4[] interfaceList) interfaceIds;
+        mapping(bytes32 configIdAndVersionAndInterfaceId => bool isSupported) supportsInterface;
     }
 
     function _createConfiguration(
@@ -95,7 +87,6 @@ abstract contract DiamondCutManagerWrapper is IDiamondCutManager, BusinessLogicR
 
             address addr = _resolveBusinessLogicByVersion(facetId, facetVersion);
 
-            // TODO: is better a checkFacetRegistered in BusinessLogicResolverWrapper??
             if (addr == address(0)) {
                 revert FacetIdNotRegistered(_configurationId, facetId);
             }
@@ -414,8 +405,15 @@ abstract contract DiamondCutManagerWrapper is IDiamondCutManager, BusinessLogicR
         for (uint256 index; index < length; ) {
             bytes4 selector = selectors[index];
             bytes32 configVersionSelectorHash = _buildHashSelector(_configurationId, _version, selector);
-            _dcms.facetAddress[configVersionSelectorHash] = selectorAddress;
-            _dcms.selectorToFacetId[configVersionSelectorHash] = _facetId;
+
+            if (_dcms.facetAddress[configVersionSelectorHash] != address(0)) {
+                address previousFacetAddress = _dcms.facetAddress[configVersionSelectorHash];
+                if (previousFacetAddress != selectorAddress)
+                    revert SelectorAlreadyRegistered(previousFacetAddress, selectorAddress);
+            } else {
+                _dcms.facetAddress[configVersionSelectorHash] = selectorAddress;
+                _dcms.selectorToFacetId[configVersionSelectorHash] = _facetId;
+            }
             unchecked {
                 ++index;
             }
@@ -466,7 +464,6 @@ abstract contract DiamondCutManagerWrapper is IDiamondCutManager, BusinessLogicR
         }
     }
 
-    // TODO: Move to a separate file.
     function _buildHash(bytes32 _configurationId, uint256 _version) private pure returns (bytes32 hash_) {
         hash_ = keccak256(abi.encodePacked(_configurationId, _version));
     }

@@ -2,10 +2,10 @@
 pragma solidity 0.8.18;
 
 import {IReserve} from './Interfaces/IReserve.sol';
-import {IRoles} from './Interfaces/IRoles.sol';
 import {ReserveStorageWrapper} from './ReserveStorageWrapper.sol';
 import {_RESERVE_RESOLVER_KEY} from '../constants/resolverKeys.sol';
 import {IStaticFunctionSelectors} from '../resolver/interfaces/resolverProxy/IStaticFunctionSelectors.sol';
+import {ADMIN_ROLE} from '../constants/roles.sol';
 
 contract ReserveFacet is IReserve, IStaticFunctionSelectors, ReserveStorageWrapper {
     /**
@@ -21,9 +21,7 @@ contract ReserveFacet is IReserve, IStaticFunctionSelectors, ReserveStorageWrapp
      *
      * @param newAddress The new reserve address. Can be set to 0.0.0 (zero address) to disable the reserve.
      */
-    function updateReserveAddress(
-        address newAddress
-    ) external override(IReserve) onlyRole(_getRoleId(IRoles.RoleName.ADMIN)) {
+    function updateReserveAddress(address newAddress) external override(IReserve) onlyRole(ADMIN_ROLE) {
         address previous = _reserveStorage().reserveAddress;
         _reserveStorage().reserveAddress = newAddress;
         emit ReserveAddressChanged(previous, newAddress);
