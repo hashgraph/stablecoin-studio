@@ -61,7 +61,6 @@ import {
 	ASSOCIATE_GAS,
 	BURN_GAS,
 	CASHIN_GAS,
-	CONTROLLER_CREATE_HOLD_GAS,
 	CREATE_HOLD_GAS,
 	CREATE_SC_GAS,
 	DECREASE_SUPPLY_GAS,
@@ -104,7 +103,6 @@ import EventService from '../../../app/service/event/EventService';
 import NetworkService from '../../../app/service/NetworkService';
 import {MirrorNodeAdapter} from '../mirror/MirrorNodeAdapter';
 import {QueryBus} from '../../../core/query/QueryBus';
-import {SupportedWallets} from '@hashgraph/stablecoin-npm-sdk';
 import {Operation, WalletEvents} from '../../in';
 import Injectable from '../../../core/Injectable';
 import {TransactionType} from '../TransactionResponseEnums';
@@ -112,13 +110,13 @@ import TransactionResponse from '../../../domain/context/transaction/Transaction
 import {WalletPairedEvent} from '../../../app/service/event/WalletEvent';
 import {SigningError} from '../hs/error/SigningError';
 import StableCoinCapabilities from "../../../domain/context/stablecoin/StableCoinCapabilities";
-import {CapabilityDecider, Decision} from "../CapabilityDecider";
+import {CapabilityDecider} from "../CapabilityDecider";
 import {CustomFee as HCustomFee} from "@hashgraph/sdk/lib/exports";
 import {fromHCustomFeeToSCFee, SC_FixedFee, SC_FractionalFee} from "../../../domain/context/fee/CustomFee";
 import PublicKey from "../../../domain/context/account/PublicKey";
 import {RESERVE_DECIMALS} from "../../../domain/context/reserve/Reserve";
-import {Hold} from "../../../domain/context/hold/Hold";
 
+const { SupportedWallets } = require('@hashgraph/stablecoin-npm-sdk') as any;
 let HederaAdapter: typeof import('@hashgraph/hedera-wallet-connect').HederaAdapter;
 let HederaChainDefinition: typeof import('@hashgraph/hedera-wallet-connect').HederaChainDefinition;
 let hederaNamespace: typeof import('@hashgraph/hedera-wallet-connect').hederaNamespace;
@@ -903,22 +901,34 @@ export class HederaWalletConnectTransactionAdapter extends TransactionAdapter {
 		amount: BigDecimal,
 		sourceId: HederaId,
 		holdId: number,
-		targetId?: HederaId
+		target?: HederaId
 	): Promise<TransactionResponse> {
 		try {
 			CapabilityDecider.checkContractOperation(coin, Operation.EXECUTE_HOLD);
 			const proxyAddress = this.getProxyAddress(coin);
-			const holdIdentifier = { tokenHolder: await this.getEVMAddress(sourceId), holdId };
-			const target = targetId ? await this.getEVMAddress(targetId) : EVM_ZERO_ADDRESS;
+
+			const amt = amount.toBigInt();
+			const MIN_I64 = -((1n << 63n));
+			const MAX_I64 =  (1n << 63n) - 1n;
+			if (amt < MIN_I64 || amt > MAX_I64) {
+				throw new Error(`Amount ${amt} out of int64 range for HTS (use token's tiny units, no 18 decimals).`);
+			}
+
+			const holdIdentifier = {
+				tokenHolder: await this.getEVMAddress(sourceId),
+				holdId: BigInt(holdId)
+			};
+			const targetId = target ? await this.getEVMAddress(target) : EVM_ZERO_ADDRESS;
+
 			return await this.performOperation(
 				proxyAddress,
 				new ethers.Interface(HoldManagementFacet__factory.abi),
 				'executeHold',
-				[amount.toBigInt(), holdIdentifier, target],
+				[holdIdentifier, targetId, amount.toBigInt()],
 				EXECUTE_HOLD_GAS
 			);
 		} catch (error) {
-			LogService.logError(error);
+			console.log(error);
 			throw new SigningError(`Unexpected error in executeHold(): ${error}`);
 		}
 	}
@@ -937,7 +947,7 @@ export class HederaWalletConnectTransactionAdapter extends TransactionAdapter {
 				proxyAddress,
 				new ethers.Interface(HoldManagementFacet__factory.abi),
 				'releaseHold',
-				[amount.toBigInt(), holdIdentifier],
+				[holdIdentifier, amount.toBigInt()],
 				RELEASE_HOLD_GAS
 			);
 		} catch (error) {
@@ -1241,34 +1251,51 @@ export class HederaWalletConnectTransactionAdapter extends TransactionAdapter {
 		payableAmountHbar?: string,
 		responseOptions?: { eventName: string; contract: ethers.BaseContract }
 	): Promise<TransactionResponse> {
-		this.ensureInitialized();
-		if (!this.account.evmAddress) throw new Error('Account EVM address is not set');
+		try{
+			this.ensureInitialized();
+			if (!this.account.evmAddress) throw new Error('Account EVM address is not set');
 
-		const data = iface.encodeFunctionData(functionName, params);
-		const chainRef = this.currentEvmChainRef();
+			const data = iface.encodeFunctionData(functionName, params);
+			const chainRef = this.currentEvmChainRef();
 
-		const txParams: any = {
-			from: this.account.evmAddress,
-			to: proxyAddress,
-			data,
-			gas: ethers.toBeHex(gasLimit),
-		};
+			const txParams: any = {
+				from: this.account.evmAddress,
+				to: proxyAddress,
+				data,
+				gas: ethers.toBeHex(gasLimit),
+			};
 
-		if (payableAmountHbar) {
-			txParams.value = ethers.toBeHex(ethers.parseEther(payableAmountHbar));
+			if (payableAmountHbar) {
+				txParams.value = ethers.toBeHex(ethers.parseEther(payableAmountHbar));
+			}
+
+			console.log('=== TX PARAMS ===');
+			console.log('From:', txParams.from);
+			console.log('To:', txParams.to);
+			console.log('Data:', txParams.data);
+			console.log('Gas:', txParams.gas);
+			console.log('Value:', txParams.value);
+			console.log('Chain ref:', chainRef);
+			console.log('=================');
+
+
+			const txHash = await this.hederaProvider!.request({ method: 'eth_sendTransaction', params: [txParams] }, chainRef);
+			const provider = this.rpcProvider();
+			const receipt = await provider.waitForTransaction(txHash as string);
+
+			const responsePayload = { hash: txHash, wait: () => Promise.resolve(receipt) } as any;
+
+			return RPCTransactionResponseAdapter.manageResponse(
+				responsePayload,
+				this.networkService.environment,
+				responseOptions
+			);
+		} catch (e) {
+			console.log('=== FULL ERROR ===');
+			console.log(e);
+			console.log('==================');
+			throw e;
 		}
-
-		const txHash = await this.hederaProvider!.request({ method: 'eth_sendTransaction', params: [txParams] }, chainRef);
-		const provider = this.rpcProvider();
-		const receipt = await provider.waitForTransaction(txHash as string);
-
-		const responsePayload = { hash: txHash, wait: () => Promise.resolve(receipt) } as any;
-
-		return RPCTransactionResponseAdapter.manageResponse(
-			responsePayload,
-			this.networkService.environment,
-			responseOptions
-		);
 	}
 
 	private ensureInitialized(): void {
