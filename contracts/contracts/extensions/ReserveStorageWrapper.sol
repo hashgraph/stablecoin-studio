@@ -38,8 +38,9 @@ abstract contract ReserveStorageWrapper is IReserveStorageWrapper, TokenOwnerSto
         if (reserveAddress == address(0)) return true;
 
         (int256 reserveAmount, uint256 updatedAt) = _getReserveAmount();
-        if (_getUpdatedAtThreshold() > 0 || updatedAt > _getUpdatedAtThreshold())
+        if (_getUpdatedAtThreshold() > 0 && updatedAt > _getUpdatedAtThreshold()) {
             revert ReserveAmountOutdated(updatedAt, _getUpdatedAtThreshold());
+        }
         assert(reserveAmount >= 0);
 
         uint256 currentReserve = uint256(reserveAmount);
