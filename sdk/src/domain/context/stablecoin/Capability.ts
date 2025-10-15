@@ -42,7 +42,7 @@ export enum Operation {
 	RECLAIM_HOLD = 'Reclaim_Hold',
 	GRANT_KYC = 'Grant_KYC',
 	REVOKE_KYC = 'Revoke_KYC',
-	CREATE_CUSTOM_FEE = 'Create_Custom_Fee',
+	CREATE_CUSTOM_FEE = 'updateTokenCustomFees',
 	REMOVE_CUSTOM_FEE = 'Remove_Custom_Fee',
 	TRANSFERS = 'Transfers',
 	UPDATE = 'Update',

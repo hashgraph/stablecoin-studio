@@ -848,7 +848,7 @@ export class HederaWalletConnectTransactionAdapter extends TransactionAdapter {
 			return await this.performOperation(
 				proxyAddress,
 				new ethers.Interface(CustomFeesFacet__factory.abi),
-				'setCustomFees',
+				'updateTokenCustomFees',
 				[fixedFees, fractionalFees],
 				UPDATE_CUSTOM_FEES_GAS
 			);
@@ -895,7 +895,7 @@ export class HederaWalletConnectTransactionAdapter extends TransactionAdapter {
 		}
 	}
 
-
+	//TODO: fix
 	async executeHold(
 		coin: StableCoinCapabilities,
 		amount: BigDecimal,
@@ -933,6 +933,7 @@ export class HederaWalletConnectTransactionAdapter extends TransactionAdapter {
 		}
 	}
 
+	//TODO: fix
 	async releaseHold(
 		coin: StableCoinCapabilities,
 		amount: BigDecimal,
@@ -956,6 +957,7 @@ export class HederaWalletConnectTransactionAdapter extends TransactionAdapter {
 		}
 	}
 
+	//TODO: fix
 	async reclaimHold(coin: StableCoinCapabilities, sourceId: HederaId, holdId: number): Promise<TransactionResponse> {
 		try {
 			CapabilityDecider.checkContractOperation(coin, Operation.RECLAIM_HOLD);
