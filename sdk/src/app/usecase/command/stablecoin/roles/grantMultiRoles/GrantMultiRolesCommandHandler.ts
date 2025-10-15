@@ -73,15 +73,9 @@ export class GrantMultiRolesCommandHandler
 
 		const amountsFormatted: BigDecimal[] = [];
 		amounts.forEach((amount) => {
-			if (amount == '0') {
-				amountsFormatted.push(
-					BigDecimal.fromString(UINT256_MAX.toString()),
-				);
-			} else {
-				amountsFormatted.push(
-					BigDecimal.fromString(amount, capabilities.coin.decimals),
-				);
-			}
+			amountsFormatted.push(
+				BigDecimal.fromString(amount, capabilities.coin.decimals),
+			);
 		});
 
 		const res = await handler.grantRoles(

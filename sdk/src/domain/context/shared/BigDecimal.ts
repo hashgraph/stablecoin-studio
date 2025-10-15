@@ -75,14 +75,7 @@ export default class BigDecimal {
 		decimals?: number,
 	) {
 		if (typeof value === 'string') {
-			if (value.length > 50) {
-				// crude check for huge numbers
-				this.#fn = FixedNumber.fromValue(
-					BigInt(value),
-					decimals,
-					format,
-				);
-			} else this.#fn = FixedNumber.fromString(value, format);
+			this.#fn = FixedNumber.fromString(value, format);
 		} else {
 			this.#fn = FixedNumber.fromValue(value, decimals, format);
 		}
