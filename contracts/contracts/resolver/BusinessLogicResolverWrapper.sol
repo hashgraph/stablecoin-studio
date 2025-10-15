@@ -9,14 +9,16 @@ import {EnumerableSetBytes4} from '../core/EnumerableSetBytes4.sol';
 
 abstract contract BusinessLogicResolverWrapper is IBusinessLogicResolverWrapper {
     struct BusinessLogicResolverDataStorage {
-        mapping(bytes32 facetId => uint256 lastVersion) latestVersion;
+        uint256 deprecatedLatestVersion; // not used anymore but left for retrocompatibility
         // list of facetIds
         bytes32[] activeBusinessLogics;
         mapping(bytes32 facetId => bool isActive) businessLogicActive;
         mapping(bytes32 facetId => IBusinessLogicResolver.BusinessLogicVersion[] versions) businessLogics;
         mapping(bytes32 facetIdAndVersion => uint256 index) businessLogicVersionIndex;
-        mapping(bytes32 facetIdAndVersion => IBusinessLogicResolver.VersionStatus status) versionStatuses;
+        mapping(uint256 version => IBusinessLogicResolver.VersionStatus status) deprecatedVersionStatuses; // not used anymore but left for retrocompatibility
         mapping(bytes32 configId => EnumerableSetBytes4.Bytes4Set list) selectorBlacklist;
+        mapping(bytes32 facetId => uint256 lastVersion) latestVersionByFacetId;
+        mapping(bytes32 facetIdAndVersion => IBusinessLogicResolver.VersionStatus status) statusByFacetIdAndVersion;
     }
 
     modifier validVersion(bytes32 _businessLogicKey, uint256 _version) {
@@ -41,7 +43,7 @@ abstract contract BusinessLogicResolverWrapper is IBusinessLogicResolverWrapper 
         for (uint256 index; index < _businessLogicsRegistryDatas.length; index++) {
             _businessLogicsRegistryData = _businessLogicsRegistryDatas[index];
 
-            businessLogicResolverDataStorage.latestVersion[_businessLogicsRegistryData.businessLogicKey]++;
+            businessLogicResolverDataStorage.latestVersionByFacetId[_businessLogicsRegistryData.businessLogicKey]++;
 
             if (!businessLogicResolverDataStorage.businessLogicActive[_businessLogicsRegistryData.businessLogicKey]) {
                 businessLogicResolverDataStorage.businessLogicActive[
@@ -58,7 +60,7 @@ abstract contract BusinessLogicResolverWrapper is IBusinessLogicResolverWrapper 
             versions.push(
                 IBusinessLogicResolver.BusinessLogicVersion({
                     versionData: IBusinessLogicResolver.VersionData({
-                        version: businessLogicResolverDataStorage.latestVersion[
+                        version: businessLogicResolverDataStorage.latestVersionByFacetId[
                             _businessLogicsRegistryData.businessLogicKey
                         ],
                         status: IBusinessLogicResolver.VersionStatus.ACTIVATED
@@ -70,17 +72,19 @@ abstract contract BusinessLogicResolverWrapper is IBusinessLogicResolverWrapper 
             bytes32 facetIdAndVersion = keccak256(
                 abi.encodePacked(
                     _businessLogicsRegistryData.businessLogicKey,
-                    businessLogicResolverDataStorage.latestVersion[_businessLogicsRegistryData.businessLogicKey]
+                    businessLogicResolverDataStorage.latestVersionByFacetId[
+                        _businessLogicsRegistryData.businessLogicKey
+                    ]
                 )
             );
 
             businessLogicResolverDataStorage.businessLogicVersionIndex[facetIdAndVersion] = versions.length;
 
-            businessLogicResolverDataStorage.versionStatuses[facetIdAndVersion] = IBusinessLogicResolver
+            businessLogicResolverDataStorage.statusByFacetIdAndVersion[facetIdAndVersion] = IBusinessLogicResolver
                 .VersionStatus
                 .ACTIVATED;
 
-            latestVersion_[index] = businessLogicResolverDataStorage.latestVersion[
+            latestVersion_[index] = businessLogicResolverDataStorage.latestVersionByFacetId[
                 _businessLogicsRegistryData.businessLogicKey
             ];
         }
@@ -127,11 +131,11 @@ abstract contract BusinessLogicResolverWrapper is IBusinessLogicResolverWrapper 
         uint256 _version
     ) internal view returns (IBusinessLogicResolver.VersionStatus status_) {
         bytes32 facetIdAndVersion = keccak256(abi.encodePacked(_key, _version));
-        status_ = _businessLogicResolverStorage().versionStatuses[facetIdAndVersion];
+        status_ = _businessLogicResolverStorage().statusByFacetIdAndVersion[facetIdAndVersion];
     }
 
     function _getLatestVersion(bytes32 _key) internal view returns (uint256 latestVersion_) {
-        latestVersion_ = _businessLogicResolverStorage().latestVersion[_key];
+        latestVersion_ = _businessLogicResolverStorage().latestVersionByFacetId[_key];
     }
 
     function _resolveLatestBusinessLogic(
@@ -139,7 +143,7 @@ abstract contract BusinessLogicResolverWrapper is IBusinessLogicResolverWrapper 
     ) internal view returns (address businessLogicAddress_) {
         businessLogicAddress_ = _resolveBusinessLogicByVersion(
             _businessLogicKey,
-            _businessLogicResolverStorage().latestVersion[_businessLogicKey]
+            _businessLogicResolverStorage().latestVersionByFacetId[_businessLogicKey]
         );
     }
 
@@ -209,7 +213,7 @@ abstract contract BusinessLogicResolverWrapper is IBusinessLogicResolverWrapper 
     }
 
     function _checkValidVersion(bytes32 _businessLogicKey, uint256 _version) private view {
-        if (_version == 0 || _version > _businessLogicResolverStorage().latestVersion[_businessLogicKey])
+        if (_version == 0 || _version > _businessLogicResolverStorage().latestVersionByFacetId[_businessLogicKey])
             revert BusinessLogicVersionDoesNotExist(_version);
     }
 
