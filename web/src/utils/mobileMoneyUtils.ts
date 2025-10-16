@@ -158,9 +158,15 @@ export function parseCSV(csvText: string): TransactionRow[] {
                         : 'OTHER';
                 
                 const amountStr = amountIdx >= 0 ? values[amountIdx] : '';
-                const amount = amountStr
+                let amount = amountStr
                         ? parseFloat(amountStr.replace(/[^\d.-]/g, ''))
                         : undefined;
+                
+                // Reject aberrant amounts (> 10 million - likely parsing error)
+                if (amount !== undefined && !isNaN(amount) && Math.abs(amount) > 10000000) {
+                        console.warn(`⚠️ Rejected aberrant amount: ${amount} on ${timestamp.toISOString().split('T')[0]}`);
+                        amount = undefined;
+                }
                 
                 const soldeStr = soldeIdx >= 0 ? values[soldeIdx] : '';
                 const solde = soldeStr
