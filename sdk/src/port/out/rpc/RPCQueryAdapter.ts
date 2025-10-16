@@ -134,10 +134,12 @@ export class RPCQueryAdapter {
 
 	async getReserveAmount(address: EvmAddress): Promise<bigint> {
 		LogService.logTrace(`Requesting getReserveAmount address: ${address}`);
-		return await this.connect(
-			ReserveFacet,
-			address.toString(),
-		).getReserveAmount();
+		return (
+			await this.connect(
+				ReserveFacet,
+				address.toString(),
+			).getReserveAmount()
+		)[0];
 	}
 
 	async getReserveLatestRoundData(address: EvmAddress): Promise<bigint[]> {
