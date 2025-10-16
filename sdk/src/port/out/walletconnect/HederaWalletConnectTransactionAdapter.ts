@@ -115,6 +115,7 @@ import {CustomFee as HCustomFee} from "@hashgraph/sdk/lib/exports";
 import {fromHCustomFeeToSCFee, SC_FixedFee, SC_FractionalFee} from "../../../domain/context/fee/CustomFee";
 import PublicKey from "../../../domain/context/account/PublicKey";
 import {RESERVE_DECIMALS} from "../../../domain/context/reserve/Reserve";
+import {HoldIdentifier} from "../../../domain/context/hold/Hold";
 
 const { SupportedWallets } = require('@hashgraph/stablecoin-npm-sdk') as any;
 let HederaAdapter: typeof import('@hashgraph/hedera-wallet-connect').HederaAdapter;
@@ -907,17 +908,8 @@ export class HederaWalletConnectTransactionAdapter extends TransactionAdapter {
 			CapabilityDecider.checkContractOperation(coin, Operation.EXECUTE_HOLD);
 			const proxyAddress = this.getProxyAddress(coin);
 
-			const amt = amount.toBigInt();
-			const MIN_I64 = -((1n << 63n));
-			const MAX_I64 =  (1n << 63n) - 1n;
-			if (amt < MIN_I64 || amt > MAX_I64) {
-				throw new Error(`Amount ${amt} out of int64 range for HTS (use token's tiny units, no 18 decimals).`);
-			}
+			const holdIdentifier: HoldIdentifier = { tokenHolder: await this.getEVMAddress(sourceId), holdId };
 
-			const holdIdentifier = {
-				tokenHolder: await this.getEVMAddress(sourceId),
-				holdId: BigInt(holdId)
-			};
 			const targetId = target ? await this.getEVMAddress(target) : EVM_ZERO_ADDRESS;
 
 			return await this.performOperation(
@@ -927,6 +919,7 @@ export class HederaWalletConnectTransactionAdapter extends TransactionAdapter {
 				[holdIdentifier, targetId, amount.toBigInt()],
 				EXECUTE_HOLD_GAS
 			);
+
 		} catch (error) {
 			console.log(error);
 			throw new SigningError(`Unexpected error in executeHold(): ${error}`);
@@ -957,7 +950,6 @@ export class HederaWalletConnectTransactionAdapter extends TransactionAdapter {
 		}
 	}
 
-	//TODO: fix
 	async reclaimHold(coin: StableCoinCapabilities, sourceId: HederaId, holdId: number): Promise<TransactionResponse> {
 		try {
 			CapabilityDecider.checkContractOperation(coin, Operation.RECLAIM_HOLD);
@@ -1270,16 +1262,6 @@ export class HederaWalletConnectTransactionAdapter extends TransactionAdapter {
 			if (payableAmountHbar) {
 				txParams.value = ethers.toBeHex(ethers.parseEther(payableAmountHbar));
 			}
-
-			console.log('=== TX PARAMS ===');
-			console.log('From:', txParams.from);
-			console.log('To:', txParams.to);
-			console.log('Data:', txParams.data);
-			console.log('Gas:', txParams.gas);
-			console.log('Value:', txParams.value);
-			console.log('Chain ref:', chainRef);
-			console.log('=================');
-
 
 			const txHash = await this.hederaProvider!.request({ method: 'eth_sendTransaction', params: [txParams] }, chainRef);
 			const provider = this.rpcProvider();

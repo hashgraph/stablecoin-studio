@@ -10,7 +10,6 @@
   ],
   "license": "Apache-2.0",
   "scripts": {
-    "reown": "npm run build:sdk && cd ./web && npm run start",
     "setup": "npm run install:all",
     "install:all": "npm install && npm run build --workspaces",
     "install:backend": "npm install --worksp.ace=backend",
