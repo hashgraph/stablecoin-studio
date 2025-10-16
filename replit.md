@@ -10,6 +10,37 @@ Preferred communication style: Simple, everyday language.
 
 # Recent Changes
 
+## Analytics Page (October 16, 2025)
+
+Created a new "Analytics" page to visualize the relationship between stablecoin total supply and mobile money reserve balance.
+
+**Files Created**:
+- `web/src/views/Analytics/index.tsx` - Analytics page component with pie chart
+
+**Files Modified**:
+- `web/src/Router/NamedRoutes.ts` - Added Analytics route name
+- `web/src/Router/RoutesMappingUrl.ts` - Added /analytics URL mapping
+- `web/src/Router/Router.tsx` - Added Analytics route in public zone (no wallet connection required)
+- `web/src/layout/sidebar/Sidebar.tsx` - Added Analytics button with ChartPie icon
+- `web/src/translations/en/global.json` - Added analytics translations
+- `web/src/views/MobileMoneyManagement/index.tsx` - Now stores last balance in localStorage for Analytics
+
+**Features**:
+- Pie chart comparing Total Supply (from selected stablecoin) vs Mobile Money Reserve (last balance from CSV)
+- Three key statistics: Total Supply, Mobile Money Reserve, Coverage Ratio (%)
+- Smart alerts:
+  - Warning if no stablecoin selected → prompts to select one
+  - Info if no CSV uploaded → prompts to upload in Mobile Money Management
+  - Success if reserve ≥ total supply (fully collateralized)
+  - Warning if reserve < total supply (under-collateralized)
+- Plotly.js pie chart with interactive hover tooltips
+- Accessible without wallet connection (public route)
+
+**Data Flow**:
+- Mobile Money Management stores last balance in `localStorage.mobileMoneyLastBalance`
+- Analytics reads total supply from Redux (`SELECTED_WALLET_COIN`)
+- Compares both values to calculate coverage ratio
+
 ## Mobile Money Management Feature (October 14, 2025)
 
 Added a new "Mobile Money Management" section as a dedicated sidebar item for analyzing mobile money transaction data.
