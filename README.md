@@ -272,6 +272,11 @@ V2 smart contracts are not compatible with V1.
 
 If you have deployed Stablecoins in V1 and want to migrate them to V2 please follow the procedure described in the `contracts/README`document `V1 to V2 migration` section.
 
+# V2 to V3 Migration
+V3 BLR smart contracts are not compatible with V2.
+
+If you have deployed Stablecoins that refer to a BLR V2 and want them to start refering to a BLR V3 please follow the procedure described in the `contracts/README`document `V2 to V3 migration` section.
+
 # Testnet reset procedure
 
 Whenever a testnet reset occurs, the factories must be re-deployed and the addresses on the SDK must be updated.
