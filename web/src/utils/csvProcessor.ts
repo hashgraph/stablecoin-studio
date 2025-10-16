@@ -188,6 +188,10 @@ export function computeDailyFlows(transactions: TransactionRow[]): DailyFlows {
         const dailyMap = new Map<number, { in: number; out: number; balance?: number }>();
         
         transactions.forEach((tx) => {
+                if (tx.type === 'AUTRE' || tx.type === 'OTP' || tx.type === 'FAIL') {
+                        return;
+                }
+                
                 const dayStart = startOfDay(tx.timestamp).getTime();
                 const entry = dailyMap.get(dayStart) || { in: 0, out: 0 };
                 
