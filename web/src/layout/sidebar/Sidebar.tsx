@@ -72,11 +72,18 @@ const Sidebar = () => {
                 route: NamedRoutes.MobileMoneyManagement,
         };
 
+        const analyticsProperties: optionsProps = {
+                icon: 'ChartPie',
+                title: t('sidebar.analytics'),
+                route: NamedRoutes.Analytics,
+        };
+
         if (process.env.REACT_APP_SHOW_CONFIG === 'true') {
                 options.push(appProperties);
         }
 
         options.push(mobileMoneyProperties);
+        options.push(analyticsProperties);
 
         return (
                 <Flex

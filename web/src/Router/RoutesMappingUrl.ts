@@ -44,4 +44,5 @@ export const RoutesMappingUrl: Record<NamedRoutes, string> = {
         [NamedRoutes.HoldReclaim]: '/operations/hold/reclaim',
         [NamedRoutes.HoldRelease]: '/operations/hold/release',
         [NamedRoutes.MobileMoneyManagement]: '/mobile-money-management',
+        [NamedRoutes.Analytics]: '/analytics',
 };

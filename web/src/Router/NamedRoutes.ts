@@ -39,4 +39,5 @@ export enum NamedRoutes {
         FactorySettings = 'factorySettings',
         MultiSigTransactions = 'multiSigTransactions',
         MobileMoneyManagement = 'mobileMoneyManagement',
+        Analytics = 'analytics',
 }
