@@ -53,7 +53,8 @@
                 "settings": "Settings",
                 "appSettings": "Network settings",
                 "multiSigTransactions": "Multi-sig transactions",
-                "mobileMoneyManagement": "Mobile Money Management"
+                "mobileMoneyManagement": "Mobile Money Management",
+                "analytics": "Analytics"
         },
         "validations": {
                 "required": "This field is required",
@@ -104,5 +105,18 @@
                 "balanceChart": "Balance Over Time",
                 "csvLoaded": "CSV Loaded Successfully",
                 "csvError": "Error Loading CSV"
+        },
+        "analytics": {
+                "title": "Analytics",
+                "description": "Compare your stablecoin total supply with mobile money reserve balance",
+                "noStablecoin": "No Stablecoin Selected",
+                "selectStablecoin": "Please select a stablecoin to view analytics",
+                "noReserve": "No Mobile Money Reserve Data",
+                "uploadCSV": "Please upload a CSV file in Mobile Money Management to track your reserve balance",
+                "supplyVsReserve": "Total Supply vs Mobile Money Reserve",
+                "underCollateralized": "Under-Collateralized",
+                "reserveInsufficient": "Your mobile money reserve is below the total stablecoin supply",
+                "fullyCollateralized": "Fully Collateralized",
+                "reserveSufficient": "Your mobile money reserve covers the total stablecoin supply"
         }
 }

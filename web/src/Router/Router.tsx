@@ -54,6 +54,7 @@ import { ReleaseOperationHold } from '../views/Operations/Hold/Operations/Releas
 import { ReclaimOperationHold } from '../views/Operations/Hold/Operations/Reclaim/index';
 import { ListOperationHold } from '../views/Operations/Hold/Operations/List/index';
 import MobileMoneyManagement from '../views/MobileMoneyManagement';
+import Analytics from '../views/Analytics';
 
 const LoginOverlayRoute = ({ show, loadingSC }: { show: boolean; loadingSC: boolean }) => {
         return (
@@ -163,6 +164,7 @@ const Router = () => {
                                 >
                                         <Route path={RoutesMappingUrl.appSettings} element={<AppSettings />} />
                                         <Route path={RoutesMappingUrl.mobileMoneyManagement} element={<MobileMoneyManagement />} />
+                                        <Route path={RoutesMappingUrl.analytics} element={<Analytics />} />
                                 </Route>
                                 {/* Private routes */}
                                 <Route
