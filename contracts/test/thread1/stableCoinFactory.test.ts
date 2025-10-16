@@ -134,9 +134,10 @@ describe('StableCoinFactory Tests', function () {
         const reserveAddress = reserveFacet.getReserveAddress({
             gasLimit: GAS_LIMIT.hederaTokenManager.getReserveAddress,
         })
-        const reserveAmount = reserveFacet.getReserveAmount({
+        const result = await reserveFacet.getReserveAmount({
             gasLimit: GAS_LIMIT.hederaTokenManager.getReserveAmount,
         })
+        const reserveAmount = result[0]
 
         expect(await reserveAddress).to.equal(ADDRESS_ZERO)
         expect(await reserveAmount).to.equal(0)
@@ -170,9 +171,10 @@ describe('StableCoinFactory Tests', function () {
         const reserveAddress = reserveFacet.getReserveAddress({
             gasLimit: GAS_LIMIT.hederaTokenManager.getReserveAddress,
         })
-        const reserveAmount = reserveFacet.getReserveAmount({
+        const result = await reserveFacet.getReserveAmount({
             gasLimit: GAS_LIMIT.hederaTokenManager.getReserveAmount,
         })
+        const reserveAmount = result[0]
 
         expect(await reserveAddress).not.to.equal(ADDRESS_ZERO)
         expect((await reserveAmount).toString()).to.equal(toReserve(DEFAULT_TOKEN.initialSupply).toString())

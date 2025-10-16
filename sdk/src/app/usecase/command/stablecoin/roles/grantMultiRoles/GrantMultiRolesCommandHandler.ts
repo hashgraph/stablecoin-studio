@@ -19,7 +19,6 @@
  */
 
 import { ICommandHandler } from '../../../../../../core/command/CommandHandler.js';
-import { UINT256_MAX } from '../../../../../../core/Constants.js';
 import { CommandHandler } from '../../../../../../core/decorator/CommandHandlerDecorator.js';
 import { lazyInject } from '../../../../../../core/decorator/LazyInjectDecorator.js';
 import BigDecimal from '../../../../../../domain/context/shared/BigDecimal.js';

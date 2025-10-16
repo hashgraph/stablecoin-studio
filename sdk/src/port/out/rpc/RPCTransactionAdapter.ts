@@ -754,10 +754,12 @@ export default class RPCTransactionAdapter extends TransactionAdapter {
 					message: `StableCoin ${coin.coin.name} does not have a proxy address`,
 				});
 
-			const res = await ReserveFacet__factory.connect(
-				coin.coin.evmProxyAddress?.toString(),
-				this.signerOrProvider,
-			).getReserveAmount();
+			const res = (
+				await ReserveFacet__factory.connect(
+					coin.coin.evmProxyAddress?.toString(),
+					this.signerOrProvider,
+				).getReserveAmount()
+			)[0];
 
 			return new TransactionResponse(
 				undefined,
