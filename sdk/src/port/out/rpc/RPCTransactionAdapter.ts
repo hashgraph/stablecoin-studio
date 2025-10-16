@@ -107,6 +107,7 @@ import {
 	RELEASE_HOLD_GAS,
 	RECLAIM_HOLD_GAS,
 	CONTROLLER_CREATE_HOLD_GAS,
+	UINT256_MAX,
 } from '../../../core/Constants.js';
 import { MetaMaskInpageProvider } from '@metamask/providers';
 import { WalletConnectError } from '../../../domain/context/network/error/WalletConnectError.js';
@@ -753,10 +754,12 @@ export default class RPCTransactionAdapter extends TransactionAdapter {
 					message: `StableCoin ${coin.coin.name} does not have a proxy address`,
 				});
 
-			const res = await ReserveFacet__factory.connect(
-				coin.coin.evmProxyAddress?.toString(),
-				this.signerOrProvider,
-			).getReserveAmount();
+			const res = (
+				await ReserveFacet__factory.connect(
+					coin.coin.evmProxyAddress?.toString(),
+					this.signerOrProvider,
+				).getReserveAmount()
+			)[0];
 
 			return new TransactionResponse(
 				undefined,
@@ -884,7 +887,9 @@ export default class RPCTransactionAdapter extends TransactionAdapter {
 
 			const amountsFormatted: bigint[] = [];
 			amounts.forEach((amount) => {
-				amountsFormatted.push(amount.toBigInt());
+				if (amount == BigDecimal.fromString('0')) {
+					amountsFormatted.push(UINT256_MAX);
+				} else amountsFormatted.push(amount.toBigInt());
 			});
 
 			const accounts: string[] = [];
