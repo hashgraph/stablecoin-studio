@@ -157,7 +157,7 @@ export abstract class HederaTransactionAdapter extends TransactionAdapter {
 						: await this.getEVMAddress(coin.cashInRoleAccount),
 				allowance: coin.cashInRoleAllowance
 					? coin.cashInRoleAllowance.toFixedNumber()
-					: BigDecimal.ZERO.toFixedNumber(),
+					: UINT256_MAX.toString(),
 			};
 			const providedKeys = [
 				coin.adminKey,
