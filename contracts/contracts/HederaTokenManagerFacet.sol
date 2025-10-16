@@ -13,6 +13,7 @@ import {IERC20MetadataUpgradeable} from '@openzeppelin/contracts-upgradeable/tok
 import {HederaTokenManagerStorageWrapper} from './HederaTokenManagerStorageWrapper.sol';
 import {IStaticFunctionSelectors} from './resolver/interfaces/resolverProxy/IStaticFunctionSelectors.sol';
 import {ADMIN_ROLE} from './constants/roles.sol';
+import {IRoleManagement} from './extensions/Interfaces/IRoleManagement.sol';
 
 contract HederaTokenManagerFacet is
     IStaticFunctionSelectors,
@@ -196,8 +197,9 @@ contract HederaTokenManagerFacet is
 
         // granting cashin role
         if (cashinRole.account != address(0)) {
-            if (cashinRole.allowance > 0) _grantSupplierRole(cashinRole.account, cashinRole.allowance);
-            else _grantUnlimitedSupplierRole(cashinRole.account);
+            if (cashinRole.allowance == 0) revert IRoleManagement.AmountIsZero();
+            else if (cashinRole.allowance == type(uint256).max) _grantUnlimitedSupplierRole(cashinRole.account);
+            else _grantSupplierRole(cashinRole.account, cashinRole.allowance);
         }
 
         // granting admin role, always to the SC creator
