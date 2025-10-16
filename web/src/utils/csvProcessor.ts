@@ -186,7 +186,6 @@ export function computeDailyFlows(transactions: TransactionRow[]): DailyFlows {
         }
         
         const dailyMap = new Map<number, { in: number; out: number; balance?: number }>();
-        const debugDates = ['2025-04-28', '2025-07-02', '2025-08-24', '2025-09-24'];
         
         transactions.forEach((tx) => {
                 if (tx.type === 'AUTRE' || tx.type === 'OTP' || tx.type === 'FAIL') {
@@ -197,16 +196,6 @@ export function computeDailyFlows(transactions: TransactionRow[]): DailyFlows {
                 const entry = dailyMap.get(dayStart) || { in: 0, out: 0 };
                 
                 const amount = tx.amount || 0;
-                const dateStr = tx.timestamp.toISOString().split('T')[0];
-                
-                if (debugDates.includes(dateStr) && amount > 100000) {
-                        console.log('🔍 DEBUG Large amount:', {
-                                date: dateStr,
-                                type: tx.type,
-                                amount,
-                                rawAmount: tx.amount,
-                        });
-                }
                 
                 if (IN_TYPES.has(tx.type)) {
                         entry.in += amount;
