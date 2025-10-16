@@ -31,6 +31,7 @@
     - [Required parameters](#required-parameters)<br>
     - [When to use this?](#when-to-use-this)<br>
 - **[v1 to v2 Migration](#v1-to-v2-migration)**<br>
+- **[v2 to v3 Migration](#v2-to-v3-migration)**<br>
 - **[Generate documentation](#generate-documentation)**<br>
 - **[Other scripts](#other-scripts)**<br>
 - **[Contributing](#contributing)**<br>
@@ -387,6 +388,29 @@ Then you can start the CLI project with:
  ```shell
  npm run start:wizard
  ```
+# V2 to V3 Migration
+
+In order to migrate from a v2 stablecoin to a v3 one you will have to proceed as follows:
+- First [migrate your BLR v2 to v3](#business-logic-resolver-blr-migration)
+- Then [redeploy all your facets (business logics) and configurations (SC factory, SC, hedera reserve)](#redeploy-all-facets-and-configurations)
+- Finally [migrate all your deployed contracts (SC factories, SCs, hedera reserves) to their new configurations](#migrate-deployed-contracts)
+
+## Business Logic Resolver (BLR) migration 
+
+- Deploy the BLR implementation v3
+- Upgrade you BLR proxy to the v3 implementation
+
+## Redeploy all facets and configurations
+
+- Deploy all facets again
+- Deploy all configurations again using the newly deployed facet versions
+
+## Migrate deployed contracts
+
+For all your SC factories, SCs and hedera reserves __that were not set to version "0"__.
+
+- call `updateConfigVersion` method passing the new config Id
+
 
 # Generate documentation
 

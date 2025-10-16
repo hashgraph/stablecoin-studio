@@ -15,7 +15,6 @@ import {
     BusinessLogicResolver,
     DiamondCutManager,
     DiamondCutManager__factory,
-    IBusinessLogicResolver,
     IDiamondCutManager,
     IDiamondLoupe,
 } from '@contracts'

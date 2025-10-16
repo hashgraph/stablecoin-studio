@@ -44,6 +44,9 @@ abstract contract BusinessLogicResolverWrapper is IBusinessLogicResolverWrapper 
             _businessLogicsRegistryData = _businessLogicsRegistryDatas[index];
 
             businessLogicResolverDataStorage.latestVersionByFacetId[_businessLogicsRegistryData.businessLogicKey]++;
+            latestVersion_[index] = businessLogicResolverDataStorage.latestVersionByFacetId[
+                _businessLogicsRegistryData.businessLogicKey
+            ];
 
             if (!businessLogicResolverDataStorage.businessLogicActive[_businessLogicsRegistryData.businessLogicKey]) {
                 businessLogicResolverDataStorage.businessLogicActive[
@@ -60,9 +63,7 @@ abstract contract BusinessLogicResolverWrapper is IBusinessLogicResolverWrapper 
             versions.push(
                 IBusinessLogicResolver.BusinessLogicVersion({
                     versionData: IBusinessLogicResolver.VersionData({
-                        version: businessLogicResolverDataStorage.latestVersionByFacetId[
-                            _businessLogicsRegistryData.businessLogicKey
-                        ],
+                        version: latestVersion_[index],
                         status: IBusinessLogicResolver.VersionStatus.ACTIVATED
                     }),
                     businessLogicAddress: _businessLogicsRegistryData.businessLogicAddress
@@ -70,12 +71,7 @@ abstract contract BusinessLogicResolverWrapper is IBusinessLogicResolverWrapper 
             );
 
             bytes32 facetIdAndVersion = keccak256(
-                abi.encodePacked(
-                    _businessLogicsRegistryData.businessLogicKey,
-                    businessLogicResolverDataStorage.latestVersionByFacetId[
-                        _businessLogicsRegistryData.businessLogicKey
-                    ]
-                )
+                abi.encodePacked(_businessLogicsRegistryData.businessLogicKey, latestVersion_[index])
             );
 
             businessLogicResolverDataStorage.businessLogicVersionIndex[facetIdAndVersion] = versions.length;
@@ -83,10 +79,6 @@ abstract contract BusinessLogicResolverWrapper is IBusinessLogicResolverWrapper 
             businessLogicResolverDataStorage.statusByFacetIdAndVersion[facetIdAndVersion] = IBusinessLogicResolver
                 .VersionStatus
                 .ACTIVATED;
-
-            latestVersion_[index] = businessLogicResolverDataStorage.latestVersionByFacetId[
-                _businessLogicsRegistryData.businessLogicKey
-            ];
         }
     }
 
