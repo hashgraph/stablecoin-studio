@@ -12,6 +12,7 @@ import {
     tokenKeysToContract,
     CONFIG_ID,
     DEFAULT_CONFIG_VERSION,
+    UINT256_MAX,
 } from '@scripts'
 
 export interface TokenInformation {
@@ -134,7 +135,7 @@ export default class DeployStableCoinCommand {
             }),
             cashinRole: {
                 account: allToContract ? (allRolesToCreator ? signerAddress : rolesToAccount) : ADDRESS_ZERO,
-                allowance: NUMBER_ZERO,
+                allowance: UINT256_MAX,
             },
             metadata: initialMetadata,
             businessLogicResolverAddress: businessLogicResolverProxyAddress,
