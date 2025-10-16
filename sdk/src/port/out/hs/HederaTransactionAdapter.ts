@@ -108,6 +108,7 @@ import {
 	RELEASE_HOLD_GAS,
 	RECLAIM_HOLD_GAS,
 	CONTROLLER_CREATE_HOLD_GAS,
+	UINT256_MAX,
 } from '../../../core/Constants.js';
 import LogService from '../../../app/service/LogService.js';
 import { RESERVE_DECIMALS } from '../../../domain/context/reserve/Reserve.js';
@@ -658,10 +659,18 @@ export abstract class HederaTransactionAdapter extends TransactionAdapter {
 		amounts: BigDecimal[],
 		startDate?: string,
 	): Promise<TransactionResponse> {
+		const amountsFormatted: bigint[] = [];
+
+		amounts.forEach((amount) => {
+			if (amount == BigDecimal.fromString('0')) {
+				amountsFormatted.push(UINT256_MAX);
+			} else amountsFormatted.push(amount.toBigInt());
+		});
+
 		const params = new Params({
 			roles: roles,
 			targetsId: targetsId,
-			amounts: amounts,
+			amounts: amountsFormatted,
 		});
 
 		let gas = targetsId.length * roles.length * GRANT_ROLES_GAS;
@@ -1189,10 +1198,16 @@ export abstract class HederaTransactionAdapter extends TransactionAdapter {
 		targetsId: HederaId[],
 		targetId: HederaId,
 	): Promise<TransactionResponse<any, Error>> {
+		const amountsFormatted: bigint[] = [];
+
+		amounts.forEach((amount) => {
+			amountsFormatted.push(amount.toBigInt());
+		});
+
 		const params = new Params({
 			targetId: targetId,
 			targetsId: targetsId,
-			amounts: amounts,
+			amounts: amountsFormatted,
 		});
 		if (!coin.coin.tokenId)
 			throw new Error(
@@ -1521,7 +1536,11 @@ export abstract class HederaTransactionAdapter extends TransactionAdapter {
 				const targetsIdString: string[] = [];
 
 				for (let i = 0; i < params.amounts!.length; i++) {
-					amountsLong.push(params.amounts![i].toLong());
+					amountsLong.push(
+						BigDecimal.fromString(
+							params.amounts![i].toString(),
+						).toLong(),
+					);
 					targetsIdString.push(params.targetsId![i].toString());
 				}
 
@@ -1710,7 +1729,7 @@ class Params {
 	customFees?: HCustomFee[];
 	roles?: string[];
 	targetsId?: HederaId[];
-	amounts?: BigDecimal[];
+	amounts?: bigint[];
 	name?: string;
 	symbol?: string;
 	autoRenewPeriod?: number;
@@ -1767,7 +1786,7 @@ class Params {
 		customFees?: HCustomFee[];
 		roles?: string[];
 		targetsId?: HederaId[];
-		amounts?: BigDecimal[];
+		amounts?: bigint[];
 		name?: string;
 		symbol?: string;
 		autoRenewPeriod?: number;
