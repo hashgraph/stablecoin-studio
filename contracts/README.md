@@ -390,12 +390,31 @@ Then you can start the CLI project with:
  ```
 # V2 to V3 Migration
 
-In order to migrate from a v2 stablecoin to a v3 one you will have to proceed as follows:
+These are the necessary steps to migrate from a v2 stablecoin to a v3 (for more information check the referenced sections):
 - First [migrate your BLR v2 to v3](#business-logic-resolver-blr-migration)
 - Then [redeploy all your facets (business logics) and configurations (SC factory, SC, hedera reserve)](#redeploy-all-facets-and-configurations)
 - Finally [migrate all your deployed contracts (SC factories, SCs, hedera reserves) to their new configurations](#migrate-deployed-contracts)
 
-## Business Logic Resolver (BLR) migration 
+__Scripts have been implemented to make the migration easier.__
+
+- Migration script (execute steps 1 and 2)
+
+> npx hardhat migrateBLRToV3 --blrproxyadminaddress __'BLR_PROXY_ADMIN_EVM_ADDRESS'__ --blrproxyaddress __'BLR_PROXY_EVM_ADDRESS'__ --network __'NETWORK'__
+
+- Stablecoin version upload script (step 3) : OPTIONAL. Only to be executed if your SC version is not 0.
+
+> npx hardhat upgradeSCversion --scaddress __'STABLECOIN_EVM_ADDRESS'__ --network __'NETWORK'__
+
+- Rollback script to undo the _"migration script"_ changes
+
+> npx hardhat rollbackBLRToV2 --blrproxyadminaddress __'BLR_PROXY_ADMIN_EVM_ADDRESS'__ --blrproxyaddress __'BLR_PROXY_EVM_ADDRESS'__ --blrv2implementationaddress __'BLR_V2_IMPLEMENTATION_EVM_ADDRESS'__ --network __'NETWORK'__
+
+- Rollback script to undo the _"stablecoin version upload script"_ changes
+
+> npx hardhat rollbackSCToVersion --scaddress __'STABLECOIN_EVM_ADDRESS'__ --configversion __'VERSION_ID'__ --network __'NETWORK'__
+
+
+## Business Logic Resolver (BLR) migration
 
 - Deploy the BLR implementation v3
 - Upgrade you BLR proxy to the v3 implementation
