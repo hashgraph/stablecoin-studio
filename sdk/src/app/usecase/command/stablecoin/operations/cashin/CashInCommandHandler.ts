@@ -19,29 +19,30 @@
  */
 
 import CheckNums from '../../../../../../core/checks/numbers/CheckNums.js';
-import { ICommandHandler } from '../../../../../../core/command/CommandHandler.js';
-import { CommandHandler } from '../../../../../../core/decorator/CommandHandlerDecorator.js';
-import { lazyInject } from '../../../../../../core/decorator/LazyInjectDecorator.js';
+import {ICommandHandler} from '../../../../../../core/command/CommandHandler.js';
+import {CommandHandler} from '../../../../../../core/decorator/CommandHandlerDecorator.js';
+import {lazyInject} from '../../../../../../core/decorator/LazyInjectDecorator.js';
 import BigDecimal from '../../../../../../domain/context/shared/BigDecimal.js';
-import { StableCoinNotAssociated } from '../../error/StableCoinNotAssociated.js';
+import {StableCoinNotAssociated} from '../../error/StableCoinNotAssociated.js';
 import AccountService from '../../../../../service/AccountService.js';
 import StableCoinService from '../../../../../service/StableCoinService.js';
 import TransactionService from '../../../../../service/TransactionService.js';
-import { DecimalsOverRange } from '../../error/DecimalsOverRange.js';
-import { OperationNotAllowed } from '../../error/OperationNotAllowed.js';
-import { CashInCommand, CashInCommandResponse } from './CashInCommand.js';
-import { GetAccountTokenRelationshipQuery } from '../../../../query/account/tokenRelationship/GetAccountTokenRelationshipQuery.js';
+import {DecimalsOverRange} from '../../error/DecimalsOverRange.js';
+import {OperationNotAllowed} from '../../error/OperationNotAllowed.js';
+import {CashInCommand, CashInCommandResponse} from './CashInCommand.js';
 import {
-	FreezeStatus,
-	KycStatus,
-} from '../../../../../../port/out/mirror/response/AccountTokenRelationViewModel.js';
-import { RPCQueryAdapter } from '../../../../../../port/out/rpc/RPCQueryAdapter.js';
-import { AccountFreeze } from '../../error/AccountFreeze.js';
-import { AccountNotKyc } from '../../error/AccountNotKyc.js';
-import { GetReserveAmountQuery } from '../../../../query/stablecoin/getReserveAmount/GetReserveAmountQuery.js';
-import { RESERVE_DECIMALS } from '../../../../../../domain/context/reserve/Reserve.js';
-import { MirrorNodeAdapter } from '../../../../../../port/out/mirror/MirrorNodeAdapter.js';
-import { TokenSupplyType } from '@hashgraph/sdk';
+	GetAccountTokenRelationshipQuery
+} from '../../../../query/account/tokenRelationship/GetAccountTokenRelationshipQuery.js';
+import {FreezeStatus, KycStatus,} from '../../../../../../port/out/mirror/response/AccountTokenRelationViewModel.js';
+import {RPCQueryAdapter} from '../../../../../../port/out/rpc/RPCQueryAdapter.js';
+import {AccountFreeze} from '../../error/AccountFreeze.js';
+import {AccountNotKyc} from '../../error/AccountNotKyc.js';
+import {GetReserveAmountQuery} from '../../../../query/stablecoin/getReserveAmount/GetReserveAmountQuery.js';
+import {RESERVE_DECIMALS} from '../../../../../../domain/context/reserve/Reserve.js';
+import {MirrorNodeAdapter} from '../../../../../../port/out/mirror/MirrorNodeAdapter.js';
+import {TokenSupplyType} from '@hashgraph/sdk';
+import {GetAccountAutoAssociationQuery} from "../../../../query/account/autoAssociation/GetAccountAutoAssociationQuery";
+import {StableCoinMaxAutoAssociationReached} from "../../error/StableCoinMaxAutoAssociationReached";
 
 const MAX_SUPPLY = 9_223_372_036_854_775_807n;
 
@@ -64,6 +65,7 @@ export class CashInCommandHandler implements ICommandHandler<CashInCommand> {
 		const { amount, targetId, tokenId, startDate } = command;
 		const handler = this.transactionService.getHandler();
 		const account = this.accountService.getCurrentAccount();
+
 		const tokenRelationship = (
 			await this.stableCoinService.queryBus.execute(
 				new GetAccountTokenRelationshipQuery(targetId, tokenId),
@@ -71,18 +73,42 @@ export class CashInCommandHandler implements ICommandHandler<CashInCommand> {
 		).payload;
 
 		if (!tokenRelationship) {
-			throw new StableCoinNotAssociated(
-				targetId.toString(),
-				tokenId.toString(),
-			);
-		}
-		if (tokenRelationship.freezeStatus === FreezeStatus.FROZEN) {
-			throw new AccountFreeze(targetId.toString());
+			const autoAssociationInfo = (
+				await this.stableCoinService.queryBus.execute(
+					new GetAccountAutoAssociationQuery(targetId)
+				)
+			).payload;
+
+			if (!autoAssociationInfo) {
+				throw new StableCoinNotAssociated(targetId.toString(), tokenId.toString());
+			}
+
+			const max = Number(autoAssociationInfo.maxAutoAssociations ?? 0);
+			const remaining = Number(autoAssociationInfo.remainingAutoAssociations ?? 0);
+
+			if (max === 0) {
+				throw new StableCoinNotAssociated(targetId.toString(), tokenId.toString());
+			}
+
+			const isUnlimited = max === -1 || remaining === -1;
+
+			if (!isUnlimited && remaining <= 0) {
+				throw new StableCoinMaxAutoAssociationReached(
+					targetId.toString(),
+					max
+				);
+			}
+
+		} else {
+			if (tokenRelationship.freezeStatus === FreezeStatus.FROZEN) {
+				throw new AccountFreeze(targetId.toString());
+			}
+
+			if (tokenRelationship.kycStatus === KycStatus.REVOKED) {
+				throw new AccountNotKyc(targetId.toString());
+			}
 		}
 
-		if (tokenRelationship.kycStatus === KycStatus.REVOKED) {
-			throw new AccountNotKyc(targetId.toString());
-		}
 
 		const capabilities = await this.stableCoinService.getCapabilities(
 			account,

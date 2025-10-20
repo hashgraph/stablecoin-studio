@@ -73,7 +73,7 @@
 	"dependencies": {
 		"@hashgraph/cryptography": "1.4.3",
 		"@hashgraph/hedera-custodians-integration": "^1.4.1",
-		"@hashgraph/hedera-wallet-connect": "2.0.4-canary.3ca04e9.0",
+		"@hashgraph/hedera-wallet-connect": "2.0.3",
 		"@hashgraph/sdk": "2.63.0",
 		"@reown/appkit": "1.8.9",
 		"@reown/appkit-adapter-ethers": "1.8.4",
