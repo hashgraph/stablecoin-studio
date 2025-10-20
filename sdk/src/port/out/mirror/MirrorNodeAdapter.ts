@@ -57,6 +57,8 @@ import ContractViewModel from '../../out/mirror/response/ContractViewModel.js';
 import MultiKey from '../../../domain/context/account/MultiKey.js';
 import { Time } from '../../../core/Time.js';
 import Validation from '../../../port/in/request/validation/Validation.js';
+import {AccountAutoAssociationViewModel} from "./response/AccountAutoAssociationViewModel";
+import AccountDetailViewModel from "./response/AccountDetailViewModel";
 
 const PROTOBUF_ENCODED = 'ProtobufEncoded';
 
@@ -465,6 +467,59 @@ export class MirrorNodeAdapter {
 			);
 		}
 	}
+
+	public async getAccountAutoAssociationInfo(
+		targetId: HederaId,
+	): Promise<AccountAutoAssociationViewModel | undefined> {
+		try {
+			const url = `${this.mirrorNodeConfig.baseUrl}accounts/${targetId.toString()}`;
+			LogService.logTrace('Getting account auto-association info -> ', url);
+			const res = await this.instance.get<AccountDetailViewModel>(url);
+
+			if (!res.data) return undefined;
+
+			const account = res.data;
+			const maxAutoAssociations = account.max_automatic_token_associations ?? 0;
+
+			const autoAssociationsCount = await this.countAutoAssociatedTokensFromMirror(targetId.toString());
+
+			const remainingAutoAssociations =
+				maxAutoAssociations === -1
+					? -1 // ilimitado
+					: Math.max(0, maxAutoAssociations - autoAssociationsCount);
+
+			return {
+				maxAutoAssociations,
+				autoAssociationsCount,
+				remainingAutoAssociations,
+			};
+		} catch (error) {
+			LogService.logError(error);
+			return Promise.reject<AccountAutoAssociationViewModel>(new InvalidResponse(error));
+		}
+	}
+
+	private async countAutoAssociatedTokensFromMirror(accountId: string): Promise<number> {
+		let nextUrl = `${this.mirrorNodeConfig.baseUrl}accounts/${accountId}/tokens?limit=100`;
+		let count = 0;
+
+		type TokenRel = { token_id: string; automatic_association?: boolean };
+		type Page = { tokens?: TokenRel[]; token_relationships?: TokenRel[]; links?: { next?: string } };
+
+		while (nextUrl) {
+			const { data } = await this.instance.get<Page>(nextUrl);
+			const items = (data.tokens ?? data.token_relationships ?? []) as TokenRel[];
+
+			for (const rel of items) {
+				if (rel.automatic_association === true) count++;
+			}
+
+			nextUrl = data.links?.next ? `${this.mirrorNodeConfig.baseUrl}${data.links.next}` : '';
+		}
+
+		return count;
+	}
+
 
 	public async getTransactionResult(
 		transactionId: string,
