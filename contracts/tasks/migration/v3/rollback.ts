@@ -67,34 +67,34 @@ task('rollbackBLRToV2', 'Rollback V3 Migrattion to v2')
     })
 
 /**
- * npx hardhat rollbackSCToVersion --scaddress 0xef4522693eefa17114220b82e4716238afbf509c --configversion 1
+ * npx hardhat rollbackResolverProxyToVersion --resolverproxyaddress 0xef4522693eefa17114220b82e4716238afbf509c --configversion 1
  */
 
-task('rollbackSCToVersion', 'Upgrade a SC version')
-    .addParam('scaddress', 'The address of the stablecoin', undefined, types.string)
-    .addParam('configversion', 'The version to rollback the stablecoin to', undefined, types.string)
+task('rollbackResolverProxyToVersion', 'Upgrade a SC version')
+    .addParam('resolverproxyaddress', 'The address of the resolver proxy', undefined, types.string)
+    .addParam('configversion', 'The version to rollback the resolver proxy to', undefined, types.string)
     .setAction(async (args, hre) => {
         const { IDiamondCut__factory, IDiamondCutManager__factory } = await import('@contracts/index')
         const { GAS_LIMIT } = await import('@scripts')
 
-        const { scaddress, configversion } = args
+        const { resolverproxyaddress, configversion } = args
 
         const network = hre.network.name as NetworkName
 
         const signer = (await WithSignerCommand.newInstance({ hre })).signer
 
-        console.log(`Retrieving stablecoin configuration on ${network} ...`)
+        console.log(`Retrieving resolver proxy configuration on ${network} ...`)
 
-        const scProxy = IDiamondCut__factory.connect(scaddress, signer)
+        const scProxy = IDiamondCut__factory.connect(resolverproxyaddress, signer)
 
         const [resolverAddress, configId, previousVersion] = await scProxy.getConfigInfo()
 
-        console.log(`Current stablecoin resolver: ${resolverAddress}`)
-        console.log(`Current stablecoin configuration id: ${configId}`)
-        console.log(`Current stablecoin previous version: ${previousVersion}`)
+        console.log(`Current resolver proxy resolver: ${resolverAddress}`)
+        console.log(`Current resolver proxy configuration id: ${configId}`)
+        console.log(`Current resolver proxy previous version: ${previousVersion}`)
 
         if (previousVersion.toString() === configversion) {
-            console.log(`Stablecoin is already at version ${configversion}, no rollback needed.`)
+            console.log(`resolver proxy is already at version ${configversion}, no rollback needed.`)
             return
         }
 
@@ -112,7 +112,7 @@ task('rollbackSCToVersion', 'Upgrade a SC version')
             return
         }
 
-        console.log(`Upgrading stablecoin configuration to ${configversion} on ${network} ...`)
+        console.log(`Upgrading resolver proxy configuration to ${configversion} on ${network} ...`)
 
         await scProxy.updateConfigVersion(configversion, {
             gasLimit: GAS_LIMIT.resolverProxy.upgrade,
@@ -120,7 +120,7 @@ task('rollbackSCToVersion', 'Upgrade a SC version')
 
         const [newResolverAddress, newConfigId, newVersion] = await scProxy.getConfigInfo()
 
-        console.log(`New stablecoin resolver: ${newResolverAddress}`)
-        console.log(`New stablecoin configuration id: ${newConfigId}`)
-        console.log(`New stablecoin version: ${newVersion}`)
+        console.log(`New resolver proxy resolver: ${newResolverAddress}`)
+        console.log(`New resolver proxy configuration id: ${newConfigId}`)
+        console.log(`New resolver proxy version: ${newVersion}`)
     })

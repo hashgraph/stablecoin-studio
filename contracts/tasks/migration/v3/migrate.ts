@@ -106,30 +106,30 @@ task('migrateBLRToV3', 'Migrate a v2 business logic resolver to v3')
     })
 
 /**
- * npx hardhat upgradeSCversion --scaddress 0xef4522693eefa17114220b82e4716238afbf509c
+ * npx hardhat upgradeResolverProxyversion --resolverproxyaddress 0xef4522693eefa17114220b82e4716238afbf509c
  */
 
-task('upgradeSCversion', 'Upgrade a SC version')
-    .addParam('scaddress', 'The address of the stablecoin', undefined, types.string)
+task('upgradeResolverProxyversion', 'Upgrade a SC version')
+    .addParam('resolverproxyaddress', 'The address of the resolver proxy', undefined, types.string)
     .setAction(async (args, hre) => {
         const { IDiamondCut__factory, IDiamondCutManager__factory } = await import('@contracts/index')
         const { GAS_LIMIT } = await import('@scripts')
 
-        const { scaddress } = args
+        const { resolverproxyaddress } = args
 
         const network = hre.network.name as NetworkName
 
         const signer = (await WithSignerCommand.newInstance({ hre })).signer
 
-        console.log(`Retrieving stablecoin configuration on ${network} ...`)
+        console.log(`Retrieving resolver proxy configuration on ${network} ...`)
 
-        const scProxy = IDiamondCut__factory.connect(scaddress, signer)
+        const scProxy = IDiamondCut__factory.connect(resolverproxyaddress, signer)
 
         const [resolverAddress, configId, previousVersion] = await scProxy.getConfigInfo()
 
-        console.log(`Current stablecoin resolver: ${resolverAddress}`)
-        console.log(`Current stablecoin configuration id: ${configId}`)
-        console.log(`Current stablecoin version: ${previousVersion}`)
+        console.log(`Current resolver proxy resolver: ${resolverAddress}`)
+        console.log(`Current resolver proxy configuration id: ${configId}`)
+        console.log(`Current resolver proxy version: ${previousVersion}`)
 
         console.log(`Retrieving latest version for configuration ${configId} on ${network} ...`)
 
@@ -138,7 +138,7 @@ task('upgradeSCversion', 'Upgrade a SC version')
             hre.ethers.provider
         ).getLatestVersionByConfiguration(configId)
 
-        console.log(`Upgrading stablecoin configuration to ${latestVersion} on ${network} ...`)
+        console.log(`Upgrading resolver proxy configuration to ${latestVersion} on ${network} ...`)
 
         await scProxy.updateConfigVersion(latestVersion, {
             gasLimit: GAS_LIMIT.resolverProxy.upgrade,
@@ -146,7 +146,7 @@ task('upgradeSCversion', 'Upgrade a SC version')
 
         const [newResolverAddress, newConfigId, newVersion] = await scProxy.getConfigInfo()
 
-        console.log(`New stablecoin resolver: ${newResolverAddress}`)
-        console.log(`New stablecoin configuration id: ${newConfigId}`)
-        console.log(`New stablecoin version: ${newVersion}`)
+        console.log(`New resolver proxy resolver: ${newResolverAddress}`)
+        console.log(`New resolver proxy configuration id: ${newConfigId}`)
+        console.log(`New resolver proxy version: ${newVersion}`)
     })

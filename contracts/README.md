@@ -397,21 +397,33 @@ These are the necessary steps to migrate from a v2 stablecoin to a v3 (for more 
 
 __Scripts have been implemented to make the migration easier.__
 
-- Migration script (execute steps 1 and 2)
+__MIGRATION__
+
+- BLR Migration script (execute steps 1 and 2)
 
 > npx hardhat migrateBLRToV3 --blrproxyadminaddress __'BLR_PROXY_ADMIN_EVM_ADDRESS'__ --blrproxyaddress __'BLR_PROXY_EVM_ADDRESS'__ --network __'NETWORK'__
 
-- Stablecoin version upload script (step 3) : OPTIONAL. Only to be executed if your SC version is not 0.
+- Stablecoin/Factory/Reserve version upload script (step 3) : OPTIONAL. Only to be executed if your version is not 0.
 
-> npx hardhat upgradeSCversion --scaddress __'STABLECOIN_EVM_ADDRESS'__ --network __'NETWORK'__
+> npx hardhat upgradeResolverProxyversion --resolverproxyaddress __'STABLECOIN_EVM_ADDRESS'__ --network __'NETWORK'__
+
+> npx hardhat upgradeResolverProxyversion --resolverproxyaddress __'FACTORY_EVM_ADDRESS'__ --network __'NETWORK'__
+
+> npx hardhat upgradeResolverProxyversion --resolverproxyaddress __'RESERVE_EVM_ADDRESS'__ --network __'NETWORK'__
+
+__ROLLBACK__
 
 - Rollback script to undo the _"migration script"_ changes
 
-> npx hardhat rollbackBLRToV2 --blrproxyadminaddress __'BLR_PROXY_ADMIN_EVM_ADDRESS'__ --blrproxyaddress __'BLR_PROXY_EVM_ADDRESS'__ --blrv2implementationaddress __'BLR_V2_IMPLEMENTATION_EVM_ADDRESS'__ --network __'NETWORK'__
+> npx hardhat rollbackResolverProxyToVersion --blrproxyadminaddress __'BLR_PROXY_ADMIN_EVM_ADDRESS'__ --blrproxyaddress __'BLR_PROXY_EVM_ADDRESS'__ --blrv2implementationaddress __'BLR_V2_IMPLEMENTATION_EVM_ADDRESS'__ --network __'NETWORK'__
 
-- Rollback script to undo the _"stablecoin version upload script"_ changes
+- Rollback script to undo the _"stablecoin/factory/reserve version upload script"_ changes
 
-> npx hardhat rollbackSCToVersion --scaddress __'STABLECOIN_EVM_ADDRESS'__ --configversion __'VERSION_ID'__ --network __'NETWORK'__
+> npx hardhat rollbackSCToVersion --resolverproxyaddress __'STABLECOIN_EVM_ADDRESS'__ --configversion __'VERSION_ID'__ --network __'NETWORK'__
+
+> npx hardhat rollbackSCToVersion --resolverproxyaddress __'FACTORY_EVM_ADDRESS'__ --configversion __'VERSION_ID'__ --network __'NETWORK'__
+
+> npx hardhat rollbackSCToVersion --resolverproxyaddress __'RESERVE_EVM_ADDRESS'__ --configversion __'VERSION_ID'__ --network __'NETWORK'__
 
 
 ## Business Logic Resolver (BLR) migration
