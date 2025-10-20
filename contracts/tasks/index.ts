@@ -45,5 +45,9 @@ export * from './resolverDiamondCut'
 // * Migrate v2
 export * from './migration/v2/migrate'
 
+// * Migrate v3
+export * from './migration/v3/migrate'
+export * from './migration/v3/rollback'
+
 // * Upgrades
 // export * from './upgrade'

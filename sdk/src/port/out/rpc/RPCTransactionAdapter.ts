@@ -208,10 +208,16 @@ export default class RPCTransactionAdapter extends TransactionAdapter {
 					coin.cashInRoleAccount.toString() == '0.0.0'
 						? '0x0000000000000000000000000000000000000000'
 						: await this.getEVMAddress(coin.cashInRoleAccount),
-				allowance: coin.cashInRoleAllowance
-					? coin.cashInRoleAllowance.toFixedNumber()
-					: UINT256_MAX.toString(),
+				allowance:
+					!coin.cashInRoleAllowance ||
+					coin.cashInRoleAllowance.toString() == '0'
+						? UINT256_MAX.toString()
+						: coin.cashInRoleAllowance.toFixedNumber(),
 			};
+
+			LogService.logTrace('Cashin Role: ', {
+				cashinRole: cashinRole,
+			});
 
 			const providedKeys = [
 				coin.adminKey,
@@ -887,9 +893,9 @@ export default class RPCTransactionAdapter extends TransactionAdapter {
 
 			const amountsFormatted: bigint[] = [];
 			amounts.forEach((amount) => {
-				if (amount == BigDecimal.fromString('0')) {
-					amountsFormatted.push(UINT256_MAX);
-				} else amountsFormatted.push(amount.toBigInt());
+				if (amount.isGreaterThan(BigDecimal.fromString('0')))
+					amountsFormatted.push(amount.toBigInt());
+				else amountsFormatted.push(UINT256_MAX);
 			});
 
 			const accounts: string[] = [];

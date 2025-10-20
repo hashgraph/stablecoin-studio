@@ -85,6 +85,7 @@ import {
 	CREATE_SC_GAS,
 	EVM_ZERO_ADDRESS,
 	TOKEN_CREATION_COST_HBAR,
+	UINT256_MAX,
 } from '../src/core/Constants.js';
 import LogService from '../src/app/service/LogService.js';
 import {
@@ -428,7 +429,7 @@ function smartContractCalls(functionName: string, decoded: any): void {
 		newRoles.forEach((newRole: StableCoinRole) => {
 			if (newRole == StableCoinRole.CASHIN_ROLE) {
 				for (let i = 0; i < accounts.length; i++) {
-					if (amounts[i] == 0)
+					if (amounts[i] == UINT256_MAX)
 						grantUnlimitedSupplierRole(
 							'0x' + accounts[i].toUpperCase().substring(2),
 						);
