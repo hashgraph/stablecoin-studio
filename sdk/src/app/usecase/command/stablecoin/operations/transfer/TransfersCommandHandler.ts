@@ -43,6 +43,8 @@ import {
 	TransfersCommand,
 	TransfersCommandResponse,
 } from './TransfersCommand.js';
+import {GetAccountAutoAssociationQuery} from "../../../../query/account/autoAssociation/GetAccountAutoAssociationQuery";
+import {StableCoinMaxAutoAssociationReached} from "../../error/StableCoinMaxAutoAssociationReached";
 
 @CommandHandler(TransfersCommand)
 export class TransfersCommandHandler
@@ -81,16 +83,40 @@ export class TransfersCommandHandler
 			).payload;
 
 			if (!tokenRelationship) {
-				errors.push(
-					new StableCoinNotAssociated(
-						targetsIds[i].toString(),
-						tokenId.toString(),
-					),
-				);
-			} else if (tokenRelationship.freezeStatus === FreezeStatus.FROZEN) {
-				errors.push(new AccountFreeze(targetsIds[i].toString()));
-			} else if (tokenRelationship.kycStatus === KycStatus.REVOKED) {
-				errors.push(new AccountNotKyc(targetsIds[i].toString()));
+				const autoAssociationInfo = (
+					await this.stableCoinService.queryBus.execute(
+						new GetAccountAutoAssociationQuery(targetId)
+					)
+				).payload;
+
+				if (!autoAssociationInfo) {
+					throw new StableCoinNotAssociated(targetId.toString(), tokenId.toString());
+				}
+
+				const max = Number(autoAssociationInfo.maxAutoAssociations ?? 0);
+				const remaining = Number(autoAssociationInfo.remainingAutoAssociations ?? 0);
+
+				if (max === 0) {
+					throw new StableCoinNotAssociated(targetId.toString(), tokenId.toString());
+				}
+
+				const isUnlimited = max === -1 || remaining === -1;
+
+				if (!isUnlimited && remaining <= 0) {
+					throw new StableCoinMaxAutoAssociationReached(
+						targetId.toString(),
+						max
+					);
+				}
+
+			} else {
+				if (tokenRelationship.freezeStatus === FreezeStatus.FROZEN) {
+					throw new AccountFreeze(targetId.toString());
+				}
+
+				if (tokenRelationship.kycStatus === KycStatus.REVOKED) {
+					throw new AccountNotKyc(targetId.toString());
+				}
 			}
 		}
 
