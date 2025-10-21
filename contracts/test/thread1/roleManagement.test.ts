@@ -10,11 +10,13 @@ import {
     SupplierAdminFacet__factory,
 } from '@contracts'
 import {
+    ADDRESS_ZERO,
     delay,
     deployFullInfrastructure,
     DeployFullInfrastructureCommand,
     MESSAGES,
     ROLES,
+    UINT256_MAX,
     ValidateTxResponseCommand,
 } from '@scripts'
 import { deployStableCoinInTests, GAS_LIMIT, randomAccountAddressList } from '@test/shared'
@@ -120,7 +122,7 @@ describe('➡️ Role Management Tests', function () {
         const txResponse = await roleManagementFacet.grantRoles(
             rolesToGrant,
             randomAccountList,
-            randomAccountList.map((_, index) => toBigInt(index)),
+            randomAccountList.map((_, index) => toBigInt(index + 1)),
             {
                 gasLimit: GAS_LIMIT.hederaTokenManager.grantRoles,
             }
@@ -141,14 +143,14 @@ describe('➡️ Role Management Tests', function () {
                     gasLimit: GAS_LIMIT.hederaTokenManager.getSupplierAllowance,
                 })
 
-            expect(allowance.toString()).to.eq(accountIndex.toString())
+            expect(allowance.toString()).to.eq((accountIndex + 1).toString())
 
             const isUnlimited = await supplierAdminFacet
                 .connect(nonOperator)
                 .isUnlimitedSupplierAllowance(randomAccountList[accountIndex], {
                     gasLimit: GAS_LIMIT.hederaTokenManager.isUnlimitedSupplierAllowance,
                 })
-            expect(isUnlimited).to.eq(accountIndex == 0)
+            expect(isUnlimited).to.eq(false)
         }
     })
 
@@ -256,6 +258,25 @@ describe('➡️ Role Management Tests', function () {
         await expect(new ValidateTxResponseCommand({ txResponse }).execute()).to.be.rejectedWith(Error)
     })
 
+    it('Can not revoke all admin role from a token', async function () {
+        // Non operator has burn role
+        const Admins = await rolesFacet.getAccountsWithRole(ROLES.defaultAdmin.hash, {
+            gasLimit: GAS_LIMIT.hederaTokenManager.getAccountsWithRole,
+        })
+
+        const adminAccounts: string[] = []
+
+        for (let i = 0; i < Admins.length; i++) {
+            adminAccounts.push(Admins[i])
+        }
+
+        const txResponse = await roleManagementFacet.revokeRoles([ROLES.defaultAdmin.hash], adminAccounts, {
+            gasLimit: GAS_LIMIT.hederaTokenManager.revokeRoles,
+        })
+
+        await expect(new ValidateTxResponseCommand({ txResponse }).execute()).to.be.rejectedWith(Error)
+    })
+
     it('An account can get all roles of any account', async function () {
         // Grant roles
         const Roles = [ROLES.burn.hash]
@@ -286,6 +307,47 @@ describe('➡️ Role Management Tests', function () {
 
         for (const account of randomAccountList) {
             expect(burnRoleAccountsAfterRevoke).to.not.include(account)
+        }
+    })
+
+    it('Granting role to account 0 fails', async function () {
+        const listOfAccounts: string[] = []
+
+        for (let i = 0; i < randomAccountList.length; i++) {
+            listOfAccounts.push(randomAccountList[i])
+        }
+
+        listOfAccounts.push(ADDRESS_ZERO)
+
+        await expect(
+            roleManagementFacet.grantRoles([ROLES.burn.hash], listOfAccounts, [])
+        ).to.be.revertedWithCustomError(roleManagementFacet, 'AddressZero')
+    })
+
+    it('Granting CashInRole with 0 amount fails', async function () {
+        await expect(
+            roleManagementFacet.grantRoles(
+                [ROLES.cashin.hash],
+                randomAccountList,
+                randomAccountList.map(() => 0)
+            )
+        ).to.be.revertedWithCustomError(roleManagementFacet, 'AmountIsZero')
+    })
+
+    it('Granting CashInRole with max uint256 amount grants unlimited rights', async function () {
+        await roleManagementFacet.grantRoles(
+            [ROLES.cashin.hash],
+            randomAccountList,
+            randomAccountList.map(() => UINT256_MAX)
+        )
+
+        for (let i = 0; i < randomAccountList.length; i++) {
+            const isUnlimited = await supplierAdminFacet
+                .connect(nonOperator)
+                .isUnlimitedSupplierAllowance(randomAccountList[i], {
+                    gasLimit: GAS_LIMIT.hederaTokenManager.isUnlimitedSupplierAllowance,
+                })
+            expect(isUnlimited).to.eq(true)
         }
     })
 })

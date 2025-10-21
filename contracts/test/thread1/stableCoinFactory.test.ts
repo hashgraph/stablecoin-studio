@@ -134,9 +134,10 @@ describe('StableCoinFactory Tests', function () {
         const reserveAddress = reserveFacet.getReserveAddress({
             gasLimit: GAS_LIMIT.hederaTokenManager.getReserveAddress,
         })
-        const reserveAmount = reserveFacet.getReserveAmount({
+        const result = await reserveFacet.getReserveAmount({
             gasLimit: GAS_LIMIT.hederaTokenManager.getReserveAmount,
         })
+        const reserveAmount = result[0]
 
         expect(await reserveAddress).to.equal(ADDRESS_ZERO)
         expect(await reserveAmount).to.equal(0)
@@ -170,9 +171,10 @@ describe('StableCoinFactory Tests', function () {
         const reserveAddress = reserveFacet.getReserveAddress({
             gasLimit: GAS_LIMIT.hederaTokenManager.getReserveAddress,
         })
-        const reserveAmount = reserveFacet.getReserveAmount({
+        const result = await reserveFacet.getReserveAmount({
             gasLimit: GAS_LIMIT.hederaTokenManager.getReserveAmount,
         })
+        const reserveAmount = result[0]
 
         expect(await reserveAddress).not.to.equal(ADDRESS_ZERO)
         expect((await reserveAmount).toString()).to.equal(toReserve(DEFAULT_TOKEN.initialSupply).toString())
@@ -222,7 +224,6 @@ describe('StableCoinFactory Tests', function () {
         await expect(deployStableCoin(command)).to.be.rejectedWith(Error)
     })
 
-    // TODO: Check, it does not revert in prevouos versions too if comment the expect()
     it.skip('Create StableCoin setting an initial supply over the reserve, expect it to fail with a very close number', async function () {
         // Deploy Token using Client
         const command = await DeployStableCoinCommand.newInstance({

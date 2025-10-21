@@ -31,7 +31,14 @@ contract StableCoinFactoryFacet is IStaticFunctionSelectors, IStableCoinFactory,
 
     function deployStableCoin(
         TokenStruct calldata requestedToken
-    ) external payable override(IStableCoinFactory) returns (DeployedStableCoin memory) {
+    )
+        external
+        payable
+        override(IStableCoinFactory)
+        addressIsNotZero(address(requestedToken.businessLogicResolverAddress))
+        bytes32IsNotZero(requestedToken.stableCoinConfigurationId.key)
+        returns (DeployedStableCoin memory)
+    {
         address reserveAddress = _handleReserve(requestedToken);
         address stableCoinProxy = _deployStableCoinProxy(requestedToken);
         address tokenAddress = _initializeToken(requestedToken, stableCoinProxy, reserveAddress);

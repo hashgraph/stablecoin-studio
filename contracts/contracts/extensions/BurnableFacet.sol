@@ -4,13 +4,13 @@ pragma solidity 0.8.18;
 // solhint-disable-next-line max-line-length
 import {HoldManagementStorageWrapper} from './HoldManagementStorageWrapper.sol';
 import {IBurnable} from './Interfaces/IBurnable.sol';
-import {IRoles} from './Interfaces/IRoles.sol';
 import {SafeCast} from '@openzeppelin/contracts/utils/math/SafeCast.sol';
 import {_BURNABLE_RESOLVER_KEY} from '../constants/resolverKeys.sol';
 import {RolesStorageWrapper} from './RolesStorageWrapper.sol';
 import {TokenOwnerStorageWrapper} from './TokenOwnerStorageWrapper.sol';
 import {IHederaTokenService} from '@hashgraph/smart-contracts/contracts/system-contracts/hedera-token-service/IHederaTokenService.sol';
 import {IStaticFunctionSelectors} from '../resolver/interfaces/resolverProxy/IStaticFunctionSelectors.sol';
+import {_BURN_ROLE} from '../constants/roles.sol';
 
 contract BurnableFacet is
     IBurnable,
@@ -37,7 +37,7 @@ contract BurnableFacet is
     )
         external
         override(IBurnable)
-        onlyRole(_getRoleId(IRoles.RoleName.BURN))
+        onlyRole(_BURN_ROLE)
         amountIsNotNegative(amount, false)
         checkBurnAmount(amount)
         returns (bool)

@@ -12,10 +12,21 @@ abstract contract DiamondCutManager is RolesStorageWrapper, DiamondCutManagerWra
         _;
     }
 
+    modifier noEmptyConfiguration(FacetConfiguration[] calldata _facetConfigurations) {
+        _checkConfigurationFacets(_facetConfigurations);
+        _;
+    }
+
     function createConfiguration(
         bytes32 _configurationId,
         FacetConfiguration[] calldata _facetConfigurations
-    ) external override validateConfigurationId(_configurationId) onlyRole(ADMIN_ROLE) {
+    )
+        external
+        override
+        validateConfigurationId(_configurationId)
+        onlyRole(ADMIN_ROLE)
+        noEmptyConfiguration(_facetConfigurations)
+    {
         emit DiamondConfigurationCreated(
             _configurationId,
             _facetConfigurations,
@@ -27,7 +38,13 @@ abstract contract DiamondCutManager is RolesStorageWrapper, DiamondCutManagerWra
         bytes32 _configurationId,
         FacetConfiguration[] calldata _facetConfigurations,
         bool _isLastBatch
-    ) external override validateConfigurationId(_configurationId) onlyRole(ADMIN_ROLE) {
+    )
+        external
+        override
+        validateConfigurationId(_configurationId)
+        onlyRole(ADMIN_ROLE)
+        noEmptyConfiguration(_facetConfigurations)
+    {
         emit DiamondBatchConfigurationCreated(
             _configurationId,
             _facetConfigurations,
@@ -223,5 +240,9 @@ abstract contract DiamondCutManager is RolesStorageWrapper, DiamondCutManagerWra
         if (uint256(_configurationId) == 0) {
             revert DefaultValueForConfigurationIdNotPermitted();
         }
+    }
+
+    function _checkConfigurationFacets(FacetConfiguration[] calldata _facetConfigurations) private pure {
+        if (_facetConfigurations.length == 0) revert EmptyConfiguration();
     }
 }
