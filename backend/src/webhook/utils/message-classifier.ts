@@ -65,7 +65,7 @@ export function classifyMessage(body: string): string {
   }
 
   // OTP: One-time passwords and verification codes
-  if (/(Connexion\s+application\s+Orange\s+Money\s+r[ée]ussie|<#>Orange\s+Money:\s+Verification\s+automatique)/i.test(body)) {
+  if (/(Connexion\s+application\s+Orange\s+Money\s+r[ée]ussie|<#>Orange\s+Money:\s+(Verification\s+automatique|Automatic\s+verification)|You\s+are\s+now\s+connected\s+to\s+the\s+Orange\s+Money\s+App)/i.test(body)) {
     return 'OTP';
   }
 
