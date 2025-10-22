@@ -28,6 +28,8 @@ import { RequestIDMiddleware } from './middleware/requestId.middleware';
 import { ScheduleModule } from '@nestjs/schedule';
 import TransactionService from './transaction/transaction.service';
 import { JobsModule } from './jobs/jobs.module.js';
+import { WebhookModule } from './webhook/webhook.module';
+import { WebhookMessage } from './webhook/webhook-message.entity';
 
 @Module({
   imports: [
@@ -44,11 +46,12 @@ import { JobsModule } from './jobs/jobs.module.js';
         username: configService.get<string>('DB_USER'),
         password: configService.get<string>('DB_PASSWORD'),
         database: configService.get<string>('DB_NAME'),
-        entities: [Transaction],
+        entities: [Transaction, WebhookMessage],
         synchronize: true,
       }),
     }),
     TransactionModule,
+    WebhookModule,
     ScheduleModule.forRoot(),
     JobsModule,
   ],
