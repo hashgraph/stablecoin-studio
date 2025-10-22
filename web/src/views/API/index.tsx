@@ -29,6 +29,7 @@ interface WebhookMessage {
         timestamp: string;
         sent: boolean;
         type: string;
+        amount?: string;
         receivedAt: string;
 }
 
@@ -147,6 +148,7 @@ const APIPage = () => {
                                                         <Tr>
                                                                 <Th>#</Th>
                                                                 <Th>Type</Th>
+                                                                <Th>Amount</Th>
                                                                 <Th>Body</Th>
                                                                 <Th>Sender</Th>
                                                                 <Th>Timestamp</Th>
@@ -164,6 +166,15 @@ const APIPage = () => {
                                                                                 <Badge colorScheme={getTypeColor(message.type)}>
                                                                                         {message.type}
                                                                                 </Badge>
+                                                                        </Td>
+                                                                        <Td>
+                                                                                {message.amount ? (
+                                                                                        <Text fontWeight="semibold" color="blue.600">
+                                                                                                {message.amount} Ar
+                                                                                        </Text>
+                                                                                ) : (
+                                                                                        <Text color="gray.400">-</Text>
+                                                                                )}
                                                                         </Td>
                                                                         <Td maxW='300px' isTruncated>
                                                                                 {message.body}
