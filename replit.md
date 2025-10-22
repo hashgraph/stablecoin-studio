@@ -10,6 +10,58 @@ Preferred communication style: Simple, everyday language.
 
 # Recent Changes
 
+## API Webhooks Page (October 22, 2025)
+
+Created a new "API" page and backend endpoint to receive and display webhook messages in real-time.
+
+**Backend Files Created**:
+- `backend/src/webhook/webhook-message.entity.ts` - TypeORM entity for webhook messages table
+- `backend/src/webhook/dto/create-webhook-message.dto.ts` - DTO for incoming webhooks
+- `backend/src/webhook/dto/get-webhook-messages-response.dto.ts` - Response DTO
+- `backend/src/webhook/webhook.service.ts` - Service for business logic
+- `backend/src/webhook/webhook.controller.ts` - REST API controller
+- `backend/src/webhook/webhook.module.ts` - NestJS module
+- `backend/.env` - Environment configuration for database
+
+**Frontend Files Created**:
+- `web/src/views/API/index.tsx` - API page component with real-time message display
+
+**Files Modified**:
+- `backend/src/app.module.ts` - Added WebhookModule and WebhookMessage entity
+- `web/src/Router/NamedRoutes.ts` - Added API route name
+- `web/src/Router/RoutesMappingUrl.ts` - Added /api URL mapping
+- `web/src/Router/Router.tsx` - Added API route in public zone
+- `web/src/layout/sidebar/Sidebar.tsx` - Added API Webhooks button with Code icon
+- `web/src/translations/en/global.json` - Added API translations
+
+**Features**:
+- **POST /webhook/messages** - Receives webhook messages with format:
+  - Input: `{ id, message, sender, timestamp, sent }`
+  - Stored as: `{ id, body, sender, timestamp, sent }` (message → body)
+- **GET /webhook/messages** - Returns all stored messages (latest first)
+- **DELETE /webhook/messages** - Clear all messages
+- Real-time table displaying: ID, Body, Sender, Timestamp, Status, Received At
+- Auto-refresh every 10 seconds
+- Manual refresh button
+- Webhook URL prominently displayed
+- Responsive table with badges for sent status
+
+**Technical Notes**:
+- Backend uses NestJS with TypeORM
+- PostgreSQL database (same as multisig transactions)
+- API accessible at `http://localhost:3000/webhook/messages`
+- Frontend fetches from `REACT_APP_BACKEND_URL` environment variable
+- Swagger documentation available at `/api` when backend is running
+
+**Starting the Backend**:
+```bash
+cd backend
+npm install
+npm run start:dev
+```
+
+Backend listens on port 3000 and connects to the PostgreSQL database configured in `.env`.
+
 ## Analytics Page (October 16, 2025)
 
 Created a new "Analytics" page to visualize the relationship between stablecoin total supply and mobile money reserve balance.

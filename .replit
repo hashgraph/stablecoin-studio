@@ -39,7 +39,7 @@ author = "agent"
 
 [[workflows.workflow.tasks]]
 task = "shell.exec"
-args = "cd backend && npm install && npm run start:dev"
+args = "cd backend && npm run start:dev"
 waitForPort = 3000
 
 [workflows.workflow.metadata]
@@ -51,4 +51,8 @@ externalPort = 80
 
 [[ports]]
 localPort = 34411
+externalPort = 3000
+
+[[ports]]
+localPort = 3000
 externalPort = 3000
