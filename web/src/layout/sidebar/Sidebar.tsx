@@ -78,12 +78,19 @@ const Sidebar = () => {
                 route: NamedRoutes.Analytics,
         };
 
+        const apiProperties: optionsProps = {
+                icon: 'Code',
+                title: t('sidebar.api'),
+                route: NamedRoutes.API,
+        };
+
         if (process.env.REACT_APP_SHOW_CONFIG === 'true') {
                 options.push(appProperties);
         }
 
         options.push(mobileMoneyProperties);
         options.push(analyticsProperties);
+        options.push(apiProperties);
 
         return (
                 <Flex

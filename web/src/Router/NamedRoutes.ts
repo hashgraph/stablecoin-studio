@@ -40,4 +40,5 @@ export enum NamedRoutes {
         MultiSigTransactions = 'multiSigTransactions',
         MobileMoneyManagement = 'mobileMoneyManagement',
         Analytics = 'analytics',
+        API = 'api',
 }

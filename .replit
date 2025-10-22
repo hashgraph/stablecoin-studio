@@ -17,6 +17,10 @@ author = "agent"
 task = "workflow.run"
 args = "Frontend"
 
+[[workflows.workflow.tasks]]
+task = "workflow.run"
+args = "Backend"
+
 [[workflows.workflow]]
 name = "Frontend"
 author = "agent"
@@ -29,10 +33,22 @@ waitForPort = 5000
 [workflows.workflow.metadata]
 outputType = "webview"
 
+[[workflows.workflow]]
+name = "Backend"
+author = "agent"
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "cd backend && npm install && npm run start:dev"
+waitForPort = 3000
+
+[workflows.workflow.metadata]
+outputType = "console"
+
 [[ports]]
 localPort = 5000
 externalPort = 80
 
 [[ports]]
-localPort = 34505
+localPort = 34411
 externalPort = 3000

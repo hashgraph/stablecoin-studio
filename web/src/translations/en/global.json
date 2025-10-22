@@ -54,7 +54,8 @@
                 "appSettings": "Network settings",
                 "multiSigTransactions": "Multi-sig transactions",
                 "mobileMoneyManagement": "Mobile Money Management",
-                "analytics": "Analytics"
+                "analytics": "Analytics",
+                "api": "API Webhooks"
         },
         "validations": {
                 "required": "This field is required",
@@ -118,5 +119,14 @@
                 "reserveInsufficient": "Your mobile money reserve is below the total stablecoin supply",
                 "fullyCollateralized": "Fully Collateralized",
                 "reserveSufficient": "Your mobile money reserve covers the total stablecoin supply"
+        },
+        "api": {
+                "title": "API Webhooks",
+                "description": "View incoming webhook messages in real-time",
+                "refresh": "Refresh",
+                "loading": "Loading messages...",
+                "noMessages": "No webhook messages received yet. Send a POST request to the webhook URL to see messages here.",
+                "fetchError": "Error fetching messages",
+                "totalMessages": "Total: {{count}} messages"
         }
 }
