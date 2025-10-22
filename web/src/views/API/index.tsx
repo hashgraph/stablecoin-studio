@@ -48,12 +48,13 @@ const APIPage = () => {
         const [currentPage, setCurrentPage] = useState(1);
         const [itemsPerPage, setItemsPerPage] = useState(20);
 
+        const backendUrl = process.env.REACT_APP_BACKEND_URL || '';
         const publicWebhookUrl = typeof window !== 'undefined' ? `${window.location.origin}/webhook/messages` : 'https://your-domain.replit.dev/webhook/messages';
 
         const fetchMessages = async () => {
                 setLoading(true);
                 try {
-                        const response = await fetch(`/webhook/messages`);
+                        const response = await fetch(`${backendUrl}/webhook/messages`);
                         if (!response.ok) {
                                 throw new Error('Failed to fetch messages');
                         }
