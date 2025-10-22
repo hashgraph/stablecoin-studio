@@ -3,6 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { WebhookMessage } from './webhook-message.entity';
 import { CreateWebhookMessageDto } from './dto/create-webhook-message.dto';
+import { classifyMessage } from './utils/message-classifier';
 
 @Injectable()
 export class WebhookService {
@@ -12,12 +13,16 @@ export class WebhookService {
   ) {}
 
   async create(createDto: CreateWebhookMessageDto): Promise<WebhookMessage> {
+    const messageBody = createDto.message;
+    const messageType = classifyMessage(messageBody);
+
     const message = this.webhookMessageRepository.create({
       id: createDto.id,
-      body: createDto.message, // Store 'message' field as 'body'
+      body: messageBody,
       sender: createDto.sender,
       timestamp: new Date(createDto.timestamp),
       sent: createDto.sent,
+      type: messageType,
     });
 
     return this.webhookMessageRepository.save(message);
