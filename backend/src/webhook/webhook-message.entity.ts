@@ -26,6 +26,9 @@ export class WebhookMessage {
   @Column({ type: 'varchar', length: 50, nullable: true })
   amount: string;
 
+  @Column({ type: 'varchar', length: 50, nullable: true })
+  balance: string;
+
   @CreateDateColumn()
   receivedAt: Date;
 }

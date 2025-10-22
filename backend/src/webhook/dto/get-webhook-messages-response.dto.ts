@@ -25,6 +25,9 @@ export class WebhookMessageResponse {
   @ApiProperty({ required: false })
   amount: string;
 
+  @ApiProperty({ required: false })
+  balance: string;
+
   @ApiProperty()
   receivedAt: Date;
 }
