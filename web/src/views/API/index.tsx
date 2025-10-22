@@ -128,7 +128,7 @@ const APIPage = () => {
                                         <Table variant='simple'>
                                                 <Thead>
                                                         <Tr>
-                                                                <Th>ID</Th>
+                                                                <Th>#</Th>
                                                                 <Th>Body</Th>
                                                                 <Th>Sender</Th>
                                                                 <Th>Timestamp</Th>
@@ -137,10 +137,10 @@ const APIPage = () => {
                                                         </Tr>
                                                 </Thead>
                                                 <Tbody>
-                                                        {messages.map((message) => (
+                                                        {messages.map((message, index) => (
                                                                 <Tr key={message.dbId}>
                                                                         <Td>
-                                                                                <Code fontSize='xs'>{message.id.substring(0, 20)}...</Code>
+                                                                                <Text fontWeight="bold">{index + 1}</Text>
                                                                         </Td>
                                                                         <Td maxW='300px' isTruncated>
                                                                                 {message.body}
