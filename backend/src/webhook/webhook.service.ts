@@ -34,7 +34,7 @@ export class WebhookService {
     return this.webhookMessageRepository.save(message);
   }
 
-  async findAll(limit: number = 10000): Promise<{ messages: WebhookMessage[]; total: number }> {
+  async findAll(limit: number = 100): Promise<{ messages: WebhookMessage[]; total: number }> {
     const [messages, total] = await this.webhookMessageRepository.findAndCount({
       order: { receivedAt: 'DESC' },
       take: limit,

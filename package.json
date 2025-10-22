@@ -66,7 +66,6 @@
   },
   "dependencies": {
     "date-fns": "^4.1.0",
-    "http-proxy-middleware": "^3.0.5",
     "husky": "^9.1.7",
     "plotly.js-basic-dist": "^3.1.1",
     "react-plotly.js": "^2.6.0",
