@@ -22,6 +22,9 @@ export class WebhookMessageResponse {
   @ApiProperty()
   type: string;
 
+  @ApiProperty({ required: false })
+  amount: string;
+
   @ApiProperty()
   receivedAt: Date;
 }
