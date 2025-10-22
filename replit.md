@@ -38,20 +38,13 @@ Created a new "API" page and backend endpoint to receive and display webhook mes
 - **POST /webhook/messages** - Receives webhook messages with format:
   - Input: `{ id, message, sender, timestamp, sent }`
   - Stored as: `{ id, body, sender, timestamp, sent }` (message → body)
-  - Auto-classification into 10 types (P2P_IN, P2P_OUT, MERCHANT, etc.)
-  - Automatic amount and balance extraction from message body
 - **GET /webhook/messages** - Returns all stored messages (latest first)
 - **DELETE /webhook/messages** - Clear all messages
-- **PUT /webhook/messages/reclassify** - Reclassify all existing messages
-- Real-time table with columns: #, Type, Amount, Balance, Body, Sender, Timestamp, Status, Received At
+- Real-time table displaying: ID, Body, Sender, Timestamp, Status, Received At
 - Auto-refresh every 10 seconds
 - Manual refresh button
-- **Filter toggle**: Hide "AUTRE" types (promotional messages)
-- **Pagination**: Configurable items per page (10, 20, 50, 100)
-- **Page navigation**: First, Previous, Next, Last buttons with page numbers
 - Webhook URL prominently displayed
-- Responsive table with colored badges for transaction types
-- Database contains 3,376 messages spanning March 2023 to October 2025
+- Responsive table with badges for sent status
 
 **Technical Notes**:
 - Backend uses NestJS with TypeORM
