@@ -1,0 +1,23 @@
+=ARRAYFORMULA(
+  IF(LEN('Feuille 1'!$E$2:$E)=0; ;
+    IFS(
+      REGEXMATCH('Feuille 1'!$E$2:$E; "(?i)^You have transfere?d\s+[\d\s.,]+\s*AR\s+on your Orange Money account from your account"); "B2W";
+      REGEXMATCH('Feuille 1'!$E$2:$E; "(?i)^\s*Votre\s+transfert\s+de\s+[\d\s.,]+\s*A?R?\s+vers\s+(?:[^()]+\(0[2-9]\d{8}\)|0[2-9]\d{8})"); "P2P_OUT";
+      REGEXMATCH('Feuille 1'!$E$2:$E; "(?i)^[\d\s,.]+\s*Ar\s+envoye\s+a\s+.+$"); "P2P_OUT";
+      REGEXMATCH('Feuille 1'!$E$2:$E; "(?i)^\s*Vous\s+avez\s+recu\s+un\s+transfert\s+international\s+de\s+[\d\s.,]+\s*A?R?"); "P2P_IN_INTL";
+      REGEXMATCH('Feuille 1'!$E$2:$E; "(?i)^\s*Vous\s+avez\s+r[eçc]u\s+un\s+transfert\s+[\d\s.,]+\s*A?R?\s+venant\s+du\s+0[2-9]\d{8}"); "P2P_IN";
+      REGEXMATCH('Feuille 1'!$E$2:$E; "(?i)^Vous\s+avez\s+recu\s+[\d\s,.]+\s*Ar\s+de\s+la\s+part\s+.+$"); "P2P_IN";
+      REGEXMATCH('Feuille 1'!$E$2:$E; "(?i)^Vous\s+avez\s+recu\s+un\s+transfert\s+de\s+[\d\s,.]+\s*Ar\s+venant\s+du\s+[\d+]+"); "P2P_IN";
+      REGEXMATCH('Feuille 1'!$E$2:$E; "(?i)^(?:\d+\/\d+\s+)?([\d\s]+) ?Ar recu de ([\w\s]+) \((\d+)\) le (\d{2}\/\d{2}\/\d{2}) a (\d{2}:\d{2})\. Raison: (.+?)\. Solde ?: ([\d\s]+) ?Ar\. Ref: (\d+)$"); "P2P_IN";
+      REGEXMATCH('Feuille 1'!$E$2:$E; "(?i)^Vous\s+avez\s+reçu\s+un\s+transfert\s+de\s+[\d\s,.]+\s*AR\s+venant\s+du\s+0[2-9]\d{8}"); "P2P_IN";
+      REGEXMATCH('Feuille 1'!$E$2:$E; "(?i)^\s*Votre\s+paiement\s+de\s+[\d\s.,]+\s*A?R?\s+aupr[eè]s\s+de\s+"); "MERCHANT";
+      REGEXMATCH('Feuille 1'!$E$2:$E; "(?i)^Votre\s+paiement\s+aupres\s+de\s+[^,]+,\s+facture\s+numero\s+\d+\s+de\s+[\d\s,.]+Ar\s+est\s+reussi"); "MERCHANT";
+      REGEXMATCH('Feuille 1'!$E$2:$E; "(?i)^Paiement\s+facture\s+ORANGE\s+\d+\s+réussi;.*[\d\s,.]+Ar"); "MERCHANT";
+      REGEXMATCH('Feuille 1'!$E$2:$E; "(?i)^\s*Votre\s+d[ée]pot\s+de\s+[\d\s.,]+\s*Ar\s+par\s+le\s+0[2-9]\d{8}\s+est\s+r[ée]ussi"); "CASHIN";
+      REGEXMATCH('Feuille 1'!$E$2:$E; "(?i)(achat\s+de\s+credit|Be\s+connect|t[ée]l[ée]phone\s+a\s+[ée]t[ée]\s+recharg[ée]|Piement via MVola)"); "AIRTIME";
+      REGEXMATCH('Feuille 1'!$E$2:$E; "(?i)La\s+transaction\s+a\s+echou[eé].*(annuler|code\s+secret\s+saisi\s+est\s+incorrect)"); "FAIL";
+      REGEXMATCH('Feuille 1'!$E$2:$E; "(?i)(Connexion\s+application\s+Orange\s+Money\s+r[ée]ussie|<#>Orange\s+Money:\s+Verification\s+automatique)"); "OTP";
+      TRUE; "AUTRE"
+    )
+  )
+)

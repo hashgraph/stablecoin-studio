@@ -20,6 +20,9 @@ export class WebhookMessageResponse {
   sent: boolean;
 
   @ApiProperty()
+  type: string;
+
+  @ApiProperty()
   receivedAt: Date;
 }
 

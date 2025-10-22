@@ -20,6 +20,9 @@ export class WebhookMessage {
   @Column({ type: 'boolean', default: true })
   sent: boolean;
 
+  @Column({ type: 'varchar', length: 50, default: 'AUTRE' })
+  type: string;
+
   @CreateDateColumn()
   receivedAt: Date;
 }
