@@ -1,6 +1,7 @@
 {
         "name": "@hashgraph/stablecoin-dapp",
         "version": "2.1.6",
+        "proxy": "http://localhost:3000",
         "files": [
                 "build/"
         ],
