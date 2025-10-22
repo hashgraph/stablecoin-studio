@@ -28,6 +28,7 @@ interface WebhookMessage {
         sender: string;
         timestamp: string;
         sent: boolean;
+        type: string;
         receivedAt: string;
 }
 
@@ -72,6 +73,22 @@ const APIPage = () => {
         const formatDate = (dateString: string) => {
                 const date = new Date(dateString);
                 return date.toLocaleString();
+        };
+
+        const getTypeColor = (type: string): string => {
+                const colorMap: Record<string, string> = {
+                        'P2P_IN': 'green',
+                        'P2P_IN_INTL': 'teal',
+                        'P2P_OUT': 'red',
+                        'MERCHANT': 'purple',
+                        'CASHIN': 'blue',
+                        'B2W': 'cyan',
+                        'AIRTIME': 'orange',
+                        'OTP': 'gray',
+                        'FAIL': 'red',
+                        'AUTRE': 'gray',
+                };
+                return colorMap[type] || 'gray';
         };
 
         return (
@@ -129,6 +146,7 @@ const APIPage = () => {
                                                 <Thead>
                                                         <Tr>
                                                                 <Th>#</Th>
+                                                                <Th>Type</Th>
                                                                 <Th>Body</Th>
                                                                 <Th>Sender</Th>
                                                                 <Th>Timestamp</Th>
@@ -141,6 +159,11 @@ const APIPage = () => {
                                                                 <Tr key={message.dbId}>
                                                                         <Td>
                                                                                 <Text fontWeight="bold">{index + 1}</Text>
+                                                                        </Td>
+                                                                        <Td>
+                                                                                <Badge colorScheme={getTypeColor(message.type)}>
+                                                                                        {message.type}
+                                                                                </Badge>
                                                                         </Td>
                                                                         <Td maxW='300px' isTruncated>
                                                                                 {message.body}
