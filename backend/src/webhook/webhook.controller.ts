@@ -1,4 +1,4 @@
-import { Controller, Post, Get, Body, Query, Delete, HttpCode, HttpStatus } from '@nestjs/common';
+import { Controller, Post, Get, Body, Query, Delete, Put, HttpCode, HttpStatus } from '@nestjs/common';
 import { ApiTags, ApiOperation, ApiResponse, ApiQuery } from '@nestjs/swagger';
 import { WebhookService } from './webhook.service';
 import { CreateWebhookMessageDto } from './dto/create-webhook-message.dto';
@@ -37,5 +37,16 @@ export class WebhookController {
   @ApiResponse({ status: 204, description: 'All messages deleted' })
   async deleteAll() {
     await this.webhookService.deleteAll();
+  }
+
+  @Put('messages/reclassify')
+  @ApiOperation({ summary: 'Reclassify all existing messages' })
+  @ApiResponse({ status: 200, description: 'Messages reclassified successfully' })
+  async reclassify() {
+    const result = await this.webhookService.reclassifyAll();
+    return {
+      success: true,
+      ...result,
+    };
   }
 }

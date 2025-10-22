@@ -44,4 +44,20 @@ export class WebhookService {
   async deleteAll(): Promise<void> {
     await this.webhookMessageRepository.clear();
   }
+
+  async reclassifyAll(): Promise<{ updated: number }> {
+    const messages = await this.webhookMessageRepository.find();
+    let updated = 0;
+
+    for (const message of messages) {
+      const newType = classifyMessage(message.body);
+      if (message.type !== newType) {
+        message.type = newType;
+        await this.webhookMessageRepository.save(message);
+        updated++;
+      }
+    }
+
+    return { updated };
+  }
 }

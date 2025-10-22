@@ -1,0 +1,31 @@
+#	Type	Body	Sender	Timestamp	Status	Received At
+1
+
+AUTRE	Avec Orange Money Europe, profitez des frais de transfert d'argent vers Madagascar à 0 euro! Informez vos proches à l'étranger! Lien : https://bit.ly/3DbbVBE.	orangemoney	20/10/2025 18:46:09	Sent	22/10/2025 11:06:19
+2
+
+AUTRE	Votre paiement de 35500 Ar aupres de SAKAMANGA SARL est reussi. Frais: 200 Ar. Nouveau solde: 22541 Ar. Trans Id: MP251020.1417.B29719 . Orange Money vous remercie.	OrangeMoney	20/10/2025 17:17:29	Sent	22/10/2025 11:06:18
+3
+
+AUTRE	Vous avez recu un transfert international de 37760 AR de la part de +33613083079. Votre nouveau solde est : 58241 AR. Trans Id : 865c96b7. Orange Money vous remercie.	OrangeMoney	20/10/2025 17:16:39	Sent	22/10/2025 11:06:16
+4
+
+AUTRE	Votre paiement de 29300 Ar aupres de SAKAMANGA SARL est reussi. Frais: 200 Ar. Nouveau solde: 20481 Ar. Trans Id: MP251020.1241.C18934 . Orange Money vous remercie.	OrangeMoney	20/10/2025 15:41:57	Sent	22/10/2025 11:06:15
+5
+
+AUTRE	Vous avez recu un transfert international de 47200 AR de la part de +33613083079. Votre nouveau solde est : 49981 AR. Trans Id : d79af0c2. Orange Money vous remercie.	OrangeMoney	20/10/2025 15:41:29	Sent	22/10/2025 11:06:13
+6
+
+AUTRE	You are now connected to the Orange Money App. If you are not the initiator of this connection, please immediately contact customer service	OrangeMoney	20/10/2025 15:29:29	Sent	22/10/2025 11:06:12
+7
+
+AUTRE	<#>Orange Money: Automatic verification of your account, DO NOT SHARE THIS MESSAGE! 05419021746296tBvoAI2jPxd	OrangeMoney	20/10/2025 15:29:28	Sent	22/10/2025 11:06:11
+8
+
+AUTRE	Sauf erreur la facture 09-2025 reste impayee. Pour eviter la suspension, veuillez la regler des reception de ce message. Paiement par Orange Money recommande	OrangeInfo	18/10/2025 14:59:14	Sent	22/10/2025 11:06:09
+9
+
+AUTRE	Test depuis URL publique	+261377943048	22/10/2025 13:30:00	Sent	22/10/2025 10:56:06
+10
+
+AUTRE	Test depuis curl - ça marche !	+261377943048	22/10/2025 13:00:00	Sent	22/10/2025 10:54:26
