@@ -17,9 +17,13 @@ import {
         Code,
         Button,
         HStack,
+        Checkbox,
+        Select,
+        IconButton,
 } from '@chakra-ui/react';
 import { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
+import { ChevronLeftIcon, ChevronRightIcon } from '@chakra-ui/icons';
 
 interface WebhookMessage {
         dbId: string;
@@ -40,6 +44,9 @@ const APIPage = () => {
         const [messages, setMessages] = useState<WebhookMessage[]>([]);
         const [loading, setLoading] = useState(true);
         const [total, setTotal] = useState(0);
+        const [hideAutre, setHideAutre] = useState(true);
+        const [currentPage, setCurrentPage] = useState(1);
+        const [itemsPerPage, setItemsPerPage] = useState(20);
 
         const publicWebhookUrl = typeof window !== 'undefined' ? `${window.location.origin}/webhook/messages` : 'https://your-domain.replit.dev/webhook/messages';
 
@@ -72,6 +79,10 @@ const APIPage = () => {
                 return () => clearInterval(interval);
         }, []);
 
+        useEffect(() => {
+                setCurrentPage(1);
+        }, [hideAutre, itemsPerPage]);
+
         const formatDate = (dateString: string) => {
                 const date = new Date(dateString);
                 return date.toLocaleString();
@@ -91,6 +102,53 @@ const APIPage = () => {
                         'AUTRE': 'gray',
                 };
                 return colorMap[type] || 'gray';
+        };
+
+        const filteredMessages = hideAutre 
+                ? messages.filter(msg => msg.type !== 'AUTRE')
+                : messages;
+
+        const totalPages = Math.ceil(filteredMessages.length / itemsPerPage);
+        const startIndex = (currentPage - 1) * itemsPerPage;
+        const endIndex = startIndex + itemsPerPage;
+        const paginatedMessages = filteredMessages.slice(startIndex, endIndex);
+
+        const goToPage = (page: number) => {
+                if (page >= 1 && page <= totalPages) {
+                        setCurrentPage(page);
+                }
+        };
+
+        const getPageNumbers = () => {
+                const pages: (number | string)[] = [];
+                const maxVisible = 7;
+
+                if (totalPages <= maxVisible) {
+                        for (let i = 1; i <= totalPages; i++) {
+                                pages.push(i);
+                        }
+                } else {
+                        pages.push(1);
+
+                        if (currentPage > 3) {
+                                pages.push('...');
+                        }
+
+                        const startPage = Math.max(2, currentPage - 1);
+                        const endPage = Math.min(totalPages - 1, currentPage + 1);
+
+                        for (let i = startPage; i <= endPage; i++) {
+                                pages.push(i);
+                        }
+
+                        if (currentPage < totalPages - 2) {
+                                pages.push('...');
+                        }
+
+                        pages.push(totalPages);
+                }
+
+                return pages;
         };
 
         return (
@@ -125,6 +183,33 @@ const APIPage = () => {
                                                 </Code>
                                         </Box>
                                 </Alert>
+
+                                <HStack spacing={4} mb={4} flexWrap='wrap'>
+                                        <Checkbox
+                                                isChecked={hideAutre}
+                                                onChange={(e) => setHideAutre(e.target.checked)}
+                                                colorScheme='blue'
+                                        >
+                                                Hide AUTRE types
+                                        </Checkbox>
+                                        <HStack>
+                                                <Text fontSize='sm' fontWeight='500'>Items per page:</Text>
+                                                <Select
+                                                        size='sm'
+                                                        width='100px'
+                                                        value={itemsPerPage}
+                                                        onChange={(e) => setItemsPerPage(Number(e.target.value))}
+                                                >
+                                                        <option value='10'>10</option>
+                                                        <option value='20'>20</option>
+                                                        <option value='50'>50</option>
+                                                        <option value='100'>100</option>
+                                                </Select>
+                                        </HStack>
+                                        <Text fontSize='sm' color='gray.600'>
+                                                Showing {filteredMessages.length} of {total} messages
+                                        </Text>
+                                </HStack>
                         </Box>
 
                         {loading && messages.length === 0 ? (
@@ -132,82 +217,137 @@ const APIPage = () => {
                                         <Spinner size='xl' color='blue.500' />
                                         <Text mt={4}>{t('api.loading')}</Text>
                                 </Box>
-                        ) : messages.length === 0 ? (
+                        ) : filteredMessages.length === 0 ? (
                                 <Alert status='info' borderRadius='md'>
                                         <AlertIcon />
-                                        {t('api.noMessages')}
+                                        {hideAutre ? 'No transaction messages found (all AUTRE types are hidden)' : t('api.noMessages')}
                                 </Alert>
                         ) : (
-                                <Box
-                                        bg='white'
-                                        borderRadius='md'
-                                        boxShadow='sm'
-                                        overflowX='auto'
-                                >
-                                        <Table variant='simple'>
-                                                <Thead>
-                                                        <Tr>
-                                                                <Th>#</Th>
-                                                                <Th>Type</Th>
-                                                                <Th>Amount</Th>
-                                                                <Th>Balance</Th>
-                                                                <Th>Body</Th>
-                                                                <Th>Sender</Th>
-                                                                <Th>Timestamp</Th>
-                                                                <Th>Status</Th>
-                                                                <Th>Received At</Th>
-                                                        </Tr>
-                                                </Thead>
-                                                <Tbody>
-                                                        {messages.map((message, index) => (
-                                                                <Tr key={message.dbId}>
-                                                                        <Td>
-                                                                                <Text fontWeight="bold">{index + 1}</Text>
-                                                                        </Td>
-                                                                        <Td>
-                                                                                <Badge colorScheme={getTypeColor(message.type)}>
-                                                                                        {message.type}
-                                                                                </Badge>
-                                                                        </Td>
-                                                                        <Td>
-                                                                                {message.amount ? (
-                                                                                        <Text fontWeight="semibold" color="blue.600">
-                                                                                                {message.amount} Ar
-                                                                                        </Text>
-                                                                                ) : (
-                                                                                        <Text color="gray.400">-</Text>
-                                                                                )}
-                                                                        </Td>
-                                                                        <Td>
-                                                                                {message.balance ? (
-                                                                                        <Text fontWeight="semibold" color="green.600">
-                                                                                                {message.balance} Ar
-                                                                                        </Text>
-                                                                                ) : (
-                                                                                        <Text color="gray.400">-</Text>
-                                                                                )}
-                                                                        </Td>
-                                                                        <Td maxW='300px' isTruncated>
-                                                                                {message.body}
-                                                                        </Td>
-                                                                        <Td>{message.sender}</Td>
-                                                                        <Td fontSize='sm'>{formatDate(message.timestamp)}</Td>
-                                                                        <Td>
-                                                                                <Badge colorScheme={message.sent ? 'green' : 'gray'}>
-                                                                                        {message.sent ? 'Sent' : 'Pending'}
-                                                                                </Badge>
-                                                                        </Td>
-                                                                        <Td fontSize='sm'>{formatDate(message.receivedAt)}</Td>
+                                <>
+                                        <Box
+                                                bg='white'
+                                                borderRadius='md'
+                                                boxShadow='sm'
+                                                overflowX='auto'
+                                        >
+                                                <Table variant='simple'>
+                                                        <Thead>
+                                                                <Tr>
+                                                                        <Th>#</Th>
+                                                                        <Th>Type</Th>
+                                                                        <Th>Amount</Th>
+                                                                        <Th>Balance</Th>
+                                                                        <Th>Body</Th>
+                                                                        <Th>Sender</Th>
+                                                                        <Th>Timestamp</Th>
+                                                                        <Th>Status</Th>
+                                                                        <Th>Received At</Th>
                                                                 </Tr>
-                                                        ))}
-                                                </Tbody>
-                                        </Table>
-                                        <Box p={4} borderTop='1px' borderColor='gray.200'>
-                                                <Text fontSize='sm' color='gray.600'>
-                                                        {t('api.totalMessages', { count: total })}
-                                                </Text>
+                                                        </Thead>
+                                                        <Tbody>
+                                                                {paginatedMessages.map((message, index) => (
+                                                                        <Tr key={message.dbId}>
+                                                                                <Td>
+                                                                                        <Text fontWeight="bold">{startIndex + index + 1}</Text>
+                                                                                </Td>
+                                                                                <Td>
+                                                                                        <Badge colorScheme={getTypeColor(message.type)}>
+                                                                                                {message.type}
+                                                                                        </Badge>
+                                                                                </Td>
+                                                                                <Td>
+                                                                                        {message.amount ? (
+                                                                                                <Text fontWeight="semibold" color="blue.600">
+                                                                                                        {message.amount} Ar
+                                                                                                </Text>
+                                                                                        ) : (
+                                                                                                <Text color="gray.400">-</Text>
+                                                                                        )}
+                                                                                </Td>
+                                                                                <Td>
+                                                                                        {message.balance ? (
+                                                                                                <Text fontWeight="semibold" color="green.600">
+                                                                                                        {message.balance} Ar
+                                                                                                </Text>
+                                                                                        ) : (
+                                                                                                <Text color="gray.400">-</Text>
+                                                                                        )}
+                                                                                </Td>
+                                                                                <Td maxW='300px' isTruncated>
+                                                                                        {message.body}
+                                                                                </Td>
+                                                                                <Td>{message.sender}</Td>
+                                                                                <Td fontSize='sm'>{formatDate(message.timestamp)}</Td>
+                                                                                <Td>
+                                                                                        <Badge colorScheme={message.sent ? 'green' : 'gray'}>
+                                                                                                {message.sent ? 'Sent' : 'Pending'}
+                                                                                        </Badge>
+                                                                                </Td>
+                                                                                <Td fontSize='sm'>{formatDate(message.receivedAt)}</Td>
+                                                                        </Tr>
+                                                                ))}
+                                                        </Tbody>
+                                                </Table>
                                         </Box>
-                                </Box>
+
+                                        {totalPages > 1 && (
+                                                <HStack justify='center' spacing={2} mt={4}>
+                                                        <IconButton
+                                                                aria-label='First page'
+                                                                icon={<ChevronLeftIcon />}
+                                                                size='sm'
+                                                                onClick={() => goToPage(1)}
+                                                                isDisabled={currentPage === 1}
+                                                                variant='outline'
+                                                        />
+                                                        <IconButton
+                                                                aria-label='Previous page'
+                                                                icon={<ChevronLeftIcon />}
+                                                                size='sm'
+                                                                onClick={() => goToPage(currentPage - 1)}
+                                                                isDisabled={currentPage === 1}
+                                                        />
+
+                                                        {getPageNumbers().map((page, idx) => (
+                                                                typeof page === 'number' ? (
+                                                                        <Button
+                                                                                key={idx}
+                                                                                size='sm'
+                                                                                variant={currentPage === page ? 'solid' : 'outline'}
+                                                                                colorScheme={currentPage === page ? 'blue' : 'gray'}
+                                                                                onClick={() => goToPage(page)}
+                                                                        >
+                                                                                {page}
+                                                                        </Button>
+                                                                ) : (
+                                                                        <Text key={idx} px={2} color='gray.500'>
+                                                                                {page}
+                                                                        </Text>
+                                                                )
+                                                        ))}
+
+                                                        <IconButton
+                                                                aria-label='Next page'
+                                                                icon={<ChevronRightIcon />}
+                                                                size='sm'
+                                                                onClick={() => goToPage(currentPage + 1)}
+                                                                isDisabled={currentPage === totalPages}
+                                                        />
+                                                        <IconButton
+                                                                aria-label='Last page'
+                                                                icon={<ChevronRightIcon />}
+                                                                size='sm'
+                                                                onClick={() => goToPage(totalPages)}
+                                                                isDisabled={currentPage === totalPages}
+                                                                variant='outline'
+                                                        />
+                                                </HStack>
+                                        )}
+
+                                        <Text textAlign='center' fontSize='sm' color='gray.600'>
+                                                Page {currentPage} of {totalPages} ({startIndex + 1}-{Math.min(endIndex, filteredMessages.length)} of {filteredMessages.length} items)
+                                        </Text>
+                                </>
                         )}
                 </Stack>
         );
