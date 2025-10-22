@@ -48,6 +48,9 @@ import { WebhookMessage } from './webhook/webhook-message.entity';
         database: configService.get<string>('DB_NAME'),
         entities: [Transaction, WebhookMessage],
         synchronize: true,
+        ssl: {
+          rejectUnauthorized: false,
+        },
       }),
     }),
     TransactionModule,
