@@ -4,6 +4,7 @@ import { Repository } from 'typeorm';
 import { WebhookMessage } from './webhook-message.entity';
 import { CreateWebhookMessageDto } from './dto/create-webhook-message.dto';
 import { classifyMessage } from './utils/message-classifier';
+import { extractAmount } from './utils/amount-extractor';
 
 @Injectable()
 export class WebhookService {
@@ -15,6 +16,7 @@ export class WebhookService {
   async create(createDto: CreateWebhookMessageDto): Promise<WebhookMessage> {
     const messageBody = createDto.message;
     const messageType = classifyMessage(messageBody);
+    const messageAmount = extractAmount(messageBody);
 
     const message = this.webhookMessageRepository.create({
       id: createDto.id,
@@ -23,6 +25,7 @@ export class WebhookService {
       timestamp: new Date(createDto.timestamp),
       sent: createDto.sent,
       type: messageType,
+      amount: messageAmount,
     });
 
     return this.webhookMessageRepository.save(message);
@@ -51,8 +54,11 @@ export class WebhookService {
 
     for (const message of messages) {
       const newType = classifyMessage(message.body);
-      if (message.type !== newType) {
+      const newAmount = extractAmount(message.body);
+      
+      if (message.type !== newType || message.amount !== newAmount) {
         message.type = newType;
+        message.amount = newAmount;
         await this.webhookMessageRepository.save(message);
         updated++;
       }
