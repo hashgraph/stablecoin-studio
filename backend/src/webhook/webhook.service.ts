@@ -5,6 +5,7 @@ import { WebhookMessage } from './webhook-message.entity';
 import { CreateWebhookMessageDto } from './dto/create-webhook-message.dto';
 import { classifyMessage } from './utils/message-classifier';
 import { extractAmount } from './utils/amount-extractor';
+import { extractBalance } from './utils/balance-extractor';
 
 @Injectable()
 export class WebhookService {
@@ -17,6 +18,7 @@ export class WebhookService {
     const messageBody = createDto.message;
     const messageType = classifyMessage(messageBody);
     const messageAmount = extractAmount(messageBody);
+    const messageBalance = extractBalance(messageBody);
 
     const message = this.webhookMessageRepository.create({
       id: createDto.id,
@@ -26,6 +28,7 @@ export class WebhookService {
       sent: createDto.sent,
       type: messageType,
       amount: messageAmount,
+      balance: messageBalance,
     });
 
     return this.webhookMessageRepository.save(message);
@@ -55,10 +58,12 @@ export class WebhookService {
     for (const message of messages) {
       const newType = classifyMessage(message.body);
       const newAmount = extractAmount(message.body);
+      const newBalance = extractBalance(message.body);
       
-      if (message.type !== newType || message.amount !== newAmount) {
+      if (message.type !== newType || message.amount !== newAmount || message.balance !== newBalance) {
         message.type = newType;
         message.amount = newAmount;
+        message.balance = newBalance;
         await this.webhookMessageRepository.save(message);
         updated++;
       }

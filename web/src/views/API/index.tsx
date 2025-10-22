@@ -30,6 +30,7 @@ interface WebhookMessage {
         sent: boolean;
         type: string;
         amount?: string;
+        balance?: string;
         receivedAt: string;
 }
 
@@ -149,6 +150,7 @@ const APIPage = () => {
                                                                 <Th>#</Th>
                                                                 <Th>Type</Th>
                                                                 <Th>Amount</Th>
+                                                                <Th>Balance</Th>
                                                                 <Th>Body</Th>
                                                                 <Th>Sender</Th>
                                                                 <Th>Timestamp</Th>
@@ -171,6 +173,15 @@ const APIPage = () => {
                                                                                 {message.amount ? (
                                                                                         <Text fontWeight="semibold" color="blue.600">
                                                                                                 {message.amount} Ar
+                                                                                        </Text>
+                                                                                ) : (
+                                                                                        <Text color="gray.400">-</Text>
+                                                                                )}
+                                                                        </Td>
+                                                                        <Td>
+                                                                                {message.balance ? (
+                                                                                        <Text fontWeight="semibold" color="green.600">
+                                                                                                {message.balance} Ar
                                                                                         </Text>
                                                                                 ) : (
                                                                                         <Text color="gray.400">-</Text>
