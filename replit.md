@@ -93,34 +93,49 @@ Created a new "Analytics" page to visualize the relationship between stablecoin 
 - Analytics reads total supply from Redux (`SELECTED_WALLET_COIN`)
 - Compares both values to calculate coverage ratio
 
-## Mobile Money Management Feature (October 14, 2025)
+## Mobile Money Management Feature - Migrated to Webhook Data (October 22, 2025)
 
-Added a new "Mobile Money Management" section as a dedicated sidebar item for analyzing mobile money transaction data.
+**Migration from CSV to API Webhooks**: Replaced CSV upload system with automatic data fetching from API webhooks backend.
 
 **Files Created**:
-- `web/src/utils/mobileMoneyUtils.ts` - CSV parsing and transaction type definitions
+- `web/src/utils/mobileMoneyUtils.ts` - Transaction type definitions and CSV parsing (legacy support)
 - `web/src/utils/csvProcessor.ts` - Data analysis functions (activity analysis, daily flows, balance calculations)
-- `web/src/views/MobileMoneyManagement/index.tsx` - Dedicated page component with CSV upload and interactive charts
+- `web/src/utils/webhookDataAdapter.ts` - **NEW** - Converts webhook messages to transaction data
+- `web/src/views/MobileMoneyManagement/index.tsx` - Analytics page with webhook data integration
 
-**Files Modified**:
-- `web/src/Router/NamedRoutes.ts` - Added MobileMoneyManagement route name
-- `web/src/Router/RoutesMappingUrl.ts` - Added /mobile-money-management URL mapping
-- `web/src/Router/Router.tsx` - Added MobileMoneyManagement route in public zone (no wallet connection required)
-- `web/src/layout/sidebar/Sidebar.tsx` - Added Mobile Money Management button with ChartLine icon
-- `web/src/translations/en/global.json` - Added sidebar and mobileMoney translations
+**Files Modified** (October 22, 2025):
+- `web/src/views/MobileMoneyManagement/index.tsx` - Replaced CSV upload with webhook data fetching
+  - Added "Load from API Webhooks" button as primary data source
+  - CSV upload retained as legacy option
+  - Automatic data loading on page mount via `useEffect`
+  - Same visualizations, new data source
+
+**Data Flow**:
+1. **Webhook messages** stored in PostgreSQL (`webhook_messages` table)
+2. **GET /webhook/messages** API returns classified transactions with:
+   - `type`: P2P_IN, P2P_OUT, MERCHANT, CASHIN, B2W, AIRTIME, etc.
+   - `amount`: Extracted transaction amount
+   - `balance`: Extracted account balance
+   - `timestamp`: Message timestamp
+3. **webhookDataAdapter** converts webhooks to `TransactionRow[]` format
+4. **Existing analytics** process data identically (activity analysis, daily flows, balance charts)
 
 **Features**:
 - Dedicated sidebar button with ChartLine icon
-- CSV file upload for mobile money transactions
+- **Primary**: Load transaction data from API webhooks automatically
+- **Legacy**: CSV file upload still supported for backward compatibility
 - Frequency-based activity analysis (15min, 30min, 1H, 6H, 1D intervals)
-- Three interactive Recharts visualizations:
-  - Transaction activity over time
+- Three interactive Plotly.js visualizations:
+  - Transaction activity heatmap over time
   - Daily cash flows (inflows vs outflows)
   - Balance evolution with 7-day moving average
 - Statistics display (total slots, active slots, inactive slots)
+- Last balance stored in `localStorage` for Analytics page integration
 
 **Technical Notes**:
-- Uses native JavaScript date functions instead of date-fns library to avoid dependency conflicts
+- Webhook data fetched from `REACT_APP_BACKEND_URL/webhook/messages`
+- Filters out non-transaction types (OTP, FAIL, AUTRE) automatically
+- Uses same analysis engine as CSV system - zero breaking changes to charts
 - Accessible without wallet connection for better UX
 - Standalone page, not nested within Network settings
 
