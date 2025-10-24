@@ -93,6 +93,15 @@ const APIPage = () => {
                 return colorMap[type] || 'gray';
         };
 
+        const deleteAllMessages = async (apiUrl: string) => {
+                const response = await fetch(`${apiUrl}/webhook/messages`, {
+                        method: 'DELETE',
+                });
+                if (!response.ok) {
+                        throw new Error('Failed to delete all messages');
+                }
+        };
+
         return (
                 <Stack spacing={6} maxW='100%'>
                         <Box>
@@ -111,9 +120,30 @@ const APIPage = () => {
                                                         {t('api.description')}
                                                 </Text>
                                         </Box>
-                                        <Button onClick={fetchMessages} size='sm' colorScheme='blue'>
-                                                {t('api.refresh')}
-                                        </Button>
+                                        <HStack>
+                                                <Button onClick={fetchMessages} size='sm' colorScheme='blue'>
+                                                        {t('api.refresh')}
+                                                </Button>
+                                                <Button
+                                                        colorScheme="red"
+                                                        onClick={async () => {
+                                                                if (window.confirm('Are you sure you want to delete all webhook messages?')) {
+                                                                        try {
+                                                                                const apiUrl = process.env.REACT_APP_BACKEND_URL || 'http://localhost:3000';
+                                                                                await deleteAllMessages(apiUrl);
+                                                                                await fetchMessages();
+                                                                                alert('All messages deleted successfully');
+                                                                        } catch (error) {
+                                                                                console.error('Error deleting messages:', error);
+                                                                                alert('Failed to delete messages');
+                                                                        }
+                                                                }
+                                                        }}
+                                                        size='sm'
+                                                >
+                                                        Delete All
+                                                </Button>
+                                        </HStack>
                                 </HStack>
 
                                 <Alert status='info' borderRadius='md' mb={4}>
