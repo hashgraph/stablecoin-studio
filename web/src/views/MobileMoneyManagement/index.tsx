@@ -471,6 +471,7 @@ const MobileMoneyManagement = () => {
                                                                 anchor: 'y2',
                                                                 type: 'date',
                                                                 tickformat: '%Y-%m-%d',
+                                                                rangeslider: { visible: true },
                                                         },
                                                         yaxis2: {
                                                                 domain: [0, 0.45],
