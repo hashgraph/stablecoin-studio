@@ -180,6 +180,11 @@ export interface DailyFlows {
         balanceMA7?: number[];
 }
 
+export interface TypeHistogramData {
+        dates: Date[];
+        typeCounts: Map<string, number[]>;
+}
+
 export function computeDailyFlows(transactions: TransactionRow[]): DailyFlows {
         if (transactions.length === 0) {
                 return { dates: [], inflows: [], outflows: [] };

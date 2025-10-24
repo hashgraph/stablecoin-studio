@@ -23,6 +23,25 @@ export interface TransactionRow {
 export const IN_TYPES = new Set<TransactionType>(['P2P_IN', 'P2P_IN_INTL', 'CASHIN', 'B2W']);
 export const OUT_TYPES = new Set<TransactionType>(['P2P_OUT', 'MERCHANT', 'AIRTIME']);
 
+export const TX_TYPES: TransactionType[] = [
+        'P2P_IN', 'P2P_IN_INTL', 'CASHIN', 'B2W',
+        'P2P_OUT', 'MERCHANT', 'AIRTIME', 'OTP', 'FAIL', 'AUTRE', 'OTHER'
+];
+
+export const TX_COLORS: Record<TransactionType, string> = {
+        P2P_IN: '#28a745',
+        P2P_IN_INTL: '#66bb6a',
+        CASHIN: '#1b5e20',
+        B2W: '#2ecc71',
+        P2P_OUT: '#ff9800',
+        MERCHANT: '#ef6c00',
+        AIRTIME: '#2196f3',
+        OTP: '#bdbdbd',
+        FAIL: '#e53935',
+        AUTRE: '#9c27b0',
+        OTHER: '#9c27b0'
+};
+
 function normalizeType(val: string): TransactionType {
         if (!val) return 'OTHER';
         const v = val.trim().toUpperCase();
