@@ -298,6 +298,87 @@ const MobileMoneyManagement = () => {
                                 </Box>
                         )}
 
+                        {processedData && typeMatrix && (
+                                <Box
+                                        p={4}
+                                        border='1px'
+                                        borderColor='brand.black'
+                                        borderRadius='8px'
+                                        bg='brand.white'
+                                >
+                                        <Plot
+                                                data={TX_TYPES.map((txType, idx) => ({
+                                                        z: [typeMatrix[idx]],
+                                                        x: processedData.fullIndex.map(d => d.toISOString()),
+                                                        y: [txType.replace(/_/g, ' ')],
+                                                        type: 'heatmap' as const,
+                                                        colorscale: [[0, '#eeeeee'], [1, TX_COLORS[txType]]],
+                                                        showscale: false,
+                                                        zmin: 0,
+                                                        zmax: 1,
+                                                        hovertemplate: `Type: ${txType.replace(/_/g, ' ')}<br>Period: %{x|%Y-%m-%d %H:%M}<br>Present: %{z}<extra></extra>`,
+                                                        xgap: 1,
+                                                }))}
+                                                layout={{
+                                                        height: 38 * TX_TYPES.length + 70,
+                                                        margin: { l: 100, r: 20, t: 40, b: 40 },
+                                                        title: 'Transaction heatmap by type',
+                                                        xaxis: {
+                                                                type: 'date',
+                                                                tickformat: frequency === '1D' ? '%Y-%m-%d' : '%Y-%m-%d %H:%M',
+                                                        },
+                                                        yaxis: {
+                                                                tickmode: 'array',
+                                                                tickvals: TX_TYPES.map((t) => t.replace(/_/g, ' ')),
+                                                                ticktext: TX_TYPES.map((t) => t.replace(/_/g, ' ')),
+                                                        },
+                                                }}
+                                                config={{ responsive: true }}
+                                                style={{ width: '100%' }}
+                                        />
+                                </Box>
+                        )}
+
+                        {processedData && typeHistogram && (
+                                <Box
+                                        p={4}
+                                        border='1px'
+                                        borderColor='brand.black'
+                                        borderRadius='8px'
+                                        bg='brand.white'
+                                >
+                                        <Plot
+                                                data={TX_TYPES.map((txType) => {
+                                                        const counts = typeHistogram.typeCounts.get(txType) || [];
+                                                        return {
+                                                                x: typeHistogram.dates.map(d => d.toISOString()),
+                                                                y: counts,
+                                                                type: 'bar' as const,
+                                                                name: txType.replace(/_/g, ' '),
+                                                                marker: { color: TX_COLORS[txType] },
+                                                                hovertemplate: `%{fullData.name}<br>%{x|%Y-%m-%d %H:%M}<br>Count: %{y}<extra></extra>`,
+                                                        };
+                                                })}
+                                                layout={{
+                                                        barmode: 'stack',
+                                                        height: 400,
+                                                        margin: { l: 60, r: 20, t: 50, b: 60 },
+                                                        title: 'Stacked histogram of transactions by type',
+                                                        xaxis: {
+                                                                type: 'date',
+                                                                tickformat: frequency === '1D' ? '%Y-%m-%d' : '%Y-%m-%d %H:%M',
+                                                                title: 'Period',
+                                                        },
+                                                        yaxis: {
+                                                                title: 'Number of transactions',
+                                                        },
+                                                }}
+                                                config={{ responsive: true }}
+                                                style={{ width: '100%' }}
+                                        />
+                                </Box>
+                        )}
+
                         {dailyFlows && dailyFlows.balance && dailyFlows.balance.length > 0 && (
                                 <Box
                                         p={4}
