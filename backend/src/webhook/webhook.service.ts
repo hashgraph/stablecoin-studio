@@ -16,9 +16,10 @@ export class WebhookService {
 
   async create(createDto: CreateWebhookMessageDto): Promise<WebhookMessage> {
     const messageBody = createDto.message;
-    const messageType = classifyMessage(messageBody);
-    const messageAmount = extractAmount(messageBody);
-    const messageBalance = extractBalance(messageBody);
+    
+    const messageType = createDto.type || classifyMessage(messageBody);
+    const messageAmount = createDto.amount || extractAmount(messageBody);
+    const messageBalance = createDto.balance || extractBalance(messageBody);
 
     const message = this.webhookMessageRepository.create({
       id: createDto.id,
