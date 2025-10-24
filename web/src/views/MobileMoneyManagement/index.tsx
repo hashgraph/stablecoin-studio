@@ -446,7 +446,7 @@ const MobileMoneyManagement = () => {
                                                 ]}
                                                 layout={{
                                                         height: 600,
-                                                        margin: { l: 60, r: 60, t: 60, b: 100 },
+                                                        margin: { l: 60, r: 20, t: 60, b: 60 },
                                                         title: 'Balance & daily flows',
                                                         grid: {
                                                                 rows: 2,
@@ -471,7 +471,6 @@ const MobileMoneyManagement = () => {
                                                                 anchor: 'y2',
                                                                 type: 'date',
                                                                 tickformat: '%Y-%m-%d',
-                                                                rangeslider: { visible: true },
                                                         },
                                                         yaxis2: {
                                                                 domain: [0, 0.45],
