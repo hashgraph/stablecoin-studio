@@ -1,8 +1,8 @@
 {
-  "name": "@hashgraph/hedera-stable-coin",
+  "name": "@niasync/niasync",
   "version": "2.1.6",
   "private": true,
-  "description": "Stablecoin studio",
+  "description": "NiaSync - Mobile Money Management Platform",
   "keywords": [
     "stablecoin",
     "hedera",

@@ -1,6 +1,6 @@
 <div align="center">
 
-# Stablecoin Studio
+# NiaSync
 
 [![License](https://img.shields.io/badge/license-apache2-blue.svg)](LICENSE)
 

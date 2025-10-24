@@ -55,7 +55,7 @@
                 "multiSigTransactions": "Multi-sig transactions",
                 "mobileMoneyManagement": "Mobile Money Management",
                 "analytics": "Analytics",
-                "api": "API Webhooks"
+                "api": "NiaSync"
         },
         "validations": {
                 "required": "This field is required",
@@ -121,7 +121,7 @@
                 "reserveSufficient": "Your mobile money reserve covers the total stablecoin supply"
         },
         "api": {
-                "title": "API Webhooks",
+                "title": "NiaSync",
                 "description": "View incoming webhook messages in real-time",
                 "refresh": "Refresh",
                 "loading": "Loading messages...",

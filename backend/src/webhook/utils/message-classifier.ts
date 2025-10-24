@@ -3,6 +3,11 @@ export function classifyMessage(body: string): string {
     return 'AUTRE';
   }
 
+  // Messages containing "ampio" should be classified as AUTRE
+  if (/ampio/i.test(body)) {
+    return 'AUTRE';
+  }
+
   // B2W: Bank to Wallet transfers
   if (/^You have transfere?d\s+[\d\s.,]+\s*AR\s+on your Orange Money account from your account/i.test(body)) {
     return 'B2W';
