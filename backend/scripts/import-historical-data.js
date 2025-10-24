@@ -124,12 +124,19 @@ async function importData() {
                         continue;
                 }
                 
+                const cleanType = type && type.trim().length > 0 ? type.trim() : undefined;
+                const cleanAmount = amount && amount.trim().replace(/\s+/g, '').length > 0 ? amount.trim().replace(/\s+/g, '') : undefined;
+                const cleanBalance = solde && solde.trim().replace(/\s+/g, '').length > 0 ? solde.trim().replace(/\s+/g, '') : undefined;
+                
                 const payload = {
                         id: id.trim(),
                         message: message.trim().replace(/\n/g, ' '),
                         sender: sender.trim(),
                         timestamp: timestamp,
                         sent: true,
+                        type: cleanType,
+                        amount: cleanAmount,
+                        balance: cleanBalance,
                 };
                 
                 try {

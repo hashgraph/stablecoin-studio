@@ -1,4 +1,4 @@
-import { IsString, IsBoolean, IsDateString, IsNotEmpty } from 'class-validator';
+import { IsString, IsBoolean, IsDateString, IsNotEmpty, IsOptional } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
 
 export class CreateWebhookMessageDto {
@@ -25,4 +25,19 @@ export class CreateWebhookMessageDto {
   @ApiProperty({ example: true })
   @IsBoolean()
   sent: boolean;
+
+  @ApiProperty({ example: 'P2P_IN', required: false })
+  @IsString()
+  @IsOptional()
+  type?: string;
+
+  @ApiProperty({ example: '10000', required: false })
+  @IsString()
+  @IsOptional()
+  amount?: string;
+
+  @ApiProperty({ example: '50000', required: false })
+  @IsString()
+  @IsOptional()
+  balance?: string;
 }
