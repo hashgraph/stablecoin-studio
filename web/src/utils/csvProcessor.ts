@@ -185,6 +185,41 @@ export interface TypeHistogramData {
         typeCounts: Map<string, number[]>;
 }
 
+export function computeTypeHistogram(
+        transactions: TransactionRow[],
+        fullIndex: Date[],
+        freq: FrequencyLabel,
+        txTypes: TransactionType[]
+): TypeHistogramData {
+        const typeSlotMap = new Map<string, Map<number, number>>();
+        
+        txTypes.forEach((type) => {
+                const slotMap = new Map<number, number>();
+                fullIndex.forEach((d) => slotMap.set(d.getTime(), 0));
+                typeSlotMap.set(type, slotMap);
+        });
+        
+        transactions.forEach((tx) => {
+                const slotTime = floorToFrequency(tx.timestamp, freq).getTime();
+                const typeMap = typeSlotMap.get(tx.type);
+                if (typeMap) {
+                        typeMap.set(slotTime, (typeMap.get(slotTime) || 0) + 1);
+                }
+        });
+        
+        const typeCounts = new Map<string, number[]>();
+        txTypes.forEach((type) => {
+                const typeMap = typeSlotMap.get(type)!;
+                const counts = fullIndex.map((d) => typeMap.get(d.getTime()) || 0);
+                typeCounts.set(type, counts);
+        });
+        
+        return {
+                dates: fullIndex,
+                typeCounts,
+        };
+}
+
 export function computeDailyFlows(transactions: TransactionRow[]): DailyFlows {
         if (transactions.length === 0) {
                 return { dates: [], inflows: [], outflows: [] };
