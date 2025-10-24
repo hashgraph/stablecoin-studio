@@ -27,7 +27,7 @@ export class WebhookController {
   @ApiResponse({ status: 200, type: GetWebhookMessagesResponseDto })
   @ApiQuery({ name: 'limit', required: false, type: Number })
   async getMessages(@Query('limit') limit?: number): Promise<GetWebhookMessagesResponseDto> {
-    const { messages, total } = await this.webhookService.findAll(limit || 100);
+    const { messages, total } = await this.webhookService.findAll(limit || 10000);
     return { messages, total };
   }
 
