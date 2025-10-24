@@ -225,9 +225,11 @@ export function computeDailyFlows(transactions: TransactionRow[]): DailyFlows {
                 return { dates: [], inflows: [], outflows: [] };
         }
         
-        const dailyMap = new Map<number, { in: number; out: number; balance?: number }>();
+        const sortedTxs = [...transactions].sort((a, b) => a.timestamp.getTime() - b.timestamp.getTime());
         
-        transactions.forEach((tx) => {
+        const dailyMap = new Map<number, { in: number; out: number; balance?: number; lastTimestamp?: number }>();
+        
+        sortedTxs.forEach((tx) => {
                 if (tx.type === 'AUTRE' || tx.type === 'OTP' || tx.type === 'FAIL') {
                         return;
                 }
@@ -244,7 +246,11 @@ export function computeDailyFlows(transactions: TransactionRow[]): DailyFlows {
                 }
                 
                 if (tx.solde !== undefined) {
-                        entry.balance = tx.solde;
+                        const txTime = tx.timestamp.getTime();
+                        if (!entry.lastTimestamp || txTime >= entry.lastTimestamp) {
+                                entry.balance = tx.solde;
+                                entry.lastTimestamp = txTime;
+                        }
                 }
                 
                 dailyMap.set(dayStart, entry);
