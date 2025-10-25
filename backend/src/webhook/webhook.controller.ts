@@ -23,12 +23,16 @@ export class WebhookController {
   }
 
   @Get('messages')
-  @ApiOperation({ summary: 'Get all webhook messages' })
+  @ApiOperation({ summary: 'Get all webhook messages with pagination' })
   @ApiResponse({ status: 200, type: GetWebhookMessagesResponseDto })
-  @ApiQuery({ name: 'limit', required: false, type: Number })
-  async getMessages(@Query('limit') limit?: number): Promise<GetWebhookMessagesResponseDto> {
-    const { messages, total } = await this.webhookService.findAll(limit || 10000);
-    return { messages, total };
+  @ApiQuery({ name: 'limit', required: false, type: Number, description: 'Number of messages per page (default: 50)' })
+  @ApiQuery({ name: 'page', required: false, type: Number, description: 'Page number (default: 1)' })
+  async getMessages(
+    @Query('limit') limit?: number,
+    @Query('page') page?: number,
+  ): Promise<GetWebhookMessagesResponseDto> {
+    const result = await this.webhookService.findAll(limit || 50, page || 1);
+    return result;
   }
 
   @Delete('messages')

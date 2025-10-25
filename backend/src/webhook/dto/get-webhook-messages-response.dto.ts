@@ -38,4 +38,10 @@ export class GetWebhookMessagesResponseDto {
 
   @ApiProperty()
   total: number;
+
+  @ApiProperty()
+  page: number;
+
+  @ApiProperty()
+  totalPages: number;
 }
