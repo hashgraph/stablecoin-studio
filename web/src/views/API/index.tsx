@@ -40,19 +40,24 @@ const APIPage = () => {
         const [messages, setMessages] = useState<WebhookMessage[]>([]);
         const [loading, setLoading] = useState(true);
         const [total, setTotal] = useState(0);
+        const [page, setPage] = useState(1);
+        const [totalPages, setTotalPages] = useState(1);
+        const [limit] = useState(50);
 
         const publicWebhookUrl = typeof window !== 'undefined' ? `${window.location.origin}/webhook/messages` : 'https://your-domain.replit.dev/webhook/messages';
 
-        const fetchMessages = async () => {
+        const fetchMessages = async (currentPage: number = page) => {
                 setLoading(true);
                 try {
-                        const response = await fetch(`/webhook/messages`);
+                        const response = await fetch(`/webhook/messages?page=${currentPage}&limit=${limit}`);
                         if (!response.ok) {
                                 throw new Error('Failed to fetch messages');
                         }
                         const data = await response.json();
                         setMessages(data.messages || []);
                         setTotal(data.total || 0);
+                        setPage(data.page || 1);
+                        setTotalPages(data.totalPages || 1);
                 } catch (error) {
                         toast({
                                 title: t('api.fetchError'),
@@ -68,9 +73,9 @@ const APIPage = () => {
 
         useEffect(() => {
                 fetchMessages();
-                const interval = setInterval(fetchMessages, 10000);
+                const interval = setInterval(() => fetchMessages(page), 30000);
                 return () => clearInterval(interval);
-        }, []);
+        }, [page]);
 
         const formatDate = (dateString: string) => {
                 const date = new Date(dateString);
@@ -192,7 +197,7 @@ const APIPage = () => {
                                                         {messages.map((message, index) => (
                                                                 <Tr key={message.dbId}>
                                                                         <Td>
-                                                                                <Text fontWeight="bold">{index + 1}</Text>
+                                                                                <Text fontWeight="bold">{(page - 1) * limit + index + 1}</Text>
                                                                         </Td>
                                                                         <Td>
                                                                                 <Badge colorScheme={getTypeColor(message.type)}>
@@ -233,9 +238,39 @@ const APIPage = () => {
                                                 </Tbody>
                                         </Table>
                                         <Box p={4} borderTop='1px' borderColor='gray.200'>
-                                                <Text fontSize='sm' color='gray.600'>
-                                                        {t('api.totalMessages', { count: total })}
-                                                </Text>
+                                                <HStack justify='space-between' align='center'>
+                                                        <Text fontSize='sm' color='gray.600'>
+                                                                {t('api.totalMessages', { count: total })} • Page {page} of {totalPages}
+                                                        </Text>
+                                                        <HStack spacing={2}>
+                                                                <Button
+                                                                        size='sm'
+                                                                        onClick={() => {
+                                                                                const newPage = page - 1;
+                                                                                setPage(newPage);
+                                                                                fetchMessages(newPage);
+                                                                        }}
+                                                                        isDisabled={page === 1 || loading}
+                                                                        colorScheme='blue'
+                                                                        variant='outline'
+                                                                >
+                                                                        Previous
+                                                                </Button>
+                                                                <Button
+                                                                        size='sm'
+                                                                        onClick={() => {
+                                                                                const newPage = page + 1;
+                                                                                setPage(newPage);
+                                                                                fetchMessages(newPage);
+                                                                        }}
+                                                                        isDisabled={page === totalPages || loading}
+                                                                        colorScheme='blue'
+                                                                        variant='outline'
+                                                                >
+                                                                        Next
+                                                                </Button>
+                                                        </HStack>
+                                                </HStack>
                                         </Box>
                                 </Box>
                         )}
