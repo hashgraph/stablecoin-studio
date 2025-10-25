@@ -35,13 +35,18 @@ export class WebhookService {
     return this.webhookMessageRepository.save(message);
   }
 
-  async findAll(limit: number = 100): Promise<{ messages: WebhookMessage[]; total: number }> {
+  async findAll(limit: number = 100, page: number = 1): Promise<{ messages: WebhookMessage[]; total: number; page: number; totalPages: number }> {
+    const skip = (page - 1) * limit;
+    
     const [messages, total] = await this.webhookMessageRepository.findAndCount({
       order: { receivedAt: 'DESC' },
       take: limit,
+      skip: skip,
     });
 
-    return { messages, total };
+    const totalPages = Math.ceil(total / limit);
+
+    return { messages, total, page, totalPages };
   }
 
   async findById(dbId: string): Promise<WebhookMessage> {
