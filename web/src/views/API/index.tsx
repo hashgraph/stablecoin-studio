@@ -49,7 +49,8 @@ const APIPage = () => {
         const fetchMessages = async (currentPage: number = page) => {
                 setLoading(true);
                 try {
-                        const response = await fetch(`/webhook/messages?page=${currentPage}&limit=${limit}`);
+                        const apiUrl = process.env.REACT_APP_BACKEND_URL || 'http://localhost:3000';
+                        const response = await fetch(`${apiUrl}/webhook/messages?page=${currentPage}&limit=${limit}`);
                         if (!response.ok) {
                                 throw new Error('Failed to fetch messages');
                         }
@@ -126,7 +127,7 @@ const APIPage = () => {
                                                 </Text>
                                         </Box>
                                         <HStack>
-                                                <Button onClick={fetchMessages} size='sm' colorScheme='blue'>
+                                                <Button onClick={() => fetchMessages(page)} size='sm' colorScheme='blue'>
                                                         {t('api.refresh')}
                                                 </Button>
                                                 <Button
