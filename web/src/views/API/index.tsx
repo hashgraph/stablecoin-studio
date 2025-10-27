@@ -49,10 +49,7 @@ const APIPage = () => {
         const fetchMessages = async (currentPage: number = page) => {
                 setLoading(true);
                 try {
-                        const apiUrl = typeof window !== 'undefined' 
-                                ? window.location.origin 
-                                : (process.env.REACT_APP_BACKEND_URL || 'http://localhost:3000');
-                        const response = await fetch(`${apiUrl}/webhook/messages?page=${currentPage}&limit=${limit}`);
+                        const response = await fetch(`/webhook/messages?page=${currentPage}&limit=${limit}`);
                         if (!response.ok) {
                                 throw new Error('Failed to fetch messages');
                         }
@@ -102,10 +99,7 @@ const APIPage = () => {
         };
 
         const deleteAllMessages = async () => {
-                const apiUrl = typeof window !== 'undefined' 
-                        ? window.location.origin 
-                        : (process.env.REACT_APP_BACKEND_URL || 'http://localhost:3000');
-                const response = await fetch(`${apiUrl}/webhook/messages`, {
+                const response = await fetch(`/webhook/messages`, {
                         method: 'DELETE',
                 });
                 if (!response.ok) {
