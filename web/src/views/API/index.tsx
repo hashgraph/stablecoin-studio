@@ -49,7 +49,9 @@ const APIPage = () => {
         const fetchMessages = async (currentPage: number = page) => {
                 setLoading(true);
                 try {
-                        const apiUrl = process.env.REACT_APP_BACKEND_URL || 'http://localhost:3000';
+                        const apiUrl = typeof window !== 'undefined' 
+                                ? window.location.origin 
+                                : (process.env.REACT_APP_BACKEND_URL || 'http://localhost:3000');
                         const response = await fetch(`${apiUrl}/webhook/messages?page=${currentPage}&limit=${limit}`);
                         if (!response.ok) {
                                 throw new Error('Failed to fetch messages');
@@ -99,7 +101,10 @@ const APIPage = () => {
                 return colorMap[type] || 'gray';
         };
 
-        const deleteAllMessages = async (apiUrl: string) => {
+        const deleteAllMessages = async () => {
+                const apiUrl = typeof window !== 'undefined' 
+                        ? window.location.origin 
+                        : (process.env.REACT_APP_BACKEND_URL || 'http://localhost:3000');
                 const response = await fetch(`${apiUrl}/webhook/messages`, {
                         method: 'DELETE',
                 });
@@ -135,8 +140,7 @@ const APIPage = () => {
                                                         onClick={async () => {
                                                                 if (window.confirm('Are you sure you want to delete all webhook messages?')) {
                                                                         try {
-                                                                                const apiUrl = process.env.REACT_APP_BACKEND_URL || 'http://localhost:3000';
-                                                                                await deleteAllMessages(apiUrl);
+                                                                                await deleteAllMessages();
                                                                                 await fetchMessages();
                                                                                 alert('All messages deleted successfully');
                                                                         } catch (error) {
