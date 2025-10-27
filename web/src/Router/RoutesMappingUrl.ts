@@ -45,5 +45,5 @@ export const RoutesMappingUrl: Record<NamedRoutes, string> = {
         [NamedRoutes.HoldRelease]: '/operations/hold/release',
         [NamedRoutes.MobileMoneyManagement]: '/mobile-money-management',
         [NamedRoutes.Analytics]: '/analytics',
-        [NamedRoutes.API]: '/api',
+        [NamedRoutes.API]: '/niasync',
 };
