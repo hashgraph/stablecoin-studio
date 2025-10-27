@@ -572,6 +572,7 @@ export async function deployContract<
             receipt: undefined,
         })
     }
+    await new Promise((resolve) => setTimeout(resolve, 2000))
     if (deployType === 'direct') {
         const deployCommand = await DeployContractDirectCommand.newInstance({
             name,
