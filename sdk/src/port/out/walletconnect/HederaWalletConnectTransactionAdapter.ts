@@ -1427,7 +1427,12 @@ export class HederaWalletConnectTransactionAdapter extends TransactionAdapter {
 		const eventData: WalletPairedEvent = {
 			wallet: SupportedWallets.HWALLETCONNECT,
 			data: { account: this.account, pairing: '', topic: '' },
-			network: { name: this.network, recognized: true, factoryId: this.networkService.configuration?.factoryAddress || '' },
+			network: {
+				name: this.network, recognized: true,
+				factoryId: this.networkService.configuration?.factoryAddress || '',
+				resolverId: this.networkService.configuration.resolverAddress
+					|| '',
+			},
 		};
 		this.eventService.emit(WalletEvents.walletPaired, eventData);
 	}
