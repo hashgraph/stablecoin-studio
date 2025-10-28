@@ -51,6 +51,8 @@ async function processFacetLists(
     const batchSize = Math.ceil(facetIdList.length / 2)
 
     for (let i = 0; i < facetIdList.length; i += batchSize) {
+        // delay to prevent errors in RPC from too many calls
+        await new Promise((resolve) => setTimeout(resolve, 2000))
         const batchIds = facetIdList.slice(i, i + batchSize)
         const batchVersions = facetVersionList.slice(i, i + batchSize)
         const batch = createFacetConfigurations(batchIds, batchVersions)
