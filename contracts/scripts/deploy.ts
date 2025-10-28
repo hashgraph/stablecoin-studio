@@ -159,7 +159,8 @@ export async function deployFullInfrastructure({
     useEnvironment,
     partialBatchDeploy,
 }: DeployFullInfrastructureCommand): Promise<DeployFullInfrastructureResult> {
-    console.log(MESSAGES.deploy.info.deployFullInfrastructure)
+    const startDate = new Date().toJSON()
+    console.log(`[${startDate}] ${MESSAGES.deploy.info.deployFullInfrastructure}`)
     if (useEnvironment && environment.initialized) {
         return environment.toDeployScsFullInfrastructureResult()
     }
@@ -241,7 +242,8 @@ export async function deployFullInfrastructure({
     // Store the proxy address in the deployed contract list
     deployedContractList.stableCoinFactoryFacet.proxyAddress = stableCoinFactoryResolverProxy.address
 
-    console.log(MESSAGES.deploy.success.deployFullInfrastructure)
+    const endDate = new Date().toJSON()
+    console.log(`[${endDate}] ${MESSAGES.deploy.success.deployFullInfrastructure}`)
 
     // * Update Environment
     if (useEnvironment) {
