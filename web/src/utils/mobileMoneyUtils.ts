@@ -8,8 +8,7 @@ export type TransactionType =
         | 'AIRTIME'
         | 'OTP'
         | 'FAIL'
-        | 'AUTRE'
-        | 'OTHER';
+        | 'AUTRE';
 
 export interface TransactionRow {
         timestamp: Date;
@@ -25,7 +24,7 @@ export const OUT_TYPES = new Set<TransactionType>(['P2P_OUT', 'MERCHANT', 'AIRTI
 
 export const TX_TYPES: TransactionType[] = [
         'P2P_IN', 'P2P_IN_INTL', 'CASHIN', 'B2W',
-        'P2P_OUT', 'MERCHANT', 'AIRTIME', 'OTP', 'FAIL', 'AUTRE', 'OTHER'
+        'P2P_OUT', 'MERCHANT', 'AIRTIME', 'OTP', 'FAIL', 'AUTRE'
 ];
 
 export const TX_COLORS: Record<TransactionType, string> = {
@@ -38,12 +37,11 @@ export const TX_COLORS: Record<TransactionType, string> = {
         AIRTIME: '#2196f3',
         OTP: '#bdbdbd',
         FAIL: '#e53935',
-        AUTRE: '#9c27b0',
-        OTHER: '#9c27b0'
+        AUTRE: '#9c27b0'
 };
 
 function normalizeType(val: string): TransactionType {
-        if (!val) return 'OTHER';
+        if (!val) return 'AUTRE';
         const v = val.trim().toUpperCase();
         
         const aliases: Record<string, TransactionType> = {
@@ -53,16 +51,17 @@ function normalizeType(val: string): TransactionType {
                 'CASH IN': 'CASHIN',
                 'B2W ': 'B2W',
                 'B2 WALLET': 'B2W',
+                'OTHER': 'AUTRE',
         };
         
         const normalized = aliases[v] || v;
         
         const validTypes: TransactionType[] = [
                 'P2P_IN', 'P2P_IN_INTL', 'CASHIN', 'B2W',
-                'P2P_OUT', 'MERCHANT', 'AIRTIME', 'OTP', 'FAIL', 'AUTRE', 'OTHER'
+                'P2P_OUT', 'MERCHANT', 'AIRTIME', 'OTP', 'FAIL', 'AUTRE'
         ];
         
-        return validTypes.includes(normalized as TransactionType) ? (normalized as TransactionType) : 'OTHER';
+        return validTypes.includes(normalized as TransactionType) ? (normalized as TransactionType) : 'AUTRE';
 }
 
 function parseFrenchDate(dateStr: string, timeStr?: string): Date | null {
@@ -174,7 +173,7 @@ export function parseCSV(csvText: string): TransactionRow[] {
                 
                 const type = typeIdx >= 0 && values[typeIdx] 
                         ? normalizeType(values[typeIdx])
-                        : 'OTHER';
+                        : 'AUTRE';
                 
                 const amountStr = amountIdx >= 0 ? values[amountIdx] : '';
                 let amount = amountStr
