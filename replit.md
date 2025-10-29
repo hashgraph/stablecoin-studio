@@ -2,7 +2,7 @@
 
 The Stablecoin Studio is a comprehensive toolkit designed for the creation, management, and operation of stablecoins on the Hedera network. It provides a complete infrastructure including smart contracts, an SDK, CLI tools, a web interface, and backend services. This enables developers and users to deploy and manage stablecoins with advanced features such as multisignature support, role-based access control, and deep integration with the Hedera Token Service (HTS). The system is built with a modular architecture, utilizing the Diamond pattern for upgradeable smart contracts, and supports various stablecoin functionalities like minting, burning, freezing, KYC compliance, custom fees, and proof of reserve mechanisms.
 
-The application now includes a welcome page accessible at the root path ("/") that provides an introduction to the system in French before users navigate to the main application.
+The application now includes a welcome page accessible at the root path ("/") that provides an introduction to the system with messaging focused on mobile money on-chain solutions before users navigate to the main application.
 
 # User Preferences
 
@@ -15,11 +15,12 @@ Preferred communication style: Simple, everyday language.
   - Fixed automatic redirect in CoinDropdown component that was triggering on StableCoinNotSelected page
   - Added condition to prevent redirect when no stablecoin is selected (`selectedStableCoin` must be truthy)
   - Removed wildcard redirect route (`*`) that was causing routing conflicts
-- **Welcome Page**: Added elegant French landing page at root path ("/")
+- **Welcome Page**: Added elegant landing page at root path ("/")
   - Dark gradient background with subtle grid pattern
-  - "Welcome" title, system description, and "Entrer →" button
+  - Headline: "Mobile money on-chain, cash out anywhere."
+  - Key message: Complete platform for stablecoins backed by mobile money reserves
   - Configured as standalone route without sidebar or authentication
-  - "Entrer →" button navigates to stablecoin selection page (/stable-coin/not-selected)
+  - "Get Started →" button navigates to stablecoin selection page (/stable-coin/not-selected)
 - **Route Optimization**: Removed previous Stablecoin Studio landing page (/studio) to simplify navigation structure
 - **Public Routes**: All public pages (Mobile Money Management, Analytics, NiaSync, StableCoinNotSelected) are accessible without authentication
 

@@ -40,21 +40,21 @@ const HomePage = () => {
                                 >
                                         <VStack spacing={6}>
                                                 <Heading
-                                                        fontSize={{ base: '5xl', md: '7xl' }}
+                                                        fontSize={{ base: '4xl', md: '6xl' }}
                                                         fontWeight="extrabold"
-                                                        lineHeight="1.1"
+                                                        lineHeight="1.2"
                                                         bgGradient="linear(to-r, white, gray.300)"
                                                         bgClip="text"
                                                 >
-                                                        Welcome
+                                                        Mobile money on-chain, cash out anywhere.
                                                 </Heading>
                                                 <Text
                                                         fontSize={{ base: '2xl', md: '3xl' }}
-                                                        fontWeight="light"
+                                                        fontWeight="medium"
                                                         maxW="3xl"
                                                         opacity={0.9}
                                                 >
-                                                        Système de gestion des stablecoins
+                                                        A complete platform to create, manage, and operate stablecoins backed by mobile money reserves.
                                                 </Text>
                                                 <Text
                                                         fontSize={{ base: 'lg', md: 'xl' }}
@@ -62,8 +62,8 @@ const HomePage = () => {
                                                         opacity={0.7}
                                                         mt={4}
                                                 >
-                                                        Plateforme complète pour créer, gérer et opérer vos stablecoins
-                                                        avec intégration Orange Money et MVola
+                                                        Bring local liquidity to the blockchain with full transparency and automated reserve tracking.
+                                                        Issue, mint, and redeem stablecoins seamlessly — all from one unified interface.
                                                 </Text>
                                         </VStack>
 
@@ -83,10 +83,10 @@ const HomePage = () => {
                                                         transition="all 0.3s"
                                                         borderRadius="full"
                                                 >
-                                                        Entrer →
+                                                        Get Started →
                                                 </Button>
                                                 <Text fontSize="md" opacity={0.6}>
-                                                        Cliquez pour accéder à la plateforme
+                                                        Click to access the platform
                                                 </Text>
                                         </VStack>
                                 </Stack>
