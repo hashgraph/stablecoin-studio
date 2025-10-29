@@ -2,47 +2,9 @@
 
 The Stablecoin Studio is a comprehensive toolkit designed for the creation, management, and operation of stablecoins on the Hedera network. It provides a complete infrastructure including smart contracts, an SDK, CLI tools, a web interface, and backend services. This enables developers and users to deploy and manage stablecoins with advanced features such as multisignature support, role-based access control, and deep integration with the Hedera Token Service (HTS). The system is built with a modular architecture, utilizing the Diamond pattern for upgradeable smart contracts, and supports various stablecoin functionalities like minting, burning, freezing, KYC compliance, custom fees, and proof of reserve mechanisms.
 
-The application now includes a welcome page accessible at the root path ("/") that provides an introduction to the system with messaging focused on mobile money on-chain solutions before users navigate to the main application.
-
 # User Preferences
 
 Preferred communication style: Simple, everyday language.
-
-# Recent Changes
-
-## October 29, 2025
-- **MetaMask Connection Fix**: Fixed network configuration issue preventing MetaMask from connecting
-  - Changed MetaMask connection to use 'testnet' network instead of invalid '-' value
-  - Now correctly uses Hedera testnet mirror node URLs for API calls
-  - Resolves 404 errors and "invalid response from server" issues during wallet connection
-- **Connect Wallet Button Added**: Implemented "Connect Wallet" button in topbar when no wallet is connected
-  - Modified `TopbarRight.tsx` to display "Connect Wallet" button when user is not authenticated
-  - Button appears in purple color matching the app's design theme
-  - Added Redux state `showWalletConnectModal` to control modal visibility
-  - Clicking the button triggers the wallet connection modal with provider selection (MetaMask, WalletConnect, MultiSig)
-  - Modal now works on all pages including public routes
-  - Ensures users always have a clear way to connect their wallet from any page
-- **Wallet Disconnection Fix**: Resolved critical bug in SDK that caused "No Transaction Handler registered!" error when disconnecting wallet
-  - Modified `Network.ts` disconnect method to gracefully handle cases where no Transaction Handler is registered
-  - Added try-catch block to prevent unhandled promise rejections during disconnection
-  - Rebuilt SDK and cleared webpack cache to ensure frontend uses updated version
-  - Wallet disconnection now works smoothly without console errors
-- **Navigation Fix**: Resolved navigation redirect issue where clicking "Entrer" button briefly showed target page before redirecting back to Welcome
-  - Fixed automatic redirect in CoinDropdown component that was triggering on StableCoinNotSelected page
-  - Added condition to prevent redirect when no stablecoin is selected (`selectedStableCoin` must be truthy)
-  - Removed wildcard redirect route (`*`) that was causing routing conflicts
-- **Welcome Page**: Added elegant landing page at root path ("/")
-  - Dark gradient background with subtle grid pattern
-  - Headline: "Mobile money on-chain, cash out anywhere."
-  - Key message: Complete platform for stablecoins backed by mobile money reserves
-  - "How it works" section with 3 interactive step cards:
-    - Download the NiaSync app (scans mobile money balance in real time)
-    - Open Stablecoin Studio (tokenizes mobile money into on-chain assets)
-    - Use or trade your tokens (send, pay, or invest in DeFi)
-  - Configured as standalone route without sidebar or authentication
-  - "Get Started →" button navigates to stablecoin selection page (/stable-coin/not-selected)
-- **Route Optimization**: Removed previous Stablecoin Studio landing page (/studio) to simplify navigation structure
-- **Public Routes**: All public pages (Mobile Money Management, Analytics, NiaSync, StableCoinNotSelected) are accessible without authentication
 
 # System Architecture
 

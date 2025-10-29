@@ -1,5 +1,5 @@
 import { useEffect } from 'react';
-import { Outlet, Route, Routes } from 'react-router-dom';
+import { Navigate, Outlet, Route, Routes } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import Layout from '../layout/Layout';
 import { RoutesMappingUrl } from './RoutesMappingUrl';
@@ -30,7 +30,6 @@ import {
         SELECTED_WALLET_COIN,
         SELECTED_WALLET_STATUS,
         SELECTING_WALLET_COIN,
-        SHOW_WALLET_CONNECT_MODAL,
         walletActions,
 } from '../store/slices/walletSlice';
 import ImportedTokenCreation from '../views/ImportedToken/ImportedTokenCreation';
@@ -54,7 +53,6 @@ import { ExecuteOperationHold } from '../views/Operations/Hold/Operations/Execut
 import { ReleaseOperationHold } from '../views/Operations/Hold/Operations/Release/index';
 import { ReclaimOperationHold } from '../views/Operations/Hold/Operations/Reclaim/index';
 import { ListOperationHold } from '../views/Operations/Hold/Operations/List/index';
-import HomePage from '../views/HomePage';
 import MobileMoneyManagement from '../views/MobileMoneyManagement';
 import Analytics from '../views/Analytics';
 import APIPage from '../views/API';
@@ -77,7 +75,6 @@ const Router = () => {
         const selectedWalletCoin = !!useSelector(SELECTED_WALLET_COIN);
         const selectingWalletCoin = useSelector(SELECTING_WALLET_COIN);
         const status = useSelector(SELECTED_WALLET_STATUS);
-        const showWalletConnectModal = useSelector(SHOW_WALLET_CONNECT_MODAL);
 
         useEffect(() => {
                 instanceSDK();
@@ -157,19 +154,15 @@ const Router = () => {
         return (
                 <main>
                         <Routes>
-                                {/* Standalone pages - no layout wrapper */}
-                                <Route path={RoutesMappingUrl.home} element={<HomePage />} />
-                                
-                                {/* Public routes with layout */}
+                                {/* Public routes */}
                                 <Route
                                         element={
                                                 <LoginOverlayRoute
-                                                        show={Boolean(showWalletConnectModal)}
+                                                        show={false}
                                                         loadingSC={false}
                                                 />
                                         }
                                 >
-                                        <Route path={RoutesMappingUrl.stableCoinNotSelected} element={<StableCoinNotSelected />} />
                                         <Route path={RoutesMappingUrl.appSettings} element={<AppSettings />} />
                                         <Route path={RoutesMappingUrl.mobileMoneyManagement} element={<MobileMoneyManagement />} />
                                         <Route path={RoutesMappingUrl.analytics} element={<Analytics />} />
@@ -179,7 +172,7 @@ const Router = () => {
                                 <Route
                                         element={
                                                 <LoginOverlayRoute
-                                                        show={Boolean(status !== ConnectionState.Paired || showWalletConnectModal)}
+                                                        show={Boolean(status !== ConnectionState.Paired)}
                                                         loadingSC={selectingWalletCoin}
                                                 />
                                         }
@@ -233,6 +226,11 @@ const Router = () => {
 
                                         <Route path={RoutesMappingUrl.stableCoinCreation} element={<StableCoinCreation />} />
                                         <Route path={RoutesMappingUrl.importedToken} element={<ImportedTokenCreation />} />
+                                        <Route
+                                                path={RoutesMappingUrl.stableCoinNotSelected}
+                                                element={<StableCoinNotSelected />}
+                                        />
+                                        <Route path='*' element={<Navigate to={RoutesMappingUrl.stableCoinNotSelected} />} />
                                 </Route>
                         </Routes>
                 </main>
