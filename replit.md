@@ -2,7 +2,7 @@
 
 The Stablecoin Studio is a comprehensive toolkit designed for the creation, management, and operation of stablecoins on the Hedera network. It provides a complete infrastructure including smart contracts, an SDK, CLI tools, a web interface, and backend services. This enables developers and users to deploy and manage stablecoins with advanced features such as multisignature support, role-based access control, and deep integration with the Hedera Token Service (HTS). The system is built with a modular architecture, utilizing the Diamond pattern for upgradeable smart contracts, and supports various stablecoin functionalities like minting, burning, freezing, KYC compliance, custom fees, and proof of reserve mechanisms.
 
-The application now includes a landing page accessible at the root path ("/") that provides an introduction to the Stablecoin Studio before users navigate to the main application.
+The application now includes a welcome page accessible at the root path ("/") that provides an introduction to the system in French before users navigate to the main application.
 
 # User Preferences
 
@@ -11,10 +11,12 @@ Preferred communication style: Simple, everyday language.
 # Recent Changes
 
 ## October 29, 2025
-- Added landing page at root path ("/") showcasing Stablecoin Studio features
-- Landing page includes hero section with title, description, and three feature cards (Smart Contracts, Mobile Money, Multisig Support)
-- Landing page configured as public route (no authentication required)
-- "Get Started" button navigates to stablecoin selection page (/stable-coin/not-selected)
+- Added welcome page at root path ("/") with French text introducing the stablecoin management system
+- Welcome page features elegant dark gradient background with subtle grid pattern
+- Welcome page includes "Welcome" title, system description, and "Entrer →" button
+- Welcome page configured as standalone route (no sidebar, no authentication required)
+- "Entrer →" button navigates directly to stablecoin selection page (/stable-coin/not-selected)
+- Removed previous Stablecoin Studio landing page (/studio) to simplify navigation
 
 # System Architecture
 

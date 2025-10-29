@@ -57,7 +57,6 @@ import HomePage from '../views/HomePage';
 import MobileMoneyManagement from '../views/MobileMoneyManagement';
 import Analytics from '../views/Analytics';
 import APIPage from '../views/API';
-import LandingPage from '../views/LandingPage';
 
 const LoginOverlayRoute = ({ show, loadingSC }: { show: boolean; loadingSC: boolean }) => {
         return (
@@ -158,8 +157,6 @@ const Router = () => {
                         <Routes>
                                 {/* Home page - no layout */}
                                 <Route path={RoutesMappingUrl.home} element={<HomePage />} />
-                                {/* Landing page - no layout */}
-                                <Route path={RoutesMappingUrl.landingPage} element={<LandingPage />} />
                                 
                                 {/* Public routes */}
                                 <Route
