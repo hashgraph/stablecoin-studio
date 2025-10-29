@@ -155,6 +155,9 @@ const Router = () => {
         return (
                 <main>
                         <Routes>
+                                {/* Landing page - no layout */}
+                                <Route path={RoutesMappingUrl.landingPage} element={<LandingPage />} />
+                                
                                 {/* Public routes */}
                                 <Route
                                         element={
@@ -164,7 +167,6 @@ const Router = () => {
                                                 />
                                         }
                                 >
-                                        <Route path={RoutesMappingUrl.landingPage} element={<LandingPage />} />
                                         <Route path={RoutesMappingUrl.appSettings} element={<AppSettings />} />
                                         <Route path={RoutesMappingUrl.mobileMoneyManagement} element={<MobileMoneyManagement />} />
                                         <Route path={RoutesMappingUrl.analytics} element={<Analytics />} />
