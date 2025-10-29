@@ -13,7 +13,7 @@ const LandingPage = () => {
         return (
                 <Box
                         minH="100vh"
-                        bgGradient="linear(to-br, brand.primary, brand.secondary, brand.tertiary)"
+                        bgGradient="linear(to-br, #6B46C1, #805AD5, #9F7AEA)"
                         display="flex"
                         alignItems="center"
                         justifyContent="center"
