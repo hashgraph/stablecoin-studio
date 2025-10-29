@@ -1,5 +1,5 @@
 import { Box, Button, Flex, HStack, Image, Text, VStack } from '@chakra-ui/react';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import Icon from '../../components/Icon';
 import {
         LAST_WALLET_SELECTED,
@@ -9,6 +9,7 @@ import {
         SELECTED_NETWORK,
         SELECTED_RPC_LS,
         SELECTED_WALLET_PAIRED,
+        walletActions,
 } from '../../store/slices/walletSlice';
 import METAMASK_LOGO from '../../assets/svg/MetaMask_Fox.svg';
 import MULTISIG_LOGO from '../../assets/png/multisigLogo.png';
@@ -21,6 +22,7 @@ import { cleanLocalStorage } from '../../utils/cleanStorage';
 import SDKService from '../../services/SDKService';
 
 const TopbarRight = () => {
+        const dispatch = useDispatch();
         const initData = useSelector(SELECTED_WALLET_PAIRED);
         const selectedWallet = useSelector(LAST_WALLET_SELECTED);
         const network = useSelector(SELECTED_NETWORK);
@@ -32,7 +34,7 @@ const TopbarRight = () => {
         };
 
         const handleConnectWallet = () => {
-                window.location.reload();
+                dispatch(walletActions.setShowWalletConnectModal(true));
         };
 
         const getIcon = (): ReactElement => {
