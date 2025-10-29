@@ -56,6 +56,7 @@ import { ListOperationHold } from '../views/Operations/Hold/Operations/List/inde
 import MobileMoneyManagement from '../views/MobileMoneyManagement';
 import Analytics from '../views/Analytics';
 import APIPage from '../views/API';
+import LandingPage from '../views/LandingPage';
 
 const LoginOverlayRoute = ({ show, loadingSC }: { show: boolean; loadingSC: boolean }) => {
         return (
@@ -163,6 +164,7 @@ const Router = () => {
                                                 />
                                         }
                                 >
+                                        <Route path={RoutesMappingUrl.landingPage} element={<LandingPage />} />
                                         <Route path={RoutesMappingUrl.appSettings} element={<AppSettings />} />
                                         <Route path={RoutesMappingUrl.mobileMoneyManagement} element={<MobileMoneyManagement />} />
                                         <Route path={RoutesMappingUrl.analytics} element={<Analytics />} />
@@ -230,7 +232,7 @@ const Router = () => {
                                                 path={RoutesMappingUrl.stableCoinNotSelected}
                                                 element={<StableCoinNotSelected />}
                                         />
-                                        <Route path='*' element={<Navigate to={RoutesMappingUrl.stableCoinNotSelected} />} />
+                                        <Route path='*' element={<Navigate to={RoutesMappingUrl.landingPage} />} />
                                 </Route>
                         </Routes>
                 </main>
