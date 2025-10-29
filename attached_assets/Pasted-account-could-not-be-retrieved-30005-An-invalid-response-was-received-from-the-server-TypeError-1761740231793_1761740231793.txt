@@ -1,0 +1,88 @@
+account could not be retrieved : 30005 - An invalid response was received from the server: TypeError: Cannot read properties of undefined (reading 'toString')
+getAccountInfo @ SDKService.ts:448
+await in getAccountInfo
+getAccountInfo @ CoinDropdown.tsx:99
+(anonymous) @ CoinDropdown.tsx:90
+commitHookEffectListMount @ react-dom.development.js:20059
+commitPassiveMountOnFiber @ react-dom.development.js:21552
+commitPassiveMountEffects_complete @ react-dom.development.js:21524
+commitPassiveMountEffects_begin @ react-dom.development.js:21514
+commitPassiveMountEffects @ react-dom.development.js:21504
+flushPassiveEffectsImpl @ react-dom.development.js:23387
+flushPassiveEffects @ react-dom.development.js:23340
+commitRootImpl @ react-dom.development.js:23299
+commitRoot @ react-dom.development.js:23082
+performSyncWorkOnRoot @ react-dom.development.js:22591
+flushSyncCallbacks @ react-dom.development.js:10561
+(anonymous) @ react-dom.development.js:22196Understand this error
+MirrorNodeAdapter.js:65  GET https://00e7f995-d681-4ffb-a329-429e6a34508f-00-1tfezzxd9lf89.riker.replit.dev/tokens?limit=100&order=desc&account.id=0.0.6890300 404 (Not Found)
+dispatchXhrRequest @ xhr.js:175
+xhr @ xhr.js:13
+dispatchRequest @ dispatchRequest.js:43
+_request @ Axios.js:161
+request @ Axios.js:39
+(anonymous) @ Axios.js:183
+wrap @ bind.js:5
+getStableCoinsList @ MirrorNodeAdapter.js:65
+execute @ GetListStableCoinQueryHandler.js:39
+execute @ QueryBus.js:48
+listStableCoins @ Account.js:57
+(anonymous) @ LogErrorDecorator.js:25
+getStableCoins @ SDKService.ts:429
+(anonymous) @ walletSlice.ts:101
+(anonymous) @ redux-toolkit.esm.js:1557
+step @ redux-toolkit.esm.js:95
+(anonymous) @ redux-toolkit.esm.js:44
+(anonymous) @ redux-toolkit.esm.js:157
+__async @ redux-toolkit.esm.js:139
+(anonymous) @ redux-toolkit.esm.js:1519
+(anonymous) @ redux-toolkit.esm.js:1595
+(anonymous) @ index.js:16
+(anonymous) @ redux-toolkit.esm.js:557
+(anonymous) @ redux-toolkit.esm.js:291
+(anonymous) @ CoinDropdown.tsx:85
+commitHookEffectListMount @ react-dom.development.js:20059
+commitPassiveMountOnFiber @ react-dom.development.js:21552
+commitPassiveMountEffects_complete @ react-dom.development.js:21524
+commitPassiveMountEffects_begin @ react-dom.development.js:21514
+commitPassiveMountEffects @ react-dom.development.js:21504
+flushPassiveEffectsImpl @ react-dom.development.js:23387
+flushPassiveEffects @ react-dom.development.js:23340
+commitRootImpl @ react-dom.development.js:23299
+commitRoot @ react-dom.development.js:23082
+performSyncWorkOnRoot @ react-dom.development.js:22591
+flushSyncCallbacks @ react-dom.development.js:10561
+(anonymous) @ react-dom.development.js:22196Understand this error
+LogService.js:62 2025-10-29T12:16:57.394Z - [ERROR]	TypeError: Cannot read properties of undefined (reading 'map')	
+LogService.js:62 2025-10-29T12:16:57.394Z - [ERROR]	30005 - An invalid response was received from the server: TypeError: Cannot read properties of undefined (reading 'map')	
+SDKService.ts:431 list of stablecoin could not be retrieved : 30005 - An invalid response was received from the server: TypeError: Cannot read properties of undefined (reading 'map')
+getStableCoins @ SDKService.ts:431
+await in getStableCoins
+(anonymous) @ walletSlice.ts:101
+(anonymous) @ redux-toolkit.esm.js:1557
+step @ redux-toolkit.esm.js:95
+(anonymous) @ redux-toolkit.esm.js:44
+(anonymous) @ redux-toolkit.esm.js:157
+__async @ redux-toolkit.esm.js:139
+(anonymous) @ redux-toolkit.esm.js:1519
+(anonymous) @ redux-toolkit.esm.js:1595
+(anonymous) @ index.js:16
+(anonymous) @ redux-toolkit.esm.js:557
+(anonymous) @ redux-toolkit.esm.js:291
+(anonymous) @ CoinDropdown.tsx:85
+commitHookEffectListMount @ react-dom.development.js:20059
+commitPassiveMountOnFiber @ react-dom.development.js:21552
+commitPassiveMountEffects_complete @ react-dom.development.js:21524
+commitPassiveMountEffects_begin @ react-dom.development.js:21514
+commitPassiveMountEffects @ react-dom.development.js:21504
+flushPassiveEffectsImpl @ react-dom.development.js:23387
+flushPassiveEffects @ react-dom.development.js:23340
+commitRootImpl @ react-dom.development.js:23299
+commitRoot @ react-dom.development.js:23082
+performSyncWorkOnRoot @ react-dom.development.js:22591
+flushSyncCallbacks @ react-dom.development.js:10561
+(anonymous) @ react-dom.development.js:22196Understand this error
+WebSocketClient.js:44 WebSocket connection to 'wss://00e7f995-d681-4ffb-a329-429e6a34508f-00-1tfezzxd9lf89.riker.replit.dev:5000/ws' failed: 
+WebSocketClient @ WebSocketClient.js:44
+initSocket @ socket.js:27
+(anonymous) @ socket.js:51Understand this error
