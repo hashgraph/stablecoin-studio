@@ -7,7 +7,7 @@ const HomePage = () => {
         const navigate = useNavigate();
 
         const handleEnter = () => {
-                navigate(RoutesMappingUrl[NamedRoutes.LandingPage]);
+                navigate(RoutesMappingUrl[NamedRoutes.StableCoinNotSelected]);
         };
 
         return (
