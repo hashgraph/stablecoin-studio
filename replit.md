@@ -11,6 +11,11 @@ Preferred communication style: Simple, everyday language.
 # Recent Changes
 
 ## October 29, 2025
+- **Connect Wallet Button Added**: Implemented "Connect Wallet" button in topbar when no wallet is connected
+  - Modified `TopbarRight.tsx` to display "Connect Wallet" button when user is not authenticated
+  - Button appears in purple color matching the app's design theme
+  - Clicking the button reloads the page to trigger the wallet connection modal
+  - Ensures users always have a clear way to connect their wallet from any page
 - **Wallet Disconnection Fix**: Resolved critical bug in SDK that caused "No Transaction Handler registered!" error when disconnecting wallet
   - Modified `Network.ts` disconnect method to gracefully handle cases where no Transaction Handler is registered
   - Added try-catch block to prevent unhandled promise rejections during disconnection
