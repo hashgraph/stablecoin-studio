@@ -1,4 +1,4 @@
-import { Box, Button, Container, Heading, Stack, Text, VStack } from '@chakra-ui/react';
+import { Box, Button, Container, Heading, Stack, Text, VStack, SimpleGrid } from '@chakra-ui/react';
 import { useNavigate } from 'react-router-dom';
 import { RoutesMappingUrl } from '../../Router/RoutesMappingUrl';
 import { NamedRoutes } from '../../Router/NamedRoutes';
@@ -14,11 +14,8 @@ const HomePage = () => {
                 <Box
                         minH="100vh"
                         bgGradient="linear(to-br, #1A202C, #2D3748, #4A5568)"
-                        display="flex"
-                        alignItems="center"
-                        justifyContent="center"
                         position="relative"
-                        overflow="hidden"
+                        overflow="auto"
                 >
                         <Box
                                 position="absolute"
@@ -31,12 +28,11 @@ const HomePage = () => {
                                 bgSize="50px 50px"
                         />
 
-                        <Container maxW="container.lg" position="relative" zIndex={1}>
+                        <Container maxW="container.lg" position="relative" zIndex={1} py={10}>
                                 <Stack
-                                        spacing={12}
+                                        spacing={10}
                                         textAlign="center"
                                         color="white"
-                                        py={20}
                                 >
                                         <VStack spacing={6}>
                                                 <Heading
@@ -67,7 +63,138 @@ const HomePage = () => {
                                                 </Text>
                                         </VStack>
 
-                                        <VStack spacing={6} pt={12}>
+                                        <VStack spacing={8} pt={8}>
+                                                <Heading
+                                                        fontSize={{ base: '3xl', md: '4xl' }}
+                                                        fontWeight="bold"
+                                                        opacity={0.95}
+                                                >
+                                                        How it works
+                                                </Heading>
+
+                                                <SimpleGrid
+                                                        columns={{ base: 1, md: 3 }}
+                                                        spacing={10}
+                                                        pt={8}
+                                                        w="full"
+                                                >
+                                                        <VStack
+                                                                spacing={4}
+                                                                p={8}
+                                                                bg="whiteAlpha.100"
+                                                                borderRadius="2xl"
+                                                                backdropFilter="blur(10px)"
+                                                                border="1px solid"
+                                                                borderColor="whiteAlpha.200"
+                                                                transition="all 0.3s"
+                                                                _hover={{
+                                                                        transform: 'translateY(-4px)',
+                                                                        bg: 'whiteAlpha.150',
+                                                                }}
+                                                        >
+                                                                <Box
+                                                                        fontSize="4xl"
+                                                                        fontWeight="bold"
+                                                                        bgGradient="linear(to-r, purple.300, pink.300)"
+                                                                        bgClip="text"
+                                                                >
+                                                                        01
+                                                                </Box>
+                                                                <Text
+                                                                        fontSize="xl"
+                                                                        fontWeight="bold"
+                                                                        textAlign="center"
+                                                                >
+                                                                        Download the NiaSync app
+                                                                </Text>
+                                                                <Text
+                                                                        fontSize="md"
+                                                                        opacity={0.8}
+                                                                        textAlign="center"
+                                                                >
+                                                                        NiaSync automatically scans your mobile money balance and transactions in real time.
+                                                                </Text>
+                                                        </VStack>
+
+                                                        <VStack
+                                                                spacing={4}
+                                                                p={8}
+                                                                bg="whiteAlpha.100"
+                                                                borderRadius="2xl"
+                                                                backdropFilter="blur(10px)"
+                                                                border="1px solid"
+                                                                borderColor="whiteAlpha.200"
+                                                                transition="all 0.3s"
+                                                                _hover={{
+                                                                        transform: 'translateY(-4px)',
+                                                                        bg: 'whiteAlpha.150',
+                                                                }}
+                                                        >
+                                                                <Box
+                                                                        fontSize="4xl"
+                                                                        fontWeight="bold"
+                                                                        bgGradient="linear(to-r, blue.300, cyan.300)"
+                                                                        bgClip="text"
+                                                                >
+                                                                        02
+                                                                </Box>
+                                                                <Text
+                                                                        fontSize="xl"
+                                                                        fontWeight="bold"
+                                                                        textAlign="center"
+                                                                >
+                                                                        Open Stablecoin Studio
+                                                                </Text>
+                                                                <Text
+                                                                        fontSize="md"
+                                                                        opacity={0.8}
+                                                                        textAlign="center"
+                                                                >
+                                                                        Stablecoin Studio tokenizes your available mobile money into verified on-chain assets, backed 1:1.
+                                                                </Text>
+                                                        </VStack>
+
+                                                        <VStack
+                                                                spacing={4}
+                                                                p={8}
+                                                                bg="whiteAlpha.100"
+                                                                borderRadius="2xl"
+                                                                backdropFilter="blur(10px)"
+                                                                border="1px solid"
+                                                                borderColor="whiteAlpha.200"
+                                                                transition="all 0.3s"
+                                                                _hover={{
+                                                                        transform: 'translateY(-4px)',
+                                                                        bg: 'whiteAlpha.150',
+                                                                }}
+                                                        >
+                                                                <Box
+                                                                        fontSize="4xl"
+                                                                        fontWeight="bold"
+                                                                        bgGradient="linear(to-r, green.300, teal.300)"
+                                                                        bgClip="text"
+                                                                >
+                                                                        03
+                                                                </Box>
+                                                                <Text
+                                                                        fontSize="xl"
+                                                                        fontWeight="bold"
+                                                                        textAlign="center"
+                                                                >
+                                                                        Use or trade your tokens
+                                                                </Text>
+                                                                <Text
+                                                                        fontSize="md"
+                                                                        opacity={0.8}
+                                                                        textAlign="center"
+                                                                >
+                                                                        Send, pay, or invest anywhere in DeFi or digital markets — with low fees and instant liquidity.
+                                                                </Text>
+                                                        </VStack>
+                                                </SimpleGrid>
+                                        </VStack>
+
+                                        <VStack spacing={6} pt={8} pb={10}>
                                                 <Button
                                                         size="lg"
                                                         bg="white"
