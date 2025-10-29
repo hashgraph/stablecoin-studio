@@ -17,7 +17,7 @@ import { useState, useEffect } from 'react';
 import type React from 'react';
 import { useTranslation } from 'react-i18next';
 import Plot from 'react-plotly.js';
-import { parseCSV, TX_TYPES, TX_COLORS } from '../../utils/mobileMoneyUtils';
+import { parseCSV, TX_TYPES, TX_COLORS, FINANCIAL_TX_TYPES } from '../../utils/mobileMoneyUtils';
 import type { TransactionRow } from '../../utils/mobileMoneyUtils';
 import {
         processCSVActivity,
@@ -146,8 +146,8 @@ const MobileMoneyManagement = () => {
                                 freq
                         );
                         const flows = computeDailyFlows(txs);
-                        const matrix = computeTypeMatrix(txs, processed.fullIndex, freq, TX_TYPES);
-                        const histogram = computeTypeHistogram(txs, processed.fullIndex, freq, TX_TYPES);
+                        const matrix = computeTypeMatrix(txs, processed.fullIndex, freq, FINANCIAL_TX_TYPES);
+                        const histogram = computeTypeHistogram(txs, processed.fullIndex, freq, FINANCIAL_TX_TYPES);
 
                         setProcessedData(processed);
                         setActivityStats(stats);
@@ -314,7 +314,7 @@ const MobileMoneyManagement = () => {
                                         bg='brand.white'
                                 >
                                         <Plot
-                                                data={TX_TYPES.map((txType, idx) => ({
+                                                data={FINANCIAL_TX_TYPES.map((txType, idx) => ({
                                                         z: [typeMatrix[idx]],
                                                         x: processedData.fullIndex.map(d => d.toISOString()),
                                                         y: [txType.replace(/_/g, ' ')],
@@ -327,7 +327,7 @@ const MobileMoneyManagement = () => {
                                                         xgap: 1,
                                                 }))}
                                                 layout={{
-                                                        height: 38 * TX_TYPES.length + 70,
+                                                        height: 38 * FINANCIAL_TX_TYPES.length + 70,
                                                         margin: { l: 100, r: 20, t: 40, b: 40 },
                                                         title: 'Transaction heatmap by type',
                                                         xaxis: {
@@ -336,8 +336,8 @@ const MobileMoneyManagement = () => {
                                                         },
                                                         yaxis: {
                                                                 tickmode: 'array',
-                                                                tickvals: TX_TYPES.map((t) => t.replace(/_/g, ' ')),
-                                                                ticktext: TX_TYPES.map((t) => t.replace(/_/g, ' ')),
+                                                                tickvals: FINANCIAL_TX_TYPES.map((t) => t.replace(/_/g, ' ')),
+                                                                ticktext: FINANCIAL_TX_TYPES.map((t) => t.replace(/_/g, ' ')),
                                                         },
                                                 }}
                                                 config={{ responsive: true }}
@@ -355,7 +355,7 @@ const MobileMoneyManagement = () => {
                                         bg='brand.white'
                                 >
                                         <Plot
-                                                data={TX_TYPES.map((txType) => {
+                                                data={FINANCIAL_TX_TYPES.map((txType) => {
                                                         const counts = typeHistogram.typeCounts.get(txType) || [];
                                                         return {
                                                                 x: typeHistogram.dates.map(d => d.toISOString()),

@@ -27,6 +27,11 @@ export const TX_TYPES: TransactionType[] = [
         'P2P_OUT', 'MERCHANT', 'AIRTIME', 'OTP', 'FAIL', 'AUTRE'
 ];
 
+export const FINANCIAL_TX_TYPES: TransactionType[] = [
+        'P2P_IN', 'P2P_IN_INTL', 'CASHIN', 'B2W',
+        'P2P_OUT', 'MERCHANT', 'AIRTIME'
+];
+
 export const TX_COLORS: Record<TransactionType, string> = {
         P2P_IN: '#28a745',
         P2P_IN_INTL: '#66bb6a',
