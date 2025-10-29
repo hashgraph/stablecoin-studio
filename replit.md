@@ -11,6 +11,10 @@ Preferred communication style: Simple, everyday language.
 # Recent Changes
 
 ## October 29, 2025
+- **MetaMask Connection Fix**: Fixed network configuration issue preventing MetaMask from connecting
+  - Changed MetaMask connection to use 'testnet' network instead of invalid '-' value
+  - Now correctly uses Hedera testnet mirror node URLs for API calls
+  - Resolves 404 errors and "invalid response from server" issues during wallet connection
 - **Connect Wallet Button Added**: Implemented "Connect Wallet" button in topbar when no wallet is connected
   - Modified `TopbarRight.tsx` to display "Connect Wallet" button when user is not authenticated
   - Button appears in purple color matching the app's design theme
