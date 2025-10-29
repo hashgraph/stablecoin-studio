@@ -17,10 +17,6 @@ export function convertWebhooksToTransactions(webhooks: WebhookMessage[]): Trans
   return webhooks
     .filter(webhook => {
       if (!webhook.timestamp) return false;
-      
-      const excludedTypes = ['OTP', 'FAIL', 'AUTRE'];
-      if (excludedTypes.includes(webhook.type)) return false;
-      
       return true;
     })
     .map(webhook => {
@@ -65,7 +61,7 @@ export async function fetchWebhookTransactions(): Promise<TransactionRow[]> {
   
   console.log(`✅ Total webhooks loaded: ${allWebhooks.length}`);
   const transactions = convertWebhooksToTransactions(allWebhooks);
-  console.log(`✅ Converted to ${transactions.length} financial transactions`);
+  console.log(`✅ Converted to ${transactions.length} transactions (all types included)`);
   
   return transactions;
 }
