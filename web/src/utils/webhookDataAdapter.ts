@@ -41,9 +41,9 @@ export async function fetchWebhookTransactions(): Promise<TransactionRow[]> {
   let allWebhooks: WebhookMessage[] = [];
   let page = 1;
   let hasMore = true;
-  const limit = 200;
+  const limit = 500;
   
-  console.log('Fetching all webhook transactions...');
+  console.log('Fetching ALL webhook transactions from database...');
   
   while (hasMore) {
     const response = await fetch(`/webhook/messages?page=${page}&limit=${limit}`);
@@ -61,16 +61,11 @@ export async function fetchWebhookTransactions(): Promise<TransactionRow[]> {
     
     hasMore = webhooks.length === limit;
     page++;
-    
-    if (page > 20) {
-      console.warn('Too many pages, stopping at page 20');
-      break;
-    }
   }
   
-  console.log(`Total webhooks loaded: ${allWebhooks.length}`);
+  console.log(`✅ Total webhooks loaded: ${allWebhooks.length}`);
   const transactions = convertWebhooksToTransactions(allWebhooks);
-  console.log(`Converted to ${transactions.length} transactions`);
+  console.log(`✅ Converted to ${transactions.length} financial transactions`);
   
   return transactions;
 }

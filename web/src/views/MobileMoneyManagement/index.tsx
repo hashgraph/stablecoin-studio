@@ -57,9 +57,11 @@ const MobileMoneyManagement = () => {
         }, []);
 
         const handleLoadFromWebhooks = async () => {
+                console.log('🔄 Starting webhook load...');
                 setIsLoading(true);
                 try {
                         const webhookTransactions = await fetchWebhookTransactions();
+                        console.log(`✅ Fetched ${webhookTransactions.length} webhook transactions`);
                         
                         if (webhookTransactions.length === 0) {
                                 toast({
@@ -75,7 +77,10 @@ const MobileMoneyManagement = () => {
 
                         setTransactions(webhookTransactions);
                         setDataSource('webhooks');
+                        
+                        console.log('📊 Processing data...');
                         processData(webhookTransactions, frequency);
+                        console.log('✅ Data processing complete');
                         
                         toast({
                                 title: 'Webhook data loaded',
@@ -85,6 +90,7 @@ const MobileMoneyManagement = () => {
                                 isClosable: true,
                         });
                 } catch (error) {
+                        console.error('❌ Error loading webhooks:', error);
                         toast({
                                 title: 'Failed to load webhooks',
                                 description: error instanceof Error ? error.message : 'Could not fetch webhook data',
@@ -93,6 +99,7 @@ const MobileMoneyManagement = () => {
                                 isClosable: true,
                         });
                 } finally {
+                        console.log('🏁 Setting isLoading to false');
                         setIsLoading(false);
                 }
         };
