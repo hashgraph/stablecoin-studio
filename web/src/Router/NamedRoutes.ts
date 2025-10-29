@@ -1,4 +1,5 @@
 export enum NamedRoutes {
+        Home = 'home',
         LandingPage = 'landingPage',
         Balance = 'balance',
         Burn = 'burn',
