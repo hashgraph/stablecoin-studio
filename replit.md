@@ -19,6 +19,10 @@ Preferred communication style: Simple, everyday language.
   - Dark gradient background with subtle grid pattern
   - Headline: "Mobile money on-chain, cash out anywhere."
   - Key message: Complete platform for stablecoins backed by mobile money reserves
+  - "How it works" section with 3 interactive step cards:
+    - Download the NiaSync app (scans mobile money balance in real time)
+    - Open Stablecoin Studio (tokenizes mobile money into on-chain assets)
+    - Use or trade your tokens (send, pay, or invest in DeFi)
   - Configured as standalone route without sidebar or authentication
   - "Get Started →" button navigates to stablecoin selection page (/stable-coin/not-selected)
 - **Route Optimization**: Removed previous Stablecoin Studio landing page (/studio) to simplify navigation structure
