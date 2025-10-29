@@ -103,8 +103,11 @@ async function importCSV() {
       const sender = record.Sender || 'Unknown';
       const body = record.Message;
       const type = record.type || 'AUTRE';
-      const amount = cleanAmount(record.amount);
-      const balance = cleanAmount(record.solde);
+      
+      const isNonFinancial = ['AUTRE', 'OTP', 'FAIL'].includes(type);
+      const amount = isNonFinancial ? null : cleanAmount(record.amount);
+      const balance = isNonFinancial ? null : cleanAmount(record.solde);
+      
       const timestamp = parseDate(record.Date, record.Time);
       const receivedAt = new Date().toISOString();
       
