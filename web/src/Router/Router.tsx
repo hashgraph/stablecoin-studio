@@ -30,6 +30,7 @@ import {
         SELECTED_WALLET_COIN,
         SELECTED_WALLET_STATUS,
         SELECTING_WALLET_COIN,
+        SHOW_WALLET_CONNECT_MODAL,
         walletActions,
 } from '../store/slices/walletSlice';
 import ImportedTokenCreation from '../views/ImportedToken/ImportedTokenCreation';
@@ -76,6 +77,7 @@ const Router = () => {
         const selectedWalletCoin = !!useSelector(SELECTED_WALLET_COIN);
         const selectingWalletCoin = useSelector(SELECTING_WALLET_COIN);
         const status = useSelector(SELECTED_WALLET_STATUS);
+        const showWalletConnectModal = useSelector(SHOW_WALLET_CONNECT_MODAL);
 
         useEffect(() => {
                 instanceSDK();
@@ -162,7 +164,7 @@ const Router = () => {
                                 <Route
                                         element={
                                                 <LoginOverlayRoute
-                                                        show={false}
+                                                        show={Boolean(showWalletConnectModal)}
                                                         loadingSC={false}
                                                 />
                                         }
@@ -177,7 +179,7 @@ const Router = () => {
                                 <Route
                                         element={
                                                 <LoginOverlayRoute
-                                                        show={Boolean(status !== ConnectionState.Paired)}
+                                                        show={Boolean(status !== ConnectionState.Paired || showWalletConnectModal)}
                                                         loadingSC={selectingWalletCoin}
                                                 />
                                         }
