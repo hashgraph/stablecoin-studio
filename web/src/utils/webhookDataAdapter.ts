@@ -38,15 +38,39 @@ export function convertWebhooksToTransactions(webhooks: WebhookMessage[]): Trans
 }
 
 export async function fetchWebhookTransactions(): Promise<TransactionRow[]> {
-  const apiUrl = process.env.REACT_APP_BACKEND_URL || '';
-  const response = await fetch(`${apiUrl}/webhook/messages`);
+  let allWebhooks: WebhookMessage[] = [];
+  let page = 1;
+  let hasMore = true;
+  const limit = 200;
   
-  if (!response.ok) {
-    throw new Error(`Failed to fetch webhook messages: ${response.statusText}`);
+  console.log('Fetching all webhook transactions...');
+  
+  while (hasMore) {
+    const response = await fetch(`/webhook/messages?page=${page}&limit=${limit}`);
+    
+    if (!response.ok) {
+      throw new Error(`Failed to fetch webhook messages: ${response.statusText}`);
+    }
+    
+    const data = await response.json();
+    const webhooks: WebhookMessage[] = data.messages || [];
+    
+    console.log(`Page ${page}: Loaded ${webhooks.length} webhooks`);
+    
+    allWebhooks = allWebhooks.concat(webhooks);
+    
+    hasMore = webhooks.length === limit;
+    page++;
+    
+    if (page > 20) {
+      console.warn('Too many pages, stopping at page 20');
+      break;
+    }
   }
   
-  const data = await response.json();
-  const webhooks: WebhookMessage[] = data.messages || [];
+  console.log(`Total webhooks loaded: ${allWebhooks.length}`);
+  const transactions = convertWebhooksToTransactions(allWebhooks);
+  console.log(`Converted to ${transactions.length} transactions`);
   
-  return convertWebhooksToTransactions(webhooks);
+  return transactions;
 }
