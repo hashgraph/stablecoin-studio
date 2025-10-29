@@ -1,5 +1,5 @@
 import { useEffect } from 'react';
-import { Navigate, Outlet, Route, Routes } from 'react-router-dom';
+import { Outlet, Route, Routes } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import Layout from '../layout/Layout';
 import { RoutesMappingUrl } from './RoutesMappingUrl';
