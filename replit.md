@@ -11,12 +11,17 @@ Preferred communication style: Simple, everyday language.
 # Recent Changes
 
 ## October 29, 2025
-- Added welcome page at root path ("/") with French text introducing the stablecoin management system
-- Welcome page features elegant dark gradient background with subtle grid pattern
-- Welcome page includes "Welcome" title, system description, and "Entrer →" button
-- Welcome page configured as standalone route (no sidebar, no authentication required)
-- "Entrer →" button navigates directly to stablecoin selection page (/stable-coin/not-selected)
-- Removed previous Stablecoin Studio landing page (/studio) to simplify navigation
+- **Navigation Fix**: Resolved navigation redirect issue where clicking "Entrer" button briefly showed target page before redirecting back to Welcome
+  - Fixed automatic redirect in CoinDropdown component that was triggering on StableCoinNotSelected page
+  - Added condition to prevent redirect when no stablecoin is selected (`selectedStableCoin` must be truthy)
+  - Removed wildcard redirect route (`*`) that was causing routing conflicts
+- **Welcome Page**: Added elegant French landing page at root path ("/")
+  - Dark gradient background with subtle grid pattern
+  - "Welcome" title, system description, and "Entrer →" button
+  - Configured as standalone route without sidebar or authentication
+  - "Entrer →" button navigates to stablecoin selection page (/stable-coin/not-selected)
+- **Route Optimization**: Removed previous Stablecoin Studio landing page (/studio) to simplify navigation structure
+- **Public Routes**: All public pages (Mobile Money Management, Analytics, NiaSync, StableCoinNotSelected) are accessible without authentication
 
 # System Architecture
 

@@ -155,10 +155,10 @@ const Router = () => {
         return (
                 <main>
                         <Routes>
-                                {/* Home page - no layout */}
+                                {/* Standalone pages - no layout wrapper */}
                                 <Route path={RoutesMappingUrl.home} element={<HomePage />} />
                                 
-                                {/* Public routes */}
+                                {/* Public routes with layout */}
                                 <Route
                                         element={
                                                 <LoginOverlayRoute
@@ -167,14 +167,11 @@ const Router = () => {
                                                 />
                                         }
                                 >
+                                        <Route path={RoutesMappingUrl.stableCoinNotSelected} element={<StableCoinNotSelected />} />
                                         <Route path={RoutesMappingUrl.appSettings} element={<AppSettings />} />
                                         <Route path={RoutesMappingUrl.mobileMoneyManagement} element={<MobileMoneyManagement />} />
                                         <Route path={RoutesMappingUrl.analytics} element={<Analytics />} />
                                         <Route path={RoutesMappingUrl.api} element={<APIPage />} />
-                                        <Route
-                                                path={RoutesMappingUrl.stableCoinNotSelected}
-                                                element={<StableCoinNotSelected />}
-                                        />
                                 </Route>
                                 {/* Private routes */}
                                 <Route
@@ -234,7 +231,6 @@ const Router = () => {
 
                                         <Route path={RoutesMappingUrl.stableCoinCreation} element={<StableCoinCreation />} />
                                         <Route path={RoutesMappingUrl.importedToken} element={<ImportedTokenCreation />} />
-                                        <Route path='*' element={<Navigate to={RoutesMappingUrl.home} />} />
                                 </Route>
                         </Routes>
                 </main>
