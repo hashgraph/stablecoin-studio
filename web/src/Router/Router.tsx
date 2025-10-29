@@ -53,6 +53,7 @@ import { ExecuteOperationHold } from '../views/Operations/Hold/Operations/Execut
 import { ReleaseOperationHold } from '../views/Operations/Hold/Operations/Release/index';
 import { ReclaimOperationHold } from '../views/Operations/Hold/Operations/Reclaim/index';
 import { ListOperationHold } from '../views/Operations/Hold/Operations/List/index';
+import HomePage from '../views/HomePage';
 import MobileMoneyManagement from '../views/MobileMoneyManagement';
 import Analytics from '../views/Analytics';
 import APIPage from '../views/API';
@@ -155,6 +156,8 @@ const Router = () => {
         return (
                 <main>
                         <Routes>
+                                {/* Home page - no layout */}
+                                <Route path={RoutesMappingUrl.home} element={<HomePage />} />
                                 {/* Landing page - no layout */}
                                 <Route path={RoutesMappingUrl.landingPage} element={<LandingPage />} />
                                 
@@ -234,7 +237,7 @@ const Router = () => {
                                                 path={RoutesMappingUrl.stableCoinNotSelected}
                                                 element={<StableCoinNotSelected />}
                                         />
-                                        <Route path='*' element={<Navigate to={RoutesMappingUrl.landingPage} />} />
+                                        <Route path='*' element={<Navigate to={RoutesMappingUrl.home} />} />
                                 </Route>
                         </Routes>
                 </main>
