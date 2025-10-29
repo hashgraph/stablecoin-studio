@@ -56,6 +56,7 @@ import { ListOperationHold } from '../views/Operations/Hold/Operations/List/inde
 import MobileMoneyManagement from '../views/MobileMoneyManagement';
 import Analytics from '../views/Analytics';
 import APIPage from '../views/API';
+import HomePage from '../views/HomePage';
 
 const LoginOverlayRoute = ({ show, loadingSC }: { show: boolean; loadingSC: boolean }) => {
         return (
@@ -154,6 +155,9 @@ const Router = () => {
         return (
                 <main>
                         <Routes>
+                                {/* Landing page - no layout */}
+                                <Route path={RoutesMappingUrl.home} element={<HomePage />} />
+                                
                                 {/* Public routes */}
                                 <Route
                                         element={
