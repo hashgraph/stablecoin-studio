@@ -24,10 +24,10 @@ import { CommandBus } from '../../core/command/CommandBus.js';
 import { InitializationData } from '../out/TransactionAdapter.js';
 import { ConnectCommand } from '../../app/usecase/command/network/connect/ConnectCommand.js';
 import ConnectRequest, {
-        AWSKMSConfigRequest,
-        DFNSConfigRequest,
-        FireblocksConfigRequest,
-        SupportedWallets,
+	AWSKMSConfigRequest,
+	DFNSConfigRequest,
+	FireblocksConfigRequest,
+	SupportedWallets,
 } from './request/ConnectRequest.js';
 import RequestMapper from './request/mapping/RequestMapper.js';
 import TransactionService from '../../app/service/TransactionService.js';
@@ -36,8 +36,8 @@ import SetNetworkRequest from './request/SetNetworkRequest.js';
 import { SetNetworkCommand } from '../../app/usecase/command/network/setNetwork/SetNetworkCommand.js';
 import { SetConfigurationCommand } from '../../app/usecase/command/network/setConfiguration/SetConfigurationCommand.js';
 import {
-        Environment,
-        unrecognized,
+	Environment,
+	unrecognized,
 } from '../../domain/context/network/Environment.js';
 import InitializationRequest from './request/InitializationRequest.js';
 import Event from './Event.js';
@@ -64,248 +64,242 @@ import AWSKMSSettings from '../../domain/context/custodialwalletsettings/AWSKMSS
 export { InitializationData, SupportedWallets };
 
 export type NetworkResponse = {
-        environment: Environment;
-        mirrorNode: MirrorNode;
-        rpcNode: JsonRpcRelay;
-        consensusNodes: ConsensusNode[];
+	environment: Environment;
+	mirrorNode: MirrorNode;
+	rpcNode: JsonRpcRelay;
+	consensusNodes: ConsensusNode[];
 };
 
 export type ConfigResponse = {
-        factoryAddress: string;
-        resolverAddress: string;
+	factoryAddress: string;
+	resolverAddress: string;
 };
 
 export type BackendResponse = {
-        url: string;
+	url: string;
 };
 
 interface INetworkInPort {
-        init(req: InitializationRequest): Promise<SupportedWallets[]>;
-        connect(req: ConnectRequest): Promise<InitializationData>;
-        disconnect(): Promise<boolean>;
-        setNetwork(req: SetNetworkRequest): Promise<NetworkResponse>;
-        setConfig(req: SetConfigurationRequest): Promise<ConfigResponse>;
-        setBackend(req: SetBackendRequest): Promise<BackendResponse>;
-        getFactoryAddress(): string;
-        getResolverAddress(): string;
-        getNetwork(): string;
-        isNetworkRecognized(): boolean;
+	init(req: InitializationRequest): Promise<SupportedWallets[]>;
+	connect(req: ConnectRequest): Promise<InitializationData>;
+	disconnect(): Promise<boolean>;
+	setNetwork(req: SetNetworkRequest): Promise<NetworkResponse>;
+	setConfig(req: SetConfigurationRequest): Promise<ConfigResponse>;
+	setBackend(req: SetBackendRequest): Promise<BackendResponse>;
+	getFactoryAddress(): string;
+	getResolverAddress(): string;
+	getNetwork(): string;
+	isNetworkRecognized(): boolean;
 }
 
 class NetworkInPort implements INetworkInPort {
-        constructor(
-                private readonly commandBus: CommandBus = Injectable.resolve(
-                        CommandBus,
-                ),
-                private readonly transactionService: TransactionService = Injectable.resolve(
-                        TransactionService,
-                ),
-                private readonly networkService: NetworkService = Injectable.resolve(
-                        NetworkService,
-                ),
-        ) {}
+	constructor(
+		private readonly commandBus: CommandBus = Injectable.resolve(
+			CommandBus,
+		),
+		private readonly transactionService: TransactionService = Injectable.resolve(
+			TransactionService,
+		),
+		private readonly networkService: NetworkService = Injectable.resolve(
+			NetworkService,
+		),
+	) {}
 
-        @LogError
-        async setConfig(req: SetConfigurationRequest): Promise<ConfigResponse> {
-                handleValidation('SetConfigurationRequest', req);
+	@LogError
+	async setConfig(req: SetConfigurationRequest): Promise<ConfigResponse> {
+		handleValidation('SetConfigurationRequest', req);
 
-                const res = await this.commandBus.execute(
-                        new SetConfigurationCommand(
-                                req.factoryAddress,
-                                req.resolverAddress,
-                        ),
-                );
-                return res;
-        }
+		const res = await this.commandBus.execute(
+			new SetConfigurationCommand(
+				req.factoryAddress,
+				req.resolverAddress,
+			),
+		);
+		return res;
+	}
 
-        @LogError
-        public getFactoryAddress(): string {
-                return this.networkService.configuration
-                        ? this.networkService.configuration.factoryAddress
-                        : '';
-        }
+	@LogError
+	public getFactoryAddress(): string {
+		return this.networkService.configuration
+			? this.networkService.configuration.factoryAddress
+			: '';
+	}
 
-        @LogError
-        public getResolverAddress(): string {
-                return this.networkService.configuration
-                        ? this.networkService.configuration.resolverAddress
-                        : '';
-        }
+	@LogError
+	public getResolverAddress(): string {
+		return this.networkService.configuration
+			? this.networkService.configuration.resolverAddress
+			: '';
+	}
 
-        @LogError
-        public getNetwork(): string {
-                return this.networkService.environment;
-        }
+	@LogError
+	public getNetwork(): string {
+		return this.networkService.environment;
+	}
 
-        @LogError
-        public isNetworkRecognized(): boolean {
-                return this.networkService.environment != unrecognized;
-        }
+	@LogError
+	public isNetworkRecognized(): boolean {
+		return this.networkService.environment != unrecognized;
+	}
 
-        @LogError
-        async setNetwork(req: SetNetworkRequest): Promise<NetworkResponse> {
-                handleValidation('SetNetworkRequest', req);
+	@LogError
+	async setNetwork(req: SetNetworkRequest): Promise<NetworkResponse> {
+		handleValidation('SetNetworkRequest', req);
 
-                const res = await this.commandBus.execute(
-                        new SetNetworkCommand(
-                                req.environment,
-                                req.mirrorNode,
-                                req.rpcNode,
-                                req.consensusNodes,
-                        ),
-                );
-                return res;
-        }
+		const res = await this.commandBus.execute(
+			new SetNetworkCommand(
+				req.environment,
+				req.mirrorNode,
+				req.rpcNode,
+				req.consensusNodes,
+			),
+		);
+		return res;
+	}
 
-        @LogError
-        async init(req: InitializationRequest): Promise<SupportedWallets[]> {
-                handleValidation('InitializationRequest', req);
+	@LogError
+	async init(req: InitializationRequest): Promise<SupportedWallets[]> {
+		handleValidation('InitializationRequest', req);
 
-                await this.setNetwork(
-                        new SetNetworkRequest({
-                                environment: req.network,
-                                mirrorNode: req.mirrorNode,
-                                rpcNode: req.rpcNode,
-                                consensusNodes: req.consensusNodes,
-                        }),
-                );
+		await this.setNetwork(
+			new SetNetworkRequest({
+				environment: req.network,
+				mirrorNode: req.mirrorNode,
+				rpcNode: req.rpcNode,
+				consensusNodes: req.consensusNodes,
+			}),
+		);
 
-                if (req.configuration)
-                        if (
-                                req.configuration.factoryAddress &&
-                                req.configuration.resolverAddress
-                        )
-                                await this.setConfig(
-                                        new SetConfigurationRequest({
-                                                factoryAddress: req.configuration.factoryAddress,
-                                                resolverAddress: req.configuration.resolverAddress,
-                                        }),
-                                );
+		if (req.configuration)
+			if (
+				req.configuration.factoryAddress &&
+				req.configuration.resolverAddress
+			)
+				await this.setConfig(
+					new SetConfigurationRequest({
+						factoryAddress: req.configuration.factoryAddress,
+						resolverAddress: req.configuration.resolverAddress,
+					}),
+				);
 
-                if (req.backend)
-                        await this.setBackend(
-                                new SetBackendRequest({ url: req.backend.url }),
-                        );
+		if (req.backend)
+			await this.setBackend(
+				new SetBackendRequest({ url: req.backend.url }),
+			);
 
-                req.events && Event.register(req.events);
-                const wallets: SupportedWallets[] = [];
-                const instances = Injectable.registerTransactionAdapterInstances();
-                for (const val of instances) {
-                        if (val instanceof RPCTransactionAdapter) {
-                                wallets.push(SupportedWallets.METAMASK);
-                        } /* else if (val instanceof HashpackTransactionAdapter) {
-                                wallets.push(SupportedWallets.HASHPACK);
-                        } */ else if (val instanceof FireblocksTransactionAdapter) {
-                                wallets.push(SupportedWallets.FIREBLOCKS);
-                        } else if (val instanceof DFNSTransactionAdapter) {
-                                wallets.push(SupportedWallets.DFNS);
-                        } else if (val instanceof MultiSigTransactionAdapter) {
-                                wallets.push(SupportedWallets.MULTISIG);
-                        } else if (val instanceof HederaWalletConnectTransactionAdapter) {
-                                wallets.push(SupportedWallets.HWALLETCONNECT);
-                        } else if (val instanceof AWSKMSTransactionAdapter) {
-                                wallets.push(SupportedWallets.AWSKMS);
-                        } else {
-                                wallets.push(SupportedWallets.CLIENT);
-                        }
-                        await val.init();
+		req.events && Event.register(req.events);
+		const wallets: SupportedWallets[] = [];
+		const instances = Injectable.registerTransactionAdapterInstances();
+		for (const val of instances) {
+			if (val instanceof RPCTransactionAdapter) {
+				wallets.push(SupportedWallets.METAMASK);
+			} /* else if (val instanceof HashpackTransactionAdapter) {
+				wallets.push(SupportedWallets.HASHPACK);
+			} */ else if (val instanceof FireblocksTransactionAdapter) {
+				wallets.push(SupportedWallets.FIREBLOCKS);
+			} else if (val instanceof DFNSTransactionAdapter) {
+				wallets.push(SupportedWallets.DFNS);
+			} else if (val instanceof MultiSigTransactionAdapter) {
+				wallets.push(SupportedWallets.MULTISIG);
+			} else if (val instanceof HederaWalletConnectTransactionAdapter) {
+				wallets.push(SupportedWallets.HWALLETCONNECT);
+			} else if (val instanceof AWSKMSTransactionAdapter) {
+				wallets.push(SupportedWallets.AWSKMS);
+			} else {
+				wallets.push(SupportedWallets.CLIENT);
+			}
+			await val.init();
 
-                        if (val instanceof RPCTransactionAdapter) {
-                                val.setMirrorNodes(req.mirrorNodes);
-                                val.setJsonRpcRelays(req.jsonRpcRelays);
-                                val.setFactories(req.factories);
-                                val.setResolvers(req.resolvers);
-                        }
-                }
-                return wallets;
-        }
+			if (val instanceof RPCTransactionAdapter) {
+				val.setMirrorNodes(req.mirrorNodes);
+				val.setJsonRpcRelays(req.jsonRpcRelays);
+				val.setFactories(req.factories);
+				val.setResolvers(req.resolvers);
+			}
+		}
+		return wallets;
+	}
 
-        @LogError
-        async connect(req: ConnectRequest): Promise<InitializationData> {
-                handleValidation('ConnectRequest', req);
-                console.log('connect');
-                const account = req.account
-                        ? RequestMapper.mapAccount(req.account)
-                        : undefined;
-                const custodialSettings = this.getCustodialSettings(req);
-                const hwcSettings = req.hwcSettings
-                        ? RequestMapper.hwcRequestToHWCSettings(req.hwcSettings)
-                        : undefined;
-                console.log(
-                        'SetNetworkCommand',
-                        req.network,
-                        req.mirrorNode,
-                        req.rpcNode,
-                );
-                await this.commandBus.execute(
-                        new SetNetworkCommand(
-                                req.network,
-                                req.mirrorNode,
-                                req.rpcNode,
-                                req.consensusNodes,
-                        ),
-                );
-                console.log('ConnectRequest', req.wallet, account, custodialSettings);
-                const res = await this.commandBus.execute(
-                        new ConnectCommand(
-                                req.network,
-                                req.wallet,
-                                account,
-                                custodialSettings,
-                                hwcSettings,
-                        ),
-                );
-                return res.payload;
-        }
+	@LogError
+	async connect(req: ConnectRequest): Promise<InitializationData> {
+		handleValidation('ConnectRequest', req);
+		console.log('connect');
+		const account = req.account
+			? RequestMapper.mapAccount(req.account)
+			: undefined;
+		const custodialSettings = this.getCustodialSettings(req);
+		const hwcSettings = req.hwcSettings
+			? RequestMapper.hwcRequestToHWCSettings(req.hwcSettings)
+			: undefined;
+		console.log(
+			'SetNetworkCommand',
+			req.network,
+			req.mirrorNode,
+			req.rpcNode,
+		);
+		await this.commandBus.execute(
+			new SetNetworkCommand(
+				req.network,
+				req.mirrorNode,
+				req.rpcNode,
+				req.consensusNodes,
+			),
+		);
+		console.log('ConnectRequest', req.wallet, account, custodialSettings);
+		const res = await this.commandBus.execute(
+			new ConnectCommand(
+				req.network,
+				req.wallet,
+				account,
+				custodialSettings,
+				hwcSettings,
+			),
+		);
+		return res.payload;
+	}
 
-        @LogError
-        async setBackend(req: SetBackendRequest): Promise<BackendResponse> {
-                handleValidation('SetBackendRequest', req);
+	@LogError
+	async setBackend(req: SetBackendRequest): Promise<BackendResponse> {
+		handleValidation('SetBackendRequest', req);
 
-                const be = new BackendEndpoint(req.url);
+		const be = new BackendEndpoint(req.url);
 
-                const res = await this.commandBus.execute(new SetBackendCommand(be));
+		const res = await this.commandBus.execute(new SetBackendCommand(be));
 
-                return res.backendEndpoint;
-        }
+		return res.backendEndpoint;
+	}
 
-        private getCustodialSettings(
-                req: ConnectRequest,
-        ): DfnsSettings | FireblocksSettings | AWSKMSSettings | undefined {
-                if (
-                        req.custodialWalletSettings &&
-                        req.wallet === SupportedWallets.DFNS
-                ) {
-                        return RequestMapper.dfnsRequestToDfnsSettings(
-                                req.custodialWalletSettings as DFNSConfigRequest,
-                        );
-                } else if (
-                        req.custodialWalletSettings &&
-                        req.wallet === SupportedWallets.FIREBLOCKS
-                ) {
-                        return RequestMapper.fireblocksRequestToFireblocksSettings(
-                                req.custodialWalletSettings as FireblocksConfigRequest,
-                        );
-                } else if (
-                        req.custodialWalletSettings &&
-                        req.wallet === SupportedWallets.AWSKMS
-                ) {
-                        return RequestMapper.awsKmsRequestToAwsKmsSettings(
-                                req.custodialWalletSettings as AWSKMSConfigRequest,
-                        );
-                }
-                return undefined;
-        }
+	private getCustodialSettings(
+		req: ConnectRequest,
+	): DfnsSettings | FireblocksSettings | AWSKMSSettings | undefined {
+		if (
+			req.custodialWalletSettings &&
+			req.wallet === SupportedWallets.DFNS
+		) {
+			return RequestMapper.dfnsRequestToDfnsSettings(
+				req.custodialWalletSettings as DFNSConfigRequest,
+			);
+		} else if (
+			req.custodialWalletSettings &&
+			req.wallet === SupportedWallets.FIREBLOCKS
+		) {
+			return RequestMapper.fireblocksRequestToFireblocksSettings(
+				req.custodialWalletSettings as FireblocksConfigRequest,
+			);
+		} else if (
+			req.custodialWalletSettings &&
+			req.wallet === SupportedWallets.AWSKMS
+		) {
+			return RequestMapper.awsKmsRequestToAwsKmsSettings(
+				req.custodialWalletSettings as AWSKMSConfigRequest,
+			);
+		}
+		return undefined;
+	}
 
-        async disconnect(): Promise<boolean> {
-                try {
-                        const handler = this.transactionService.getHandler();
-                        return await handler.stop();
-                } catch (error) {
-                        // No handler registered, already disconnected
-                        return true;
-                }
-        }
+	disconnect(): Promise<boolean> {
+		return this.transactionService.getHandler().stop();
+	}
 }
 
 const Network = new NetworkInPort();

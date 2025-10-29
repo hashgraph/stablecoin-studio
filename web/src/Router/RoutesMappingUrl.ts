@@ -4,7 +4,6 @@ import { NamedRoutes } from './NamedRoutes';
  * Mapping from name to the url.
  * */
 export const RoutesMappingUrl: Record<NamedRoutes, string> = {
-        [NamedRoutes.Home]: '/',
         [NamedRoutes.Balance]: '/operations/balance',
         [NamedRoutes.Burn]: '/operations/burn',
         [NamedRoutes.CashIn]: '/operations/cash-in',
