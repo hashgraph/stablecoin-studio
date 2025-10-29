@@ -171,6 +171,10 @@ const Router = () => {
                                         <Route path={RoutesMappingUrl.mobileMoneyManagement} element={<MobileMoneyManagement />} />
                                         <Route path={RoutesMappingUrl.analytics} element={<Analytics />} />
                                         <Route path={RoutesMappingUrl.api} element={<APIPage />} />
+                                        <Route
+                                                path={RoutesMappingUrl.stableCoinNotSelected}
+                                                element={<StableCoinNotSelected />}
+                                        />
                                 </Route>
                                 {/* Private routes */}
                                 <Route
@@ -230,10 +234,6 @@ const Router = () => {
 
                                         <Route path={RoutesMappingUrl.stableCoinCreation} element={<StableCoinCreation />} />
                                         <Route path={RoutesMappingUrl.importedToken} element={<ImportedTokenCreation />} />
-                                        <Route
-                                                path={RoutesMappingUrl.stableCoinNotSelected}
-                                                element={<StableCoinNotSelected />}
-                                        />
                                         <Route path='*' element={<Navigate to={RoutesMappingUrl.home} />} />
                                 </Route>
                         </Routes>
