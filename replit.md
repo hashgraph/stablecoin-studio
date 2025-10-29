@@ -11,6 +11,11 @@ Preferred communication style: Simple, everyday language.
 # Recent Changes
 
 ## October 29, 2025
+- **Wallet Disconnection Fix**: Resolved critical bug in SDK that caused "No Transaction Handler registered!" error when disconnecting wallet
+  - Modified `Network.ts` disconnect method to gracefully handle cases where no Transaction Handler is registered
+  - Added try-catch block to prevent unhandled promise rejections during disconnection
+  - Rebuilt SDK and cleared webpack cache to ensure frontend uses updated version
+  - Wallet disconnection now works smoothly without console errors
 - **Navigation Fix**: Resolved navigation redirect issue where clicking "Entrer" button briefly showed target page before redirecting back to Welcome
   - Fixed automatic redirect in CoinDropdown component that was triggering on StableCoinNotSelected page
   - Added condition to prevent redirect when no stablecoin is selected (`selectedStableCoin` must be truthy)
