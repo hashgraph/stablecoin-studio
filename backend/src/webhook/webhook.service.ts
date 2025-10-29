@@ -18,8 +18,10 @@ export class WebhookService {
     const messageBody = createDto.message;
     
     const messageType = createDto.type || classifyMessage(messageBody);
-    const messageAmount = createDto.amount || extractAmount(messageBody);
-    const messageBalance = createDto.balance || extractBalance(messageBody);
+    
+    const isNonFinancial = ['AUTRE', 'OTP', 'FAIL'].includes(messageType);
+    const messageAmount = isNonFinancial ? null : (createDto.amount || extractAmount(messageBody));
+    const messageBalance = isNonFinancial ? null : (createDto.balance || extractBalance(messageBody));
 
     const message = this.webhookMessageRepository.create({
       id: createDto.id,
@@ -63,8 +65,10 @@ export class WebhookService {
 
     for (const message of messages) {
       const newType = classifyMessage(message.body);
-      const newAmount = extractAmount(message.body);
-      const newBalance = extractBalance(message.body);
+      
+      const isNonFinancial = ['AUTRE', 'OTP', 'FAIL'].includes(newType);
+      const newAmount = isNonFinancial ? null : extractAmount(message.body);
+      const newBalance = isNonFinancial ? null : extractBalance(message.body);
       
       if (message.type !== newType || message.amount !== newAmount || message.balance !== newBalance) {
         message.type = newType;
