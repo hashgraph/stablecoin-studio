@@ -17,7 +17,7 @@ import { useState, useEffect } from 'react';
 import type React from 'react';
 import { useTranslation } from 'react-i18next';
 import Plot from 'react-plotly.js';
-import { parseCSV, TX_TYPES, TX_COLORS, FINANCIAL_TX_TYPES } from '../../utils/mobileMoneyUtils';
+import { parseCSV, TX_COLORS, FINANCIAL_TX_TYPES } from '../../utils/mobileMoneyUtils';
 import type { TransactionRow } from '../../utils/mobileMoneyUtils';
 import {
         processCSVActivity,
@@ -51,12 +51,11 @@ const MobileMoneyManagement = () => {
         const [typeHistogram, setTypeHistogram] = useState<TypeHistogramData | null>(null);
         const [isLoading, setIsLoading] = useState(false);
         const [dataSource, setDataSource] = useState<'webhooks' | 'csv'>('webhooks');
-
-        useEffect(() => {
-                handleLoadFromWebhooks();
-        }, []);
+        const [hasLoadedOnce, setHasLoadedOnce] = useState(false);
 
         const handleLoadFromWebhooks = async () => {
+                if (isLoading) return;
+                
                 console.log('🔄 Starting webhook load...');
                 setIsLoading(true);
                 try {
@@ -101,8 +100,15 @@ const MobileMoneyManagement = () => {
                 } finally {
                         console.log('🏁 Setting isLoading to false');
                         setIsLoading(false);
+                        setHasLoadedOnce(true);
                 }
         };
+
+        useEffect(() => {
+                if (!hasLoadedOnce) {
+                        handleLoadFromWebhooks();
+                }
+        }, [hasLoadedOnce]);
 
         const handleFileUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
                 const file = event.target.files?.[0];
