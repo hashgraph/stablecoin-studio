@@ -62,4 +62,5 @@ localPort = 42621
 externalPort = 3002
 
 [deployment]
-deploymentTarget = "cloudrun"
+deploymentTarget = "autoscale"
+run = ["bash", "start-deployment.sh"]
