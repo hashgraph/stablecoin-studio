@@ -163,11 +163,11 @@ GET /webhook/messages   ← Fournit les données à la web app
 
 **Important** : NiaSync est construit sur la base solide de [Hedera Stablecoin Studio](https://github.com/hashgraph/stablecoin-studio) développé par l'équipe Hedera.
 
-### Ce qui vient de Stablecoin Studio (~85% du code)
+### Ce qui vient de Stablecoin Studio (94.9% du code - 75 834 lignes)
 
 ✅ **Smart Contracts** : Architecture Diamond Pattern, gestion des tokens Hedera  
-✅ **SDK** : API TypeScript complète pour interagir avec les smart contracts  
-✅ **CLI** : Interface en ligne de commande  
+✅ **SDK** : API TypeScript complète pour interagir avec les smart contracts (40% du projet)  
+✅ **CLI** : Interface en ligne de commande (17% du projet)  
 ✅ **Backend de base** : NestJS, coordination multisignature  
 ✅ **Web app de base** : React, création de stablecoins, gestion des rôles  
 
@@ -182,7 +182,7 @@ GET /webhook/messages   ← Fournit les données à la web app
 
 ---
 
-## ⭐ Ce qui a été ajouté par NiaSync (~15% du code)
+## ⭐ Ce qui a été ajouté par NiaSync (5.1% du code - 4 077 lignes)
 
 ### Nouveaux modules complets
 
@@ -583,14 +583,32 @@ Merci aux projets open source utilisés :
 
 ## 📊 Statistiques du projet
 
+### Répartition du code (calcul précis)
+
+| Composant | Lignes de code | Pourcentage |
+|-----------|----------------|-------------|
+| **Backend** (Stablecoin Studio) | 1 862 | 2.3% |
+| **Backend Webhooks** (NiaSync) | 438 | 0.5% |
+| **Web** (Stablecoin Studio) | 18 872 | 23.6% |
+| **Web - Nouveaux modules** (NiaSync) | 2 393 | 3.0% |
+| **Contracts** (Stablecoin Studio) | 6 693 | 8.4% |
+| **SDK** (Stablecoin Studio) | 31 984 | 40.0% |
+| **CLI** (Stablecoin Studio) | 13 592 | 17.0% |
+| **Mobile App** (NiaSync) | 1 253 | 1.6% |
+| **TOTAL** | **79 911** | **100%** |
+
+### Résumé
+
 | Métrique | Valeur |
 |----------|--------|
-| **Code de base (Stablecoin Studio)** | ~85% |
-| **Ajouts NiaSync** | ~15% |
+| **Code de base (Stablecoin Studio)** | 75 834 lignes (94.9%) |
+| **Ajouts NiaSync** | 4 077 lignes (5.1%) |
 | **Modules totaux** | 3 (Mobile + Backend + Web) |
 | **Nouveaux modules web** | 4 (MM Management, Analytics, API, Fees) |
-| **Lignes de code ajoutées** | ~5000+ |
-| **Technologies ajoutées** | 8 (Flutter, Plotly, etc.) |
+| **Nouveau module mobile** | 1 (App Flutter complète) |
+| **Technologies ajoutées** | 8 (Flutter, Plotly, csv-parse, etc.) |
+
+**Conclusion** : NiaSync ajoute ~5% de code nouveau qui transforme Stablecoin Studio en solution complète de tokenisation du mobile money avec capture automatique des SMS.
 
 ---
 
