@@ -1,12 +1,14 @@
 <div align="center">
 
-# NiaSync - Stablecoin Studio
+# 💳 NiaSync
 
 [![License](https://img.shields.io/badge/license-apache2-blue.svg)](LICENSE)
 
-**Une plateforme complète pour créer, gérer et opérer des stablecoins sur Hedera Hashgraph**
+**Plateforme de gestion et tokenisation du Mobile Money sur blockchain Hedera**
 
-[Documentation](#documentation) • [Installation](#installation) • [Architecture](#architecture) • [Contribuer](#contributing)
+*Transformez vos réserves mobile money en stablecoins transparents et traçables*
+
+[Documentation](#documentation) • [Installation](#installation) • [Démarrage](#démarrage-rapide) • [Architecture](#architecture)
 
 </div>
 
@@ -14,123 +16,207 @@
 
 ## 📋 Table des matières
 
-- [À propos](#à-propos)
+- [Vue d'ensemble](#vue-densemble)
+- [Pourquoi NiaSync ?](#pourquoi-niasync)
 - [Fonctionnalités principales](#fonctionnalités-principales)
-- [Architecture du projet](#architecture-du-projet)
-- [Technologies utilisées](#technologies-utilisées)
+- [Architecture](#architecture)
+- [Technologies](#technologies)
 - [Installation](#installation)
 - [Démarrage rapide](#démarrage-rapide)
+- [Utilisation](#utilisation)
 - [Build](#build)
-- [Documentation](#documentation)
-- [Sécurité](#sécurité)
 - [Support](#support)
-- [Contribuer](#contributing)
+- [Contribuer](#contribuer)
 - [Licence](#licence)
 
 ---
 
-## 🎯 À propos
+## 🎯 Vue d'ensemble
 
-**NiaSync - Stablecoin Studio** est une solution complète qui permet aux développeurs de créer, gérer et opérer des stablecoins sur la blockchain Hedera Hashgraph. Le projet offre un ensemble d'outils incluant des smart contracts, un SDK, une interface en ligne de commande (CLI) et une application web décentralisée (DApp).
+**NiaSync** est une plateforme innovante qui permet de créer des **stablecoins adossés aux réserves de Mobile Money** sur la blockchain Hedera. Elle offre une solution complète pour digitaliser, tracer et gérer les transactions de mobile money (Orange Money, MVola, Airtel Money, etc.) tout en maintenant une transparence totale grâce à la technologie blockchain.
 
-### Qu'est-ce qu'un stablecoin ?
+### Le problème résolu
 
-Un stablecoin est une cryptomonnaie conçue pour maintenir une valeur stable par rapport à un actif spécifique (généralement une devise fiduciaire comme le dollar américain). Contrairement aux cryptomonnaies volatiles, les stablecoins offrent la stabilité nécessaire pour les transactions quotidiennes et le commerce électronique.
+En Afrique et dans les marchés émergents, le mobile money est omniprésent mais présente des défis :
+- ❌ Manque de transparence sur les réserves
+- ❌ Difficultés d'interopérabilité entre opérateurs
+- ❌ Frais élevés pour les transferts
+- ❌ Traçabilité limitée des transactions
+- ❌ Pas d'accès aux services financiers décentralisés (DeFi)
 
-### Pourquoi NiaSync ?
+### La solution NiaSync
 
-- ✅ **Déploiement simplifié** : Créez des stablecoins en quelques minutes
-- ✅ **Gestion granulaire** : Système de rôles multiples pour une gouvernance flexible
-- ✅ **Multisignature** : Support natif des comptes multi-signatures pour une sécurité renforcée
-- ✅ **Preuve de réserve** : Intégration de flux de données pour la transparence
-- ✅ **Interface intuitive** : CLI et DApp pour tous les niveaux d'utilisateurs
+✅ **Tokenisation** : Convertissez vos réserves mobile money en stablecoins blockchain  
+✅ **Transparence** : Preuve de réserve en temps réel visible publiquement  
+✅ **Analyse avancée** : Visualisation et analyse de vos flux mobile money  
+✅ **Traçabilité** : Chaque transaction enregistrée sur la blockchain  
+✅ **Interopérabilité** : Un token unique pour tous les opérateurs mobile money  
+✅ **DeFi Ready** : Accès aux services financiers décentralisés
+
+---
+
+## 💡 Pourquoi NiaSync ?
+
+### Pour les institutions financières
+
+- **Conformité réglementaire** : Preuve de réserve automatique et auditable
+- **Réduction des coûts** : Moins d'intermédiaires, frais réduits
+- **Innovation** : Offrez des services blockchain à vos clients
+- **Sécurité** : Multisignature et contrôle d'accès granulaire
+
+### Pour les entreprises
+
+- **Gestion de trésorerie** : Visualisez tous vos flux mobile money
+- **Analytics avancés** : Graphiques et statistiques en temps réel
+- **Automatisation** : Webhooks pour synchronisation automatique
+- **Reporting** : Génération de rapports automatiques
+
+### Pour les développeurs
+
+- **SDK complet** : API TypeScript intuitive
+- **Multi-wallet** : Support HashPack, Blade, MetaMask
+- **Webhooks** : Intégration facile avec vos systèmes existants
+- **Open source** : Code 100% ouvert et auditable
 
 ---
 
 ## 🚀 Fonctionnalités principales
 
-### 1. Gestion des rôles multiples
+### 1. 📊 Gestion Mobile Money
 
-Contrairement aux tokens Hedera standards, les stablecoins créés avec NiaSync permettent d'assigner plusieurs comptes pour chaque opération :
+Module complet pour gérer vos transactions mobile money :
 
-- **Admin** : Gestion complète du stablecoin
-- **Cash-in** : Création de nouveaux tokens (limité ou illimité)
-- **Burn** : Destruction de tokens
-- **Wipe** : Suppression de tokens d'un compte spécifique
-- **Pause** : Suspension temporaire des transactions
-- **Freeze** : Gel de comptes individuels
-- **KYC** : Gestion de la vérification d'identité
-- **Rescue** : Récupération de tokens et HBAR du contrat
+- **Import automatique** via webhooks (Orange Money, MVola, etc.)
+- **Import CSV** : Téléversez vos relevés de transactions
+- **Analyse en temps réel** : Visualisation graphique des flux
+- **Statistiques détaillées** :
+  - Solde courant
+  - Entrées/sorties quotidiennes
+  - Distribution par type de transaction
+  - Matrice de corrélation des flux
+  - Historique des transactions
 
-### 2. Fonctionnalité Cash-in avancée
+### 2. 📈 Analytics & Reporting
 
-Le rôle cash-in permet de créer et assigner des tokens en une seule transaction, avec deux modes :
+Tableau de bord analytique avancé :
 
-- **Illimité** : Création sans limite (jusqu'à la supply maximale)
-- **Limité** : Quota personnalisé par compte
+- **Coverage Ratio** : Ratio de couverture réserve/stablecoin en temps réel
+- **Supply vs Reserve** : Visualisation comparative
+- **Graphiques interactifs** : Plotly.js pour des analyses poussées
+- **Statistiques multi-temporelles** : Jour, semaine, mois
+- **Alertes** : Notifications en cas de déséquilibre
 
-### 3. Preuve de réserve
+### 3. 💰 Stablecoin Management
 
-Intégration de flux de données externes (compatible avec Chainlink) pour garantir que les tokens sont adossés à des réserves réelles.
+Création et gestion de stablecoins adossés au mobile money :
 
-### 4. Support multisignature
+- **Déploiement en un clic** : Créez votre stablecoin en quelques minutes
+- **Multi-rôles** : Admin, Cash-in, Burn, Wipe, Rescue, etc.
+- **Preuve de réserve** : Lien automatique avec votre solde mobile money
+- **Cash-in intelligent** : Mint uniquement si la réserve le permet
+- **Burn sécurisé** : Destruction de tokens avec mise à jour de réserve
 
-Gestion complète des comptes multi-signatures Hedera pour une gouvernance décentralisée et sécurisée.
+### 4. 🔐 Sécurité avancée
+
+- **Multisignature native** : Support complet des comptes multi-signatures Hedera
+- **Contrôle d'accès** : Système de rôles granulaire (RBAC)
+- **Audit trail** : Toutes les opérations tracées sur blockchain
+- **Backend sécurisé** : API REST pour coordination multisig
+
+### 5. 🔗 Intégrations
+
+- **Webhooks** : Réception automatique des notifications mobile money
+- **API REST** : Intégration facile avec vos systèmes
+- **Multi-wallet** : HashPack, Blade, MetaMask
+- **Export de données** : CSV, JSON
 
 ---
 
-## 🏗️ Architecture du projet
+## 🏗️ Architecture
 
-Le projet est organisé en 5 modules Node.js :
+### Structure du projet
 
 ```
 📁 NiaSync
-├── 📂 contracts/     # Smart contracts Solidity
-├── 📂 backend/       # API REST pour les transactions multisig
-├── 📂 sdk/           # SDK TypeScript pour les développeurs
-├── 📂 cli/           # Interface en ligne de commande
-├── 📂 web/           # Application web React (DApp)
-└── 📂 docs/          # Documentation complète
+├── 📂 contracts/          # Smart contracts Solidity
+├── 📂 backend/            # API REST NestJS + PostgreSQL
+│   ├── Multisig coordination
+│   ├── Webhook management
+│   └── Transaction storage
+├── 📂 sdk/                # SDK TypeScript
+│   └── API unifiée pour tous les modules
+├── 📂 cli/                # Interface en ligne de commande
+└── 📂 web/                # Application web React
+    ├── MobileMoneyManagement/    ⭐ Nouveau
+    ├── Analytics/                ⭐ Nouveau
+    ├── FeesManagement/           ⭐ Nouveau
+    ├── API/                      ⭐ Nouveau (Webhooks)
+    └── ... (autres modules standard)
 ```
 
-### Flux de données
+### Flux de données NiaSync
 
 ```
-┌─────────────┐
-│    DApp     │ ◄─── Interface utilisateur (React)
-│     ou      │
-│     CLI     │
-└──────┬──────┘
-       │
-       ▼
-┌─────────────┐
-│     SDK     │ ◄─── API unifiée
-└──────┬──────┘
-       │
-       ├──────────► 📦 Smart Contracts (Hedera)
-       │
-       └──────────► 🔐 Backend (Multisig)
+┌─────────────────────────────────────────────────┐
+│         Sources de données Mobile Money         │
+│  (Orange Money, MVola, Airtel Money, etc.)      │
+└────────────────┬────────────────────────────────┘
+                 │
+                 ▼
+┌─────────────────────────────────────────────────┐
+│              Webhooks / CSV Import              │
+│          (Notifications SMS → Backend)          │
+└────────────────┬────────────────────────────────┘
+                 │
+                 ▼
+┌─────────────────────────────────────────────────┐
+│           Backend NiaSync (PostgreSQL)          │
+│   • Stockage des transactions                   │
+│   • Calcul des réserves                         │
+│   • Coordination multisig                       │
+└────────────────┬────────────────────────────────┘
+                 │
+                 ▼
+┌─────────────────────────────────────────────────┐
+│            Frontend Web / CLI / SDK             │
+│   • Visualisation Analytics                     │
+│   • Gestion stablecoin                          │
+│   • Proof of Reserve                            │
+└────────────────┬────────────────────────────────┘
+                 │
+                 ▼
+┌─────────────────────────────────────────────────┐
+│        Smart Contracts (Hedera Network)         │
+│   • Stablecoin avec preuve de réserve           │
+│   • Minting contrôlé par réserve MM             │
+│   • Multisignature support                      │
+└─────────────────────────────────────────────────┘
 ```
 
-### Modules détaillés
+### Modules NiaSync spécifiques
 
-- **[Contracts](./contracts/README.md)** : Smart contracts implémentant la logique stablecoin
-- **[Backend](./backend/README.md)** : Gestion des transactions multi-signatures
-- **[SDK](./sdk/README.md)** : API TypeScript pour intégrer les stablecoins
-- **[CLI](./cli/README.md)** : Outil en ligne de commande
-- **[Web](./web/README.md)** : DApp React pour l'interface graphique
+| Module | Fonction | Fichiers clés |
+|--------|----------|---------------|
+| **Mobile Money Management** | Import et analyse des transactions MM | `web/src/views/MobileMoneyManagement/` |
+| **Analytics** | Visualisation Supply vs Reserve | `web/src/views/Analytics/` |
+| **Fees Management** | Gestion des frais de transaction | `web/src/views/FeesManagement/` |
+| **Webhook API** | Réception auto des notifications MM | `web/src/views/API/` + `backend/webhook` |
+| **CSV Processor** | Traitement des relevés MM | `web/src/utils/csvProcessor.ts` |
 
 ---
 
-## 💻 Technologies utilisées
+## 💻 Technologies
 
-| Composant | Technologies |
-|-----------|-------------|
-| **Smart Contracts** | Solidity 0.8.16, Hardhat 2.14.0 |
-| **SDK/Backend/CLI** | TypeScript ≥4.7, Node.js ≥18.13 |
-| **Interface Web** | React.js ≥2.2.6 |
-| **Blockchain** | Hedera Hashgraph |
-| **Outils** | OpenZeppelin, Chainlink (compatibilité) |
+| Composant | Stack technique |
+|-----------|-----------------|
+| **Blockchain** | Hedera Hashgraph (HTS) |
+| **Smart Contracts** | Solidity 0.8.16, Hardhat |
+| **Backend** | NestJS, TypeScript, PostgreSQL |
+| **Frontend** | React 18, TypeScript, Chakra UI |
+| **SDK** | TypeScript ≥4.7, Node.js ≥18.13 |
+| **Analytics** | Plotly.js, Recharts |
+| **Data Processing** | csv-parse, date-fns |
+| **Wallet Support** | HashPack, Blade, MetaMask |
 
 ---
 
@@ -138,224 +224,220 @@ Le projet est organisé en 5 modules Node.js :
 
 ### Prérequis
 
-- Node.js ≥ 18.13
-- NPM ou Yarn
-- Un compte Hedera (testnet ou mainnet)
+- **Node.js** ≥ 18.13
+- **PostgreSQL** (pour le backend)
+- **Compte Hedera** (testnet ou mainnet)
+- **Git**
 
-### Installation globale
-
-Installez toutes les dépendances pour tous les modules :
+### Installation complète
 
 ```bash
+# Cloner le projet
+git clone https://github.com/votre-repo/niasync.git
+cd niasync
+
+# Installer toutes les dépendances
 npm run install:all
 ```
 
-Cette commande installe et configure automatiquement les dépendances pour tous les sous-projets.
-
-### Installation individuelle
-
-Pour installer un module spécifique :
-
-```bash
-cd [module]  # contracts, sdk, cli, web, ou backend
-npm install
-```
+Cette commande installe automatiquement tous les modules (backend, contracts, sdk, cli, web).
 
 ---
 
 ## 🎮 Démarrage rapide
 
-### 1. Configuration
+### 1. Configuration des variables d'environnement
 
-Créez un fichier `.env` dans chaque module avec vos identifiants Hedera :
+Créez un fichier `.env` dans chaque module :
 
+**Backend** (`backend/.env`)
+```env
+DATABASE_URL=postgresql://user:password@localhost:5432/niasync
+PORT=3000
+```
+
+**Frontend** (`web/.env`)
+```env
+REACT_APP_BACKEND_URL=http://localhost:3000
+REACT_APP_NETWORK=testnet
+```
+
+**SDK/CLI** (`.env` à la racine)
 ```env
 OPERATOR_ID=0.0.xxxxx
 OPERATOR_KEY=302e...
 NETWORK=testnet
 ```
 
-### 2. Lancement de l'application web
-
-```bash
-cd web
-npm start
-```
-
-L'application sera accessible sur `http://localhost:5000`
-
-### 3. Utilisation du CLI
-
-```bash
-cd cli
-npm start
-```
-
-Suivez les instructions interactives pour créer et gérer vos stablecoins.
-
-### 4. Démarrage du backend (optionnel - pour multisig)
+### 2. Démarrer le backend
 
 ```bash
 cd backend
 npm run start:dev
 ```
 
+Le backend démarre sur `http://localhost:3000`.
+
+### 3. Démarrer le frontend
+
+```bash
+cd web
+npm start
+```
+
+L'application web démarre sur `http://localhost:5000`.
+
+### 4. Premier usage
+
+1. **Connectez votre wallet** (HashPack, Blade ou MetaMask)
+2. **Créez un stablecoin** adossé au mobile money
+3. **Allez dans "API / Webhooks"** pour configurer la réception automatique
+4. **Ou importez un CSV** de transactions mobile money
+5. **Consultez "Analytics"** pour voir votre coverage ratio
+6. **Utilisez "Mobile Money Management"** pour analyser vos flux
+
+---
+
+## 📖 Utilisation
+
+### Import de transactions mobile money
+
+#### Option 1 : Via webhooks (automatique)
+
+1. Configurez votre endpoint webhook dans `API / Webhooks`
+2. Configurez votre opérateur mobile money pour envoyer les notifications SMS vers le webhook
+3. Les transactions sont automatiquement importées et analysées
+
+#### Option 2 : Via CSV (manuel)
+
+1. Exportez vos transactions depuis votre compte mobile money
+2. Allez dans "Mobile Money Management"
+3. Cliquez sur "Upload CSV"
+4. Sélectionnez votre fichier (format : timestamp, provider, date, time, message)
+
+### Création d'un stablecoin adossé au mobile money
+
+1. **Importer d'abord vos transactions** mobile money
+2. Aller dans "Create Stablecoin"
+3. Choisir "Link to Proof of Reserve"
+4. Sélectionner "Mobile Money Reserve" comme source
+5. Le smart contract vérifiera automatiquement que vous avez assez de réserve avant chaque mint
+
+### Analyse et monitoring
+
+- **Mobile Money Management** : Vue complète des flux avec graphiques interactifs
+- **Analytics** : Suivi du ratio de couverture Reserve/Supply en temps réel
+- **Fees Management** : Analyse des frais par opérateur et type de transaction
+
 ---
 
 ## 🔨 Build
 
-Lors de modifications, recompilez les modules dans cet ordre :
+Pour compiler les modules après modification :
 
 ```bash
-# 1. Smart contracts
-npm run build:contracts
+# Build complet (tous les modules dans l'ordre)
+npm run build:contracts  # 1. Smart contracts
+npm run build:sdk        # 2. SDK
+npm run build:cli        # 3. CLI
+npm run build:web        # 4. Frontend
 
-# 2. SDK
-npm run build:sdk
-
-# 3. CLI ou Web
-npm run build:cli
-# ou
-npm run build:web
-```
-
-Ou individuellement dans chaque module :
-
-```bash
+# Ou build individuel
 cd [module]
 npm run build
 ```
 
 ---
 
-## 📚 Documentation
-
-### Concepts clés
-
-#### Création de stablecoins
-
-Chaque stablecoin déploie automatiquement :
-- Un nouveau token Hedera (token sous-jacent)
-- Un smart contract proxy (pour l'upgradabilité)
-- Un smart contract proxy admin
-
-#### Catégories de stablecoins
-
-- **Stablecoins internes** : Créés par votre compte
-- **Stablecoins importés** : Créés par d'autres comptes, mais où vous avez des rôles
-
-#### Déploiement avec multisignature
-
-1. Déployez avec un compte simple en assignant les rôles au compte multisig
-2. Assignez le rôle admin au compte multisig
-3. Retirez le rôle admin du compte simple
-4. Importez le stablecoin avec le compte multisig
-
-### Frais des opérations
-
-| Opération | Coût approximatif | Gas |
-|-----------|-------------------|-----|
-| Cash-in | $0.01 | 101,497 |
-| Burn | $0.005 | 60,356 |
-| Wipe | $0.005 | 60,692 |
-| Freeze/Unfreeze | $0.005 | ~56,262 |
-| Grant/Revoke KYC | $0.005 | ~56,181 |
-
-*Les frais sont sujets à modification et peuvent varier selon les caractéristiques de la transaction.*
-
-### JSON-RPC Relays
-
-Utilisez l'un de ces relays JSON-RPC communautaires :
-- [Hashio](https://swirldslabs.com/hashio/)
-- [Arkhia](https://www.arkhia.io/features/#api-services)
-- [ValidationCloud](https://docs.validationcloud.io/v1/hedera/json-rpc-relay-api)
-
-Ou configurez votre propre relay local en suivant les [instructions officielles](https://github.com/hashgraph/hedera-json-rpc-relay).
-
----
-
-## 🛠️ Déploiement des factories
-
-Pour déployer des stablecoins, les smart contracts `HederaTokenManager` et `StablecoinFactory` doivent être déployés sur le réseau.
-
-### Adresses par défaut
-
-Les adresses des factories pré-déployées sont disponibles dans :
-- [FACTORY_VERSION.md](./FACTORY_VERSION.md)
-- [RESOLVER_VERSION.md](./RESOLVER_VERSION.md)
-
-### Déployer vos propres factories
-
-Consultez la [documentation des contracts](./contracts/README.md#deploy-factory) pour les instructions détaillées.
-
----
-
-## 🔄 Migration V1 vers V2
-
-Les smart contracts V2 ne sont pas compatibles avec V1. 
-
-Si vous avez des stablecoins déployés en V1, suivez la procédure de migration décrite dans [contracts/README.md](./contracts/README.md).
-
----
-
-## 🧪 Tests et qualité
-
-- **SDK/CLI/Web** : >70% de couverture de code
-- **Smart Contracts** : 100% de couverture des méthodes publiques/externes
-
-### Lancer les tests
+## 🧪 Tests
 
 ```bash
 # Tests globaux
 npm test
 
 # Tests par module
-cd [module]
-npm test
+cd backend && npm test
+cd sdk && npm test
+cd web && npm test
 ```
+
+Couverture de code :
+- **Backend/SDK/Web** : >70%
+- **Smart Contracts** : 100% des méthodes publiques
 
 ---
 
-## 🏛️ Principes de développement
+## 📚 Documentation
 
-Le projet suit des pratiques de développement de niveau entreprise :
+### Modules détaillés
 
-### Domain-Driven Design (DDD)
-Création d'un langage partagé pour améliorer la communication et l'efficacité.
+- **[Backend](./backend/README.md)** : API REST, webhooks, multisig
+- **[Contracts](./contracts/README.md)** : Smart contracts stablecoin
+- **[SDK](./sdk/README.md)** : API programmatique TypeScript
+- **[CLI](./cli/README.md)** : Interface en ligne de commande
+- **[Web](./web/README.md)** : Application web React
 
-### Architecture hexagonale
-Séparation claire entre logique métier et infrastructure pour une meilleure testabilité.
+### Guides
 
-### CQS Pattern
-Séparation des commandes (modifications d'état) et des requêtes (lectures).
+- **[Guide de déploiement](./docs/deployment.md)** *(à venir)*
+- **[Configuration des webhooks](./docs/webhooks.md)** *(à venir)*
+- **[Format CSV mobile money](./docs/csv-format.md)** *(à venir)*
+
+---
+
+## 🌍 Cas d'usage
+
+### 1. Institution de microfinance
+
+> *"Nous utilisons NiaSync pour tokeniser les dépôts mobile money de nos clients et leur offrir un accès à la DeFi tout en maintenant une preuve de réserve transparente."*
+
+### 2. Entreprise de commerce électronique
+
+> *"NiaSync nous permet de gérer nos recettes mobile money de tous les opérateurs en un seul endroit, avec des analytics puissants."*
+
+### 3. Projet d'inclusion financière
+
+> *"Grâce à NiaSync, nous créons des stablecoins communautaires adossés aux réserves mobile money locales, favorisant l'accès aux services financiers."*
 
 ---
 
 ## 🔐 Sécurité
 
-**Ne déposez jamais de problème de sécurité publiquement.**
+- ✅ **Audité** : Smart contracts audités par Certik ([Rapport](./Certik%20final%20smart%20contracts%20audit%20report.pdf))
+- ✅ **Multisignature** : Support natif Hedera multi-key
+- ✅ **RBAC** : Contrôle d'accès basé sur les rôles
+- ✅ **Audit trail** : Toutes les opérations tracées
 
-Consultez notre [politique de sécurité](./SECURITY.md) pour rapporter des vulnérabilités de manière responsable.
-
-Un audit de sécurité complet a été réalisé par Certik. Consultez le rapport : [Certik Audit Report](./Certik%20final%20smart%20contracts%20audit%20report.pdf)
+**Pour rapporter une vulnérabilité** : Consultez [SECURITY.md](./SECURITY.md)
 
 ---
 
 ## 💬 Support
 
-Besoin d'aide ? Consultez notre [guide de support](https://github.com/hashgraph/.github/blob/main/SUPPORT.md).
+- 📧 Email : support@niasync.io *(exemple)*
+- 💬 Discord : [Rejoindre la communauté](#) *(exemple)*
+- 📖 Documentation : [docs.niasync.io](#) *(exemple)*
+- 🐛 Issues : [GitHub Issues](https://github.com/votre-repo/niasync/issues)
+
+Pour les questions générales : [Guide de support](https://github.com/hashgraph/.github/blob/main/SUPPORT.md)
 
 ---
 
 ## 🤝 Contribuer
 
-Les contributions sont les bienvenues ! Consultez notre [guide de contribution](https://github.com/hashgraph/.github/blob/main/CONTRIBUTING.md) pour commencer.
+Les contributions sont les bienvenues ! 
+
+1. Fork le projet
+2. Créez votre branche (`git checkout -b feature/amazing-feature`)
+3. Committez vos changements (`git commit -m 'Add amazing feature'`)
+4. Push vers la branche (`git push origin feature/amazing-feature`)
+5. Ouvrez une Pull Request
+
+Consultez notre [guide de contribution](https://github.com/hashgraph/.github/blob/main/CONTRIBUTING.md).
 
 ### Code de conduite
 
-Ce projet respecte le [Contributor Covenant Code of Conduct](https://github.com/hashgraph/.github/blob/main/CODE_OF_CONDUCT.md). 
-
-Signalez tout comportement inacceptable à [oss@hedera.com](mailto:oss@hedera.com).
+Respectez le [Contributor Covenant Code of Conduct](https://github.com/hashgraph/.github/blob/main/CODE_OF_CONDUCT.md).
 
 ---
 
@@ -367,16 +449,37 @@ Signalez tout comportement inacceptable à [oss@hedera.com](mailto:oss@hedera.co
 
 ## 🙏 Remerciements
 
-Développé avec ❤️ par l'équipe Hedera et la communauté open source.
+NiaSync est construit sur la base de [Hedera Stablecoin Studio](https://github.com/hashgraph/stablecoin-studio) développé par l'équipe Hedera.
 
-Merci à tous les [contributeurs](https://github.com/hashgraph/stablecoin-studio/graphs/contributors) qui ont participé à ce projet !
+**Ajouts et fonctionnalités NiaSync** :
+- 💳 Module Mobile Money Management
+- 📊 Analytics Supply vs Reserve
+- 🔗 Intégration Webhooks
+- 📈 Visualisations avancées (Plotly.js)
+- 💰 Gestion automatique des réserves
+
+Merci à la communauté Hedera et à tous les contributeurs !
+
+---
+
+## 🌟 Roadmap
+
+- [ ] Support de plus d'opérateurs mobile money africains
+- [ ] Application mobile native (iOS/Android)
+- [ ] Intégration API directe avec Orange Money, MVola
+- [ ] Module de réconciliation comptable automatique
+- [ ] Support des paiements marchands
+- [ ] Bridge vers d'autres blockchains
+- [ ] Marketplace de stablecoins mobile money
 
 ---
 
 <div align="center">
 
-**[⬆ Retour en haut](#niasync---stablecoin-studio)**
+**[⬆ Retour en haut](#-niasync)**
 
-Made with ❤️ for the Hedera community
+Fait avec ❤️ pour démocratiser l'accès à la blockchain en Afrique
+
+*Propulsé par [Hedera Hashgraph](https://hedera.com)*
 
 </div>
