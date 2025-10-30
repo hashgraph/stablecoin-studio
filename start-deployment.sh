@@ -1,23 +1,15 @@
 #!/bin/bash
-set -e
 
-echo "Building backend..."
-cd backend && npm run build
-cd ..
-
-echo "Building frontend..."
-cd web && npm run build
-cd ..
-
-echo "Starting backend in production mode..."
-(cd backend && npm run start:prod) &
+# Start backend in the background
+(cd backend && npm run start:dev) &
 BACKEND_PID=$!
 
+# Wait for backend to start
 echo "Waiting for backend to start..."
-sleep 10
+sleep 5
 
-echo "Starting production server on port 5000..."
-node production-server.js
+# Start frontend (this will run in the foreground and keep the deployment alive)
+cd web && npm start
 
 # If frontend exits, kill backend
 kill $BACKEND_PID
