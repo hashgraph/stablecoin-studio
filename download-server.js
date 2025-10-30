@@ -104,12 +104,7 @@ app.get('/download', (req, res) => {
   const file = path.join(__dirname, 'project-archive.tar.gz');
   
   if (fs.existsSync(file)) {
-    res.download(file, 'project-archive.tar.gz', (err) => {
-      if (err) {
-        console.error('Error downloading file:', err);
-        res.status(500).send('Erreur lors du téléchargement');
-      }
-    });
+    res.download(file, 'project-archive.tar.gz');
   } else {
     res.status(404).send('Archive non trouvée');
   }
