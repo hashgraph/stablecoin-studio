@@ -48,7 +48,6 @@ outputType = "console"
 [[ports]]
 localPort = 3000
 externalPort = 3000
-exposeLocalhost = true
 
 [[ports]]
 localPort = 5000
