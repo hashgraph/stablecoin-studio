@@ -43,7 +43,7 @@ async function bootstrap() {
   );
 
   const port = configService.get('SERVER_PORT') || 3000;
-  const host = configService.get('SERVER_HOST') || '127.0.0.1';
+  const host = configService.get('SERVER_HOST') || '0.0.0.0';
 
   const config = new DocumentBuilder()
     .setTitle('Hedera Multisignature Backend API')
