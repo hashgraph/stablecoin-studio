@@ -130,7 +130,26 @@ Fonctionnalités :
 - Visualisation des frais par type de transaction
 - Statistiques de coûts
 
-### 5. 🛠️ Utilitaires et Helpers
+### 5. 📱 Application Mobile (Flutter)
+**Nouveau module** : `mobile-app/`
+
+Application mobile Android/iOS pour la capture automatique des SMS mobile money :
+
+Fonctionnalités :
+- Écoute automatique des SMS des opérateurs (Orange Money, MVola, etc.)
+- Filtrage intelligent des notifications mobile money
+- Envoi automatique vers le backend via webhooks
+- Fonctionnement en arrière-plan 24/7
+- Historique local des SMS capturés
+- Support Android et iOS
+
+**Technologies** :
+- Flutter SDK 3.0+
+- Packages : `telephony`, `http`, `flutter_foreground_task`, `workmanager`
+
+👉 [Documentation complète de l'app mobile](./mobile-app/README.md)
+
+### 6. 🛠️ Utilitaires et Helpers
 **Nouveaux fichiers** :
 - `web/src/utils/csvProcessor.ts` : Traitement des CSV mobile money
 - `web/src/utils/mobileMoneyUtils.ts` : Utilitaires mobile money
@@ -160,6 +179,7 @@ Fonctionnalités :
 - `web/src/utils/mobileMoneyUtils.ts`
 - `web/src/utils/webhookDataAdapter.ts`
 - `backend/src/webhook/*`
+- `mobile-app/*` (Application Flutter complète)
 
 **Fichiers existants (du Stablecoin Studio)** :
 - Tous les autres fichiers sont issus du Stablecoin Studio original
@@ -180,21 +200,29 @@ Fonctionnalités :
 │   ├── src/jobs/          ← Original
 │   └── src/webhook/       ⭐ NOUVEAU (NiaSync)
 │
-└── 📂 web/                ← Stablecoin Studio + ajouts NiaSync
-    ├── src/views/
-    │   ├── StableCoinCreation/    ← Original
-    │   ├── Operations/            ← Original
-    │   ├── Roles/                 ← Original
-    │   ├── Settings/              ← Original
-    │   ├── MobileMoneyManagement/ ⭐ NOUVEAU (NiaSync)
-    │   ├── Analytics/             ⭐ NOUVEAU (NiaSync)
-    │   ├── API/                   ⭐ NOUVEAU (NiaSync)
-    │   └── FeesManagement/        ⭐ NOUVEAU (NiaSync)
-    │
-    └── src/utils/
-        ├── csvProcessor.ts        ⭐ NOUVEAU (NiaSync)
-        ├── mobileMoneyUtils.ts    ⭐ NOUVEAU (NiaSync)
-        └── webhookDataAdapter.ts  ⭐ NOUVEAU (NiaSync)
+├── 📂 web/                ← Stablecoin Studio + ajouts NiaSync
+│   ├── src/views/
+│   │   ├── StableCoinCreation/    ← Original
+│   │   ├── Operations/            ← Original
+│   │   ├── Roles/                 ← Original
+│   │   ├── Settings/              ← Original
+│   │   ├── MobileMoneyManagement/ ⭐ NOUVEAU (NiaSync)
+│   │   ├── Analytics/             ⭐ NOUVEAU (NiaSync)
+│   │   ├── API/                   ⭐ NOUVEAU (NiaSync)
+│   │   └── FeesManagement/        ⭐ NOUVEAU (NiaSync)
+│   │
+│   └── src/utils/
+│       ├── csvProcessor.ts        ⭐ NOUVEAU (NiaSync)
+│       ├── mobileMoneyUtils.ts    ⭐ NOUVEAU (NiaSync)
+│       └── webhookDataAdapter.ts  ⭐ NOUVEAU (NiaSync)
+│
+└── 📂 mobile-app/         ⭐ NOUVEAU (NiaSync) - Application Flutter
+    ├── android/           # Configuration Android
+    ├── ios/              # Configuration iOS
+    └── lib/              # Code Dart
+        ├── background/   # Tâches en arrière-plan
+        ├── screens/      # Interfaces utilisateur
+        └── services/     # Communication API
 ```
 
 ---
@@ -217,6 +245,7 @@ Fonctionnalités :
 | **Graphiques** | plotly.js-basic-dist, react-plotly.js, recharts |
 | **Data Processing** | csv-parse, date-fns |
 | **Backend** | NestJS (déjà présent), PostgreSQL pour webhooks |
+| **Mobile App** | Flutter 3.0+, telephony, http, flutter_foreground_task |
 
 ---
 
