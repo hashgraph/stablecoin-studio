@@ -1,350 +1,382 @@
 <div align="center">
 
-# NiaSync
+# NiaSync - Stablecoin Studio
 
 [![License](https://img.shields.io/badge/license-apache2-blue.svg)](LICENSE)
 
+**Une plateforme complète pour créer, gérer et opérer des stablecoins sur Hedera Hashgraph**
+
+[Documentation](#documentation) • [Installation](#installation) • [Architecture](#architecture) • [Contribuer](#contributing)
+
 </div>
 
-### Table of Contents
+---
 
-- **[Abstract](#abstract)**<br>
-- **[Context](#context)**<br>
-- **[Objective](#objective)**<br>
-- **[Overview](#overview)**<br>
-  - [What is a stablecoin](#what-is-a-stablecoin)<br>
-  - [Creating stablecoins](#creating-stablecoins)<br>
-  - [Managing stablecoins](#managing-stablecoins)<br>
-  - [Operating stablecoins](#operating-stablecoins)<br>
-  - [Stablecoin categories](#stablecoins-categories)<br>
-  - [Proof of reserve](#proof-of-reserve)<br>
-  - [Multisignature functionality](#multisignature-functionality)<br>
-- **[Architecture](#architecture)**<br>
-- **[Technologies](#technologies)**<br>
-- **[Installation](#installation)**<br>
-- **[Build](#build)**<br>
-- **[Recommendations](#recommendations)**<br>
-- **[Testnet reset procedure](#testnet-reset-procedure)**<br>
-- **[Deploying the stablecoin factories](#deploying-the-stablecoin-factories)**<br>
-- **[v1 to v2 Migration](#v1-to-v2-migration)**<br>
-- **[Development manifesto](#development-manifesto)**<br>
-- **[Support](#support)**<br>
-- **[Contributing](#contributing)**<br>
-- **[Code of conduct](#code-of-conduct)**<br>
-- **[License](#license)**<br>
+## 📋 Table des matières
 
-# Abstract
+- [À propos](#à-propos)
+- [Fonctionnalités principales](#fonctionnalités-principales)
+- [Architecture du projet](#architecture-du-projet)
+- [Technologies utilisées](#technologies-utilisées)
+- [Installation](#installation)
+- [Démarrage rapide](#démarrage-rapide)
+- [Build](#build)
+- [Documentation](#documentation)
+- [Sécurité](#sécurité)
+- [Support](#support)
+- [Contribuer](#contributing)
+- [Licence](#licence)
 
-The Stablecoin Studio is a comprehensive set of tools and resources designed to enable developers to build applications and services that make use of the stablecoin. The accelerator includes smart contracts, documentation, and sample code to help developers understand how to use the accelerator and other functionality provided by the platform. With the Stablecoin Studio, developers can easily integrate the stablecoin into their own applications or create new applications or services that make use of the stablecoin's unique features. Whether you're a seasoned cryptocurrency developer or new to the space, the Stablecoin Studio has everything you need to start building with stablecoins today.
+---
 
-# Context
+## 🎯 À propos
 
-As people are looking to adopt cryptocurrencies, they sometimes have their reservations about potential price volatility. This is especially true when it comes to paying for goods and services.
+**NiaSync - Stablecoin Studio** est une solution complète qui permet aux développeurs de créer, gérer et opérer des stablecoins sur la blockchain Hedera Hashgraph. Le projet offre un ensemble d'outils incluant des smart contracts, un SDK, une interface en ligne de commande (CLI) et une application web décentralisée (DApp).
 
-That is where stablecoin comes in. Unlike other cryptocurrencies, stablecoin are usually pegged to another currency. This means that the value of a stablecoin will follow the value of that currency. Take for instance some of the most popular stablecoin like Tether (USDT), USD Coin (USDC) and Binance USD (BUSD), which are all pegged to the US Dollar.
+### Qu'est-ce qu'un stablecoin ?
 
-There are also some crypto backed stablecoin such as DAI by MakerDAO, or commodity backed stablecoin such as Paxos Gold (PAXG) by Paxos.
+Un stablecoin est une cryptomonnaie conçue pour maintenir une valeur stable par rapport à un actif spécifique (généralement une devise fiduciaire comme le dollar américain). Contrairement aux cryptomonnaies volatiles, les stablecoins offrent la stabilité nécessaire pour les transactions quotidiennes et le commerce électronique.
 
-Stablecoin have transformed the way crypto markets work by allowing traders to exchange their volatile crypto assets for a stable asset that can quickly be transferred to any other platform. If they can change the way people trade, they can also become a real breakthrough in e-commerce.
+### Pourquoi NiaSync ?
 
-# Objective
+- ✅ **Déploiement simplifié** : Créez des stablecoins en quelques minutes
+- ✅ **Gestion granulaire** : Système de rôles multiples pour une gouvernance flexible
+- ✅ **Multisignature** : Support natif des comptes multi-signatures pour une sécurité renforcée
+- ✅ **Preuve de réserve** : Intégration de flux de données pour la transparence
+- ✅ **Interface intuitive** : CLI et DApp pour tous les niveaux d'utilisateurs
 
-A stablecoin is a type of cryptocurrency that is designed to maintain a stable value relative to a specific asset or basket of assets. Currently, there is no out-of-the-box solution to create and manage stablecoins on Hedera Hashgraph. This project aims to provide developers with the tools they need to build applications that make use of the stablecoin, such as wallets, as well as documentation and sample code to help developers understand how to use the SDK and other functionality provided by the stablecoin platform. With all of this, we want to enable developers to integrate the stablecoin into their own applications or systems.
+---
 
-# Overview
+## 🚀 Fonctionnalités principales
 
-This solution consists of a set of tools, including Smart Contracts, SDK, CLI and UI to facilitate the deployment and management of stablecoins in Hedera Hashgraph.
+### 1. Gestion des rôles multiples
 
-## What is a stablecoin
+Contrairement aux tokens Hedera standards, les stablecoins créés avec NiaSync permettent d'assigner plusieurs comptes pour chaque opération :
 
-A stablecoin is a **decorator** to a standard Hedera Token.
-Each stablecoin maps to an _underlying_ Hedera Token and adds the following functionality:
+- **Admin** : Gestion complète du stablecoin
+- **Cash-in** : Création de nouveaux tokens (limité ou illimité)
+- **Burn** : Destruction de tokens
+- **Wipe** : Suppression de tokens d'un compte spécifique
+- **Pause** : Suspension temporaire des transactions
+- **Freeze** : Gel de comptes individuels
+- **KYC** : Gestion de la vérification d'identité
+- **Rescue** : Récupération de tokens et HBAR du contrat
 
-- **Multiple roles**
+### 2. Fonctionnalité Cash-in avancée
 
-  Hedera Tokens' operations (Wipe, Pause, ...) can only be performed by the accounts to which they are assigned (WipeKey, PauseKey, ...).
+Le rôle cash-in permet de créer et assigner des tokens en une seule transaction, avec deux modes :
 
-  Stablecoins allow for multiple accounts to share the same operation rights, we can wipe/pause/... tokens using any of the accounts with the wipe/pause/... role respectively.
+- **Illimité** : Création sans limite (jusqu'à la supply maximale)
+- **Limité** : Quota personnalisé par compte
 
-- **Supply role split into Cash-in and Burn roles**
+### 3. Preuve de réserve
 
-  The Hedera Tokens' supply account has the right to change the supply of the token, it can be used to mint and burn tokens.
+Intégration de flux de données externes (compatible avec Chainlink) pour garantir que les tokens sont adossés à des réserves réelles.
 
-  Stablecoins split the supply role in two, the *cash-in* and the *burn* roles which can be assigned to different accounts.
+### 4. Support multisignature
 
-- **Cash-in role**
+Gestion complète des comptes multi-signatures Hedera pour une gouvernance décentralisée et sécurisée.
 
-  When Hedera Tokens are minted, they are automatically assigned to the treasury account. If we want to assign them to another account, a second transaction (signed by the treasury account) is required to transfer the tokens.
+---
 
-  Stablecoins implement a "cash-in" operation that allows cash-in role owners to mint and assign tokens to any account in a single transaction.
-  The cash-in role comes in two flavours:
+## 🏗️ Architecture du projet
 
-  - _unlimited_: Accounts with the unlimited cash-in role can mint as many tokens as they wish (as long as the total supply does not exceed the max supply).
-  - _limited_: Accounts with the limited cash-in role can only mint a limited number of tokens. The maximum cash-in amount is defined for each account individually and can be increased/decreased at any time by the admin account.
-
-- **Rescue role**
-
-  When the treasury account for a stablecoin's underlying token is the main stablecoin smart contract itself, any token assigned to the treasury account can be managed by accounts having the _rescue_ role.
-  It is important to note that the initial supply of tokens (minted when the Hedera token was created) is always assigned to the treasury account, which means that rescue role accounts will be required to transfer those tokens to other accounts.
-
-  In the same way, smart contract HBAR can also be managed by accounts having the _rescue_ role. Therefore, _rescue_ role accounts will be able to manage both the tokens and the HBAR of the smart contract.
-
-> The account deploying the stablecoin can be set as the administrator of the underlying token (instead of the smart contract itself), in which case, that account could completely bypass the stablecoin and interact with the underlying token directly in order to change the keys associated to the roles. This would completely decouple the stablecoin from the underlying token making the above-mentioned functionalities impossible.
-
-## Creating stablecoins
-
-Every time a stablecoin is created, a new Hedera Token is created (the underlying token) and the following smart contracts are deployed:
-
-- The stablecoin proxy smart contract: pointing to the `HederaTokenManager` logic smart contract that was passed as an input argument(\*). Proxies are used to make stablecoins upgradable.
-- The stablecoin proxy admin smart contract: this contract will act as an intermediary to upgrade the stablecoin proxy implementation. For more information on this, check the [contract module's README](https://github.com/hashgraph/stablecoin-studio/tree/main/contracts/README.md).
-
-An smart contract, named `StablecoinFactory`, must be previously deployed since implements the flow to create a new stablecoin in a single transaction. A default `StablecoinFactory` is deployed, but any user will be able to [deploy their own factory](#deploying-the-stablecoin-factories).
-
-(\*)By default, the HederaTokenManager smart contract that will be used will be the pre-deployed one, but users can use any other contract they want. For more information on this check the contract module's README.
-
-Users interact with the stablecoin proxy smart contract, instead of doing with the stablecoin logic smart contract, because its address will never change. stablecoin logic smart contract address change if a new version is deployed.
-
-> It is important to note that when creating a new stablecoin, the user will have the possibility to specify the underlying token's keys (those that will have the wipe, supply, ... roles attached). By default, those keys will be assigned to the _stablecoin proxy smart contract_ because, by doing that, the user will be able to enjoy the whole functionality implemented in this project through the stablecoin logic smart contract methods. **NEVERTHELESS**, the user is free to assign any key to the public key of any account (not only during the creation process but also later, if the user's account was set as the underlying key admin), except the admin key and the supply key, that will always be automatically assigned to the stablecoin proxy smart contract. If the user assigns a key to the public key of a different account, the stablecoin proxy smart contract will not be able to fully manage the underlying token, limiting the functionality it exposes to the user. These keys could be even not assigned, so the related functionalities couldn't be performed. It is also worth noting that just like the user will have the possibility to assign any key to the public key of any account other than the stablecoin smart contract proxy, he/she will be able to assign it back too.
-
-## Managing stablecoins
-
-Every time a stablecoin is deployed, the deploying account will be defined as the stablecoin administrator and will be granted all roles (wipe, rescue, ...). That account will have the possibility to assign and remove any role to any account, increase and decrease cash-in limits, etc...
-
-## Operating stablecoins
-
-Any account having any role granted for a stablecoin can operate with it accordingly. For instance, if an account has the burn role granted, it will be allowed to burn tokens. Accounts do not need to be associate with the underlying token in order to operate with it, they only need to be granted roles. On the other hand, if they want to own tokens, they will have to associate the token as for any other Hedera token.
-
-## Stablecoins categories
-
-From an account's perspective, there are two kinds of stablecoins:
-
-- _Internal stablecoins_
-
-Every stablecoin created using the account, independently of the roles the account might have.
-
-- _Imported stablecoins_
-
-Every stablecoin for which the account has at least one role but was created using a different account.
-
-## Proof of reserve
-
-Under the current implementation, all stablecoins may choose to implement a proof of reserve data feed at creation (new reserve data feeds can only be deployed when a stablecoin has been created as part of the creation process itself. They can not be deployed independently).
-
-> A proof of reserve is, in very simple terms, an external feed that provides the backing of the tokens in real world. This may be FIAT or other assets.
-
-### Setting up a proof of reserve
-
-During setup, it is possible to link an existing data feed by providing the smart contract's address, or create a new one based on our implementation. If a reserve was created during the stablecoin deployment, it will also be possible to edit the amount of the reserve.
-
-> The initial supply of the stablecoin cannot be higher than the reserve initial / current amount.
-
-The interface the reserve data feed must implement for the stablecoin to be able to interact with is the **AggregatorV3Interface** defined and used by Chainlink for its [Data Feeds](https://docs.chain.link/data-feeds/). This means that any reserve data feed implemented by Chainlink or adhering to Chainlink's standards is fully compatible with our stablecoins.
-
-Therefore, three options exist
-
-- **stablecoin not linked to a reserve:** No known reserve collateralizing the Token. stablecoins with no reserve are technically not "stable" but just "coins".
-- **stablecoin linked to a reserve but no data feed is provided:** This will deploy and initialize a reserve based on our example implementation. This reserve is meant to be used for demo purposes and allows the admin to change the reserve amount to showcase the integration between both.
-- **stablecoin linked to a reserve and an existing data feed is provided**: This data feed will be used to check the reserve before minting any new tokens.
-
-In any case, the reserve address can be edited after creation. However, changing the amount in the reserve can only be performed when the reserve smart contract was deployed during the stablecoin creation.
-
-For more information about the SDK and the methods to perform these operations, visit to the [docs](https://github.com/hashgraph/stablecoin-studio/tree/main/sdk#reserve-data-feed).
-
-## Multisignature functionality
-
-Hedera allows for the creation of accounts with complex key structures (__multi-key accounts__), enabling configurations that require multiple signatures from different ED25519 or ECDSA keys to authorize transactions. 
-
-These accounts can use simple multi-signature setups or more sophisticated threshold key arrangements, where a specific number of approvals from a designated group of key holders is necessary to execute transactions. This functionality is ideal for enhancing security and governance in applications requiring collective decision-making.
-
-For more information about this type of account please check the official Hedera documentation about [key structures](https://docs.hedera.com/hedera/core-concepts/keys-and-signatures#key-structures).
-
-> If you need to deploy a brand new multikey account you can use our [script](https://github.com/hashgraph/stablecoin-studio/tree/main/sdk/scripts/CreateMultisigAccount.ts). Follow the instructions in the script itself (comment section at the begining)
-
-The Stablecoin solution enables the management of a stablecoin through multi-key accounts.
-
-When an operation (cash-in, burn, ...) is carried out using the _multisig_ mode, the corresponding transaction will not be directly submitted to the Hedera DLT, instead, it will be temporarily stored in a backend waiting for the multisig account key owners to sign it. Once it has been signed by all the required keys it will be available for submission.
-
-It's crucial to note that there is a time constraint for multisig transactions: they must be signed and submitted within three minutes of their initiation. If this timeframe is not met, the Hedera DLT will consider these transactions as expired and reject them.
-
-> The functionality has a limitation: Complex keys must have only one level, in other words, key list and threshold keys must contain only ED25519/ECDSA keys, they cannot contain firther key lists and/or threshold keys.
-
-### Steps to deploy a multisig-managed stablecoin
-
-If you wish to deploy a stablecoin and fully manage it with a multisig account the steps to follow are:
-- Using a single key account, deploy a stablecoin assigning all roles and the proxy admin ownership to the multisig account
-- Once the stablecoin is deployed, assign the "admin" role to the multisig account. 
-> The admin role is the only one that cannot be assigned automatically during the initial deployment
-- Remove the admin role from the single key account used to deploy the stablecoin
-> The admin role is automatically assigned to the deploying account
-- Connect to the stablecoin platform using the multisig account and manually import the deployed stablecoin
-> Since the deployment was carried out by another account, the multisig account was not associated to the token, that is the reason why you need to import it manually. It you associate your multisig account to the stablecoin's hedera token, you will not need to import it anymore.
-
-
-# Architecture
-
-The project is divided in 5 node modules:
+Le projet est organisé en 5 modules Node.js :
 
 ```
-  /contracts
-  /backend
-  /sdk
-  /cli
-  /web
+📁 NiaSync
+├── 📂 contracts/     # Smart contracts Solidity
+├── 📂 backend/       # API REST pour les transactions multisig
+├── 📂 sdk/           # SDK TypeScript pour les développeurs
+├── 📂 cli/           # Interface en ligne de commande
+├── 📂 web/           # Application web React (DApp)
+└── 📂 docs/          # Documentation complète
 ```
 
-- **`/contracts`:** The solidity smart contracts implementing the stablecoin functionalities.
-- **`/backend`:** A Backend tool implemented for managing the multisignature transactions that must be signed then submitted to the Hdera DLT. It exposes a REST API.
-- **`/sdk`:** The SDK implementing the features to create, manage and operate stablecoins. The SDK interacts with the smart contracts and the backend REST API and exposes an API to be used by client facing applications.
-- **`/cli`:** A CLI tool for creating, managing and operating stablecoins. Uses the SDK exposed API.
-- **`/web`:** A DApp developed with React to create, manage and operate stablecoins. Uses the SDK exposed API.
-
-
-Learn more about them in their README:
-
-- [contracts](https://github.com/hashgraph/stablecoin-studio/tree/main/contracts/README.md)
-- [backend](https://github.com/hashgraph/stablecoin-studio/tree/main/backend/README.md)
-- [sdk](https://github.com/hashgraph/stablecoin-studio/tree/main/sdk/README.md)
-- [cli](https://github.com/hashgraph/stablecoin-studio/tree/main/cli/README.md)
-- [web](https://github.com/hashgraph/stablecoin-studio/tree/main/web/README.md)
-
-# Technologies
-
-- **Smart contracts**: Solidity version 0.8.16 (and lower versions for contracts imported from external sources like OpenZeppelin).
-- **SDK, Backend, CLI and UI**: Typescript `>=4.7`
-- **SDK**: Node `>= v18.13`
-- **UI**: React.js `>=2.2.6`
-- **CONTRACTS**: Hardhat `^2.14.0`
-
-# Installation
-
-In a terminal:
+### Flux de données
 
 ```
+┌─────────────┐
+│    DApp     │ ◄─── Interface utilisateur (React)
+│     ou      │
+│     CLI     │
+└──────┬──────┘
+       │
+       ▼
+┌─────────────┐
+│     SDK     │ ◄─── API unifiée
+└──────┬──────┘
+       │
+       ├──────────► 📦 Smart Contracts (Hedera)
+       │
+       └──────────► 🔐 Backend (Multisig)
+```
+
+### Modules détaillés
+
+- **[Contracts](./contracts/README.md)** : Smart contracts implémentant la logique stablecoin
+- **[Backend](./backend/README.md)** : Gestion des transactions multi-signatures
+- **[SDK](./sdk/README.md)** : API TypeScript pour intégrer les stablecoins
+- **[CLI](./cli/README.md)** : Outil en ligne de commande
+- **[Web](./web/README.md)** : DApp React pour l'interface graphique
+
+---
+
+## 💻 Technologies utilisées
+
+| Composant | Technologies |
+|-----------|-------------|
+| **Smart Contracts** | Solidity 0.8.16, Hardhat 2.14.0 |
+| **SDK/Backend/CLI** | TypeScript ≥4.7, Node.js ≥18.13 |
+| **Interface Web** | React.js ≥2.2.6 |
+| **Blockchain** | Hedera Hashgraph |
+| **Outils** | OpenZeppelin, Chainlink (compatibilité) |
+
+---
+
+## 📦 Installation
+
+### Prérequis
+
+- Node.js ≥ 18.13
+- NPM ou Yarn
+- Un compte Hedera (testnet ou mainnet)
+
+### Installation globale
+
+Installez toutes les dépendances pour tous les modules :
+
+```bash
 npm run install:all
 ```
 
-This will install the dependencies in all projects and sets up the links between them.
+Cette commande installe et configure automatiquement les dépendances pour tous les sous-projets.
 
-You can now start developing in any of the modules.
+### Installation individuelle
 
-> To individual installation or running SDK/CLI/UI you can find all the information in their respective readme cited above.
-
-# Build
-
-When making modifications to any of the modules, you have to re-compile the dependencies, in this order, depending on which ones the modifications where made:
+Pour installer un module spécifique :
 
 ```bash
-  // 1st
-  $ npm run build:contracts
-  // 2nd
-  $ npm run build:sdk
-  // 3rd
-  $ npm run build:cli
-  // or
-  $ npm run build:web
+cd [module]  # contracts, sdk, cli, web, ou backend
+npm install
 ```
 
-Or within any of the modules:
+---
+
+## 🎮 Démarrage rapide
+
+### 1. Configuration
+
+Créez un fichier `.env` dans chaque module avec vos identifiants Hedera :
+
+```env
+OPERATOR_ID=0.0.xxxxx
+OPERATOR_KEY=302e...
+NETWORK=testnet
+```
+
+### 2. Lancement de l'application web
 
 ```bash
-  $ cd [module] // sdk, web, contracts, etc
-  $ npm run build
+cd web
+npm start
 ```
 
-# Recommendations
+L'application sera accessible sur `http://localhost:5000`
 
-If you are using VSCode we recommend the use of the solidity extension from nomicFoundation, it will facilitate the use of hardhat.
-[hardhat-vscode](https://github.com/NomicFoundation/hardhat-vscode)
+### 3. Utilisation du CLI
 
-> This may not be compatible with others solidity extensions, such as this one. [vscode-solidity](https://github.com/juanfranblanco/vscode-solidity)
+```bash
+cd cli
+npm start
+```
 
-# Deploying the stablecoin factories
-In order to be able to deploy any stablecoin, the `HederaTokenManager` and `StablecoinFactory` smart contracts must be deployed on the network. Whenever a new version of these contracts is needed or when the testnet is reset, new contracts must be deployed. Moreover, the address of the `StablecoinFactory` smart contract must be updated in the SDK, CLI and web modules as explained above.
+Suivez les instructions interactives pour créer et gérer vos stablecoins.
 
-We provide default addresses for the factory and the business logic resolver that we have deployed for anyone to use that are updated whenever a new version is released. 
+### 4. Démarrage du backend (optionnel - pour multisig)
 
-You can find them associated to each version in [FACTORY_VERSION.md](./FACTORY_VERSION.md) and [RESOLVER_VERSION.md](./RESOLVER_VERSION.md)
+```bash
+cd backend
+npm run start:dev
+```
 
-Follow the steps in the [contracts docs](https://github.com/hashgraph/stablecoin-studio/tree/main/contracts#deploy-factory) to learn how to deploy the factories.
+---
 
-# V1 to V2 Migration
-V2 smart contracts are not compatible with V1.
+## 🔨 Build
 
-If you have deployed Stablecoins in V1 and want to migrate them to V2 please follow the procedure described in the `contracts/README`document `V1 to V2 migration` section.
+Lors de modifications, recompilez les modules dans cet ordre :
 
-# Testnet reset procedure
+```bash
+# 1. Smart contracts
+npm run build:contracts
 
-Whenever a testnet reset occurs, the factories must be re-deployed and the addresses on the SDK must be updated.
+# 2. SDK
+npm run build:sdk
 
-1. Follow the steps in [Deploying the stablecoin factories](#deploying-the-stablecoin-factories) to deploy the factories.
-2. Update the addresses in SDK's `.env` file to the newly deployed factories in order to pass the SDK's tests.
-3. Update the addresses in the CLI's configuration file in order to use the new factories in the CLI.
-4. Update the addresses in the web's `.env` file in order to use the new factories in the DApp.
-5. Create a PR to be validated and merged for the new version.
+# 3. CLI ou Web
+npm run build:cli
+# ou
+npm run build:web
+```
 
-# Fees
-All fees are subject to change. The fees below reflect a base price for the transaction or query. Transaction characteristics may increase the price from the base price shown below. The following table reflects the cost that the transaction have through the Smart Contracts.
+Ou individuellement dans chaque module :
 
-| Operation  | Dollar      | Gas    | 
-|----------------|--------------|------------|
-| Cash in | 0.01$   | 101.497    |
-| Burn | 0.005$   | 60.356 |
-| Wipe | 0.005$   | 60.692 |
-| Freeze | 0.005$  | 56.261 |
-| Unfreeze | 0.005$   | 56.262 |
-| Grant KyC | 0.005$   | 56.167 |
-| Revoke KyC | 0.005$   | 56.195 |
+```bash
+cd [module]
+npm run build
+```
 
-# JSON-RPC Relays
-Anyone in the community can set up their own JSON RPC relay that applications can use to deploy, query, and execute smart contracts. You can use your local RPC-relay following this [instructions](https://github.com/hashgraph/hedera-json-rpc-relay) or you can use one of the community-hosted Hedera JSON RPC relays like:
+---
+
+## 📚 Documentation
+
+### Concepts clés
+
+#### Création de stablecoins
+
+Chaque stablecoin déploie automatiquement :
+- Un nouveau token Hedera (token sous-jacent)
+- Un smart contract proxy (pour l'upgradabilité)
+- Un smart contract proxy admin
+
+#### Catégories de stablecoins
+
+- **Stablecoins internes** : Créés par votre compte
+- **Stablecoins importés** : Créés par d'autres comptes, mais où vous avez des rôles
+
+#### Déploiement avec multisignature
+
+1. Déployez avec un compte simple en assignant les rôles au compte multisig
+2. Assignez le rôle admin au compte multisig
+3. Retirez le rôle admin du compte simple
+4. Importez le stablecoin avec le compte multisig
+
+### Frais des opérations
+
+| Opération | Coût approximatif | Gas |
+|-----------|-------------------|-----|
+| Cash-in | $0.01 | 101,497 |
+| Burn | $0.005 | 60,356 |
+| Wipe | $0.005 | 60,692 |
+| Freeze/Unfreeze | $0.005 | ~56,262 |
+| Grant/Revoke KYC | $0.005 | ~56,181 |
+
+*Les frais sont sujets à modification et peuvent varier selon les caractéristiques de la transaction.*
+
+### JSON-RPC Relays
+
+Utilisez l'un de ces relays JSON-RPC communautaires :
 - [Hashio](https://swirldslabs.com/hashio/)
 - [Arkhia](https://www.arkhia.io/features/#api-services)
 - [ValidationCloud](https://docs.validationcloud.io/v1/hedera/json-rpc-relay-api)
 
-# Development manifesto
+Ou configurez votre propre relay local en suivant les [instructions officielles](https://github.com/hashgraph/hedera-json-rpc-relay).
 
-The development of the project follows enterprise-grade practices for software development. Using DDD, hexagonal architecture, and the CQS pattern, all within an agile methodology.
+---
 
-## Domain driven design
+## 🛠️ Déploiement des factories
 
-By using DDD (Domain-Driven Design), we aim to create a shared language among all members of the project team, which allows us to focus our development efforts on thoroughly understanding the processes and rules of the domain. This helps to bring benefits such as increased efficiency and improved communication.
+Pour déployer des stablecoins, les smart contracts `HederaTokenManager` et `StablecoinFactory` doivent être déployés sur le réseau.
 
-## Hexagonal architecture
+### Adresses par défaut
 
-We employ this architectural pattern to differentiate between the internal and external parts of our software. By encapsulating logic in different layers of the application, we are able to separate concerns and promote a higher level of isolation, testability, and control over business-specific code. This structure allows each layer of the application to have clear responsibilities and requirements, which helps to improve the overall quality and maintainability of the software.
+Les adresses des factories pré-déployées sont disponibles dans :
+- [FACTORY_VERSION.md](./FACTORY_VERSION.md)
+- [RESOLVER_VERSION.md](./RESOLVER_VERSION.md)
 
-## CQS and command handlers
+### Déployer vos propres factories
 
-We use a separation of queries/commands, query handlers/command handlers to divide state changes from state reads, with the goal of decoupling functional workflows and separating view models from the domain. By using command handlers and an internal command bus, we are able to completely decouple the use cases within the system, improving flexibility and maintainability. This has been achieved by developing a fully typed TS Command / Query Handler module.
+Consultez la [documentation des contracts](./contracts/README.md#deploy-factory) pour les instructions détaillées.
 
-## Code standards
+---
 
-The SDK,CLI and UI have over 70% code coverage in unit and integration tests. The Smart Contracts have a 100% code coverage(\*).
+## 🔄 Migration V1 vers V2
 
-_(\*) we could not find any tool to automatically measure the Smart Contracts coverage, but we included tests for all external and public methods implemented by this project (external and public methods imported from trusted external sources were not considered)._
+Les smart contracts V2 ne sont pas compatibles avec V1. 
 
-# Support
+Si vous avez des stablecoins déployés en V1, suivez la procédure de migration décrite dans [contracts/README.md](./contracts/README.md).
 
-If you have a question on how to use the product, please see our
-[support guide](https://github.com/hashgraph/.github/blob/main/SUPPORT.md).
+---
 
-# Contributing
+## 🧪 Tests et qualité
 
-Contributions are welcome. Please see the
-[contributing guide](https://github.com/hashgraph/.github/blob/main/CONTRIBUTING.md)
-to see how you can get involved.
+- **SDK/CLI/Web** : >70% de couverture de code
+- **Smart Contracts** : 100% de couverture des méthodes publiques/externes
 
-# Code of conduct
+### Lancer les tests
 
-This project is governed by the
-[Contributor Covenant Code of Conduct](https://github.com/hashgraph/.github/blob/main/CODE_OF_CONDUCT.md). By
-participating, you are expected to uphold this code of conduct. Please report unacceptable behavior
-to [oss@hedera.com](mailto:oss@hedera.com).
+```bash
+# Tests globaux
+npm test
 
-# License
+# Tests par module
+cd [module]
+npm test
+```
+
+---
+
+## 🏛️ Principes de développement
+
+Le projet suit des pratiques de développement de niveau entreprise :
+
+### Domain-Driven Design (DDD)
+Création d'un langage partagé pour améliorer la communication et l'efficacité.
+
+### Architecture hexagonale
+Séparation claire entre logique métier et infrastructure pour une meilleure testabilité.
+
+### CQS Pattern
+Séparation des commandes (modifications d'état) et des requêtes (lectures).
+
+---
+
+## 🔐 Sécurité
+
+**Ne déposez jamais de problème de sécurité publiquement.**
+
+Consultez notre [politique de sécurité](./SECURITY.md) pour rapporter des vulnérabilités de manière responsable.
+
+Un audit de sécurité complet a été réalisé par Certik. Consultez le rapport : [Certik Audit Report](./Certik%20final%20smart%20contracts%20audit%20report.pdf)
+
+---
+
+## 💬 Support
+
+Besoin d'aide ? Consultez notre [guide de support](https://github.com/hashgraph/.github/blob/main/SUPPORT.md).
+
+---
+
+## 🤝 Contribuer
+
+Les contributions sont les bienvenues ! Consultez notre [guide de contribution](https://github.com/hashgraph/.github/blob/main/CONTRIBUTING.md) pour commencer.
+
+### Code de conduite
+
+Ce projet respecte le [Contributor Covenant Code of Conduct](https://github.com/hashgraph/.github/blob/main/CODE_OF_CONDUCT.md). 
+
+Signalez tout comportement inacceptable à [oss@hedera.com](mailto:oss@hedera.com).
+
+---
+
+## 📄 Licence
 
 [Apache License 2.0](LICENSE)
 
-# 🔐 Security
+---
 
-Please do not file a public ticket mentioning the vulnerability. Refer to the security policy defined in the [SECURITY.md](https://github.com/hashgraph/stablecoin-studio/blob/main/SECURITY.md).
+## 🙏 Remerciements
+
+Développé avec ❤️ par l'équipe Hedera et la communauté open source.
+
+Merci à tous les [contributeurs](https://github.com/hashgraph/stablecoin-studio/graphs/contributors) qui ont participé à ce projet !
+
+---
+
+<div align="center">
+
+**[⬆ Retour en haut](#niasync---stablecoin-studio)**
+
+Made with ❤️ for the Hedera community
+
+</div>
