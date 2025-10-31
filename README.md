@@ -48,6 +48,9 @@ https://github.com/itsaina207/Nia-HederaAfrica/tree/Nia-HederaAfrica
 NiaSync APK
 https://drive.google.com/file/d/1uHvBbspMJLeLdk0NoGTPL_BKkb4ol2op/view?usp=drive_link
 
+Certification
+https://certs.hashgraphdev.com/050bf9dd-972e-4f7e-92ed-f69874cd26e1.pdf
+
 ### En bref
 
 ```
