@@ -8,6 +8,18 @@
 
 *Transformez vos réserves mobile money en stablecoins traçables avec capture automatique des SMS*
 
+Project demo link
+https://www.canva.com/design/DAG3SKccexI/utw-OgnuC82cRK23SFFhIg/watch?utm_content=DAG3SKccexI&utm_campaign=designshare&utm_medium=link2&utm_source=uniquelinks&utlId=h351554f269
+
+Deck
+https://docs.google.com/presentation/d/1AGz-6eyiqDoy10wttp4mDzQlHjSRQrZyJFKeWdhfRkY/edit?usp=sharing
+
+Github
+https://github.com/itsaina207/Nia-HederaAfrica/tree/Nia-HederaAfrica
+
+NiaSync APK
+https://drive.google.com/file/d/1uHvBbspMJLeLdk0NoGTPL_BKkb4ol2op/view?usp=drive_link
+
 [Vue d'ensemble](#-vue-densemble) • [Écosystème](#-lécosystème-niasync) • [Installation](#-installation) • [Documentation](#-documentation)
 
 </div>
