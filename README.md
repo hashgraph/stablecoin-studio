@@ -1,8 +1,6 @@
 <div align="center">
 
-# 💳 NiaSync
-
-[![License](https://img.shields.io/badge/license-apache2-blue.svg)](LICENSE)
+# 💳 Nia
 
 **Écosystème complet pour tokeniser le Mobile Money sur blockchain**
 
@@ -523,45 +521,6 @@ const stablecoin = await sdk.createStablecoin({
 
 ---
 
-## 🔐 Sécurité
-
-- ✅ **Smart contracts audités** par Certik ([Rapport](./Certik%20final%20smart%20contracts%20audit%20report.pdf))
-- ✅ **Multisignature** : Support natif Hedera multi-key
-- ✅ **RBAC** : Contrôle d'accès basé sur les rôles
-- ✅ **Chiffrement** : Communications HTTPS
-- ✅ **Permissions** : App mobile avec filtrage des SMS
-
-**Rapporter une vulnérabilité** : Consultez [SECURITY.md](./SECURITY.md)
-
----
-
-## 💬 Support
-
-- 📖 **Documentation** : Voir les README de chaque module
-- 🐛 **Issues** : [GitHub Issues](https://github.com/votre-repo/niasync/issues)
-- 💬 **Discussions** : [GitHub Discussions](https://github.com/votre-repo/niasync/discussions)
-- 📧 **Email** : support@niasync.io *(exemple)*
-
----
-
-## 🤝 Contribuer
-
-Les contributions sont les bienvenues !
-
-1. Fork le projet
-2. Créez votre branche (`git checkout -b feature/nouvelle-fonctionnalite`)
-3. Committez vos changements (`git commit -m 'Ajout nouvelle fonctionnalité'`)
-4. Push vers la branche (`git push origin feature/nouvelle-fonctionnalite`)
-5. Ouvrez une Pull Request
-
-Consultez notre [guide de contribution](https://github.com/hashgraph/.github/blob/main/CONTRIBUTING.md).
-
-### Code de conduite
-
-[Contributor Covenant Code of Conduct](https://github.com/hashgraph/.github/blob/main/CODE_OF_CONDUCT.md)
-
----
-
 ## 🙏 Crédits
 
 ### Hedera Stablecoin Studio
@@ -612,25 +571,6 @@ Merci aux projets open source utilisés :
 | **Mobile App** (NiaSync) | 1 253 | 1.6% |
 | **TOTAL** | **79 911** | **100%** |
 
-### Résumé
-
-| Métrique | Valeur |
-|----------|--------|
-| **Code de base (Stablecoin Studio)** | 75 834 lignes (94.9%) |
-| **Ajouts NiaSync** | 4 077 lignes (5.1%) |
-| **Modules totaux** | 3 (Mobile + Backend + Web) |
-| **Nouveaux modules web** | 4 (MM Management, Analytics, API, Fees) |
-| **Nouveau module mobile** | 1 (App Flutter complète) |
-| **Technologies ajoutées** | 8 (Flutter, Plotly, csv-parse, etc.) |
-
-**Conclusion** : NiaSync ajoute ~5% de code nouveau qui transforme Stablecoin Studio en solution complète de tokenisation du mobile money avec capture automatique des SMS.
-
----
-
-## 📄 Licence
-
-[Apache License 2.0](LICENSE)
-
 ---
 
 ## 🌟 Roadmap
@@ -640,27 +580,6 @@ Merci aux projets open source utilisés :
 - ✅ Backend webhooks
 - ✅ Mobile Money Management
 - ✅ Analytics & Coverage ratio
-- ✅ Fees Management
-
-### Prochaines versions
-
-**v1.1** (Q1 2026)
-- [ ] Support de plus d'opérateurs africains
-- [ ] Notifications push dans l'app mobile
-- [ ] Export PDF des rapports
-- [ ] API publique pour développeurs
-
-**v1.2** (Q2 2026)
-- [ ] Application mobile native améliorée
-- [ ] Intégration API directe avec opérateurs
-- [ ] Module de réconciliation comptable
-- [ ] Dashboard admin avancé
-
-**v2.0** (Q3 2026)
-- [ ] Support paiements marchands
-- [ ] Bridge vers d'autres blockchains
-- [ ] Marketplace de stablecoins MM
-- [ ] SDK mobile pour développeurs
 
 ---
 
@@ -675,9 +594,5 @@ Construit avec ❤️ pour démocratiser l'accès à la blockchain en Afrique
 Basé sur [Hedera Stablecoin Studio](https://github.com/hashgraph/stablecoin-studio) | Propulsé par [Hedera Hashgraph](https://hedera.com)
 
 ---
-
-**NiaSync** = **Nia** (objectif en swahili) + **Sync** (synchronisation)
-
-*Notre objectif : synchroniser le mobile money avec la blockchain*
 
 </div>
