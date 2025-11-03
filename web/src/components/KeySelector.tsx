@@ -37,7 +37,9 @@ const selectorStyle = {
 		border: '1px',
 		borderColor: 'brand.black',
 		borderRadius: '8px',
-		height: 'min',
+		height: 'auto',
+		minHeight: '40px',
+		overflow: 'visible',
 	},
 	menuList: {
 		maxH: '220px',
@@ -50,6 +52,11 @@ const selectorStyle = {
 	valueSelected: {
 		fontSize: '14px',
 		fontWeight: '500',
+		whiteSpace: 'normal',
+		wordBreak: 'break-word',
+		lineHeight: '1.3',
+		py: 1,
+		pr: 8,
 	},
 };
 
