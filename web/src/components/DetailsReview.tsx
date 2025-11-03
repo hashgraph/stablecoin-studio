@@ -130,11 +130,11 @@ const formatKey = (
 
 	// Handle string (legacy, for backward compatibility)
 	if (typeof keySelection === 'string') {
-		if (keySelection === 'Current user key') {
+		if (keySelection === 'Current user account') {
 			return accountInfo.publicKey;
 		}
 
-		if (keySelection === 'Other key') {
+		if (keySelection === 'Other account') {
 			const param = Object.keys(values).find((key) => key.includes(keyName + 'Other'));
 			return {
 				key: param ? values[param] : '',
@@ -160,25 +160,25 @@ const keyToString = (
 	// Handle object from KeySelector (has value property)
 	if (typeof keySelection === 'object' && keySelection !== null && 'value' in keySelection) {
 		if (keySelection.value === 1) {
-			// Current user key
-			return keySelection.label || 'Current user key';
+			// Current user account
+			return keySelection.label || 'Current user account';
 		}
 		if (keySelection.value === 2) {
-			// The smart contract
-			return keySelection.label || 'The smart contract';
+			// Hedera Token Manager smart contract
+			return keySelection.label || 'Hedera Token Manager smart contract';
 		}
 		if (keySelection.value === 3) {
-			// Other key - show masked version
+			// Other account - show masked version
 			const param = Object.keys(getValues()).find((key) => key.includes(keyName + 'Other'));
 			if (param && getValues()[param]) {
 				return maskPublicKeys(getValues()[param]);
 			}
-			return 'Other key';
+			return 'Other account';
 		}
 	}
 
 	// Legacy string-based handling
-	if (keySelection.label === 'Current user key' || keySelection.label === 'The smart contract') {
+	if (keySelection.label === 'Current user account' || keySelection.label === 'Hedera Token Manager smart contract') {
 		return keySelection.label;
 	}
 
@@ -398,8 +398,12 @@ const DetailsReview = ({
 				}
 
 				if (!isNaN(timestamp)) {
-					// Convert milliseconds to nanoseconds
-					request.expirationTimestamp = (timestamp * 1000000).toString();
+					// Convert milliseconds to nanoseconds (must be 19 digits)
+					const nanoseconds = (timestamp * 1000000).toString();
+					console.log('Expiration timestamp (ms):', timestamp);
+					console.log('Expiration timestamp (ns):', nanoseconds);
+					console.log('Length:', nanoseconds.length);
+					request.expirationTimestamp = nanoseconds;
 				}
 			}
 			// Only send keys that were edited
