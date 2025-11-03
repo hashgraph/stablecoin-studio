@@ -158,7 +158,7 @@ const keyToString = (
 	}
 
 	// Handle object from KeySelector (has value property)
-	if (typeof keySelection === 'object' && keySelection !== null && 'value' in keySelection) {
+	if (typeof keySelection === 'object' && 'value' in keySelection) {
 		if (keySelection.value === 1) {
 			// Current user account
 			return keySelection.label || 'Current user account';
@@ -343,9 +343,9 @@ const DetailsReview = ({
 	if (isLoading && editMode) return <AwaitingWalletSignature />;
 
 	const { t } = useTranslation(['global', 'stableCoinDetails', 'updateToken']);
-	const currentExpirationTime: Detail | undefined = details.find(
-		(obj) => obj.label === 'Expiration time',
-	);
+	// const currentExpirationTime: Detail | undefined = details.find(
+	// 	(obj) => obj.label === 'Expiration time',
+	// );
 	// SDK validation: expiration time must be between now+1 day and now+730 days (2 years)
 	const minimumExpirationTime: Date = new Date();
 	minimumExpirationTime.setDate(minimumExpirationTime.getDate() + 1);
