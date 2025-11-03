@@ -2,6 +2,7 @@ import { Box, Flex } from '@chakra-ui/react';
 import { StableCoinRole } from '@hashgraph/stablecoin-npm-sdk';
 import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
+import { useEffect, useState } from 'react';
 import AwaitingWalletSignature from '../../components/AwaitingWalletSignature';
 import BaseContainer from '../../components/BaseContainer';
 import DetailsReview from '../../components/DetailsReview';
@@ -12,6 +13,7 @@ import {
 	SELECTED_WALLET_COIN,
 	SELECTED_TOKEN_ROLES,
 	SELECTED_WALLET_COIN_CONFIG_INFO,
+	SELECTED_MIRRORS,
 } from '../../store/slices/walletSlice';
 import { formatShortKey } from '../../utils/inputHelper';
 import { formatBytes32 } from '../../utils/format';
@@ -24,28 +26,150 @@ const StableCoinDetails = () => {
 	const account = useSelector(SELECTED_WALLET_ACCOUNT_INFO);
 	const network = useSelector(SELECTED_NETWORK);
 	const roles = useSelector(SELECTED_TOKEN_ROLES)! || [];
+	const mirrors = useSelector(SELECTED_MIRRORS);
 
 	const { isLoading, getStableCoinDetails } = useRefreshCoinInfo();
 
 	const hashScanURL = `https://hashscan.io/${network}`;
 
+	// State to store account IDs fetched from mirror node
+	const [keyAccountIds, setKeyAccountIds] = useState<Record<string, string>>({});
+
+	// Helper function to get mirror node URL for the current network
+	const getMirrorNodeUrl = (): string | undefined => {
+		const mirror = mirrors?.find((m: any) => m.Environment === network);
+		return mirror?.BASE_URL;
+	};
+
+	// Fetch account ID from mirror node using public key
+	const fetchAccountIdFromPublicKey = async (publicKey: string): Promise<string | undefined> => {
+		const mirrorUrl = getMirrorNodeUrl();
+		if (!mirrorUrl || !publicKey) return undefined;
+
+		try {
+			const response = await fetch(`${mirrorUrl}accounts?account.publickey=${publicKey}`);
+			if (!response.ok) return undefined;
+
+			const data = await response.json();
+			if (data.accounts && data.accounts.length > 0) {
+				return data.accounts[0].account;
+			}
+		} catch (error) {
+			console.error('Error fetching account ID from mirror node:', error);
+		}
+		return undefined;
+	};
+
+	// Effect to fetch account IDs for all public keys
+	useEffect(() => {
+		const fetchAllAccountIds = async () => {
+			const keysToFetch: Record<string, string> = {};
+
+			// Collect all public keys that need to be converted
+			const keys = [
+				selectedStableCoin?.adminKey,
+				selectedStableCoin?.kycKey,
+				selectedStableCoin?.freezeKey,
+				selectedStableCoin?.wipeKey,
+				selectedStableCoin?.supplyKey,
+				selectedStableCoin?.pauseKey,
+				selectedStableCoin?.feeScheduleKey,
+			];
+
+			for (const key of keys) {
+				if (key && 'key' in key && !('value' in key)) {
+					// This is a PublicKey (EOA), not a ContractId
+					const publicKey = (key as any).key;
+					if (publicKey && !keyAccountIds[publicKey]) {
+						const accountId = await fetchAccountIdFromPublicKey(publicKey);
+						if (accountId) {
+							keysToFetch[publicKey] = accountId;
+						}
+					}
+				}
+			}
+
+			if (Object.keys(keysToFetch).length > 0) {
+				setKeyAccountIds((prev) => ({ ...prev, ...keysToFetch }));
+			}
+		};
+
+		if (selectedStableCoin) {
+			fetchAllAccountIds();
+		}
+	}, [selectedStableCoin, network, mirrors]);
+
 	const getLabelFromKey = ({ key }: { key: any }) => {
 		if (!key) return t('none').toUpperCase();
-		if (key.key === account.publicKey?.toString()) return t('currentUser').toUpperCase();
+
+		// Check if it's the current user's key by comparing public key
+		if (key.key === account.publicKey?.toString()) {
+			return {
+				primary: account.id, // Account ID in large
+				secondary: 'Current user account', // Label in small
+			};
+		}
 
 		const isSmartContract = 'value' in key;
-		const text = isSmartContract
-			? `${t('smartContract').toUpperCase()} - ${key.value}`
-			: formatShortKey({ key: key.key });
-		return text;
+		if (isSmartContract) {
+			// ContractId - already has Account ID format
+			return {
+				primary: key.value, // Account ID in large
+				secondary: 'Hedera Token Manager smart contract', // Label in small
+			};
+		} else {
+			// PublicKey (EOA) - try to get Account ID from mirror node
+			const publicKey = key.key;
+			const accountId = keyAccountIds[publicKey];
+
+			// Check if the fetched account ID matches the current user's account ID
+			if (accountId && accountId === account.id) {
+				return {
+					primary: accountId, // Account ID in large
+					secondary: 'Current user account', // Label in small
+				};
+			}
+
+			// If we have an account ID but it's not the current user, it's "Other Account"
+			if (accountId) {
+				return {
+					primary: accountId, // Account ID in large
+					secondary: 'Other account', // Label in small
+				};
+			}
+
+			// Fallback to showing the short public key
+			return formatShortKey({ key: publicKey });
+		}
+	};
+
+	const getCopyValueFromKey = ({ key }: { key: any }): string | undefined => {
+		if (!key) return undefined;
+
+		const isSmartContract = 'value' in key;
+		if (isSmartContract) {
+			// ContractId - return the account ID
+			return key.value;
+		} else {
+			// PublicKey (EOA) - return Account ID if available, otherwise public key
+			const publicKey = key.key;
+			const accountId = keyAccountIds[publicKey];
+			return accountId || publicKey;
+		}
 	};
 
 	const getKeyUrlHashscan = ({ key }: { key: any }): string | undefined => {
 		if (!key) return undefined;
 		const isSmartContract = 'value' in key;
-		return isSmartContract
-			? `${hashScanURL}/contract/${key.value}`
-			: `${hashScanURL}/account/${key.key}`;
+		if (isSmartContract) {
+			// ContractId - use Account ID for contract URL
+			return `${hashScanURL}/contract/${key.value}`;
+		} else {
+			// PublicKey (EOA) - try to get Account ID from mirror node
+			const publicKey = key.key;
+			const accountId = keyAccountIds[publicKey];
+			return accountId ? `${hashScanURL}/account/${accountId}` : undefined;
+		}
 	};
 
 	const epochTimestampToGMTString = (timestamp: number | undefined): string => {
@@ -151,6 +275,7 @@ const StableCoinDetails = () => {
 			}),
 			hashScanURL: getKeyUrlHashscan({ key: selectedStableCoin?.adminKey as any }),
 			copyButton: selectedStableCoin?.adminKey !== undefined,
+			copyValue: getCopyValueFromKey({ key: selectedStableCoin?.adminKey as any }),
 		},
 		{
 			label: t('kycKey'),
@@ -159,6 +284,7 @@ const StableCoinDetails = () => {
 			}),
 			hashScanURL: getKeyUrlHashscan({ key: selectedStableCoin?.kycKey as any }),
 			copyButton: selectedStableCoin?.kycKey !== undefined,
+			copyValue: getCopyValueFromKey({ key: selectedStableCoin?.kycKey as any }),
 		},
 		{
 			label: t('freezeKey'),
@@ -167,6 +293,7 @@ const StableCoinDetails = () => {
 			}),
 			hashScanURL: getKeyUrlHashscan({ key: selectedStableCoin?.freezeKey as any }),
 			copyButton: selectedStableCoin?.freezeKey !== undefined,
+			copyValue: getCopyValueFromKey({ key: selectedStableCoin?.freezeKey as any }),
 		},
 		{
 			label: t('wipeKey'),
@@ -175,6 +302,7 @@ const StableCoinDetails = () => {
 			}),
 			hashScanURL: getKeyUrlHashscan({ key: selectedStableCoin?.wipeKey as any }),
 			copyButton: selectedStableCoin?.wipeKey !== undefined,
+			copyValue: getCopyValueFromKey({ key: selectedStableCoin?.wipeKey as any }),
 		},
 		{
 			label: t('supplyKey'),
@@ -183,6 +311,7 @@ const StableCoinDetails = () => {
 			}),
 			hashScanURL: getKeyUrlHashscan({ key: selectedStableCoin?.supplyKey as any }),
 			copyButton: selectedStableCoin?.supplyKey !== undefined,
+			copyValue: getCopyValueFromKey({ key: selectedStableCoin?.supplyKey as any }),
 		},
 		{
 			label: t('pauseKey'),
@@ -191,6 +320,7 @@ const StableCoinDetails = () => {
 			}),
 			hashScanURL: getKeyUrlHashscan({ key: selectedStableCoin?.pauseKey as any }),
 			copyButton: selectedStableCoin?.pauseKey !== undefined,
+			copyValue: getCopyValueFromKey({ key: selectedStableCoin?.pauseKey as any }),
 		},
 		{
 			label: t('feeScheduleKey'),
@@ -199,6 +329,7 @@ const StableCoinDetails = () => {
 			}),
 			copyButton: selectedStableCoin?.feeScheduleKey !== undefined,
 			hashScanURL: getKeyUrlHashscan({ key: selectedStableCoin?.feeScheduleKey as any }),
+			copyValue: getCopyValueFromKey({ key: selectedStableCoin?.feeScheduleKey as any }),
 		},
 	];
 

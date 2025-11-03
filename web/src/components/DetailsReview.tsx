@@ -40,9 +40,10 @@ import MaskData from 'maskdata';
 export interface Detail {
 	label: string;
 	labelInBold?: boolean;
-	value: any; // TODO: string | number
+	value: any; // TODO: string | number | { primary: string; secondary: string }
 	valueInBold?: boolean;
 	copyButton?: boolean;
+	copyValue?: string; // Optional: value to copy (overrides detail.value for copy)
 	hashScanURL?: string;
 }
 
@@ -59,7 +60,7 @@ export interface DetailsReviewProps {
 
 const allowedKeys = ['KYC key', 'Freeze key', 'Wipe key', 'Pause key', 'Fee schedule key'];
 
-let fieldsCanEdit = [
+const baseFieldsCanEdit = [
 	{
 		id: 'Name',
 		type: 'text',
@@ -101,26 +102,47 @@ const daysToSeconds = (days: number): string => {
 };
 
 const formatKey = (
-	keySelection: string,
+	keySelection: { value: number; label: string } | string,
 	keyName: string,
 	accountInfo: AccountViewModel,
 	getValues: UseFormGetValues<FieldValues>,
 ): RequestPublicKey | undefined => {
 	const values = getValues();
 
-	if (keySelection === 'Current user key') {
-		return accountInfo.publicKey;
+	// Handle object from KeySelector (has value property)
+	if (typeof keySelection === 'object' && keySelection !== null && 'value' in keySelection) {
+		if (keySelection.value === 1) {
+			// Current user key
+			return accountInfo.publicKey;
+		}
+		if (keySelection.value === 2) {
+			// The smart contract
+			return Account.NullPublicKey;
+		}
+		if (keySelection.value === 3) {
+			// Other key
+			const param = Object.keys(values).find((key) => key.includes(keyName + 'Other'));
+			return {
+				key: param ? values[param] : '',
+			};
+		}
 	}
 
-	if (keySelection === 'Other key') {
-		const param = Object.keys(values).find((key) => key.includes(keyName + 'Other'));
+	// Handle string (legacy, for backward compatibility)
+	if (typeof keySelection === 'string') {
+		if (keySelection === 'Current user account') {
+			return accountInfo.publicKey;
+		}
 
-		return {
-			key: param ? values[param] : '',
-		};
+		if (keySelection === 'Other account') {
+			const param = Object.keys(values).find((key) => key.includes(keyName + 'Other'));
+			return {
+				key: param ? values[param] : '',
+			};
+		}
+
+		if (keySelection === 'None') return undefined;
 	}
-
-	if (keySelection === 'None') return undefined;
 
 	return Account.NullPublicKey;
 };
@@ -131,13 +153,36 @@ const keyToString = (
 	accountInfo: AccountViewModel,
 	getValues: UseFormGetValues<FieldValues>,
 ): string => {
-	if (keySelection) {
-		if (keySelection.label === 'Current user key' || keySelection.label === 'The smart contract')
-			return keySelection.label;
-		return maskPublicKeys(formatKey(keySelection.label, keyName, accountInfo, getValues)!.key);
-	} else {
+	if (!keySelection) {
 		return 'None';
 	}
+
+	// Handle object from KeySelector (has value property)
+	if (typeof keySelection === 'object' && 'value' in keySelection) {
+		if (keySelection.value === 1) {
+			// Current user account
+			return keySelection.label || 'Current user account';
+		}
+		if (keySelection.value === 2) {
+			// Hedera Token Manager smart contract
+			return keySelection.label || 'Hedera Token Manager smart contract';
+		}
+		if (keySelection.value === 3) {
+			// Other account - show masked version
+			const param = Object.keys(getValues()).find((key) => key.includes(keyName + 'Other'));
+			if (param && getValues()[param]) {
+				return maskPublicKeys(getValues()[param]);
+			}
+			return 'Other account';
+		}
+	}
+
+	// Legacy string-based handling
+	if (keySelection.label === 'Current user account' || keySelection.label === 'Hedera Token Manager smart contract') {
+		return keySelection.label;
+	}
+
+	return 'Unknown key type';
 };
 
 const maskPublicKeys = (key: string): string => {
@@ -165,6 +210,11 @@ const DetailsReview = ({
 		onClose: onCloseModalAction,
 	} = useDisclosure();
 
+	const handleCloseConfirmationModal = () => {
+		// Simply close the modal without navigating or changing edit mode
+		onCloseModalAction();
+	};
+
 	const { control, setValue, reset, getValues } = useForm({
 		mode: 'onChange',
 	});
@@ -181,17 +231,22 @@ const DetailsReview = ({
 	const accountInfo = useSelector(SELECTED_WALLET_ACCOUNT_INFO);
 	const selectedStableCoin = useSelector(SELECTED_WALLET_COIN);
 
+	const [fieldsCanEdit, setFieldsCanEdit] = useState(() => [...baseFieldsCanEdit]);
+
 	useEffect(() => {
-		fieldsCanEdit = fieldsCanEdit.filter((field) => !field.id.includes('key'));
-		editable &&
+		const newFields = [...baseFieldsCanEdit];
+		if (editable) {
 			details.forEach((item) => {
-				if (allowedKeys.includes(item.label) && item.value !== 'NONE')
-					fieldsCanEdit.push({
+				if (allowedKeys.includes(item.label) && item.value !== 'NONE') {
+					newFields.push({
 						id: item.label,
 						type: 'key',
 					});
+				}
 			});
-	}, [details]);
+		}
+		setFieldsCanEdit(newFields);
+	}, [details, editable]);
 
 	const handleEditMode = () => {
 		if (!editMode) {
@@ -236,32 +291,67 @@ const DetailsReview = ({
 		label,
 		hashScanURL,
 	}: {
-		value: string;
+		value: any; // Can be string or { primary: string; secondary: string }
 		label: string;
 		hashScanURL?: string;
 	}) => {
-		if (value.includes('SMART')) {
-			return { value: 1, label: 'The smart contract' };
+		// Handle object format (new format with primary/secondary)
+		// Now: primary = Account ID, secondary = Label (Current user account, Hedera Token Manager smart contract, etc)
+		if (typeof value === 'object' && value?.secondary) {
+			if (value.secondary.includes('Hedera Token Manager smart contract')) {
+				return { value: 2, label: 'Hedera Token Manager smart contract' };
+			}
+			if (value.secondary.includes('Current user account')) {
+				return { value: 1, label: 'Current user account' };
+			}
+			if (value.secondary.includes('Other account')) {
+				// Extract the account ID from primary to save in the form
+				setValue(`${label.toLowerCase()}Other`, value.primary);
+				return { value: 3, label: 'Other account' };
+			}
 		}
 
-		if (value.substring(0, 6) === accountInfo?.publicKey?.key.substring(0, 6)) {
-			return { value: 2, label: 'Current user key' };
+		// Handle string format (legacy/other keys)
+		const valueStr = typeof value === 'string' ? value : '';
+
+		if (valueStr.includes('Hedera Token Manager smart contract')) {
+			return { value: 2, label: 'Hedera Token Manager smart contract' };
 		}
 
-		setValue(`${label.toLowerCase()}Other`, hashScanURL?.split('account/')[1]);
-		return { value: 3, label: 'Other key' };
+		// Check if it's the current user by comparing:
+		// 1. The displayed value with "Current user account"
+		// 2. The public key (first 6 chars)
+		// 3. The account ID from the hashScanURL
+		if (valueStr.includes('Current user account')) {
+			return { value: 1, label: 'Current user account' };
+		}
+
+		if (accountInfo?.publicKey?.key && valueStr.substring(0, 6) === accountInfo.publicKey.key.substring(0, 6)) {
+			return { value: 1, label: 'Current user account' };
+		}
+
+		// Check if the account ID in the URL matches the current user's account ID
+		const accountIdFromUrl = hashScanURL?.split('account/')[1] || hashScanURL?.split('contract/')[1];
+		if (accountIdFromUrl && accountIdFromUrl === accountInfo?.id) {
+			return { value: 1, label: 'Current user account' };
+		}
+
+		setValue(`${label.toLowerCase()}Other`, accountIdFromUrl || valueStr);
+		return { value: 3, label: 'Other account' };
 	};
 
 	if (isLoading && editMode) return <AwaitingWalletSignature />;
 
 	const { t } = useTranslation(['global', 'stableCoinDetails', 'updateToken']);
-	const currentExpirationTime: Detail | undefined = details.find(
-		(obj) => obj.label === 'Expiration time',
-	);
-	const maximumExpirationTime: Date = currentExpirationTime
-		? new Date(currentExpirationTime.value)
-		: new Date();
-	maximumExpirationTime.setFullYear(maximumExpirationTime.getFullYear() + 5);
+	// const currentExpirationTime: Detail | undefined = details.find(
+	// 	(obj) => obj.label === 'Expiration time',
+	// );
+	// SDK validation: expiration time must be between now+1 day and now+730 days (2 years)
+	const minimumExpirationTime: Date = new Date();
+	minimumExpirationTime.setDate(minimumExpirationTime.getDate() + 1);
+
+	const maximumExpirationTime: Date = new Date();
+	maximumExpirationTime.setDate(maximumExpirationTime.getDate() + 730); // 2 years from now
 
 	const handleUpdateToken: ModalsHandlerActionsProps['onConfirm'] = async ({
 		onSuccess,
@@ -274,45 +364,79 @@ const DetailsReview = ({
 				onError();
 				return;
 			}
+
 			// @ts-ignore
 			const request: UpdateRequest = {
 				tokenId: details.find((detail) => detail.label === 'Token id')?.value as string,
-				name: getValues().name,
-				symbol: getValues().symbol,
-				metadata: getValues().metadata,
-				autoRenewPeriod: daysToSeconds(getValues()['autorenew period']),
-				expirationTimestamp: Date.parse(getValues()['expiration time']) * 1000000 + '',
 			};
-			if (getValues()['freeze key']) {
+
+			// Only send fields that have values (were edited)
+			const formValues = getValues();
+
+			if (formValues.name) request.name = formValues.name;
+			if (formValues.symbol) request.symbol = formValues.symbol;
+			if (formValues.metadata !== undefined) request.metadata = formValues.metadata;
+
+			const autoRenewValue = formValues['autorenew period'];
+			if (autoRenewValue) {
+				// Parse "90 days" format
+				const days = parseInt(autoRenewValue);
+				if (!isNaN(days)) {
+					request.autoRenewPeriod = daysToSeconds(days);
+				}
+			}
+
+			const expirationValue = formValues['expiration time'];
+			if (expirationValue) {
+				let timestamp: number;
+				// DatePickerController returns a Date object
+				if (expirationValue instanceof Date) {
+					timestamp = expirationValue.getTime(); // Returns milliseconds since epoch
+				} else {
+					// Fallback to parsing if it's a string
+					timestamp = Date.parse(expirationValue);
+				}
+
+				if (!isNaN(timestamp)) {
+					// Convert milliseconds to nanoseconds (must be 19 digits)
+					const nanoseconds = (timestamp * 1000000).toString();
+					console.log('Expiration timestamp (ms):', timestamp);
+					console.log('Expiration timestamp (ns):', nanoseconds);
+					console.log('Length:', nanoseconds.length);
+					request.expirationTimestamp = nanoseconds;
+				}
+			}
+			// Only send keys that were edited
+			if (formValues['freeze key']) {
 				request.freezeKey = formatKey(
-					getValues()['freeze key'].label,
+					formValues['freeze key'],
 					'freeze key',
 					accountInfo,
 					getValues,
 				);
 			}
-			if (getValues()['wipe key']) {
+			if (formValues['wipe key']) {
 				request.wipeKey = formatKey(
-					getValues()['wipe key'].label,
+					formValues['wipe key'],
 					'wipe key',
 					accountInfo,
 					getValues,
 				);
 			}
-			if (getValues()['pause key']) {
+			if (formValues['pause key']) {
 				request.pauseKey = formatKey(
-					getValues()['pause key'].label,
+					formValues['pause key'],
 					'pause key',
 					accountInfo,
 					getValues,
 				);
 			}
-			if (getValues()['kyc key']) {
-				request.kycKey = formatKey(getValues()['kyc key'].label, 'kyc key', accountInfo, getValues);
+			if (formValues['kyc key']) {
+				request.kycKey = formatKey(formValues['kyc key'], 'kyc key', accountInfo, getValues);
 			}
-			if (getValues()['fee schedule key']) {
+			if (formValues['fee schedule key']) {
 				request.feeScheduleKey = formatKey(
-					getValues()['fee schedule key'].label,
+					formValues['fee schedule key'],
 					'fee schedule key',
 					accountInfo,
 					getValues,
@@ -422,7 +546,7 @@ const DetailsReview = ({
 											containerStyle={{
 												w: '300px',
 											}}
-											minimumDate={new Date(detail.value)}
+											minimumDate={minimumExpirationTime}
 											maximumDate={maximumExpirationTime}
 											customHeader={false}
 											showMonthDropdown
@@ -444,11 +568,31 @@ const DetailsReview = ({
 								<>
 									{typeof detail.value === 'string' && detail.value.includes('GMT') ? (
 										<Text {...commonTextProps}>{new Date(detail.value).toDateString()}</Text>
+									) : typeof detail.value === 'object' && detail.value?.primary && detail.value?.secondary ? (
+										// Render two-line format for keys with primary (label) and secondary (Account ID)
+										<HStack {...(detail.valueInBold ? textInBoldProps : commonTextProps)} alignItems='flex-start' spacing={2}>
+											<Stack spacing={0} flex={1} alignItems='flex-end'>
+												<Text fontWeight={600}>{detail.value.primary}</Text>
+												<Text fontSize='12px' color='brand.gray' opacity={0.8}>
+													{detail.value.secondary}
+												</Text>
+											</Stack>
+											{detail.copyButton && (
+												<TooltipCopy valueToCopy={detail.copyValue ?? detail.value.secondary ?? ''}>
+													<Icon name='Copy' />
+												</TooltipCopy>
+											)}
+											{detail.hashScanURL && (
+												<Link isExternal={true} href={`${detail.hashScanURL}`}>
+													<Icon name='ArrowSquareOut' />
+												</Link>
+											)}
+										</HStack>
 									) : typeof detail.value === 'string' || typeof detail.value === 'number' ? (
 										<HStack {...(detail.valueInBold ? textInBoldProps : commonTextProps)}>
 											<Text>{detail.value.toString()}</Text>
 											{detail.copyButton && (
-												<TooltipCopy valueToCopy={detail.value.toString() ?? ''}>
+												<TooltipCopy valueToCopy={detail.copyValue ?? detail.value.toString() ?? ''}>
 													<Icon name='Copy' />
 												</TooltipCopy>
 											)}
@@ -488,7 +632,7 @@ const DetailsReview = ({
 				errorTransactionUrl={errorTransactionUrl}
 				modalActionProps={{
 					isOpen: isOpenModalAction,
-					onClose: onCloseModalAction,
+					onClose: handleCloseConfirmationModal,
 					title: t('updateToken:modalAction.subtitle'),
 					confirmButtonLabel: t('updateToken:modalAction.accept'),
 					onConfirm: handleUpdateToken,
