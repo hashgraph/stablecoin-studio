@@ -30,6 +30,7 @@ export class CapabilityDecider {
 		Operation.WIPE,
 		Operation.CASH_IN,
 		Operation.BURN,
+		Operation.UPDATE,
 
 		// Token state
 		Operation.FREEZE,

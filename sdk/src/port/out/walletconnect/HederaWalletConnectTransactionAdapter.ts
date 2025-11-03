@@ -1117,7 +1117,6 @@ export class HederaWalletConnectTransactionAdapter extends TransactionAdapter {
 		}
 	}
 
-	//-- BLR
 	async update(
 		coin: StableCoinCapabilities,
 		name?: string,
@@ -1136,28 +1135,33 @@ export class HederaWalletConnectTransactionAdapter extends TransactionAdapter {
 			const proxyAddress = this.getProxyAddress(coin);
 			const iface = new ethers.Interface(HederaTokenManagerFacet__factory.abi);
 
-			const pkToAddr = async (pk?: PublicKey) =>
-				pk ? (await this.mirrorNodeAdapter.getAccountInfo(pk.toString())).accountEvmAddress! : EVM_ZERO_ADDRESS;
-
-			const args = [
-				name ?? '',
-				symbol ?? '',
-				autoRenewPeriod ?? 0,
-				expirationTime ?? 0,
-				await pkToAddr(kycKey),
-				await pkToAddr(freezeKey),
-				await pkToAddr(feeScheduleKey),
-				await pkToAddr(pauseKey),
-				await pkToAddr(wipeKey),
-				metadata ?? '',
+			const providedKeys = [
+				undefined, // admin key (index 0) - never updated
+				kycKey,
+				freezeKey,
+				wipeKey,
+				undefined, // supply key (index 4) - never updated
+				feeScheduleKey,
+				pauseKey,
 			];
 
-			return await this.performOperation(proxyAddress, iface, 'updateToken', args, UPDATE_TOKEN_GAS);
+			const updateTokenStruct = {
+				tokenName: name ?? '',
+				tokenSymbol: symbol ?? '',
+				keys: this.setKeysForSmartContract(providedKeys),
+				second: expirationTime ? Math.floor(expirationTime / 1000000000) : -1,
+				autoRenewPeriod: autoRenewPeriod ?? -1,
+				tokenMetadataURI: metadata ?? '',
+			};
+
+			return await this.performOperation(proxyAddress, iface, 'updateToken', [updateTokenStruct], UPDATE_TOKEN_GAS);
 		} catch (error) {
 			LogService.logError(error);
 			throw new SigningError(`Unexpected error in update(): ${error}`);
 		}
 	}
+
+	//-- BLR
 
 	async updateConfigVersion(coin: StableCoinCapabilities, configVersion: number): Promise<TransactionResponse> {
 		try {
