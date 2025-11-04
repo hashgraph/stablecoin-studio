@@ -12,6 +12,7 @@
 		"test:update": "react-app-rewired test -u --maxWorkers=50% --watchAll=false",
 		"test:ci": "react-app-rewired test --ci --runInBand --watchAll=false --cache=false",
 		"clear:cache": "react-app-rewired test --clearCache",
+		"clean": "rimraf build coverage",
 		"clean:modules": "rimraf node_modules",
 		"eject": "react-app-rewired eject",
 		"lint": "eslint . --ext .ts --ext .mts --fix",
