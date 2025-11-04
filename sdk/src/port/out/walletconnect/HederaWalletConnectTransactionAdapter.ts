@@ -102,6 +102,7 @@ import {lazyInject} from '../../../core/decorator/LazyInjectDecorator';
 import EventService from '../../../app/service/event/EventService';
 import NetworkService from '../../../app/service/NetworkService';
 import {MirrorNodeAdapter} from '../mirror/MirrorNodeAdapter';
+import AccountViewModel from '../mirror/response/AccountViewModel';
 import {QueryBus} from '../../../core/query/QueryBus';
 import {Operation, WalletEvents} from '../../in';
 import Injectable from '../../../core/Injectable';
@@ -1422,8 +1423,20 @@ export class HederaWalletConnectTransactionAdapter extends TransactionAdapter {
 		const hederaAccount = this.hederaProvider.getAccountAddresses()[0];
 		if (!hederaAccount) throw new Error('No Hedera account from WalletConnect session');
 
-		const accountMirror = await this.mirrorNodeAdapter.getAccountInfo(hederaAccount);
-		if (!accountMirror) throw new Error(`No account info from Mirror Node for ${hederaAccount}`);
+		LogService.logInfo(`WalletConnect provided account: ${hederaAccount}`);
+
+		let accountMirror: AccountViewModel | undefined;
+		try {
+			accountMirror = await this.mirrorNodeAdapter.getAccountInfo(hederaAccount);
+		} catch (error) {
+			LogService.logError(`Account ${hederaAccount} does not exist in ${currentNetwork}. Please create or import an account for this network in your wallet.`);
+			throw new Error(`Account ${hederaAccount} does not exist in ${currentNetwork}. Please create or import an account for this network in your wallet.`);
+		}
+
+		if (!accountMirror) {
+			LogService.logError(`No account info from Mirror Node for ${hederaAccount} in ${currentNetwork}`);
+			throw new Error(`Account ${hederaAccount} does not exist in ${currentNetwork}. Please verify your account exists in this network.`);
+		}
 
 		this.account = new Account({ id: accountMirror.id!, publicKey: accountMirror.publicKey, evmAddress: accountMirror.accountEvmAddress });
 		this.network = currentNetwork;
