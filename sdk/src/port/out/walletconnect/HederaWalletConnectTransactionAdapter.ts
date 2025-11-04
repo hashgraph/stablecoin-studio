@@ -1423,18 +1423,23 @@ export class HederaWalletConnectTransactionAdapter extends TransactionAdapter {
 		const hederaAccount = this.hederaProvider.getAccountAddresses()[0];
 		if (!hederaAccount) throw new Error('No Hedera account from WalletConnect session');
 
-		LogService.logInfo(`WalletConnect provided account: ${hederaAccount}`);
+		LogService.logInfo(`[WalletConnect] Provided account: ${hederaAccount}`);
 
-		let accountMirror: AccountViewModel | undefined;
+		let accountMirror: AccountViewModel;
 		try {
 			accountMirror = await this.mirrorNodeAdapter.getAccountInfo(hederaAccount);
+			LogService.logInfo(`[WalletConnect] Successfully retrieved account info from Mirror Node`);
 		} catch (error) {
-			LogService.logError(`Account ${hederaAccount} does not exist in ${currentNetwork}. Please create or import an account for this network in your wallet.`);
-			throw new Error(`Account ${hederaAccount} does not exist in ${currentNetwork}. Please create or import an account for this network in your wallet.`);
+			const errorMessage = `Account ${hederaAccount} does not exist in ${currentNetwork}. Please create or import an account for this network in your wallet.`;
+			LogService.logError(`[WalletConnect] ${errorMessage}`);
+			console.error(`[WalletConnect Error] ${errorMessage}`);
+			throw new Error(errorMessage);
 		}
 
-		if (!accountMirror) {
-			LogService.logError(`No account info from Mirror Node for ${hederaAccount} in ${currentNetwork}`);
+		if (!accountMirror || !accountMirror.id) {
+			const errorMessage = `No valid account info from Mirror Node for ${hederaAccount} in ${currentNetwork}`;
+			LogService.logError(`[WalletConnect] ${errorMessage}`);
+			console.error(`[WalletConnect Error] ${errorMessage}`);
 			throw new Error(`Account ${hederaAccount} does not exist in ${currentNetwork}. Please verify your account exists in this network.`);
 		}
 
