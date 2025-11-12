@@ -1,11 +1,11 @@
-version: '3.9'
+version: "3.9"
 
 services:
   # Uses base image from node and maps local needed files to the container
   backend:
     build:
-      context: .
-      dockerfile: Dockerfile
+      context: ..
+      dockerfile: backend/Dockerfile
       target: development
     container_name: ${CONTAINER_BACK_NAME} # This is the name of the container
     image: multisig-back:latest # This is the name of the image that will be created
@@ -17,7 +17,7 @@ services:
       - /app/node_modules
       - log:/var/lib/logs
     ports:
-      - '${SERVER_PORT}:${SERVER_PORT}'
+      - "${SERVER_PORT}:${SERVER_PORT}"
     networks:
       - default-network
     environment:
@@ -40,7 +40,7 @@ services:
       - POSTGRES_USER=${DB_USER}
       - POSTGRES_PASSWORD=${DB_PASSWORD}
     ports:
-      - '${DB_PORT}:${DB_PORT}'
+      - "${DB_PORT}:${DB_PORT}"
     networks:
       - default-network
     volumes:

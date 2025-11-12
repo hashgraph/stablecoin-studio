@@ -17,8 +17,13 @@ ENV NODE_ENV development
 # Copy source code into app folder
 COPY --chown=node:node . .
 
-# Install dependencies
-RUN npm ci
+COPY --chown=node:node ../package-lock.json ./
+COPY --chown=node:node ../package.json ./
+COPY --chown=node:node . .
+RUN npm ci --workspace=backend
+
+# # Install dependencies
+# RUN npm ci
 
 # Set Docker as a non-root user
 USER node
