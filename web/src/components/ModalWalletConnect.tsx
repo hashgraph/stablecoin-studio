@@ -102,6 +102,7 @@ const ModalWalletConnect = () => {
 		hederaAccountId?: string,
 	) => {
 		if (loading) return;
+		console.log(`🔌 [Modal] Attempting to connect wallet: ${wallet} on network: ${network}`);
 		setLoading(wallet);
 		dispatch(walletActions.setLastWallet(wallet));
 		dispatch(walletActions.setNetwork(network));
@@ -112,6 +113,7 @@ const ModalWalletConnect = () => {
 		dispatch(walletActions.setIsAcceptOwner(false));
 
 		try {
+			console.log('[Modal] Calling SDKService.connectWallet...');
 			let mirrorNode;
 			if (selectedMirrors.length > 0) {
 				const listMirrors = selectedMirrors.filter(
@@ -136,6 +138,7 @@ const ModalWalletConnect = () => {
 				rpcNode,
 				hederaAccountId,
 			);
+			console.log('✅ [Modal] SDKService.connectWallet completed successfully');
 
 			const newselectedMirrors: IMirrorRPCNode[] = [];
 
@@ -165,10 +168,20 @@ const ModalWalletConnect = () => {
 			dispatch(walletActions.setIsFactoryPendingOwner(false));
 			dispatch(walletActions.setIsFactoryAcceptOwner(false));
 		} catch (error: any) {
+			console.error('❌ [Modal] Error connecting wallet:', error);
+			console.error('[Modal] Error details:', {
+				message: error.message,
+				errorCode: error.errorCode,
+				stack: error.stack,
+				fullError: JSON.stringify(error, null, 2)
+			});
+
 			if ('errorCode' in error && error.errorCode === '40009') {
+				console.warn('[Modal] User rejected the connection');
 				setRejected(true);
 			} else {
-				setError(error.message);
+				console.error('[Modal] Connection error:', error.message || 'Unknown error');
+				setError(error.message || 'Connection failed');
 			}
 			setLoading(undefined);
 		}

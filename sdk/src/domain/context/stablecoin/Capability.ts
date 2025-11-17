@@ -42,10 +42,23 @@ export enum Operation {
 	RECLAIM_HOLD = 'Reclaim_Hold',
 	GRANT_KYC = 'Grant_KYC',
 	REVOKE_KYC = 'Revoke_KYC',
-	CREATE_CUSTOM_FEE = 'Create_Custom_Fee',
+	CREATE_CUSTOM_FEE = 'updateTokenCustomFees',
 	REMOVE_CUSTOM_FEE = 'Remove_Custom_Fee',
 	TRANSFERS = 'Transfers',
 	UPDATE = 'Update',
+	GRANT_ROLE = 'Grant_Role',
+	//TODO: review capabilities names from SCs
+	GRANT_ROLES = 'Role_Management',
+	REVOKE_ROLE = 'Role_Management',
+	REVOKE_ROLES = 'Role_Management',
+	REVOKE_SUPPLIER_ROLE = 'Role_Management',
+	RESET_SUPPLIER_ALLOWANCE = 'Role_Management',
+	GRANT_SUPPLIER_ROLE = 'Role_Management',
+	GRANT_UNLIMITED_SUPPLIER_ROLE = 'Role_Management',
+	ASSOCIATE = 'Associate',
+	INCREASE_SUPPLIER_ALLOWANCE = 'increaseSupplierAllowance',
+	DECREASE_SUPPLIER_ALLOWANCE = 'decreaseSupplierAllowance',
+	UPDATE_RESERVE_ADDRESS = 'updateReserveAddress'
 }
 
 export enum Access {

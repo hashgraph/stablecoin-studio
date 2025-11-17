@@ -26,7 +26,7 @@ import { lazyInject } from '../../../../../../core/decorator/LazyInjectDecorator
 import { BackendAdapter } from '../../../../../../port/out/backend/BackendAdapter.js';
 // import { HashpackTransactionAdapter } from '../../../../../../port/out/hs/hashpack/HashpackTransactionAdapter.js';
 import { HTSTransactionAdapter } from '../../../../../../port/out/hs/hts/HTSTransactionAdapter.js';
-import { HederaWalletConnectTransactionAdapter } from '../../../../../../port/out/hs/walletconnect/HederaWalletConnectTransactionAdapter.js';
+import { HederaWalletConnectTransactionAdapter } from '../../../../../../port/out/walletconnect/HederaWalletConnectTransactionAdapter.js';
 import AccountService from '../../../../../service/AccountService.js';
 import TransactionService from '../../../../../service/TransactionService.js';
 import { SignCommand, SignCommandResponse } from './SignCommand.js';

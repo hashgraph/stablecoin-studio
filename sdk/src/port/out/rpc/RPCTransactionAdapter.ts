@@ -1389,53 +1389,61 @@ export default class RPCTransactionAdapter extends TransactionAdapter {
 		targetId: HederaId,
 	): Promise<TransactionResponse<any, Error>> {
 		try {
-			const HTSTokenEVMAddress = tokenId
-				.toHederaAddress()
-				.toSolidityAddress();
-			const response = await RPCTransactionResponseAdapter.manageResponse(
-				await IHRC__factory.connect(
+			const HTSTokenEVMAddress = tokenId.toHederaAddress().toSolidityAddress();
+
+			const tx = await IHRC__factory
+				.connect(
 					CheckEvmAddress.toEvmAddress(HTSTokenEVMAddress),
-					this.signerOrProvider,
-				).associate({ gasLimit: ASSOCIATE_GAS }),
+					this.signerOrProvider as unknown as Signer,
+				)
+				.associate({ gasLimit: ASSOCIATE_GAS });
+
+			const response = await RPCTransactionResponseAdapter.manageResponse(
+				tx as unknown as ContractTransactionResponse,
 				this.networkService.environment,
 			);
-			this.logTransaction(
-				response.id ?? '',
-				this.networkService.environment,
-			);
+
+			this.logTransaction(response.id ?? '', this.networkService.environment);
 			return response;
 		} catch (error) {
 			LogService.logError(error);
-			this.logTransaction(
-				(error as any).error.transactionHash ?? '',
-				this.networkService.environment,
-			);
+
+			const txHash =
+				(error as any)?.transactionHash ??
+				(error as any)?.transaction?.hash ??
+				(error as any)?.error?.transactionHash ??
+				'';
+
+			this.logTransaction(txHash, this.networkService.environment);
+
 			throw new TransactionResponseError({
 				network: this.networkService.environment,
 				RPC_relay: true,
 				message: `Unexpected error in RPCTransactionAdapter association operation : ${error}`,
-				transactionId: (error as any).error.transactionHash,
+				transactionId: txHash,
 			});
 		}
 	}
 
-	async contractCall(
-		contractAddress: string,
-		functionName: string,
-		param: unknown[],
-	): Promise<ContractTransactionResponse> {
-		const tokenManager = IHederaTokenService__factory.connect(
-			contractAddress,
-			this.signerOrProvider,
-		);
-		const fn = tokenManager.getFunction(functionName);
 
-		if (typeof fn !== 'function') {
-			throw new Error(`Function ${functionName} not found on contract`);
-		}
 
-		return await fn(...param);
-	}
+	// async contractCall(
+	// 	contractAddress: string,
+	// 	functionName: string,
+	// 	param: unknown[],
+	// ): Promise<ContractTransactionResponse> {
+	// 	const tokenManager = IHederaTokenService__factory.connect(
+	// 		contractAddress,
+	// 		this.signerOrProvider,
+	// 	);
+	// 	const fn = tokenManager.getFunction(functionName);
+	//
+	// 	if (typeof fn !== 'function') {
+	// 		throw new Error(`Function ${functionName} not found on contract`);
+	// 	}
+	//
+	// 	return await fn(...param);
+	// }
 
 	async signAndSendTransaction(
 		t: RPCTransactionAdapter,
@@ -1730,7 +1738,7 @@ export default class RPCTransactionAdapter extends TransactionAdapter {
 	): Promise<TransactionResponse> {
 		try {
 			let response;
-			switch (CapabilityDecider.decide(coin, operation)) {
+				switch (CapabilityDecider.getAccessDecision(coin, operation)) {
 				case Decision.CONTRACT:
 					if (!coin.coin.evmProxyAddress?.toString())
 						throw new Error(

@@ -33,6 +33,14 @@ import { TransactionType } from '../../TransactionResponseEnums.js';
 import { TransactionResponseAdapter } from '../../TransactionResponseAdapter.js';
 
 export class HTSTransactionResponseAdapter extends TransactionResponseAdapter {
+	private static toArrayBuffer(view: Uint8Array | Uint32Array): ArrayBuffer {
+		const ab = new ArrayBuffer(view.byteLength);
+		new Uint8Array(ab).set(
+			new Uint8Array(view.buffer, view.byteOffset, view.byteLength)
+		);
+		return ab;
+	}
+
 	public static async manageResponse(
 		network: string,
 		transactionResponse: HTransactionResponse,
@@ -71,9 +79,11 @@ export class HTSTransactionResponseAdapter extends TransactionResponseAdapter {
 						message: 'Invalid response type',
 						network: network,
 					});
+
+				const ab = HTSTransactionResponseAdapter.toArrayBuffer(record);
 				results = this.decodeFunctionResult(
 					nameFunction,
-					record,
+					ab,
 					abi,
 					network,
 				);

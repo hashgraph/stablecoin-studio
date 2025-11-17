@@ -229,11 +229,11 @@ const StableCoinCreation = () => {
 	const formatKey = (keySelection: string, keyName: string): RequestPublicKey | undefined => {
 		const values = getValues();
 
-		if (keySelection === 'Current user key') {
+		if (keySelection === 'Current user account') {
 			return accountInfo.publicKey;
 		}
 
-		if (keySelection === 'Other key') {
+		if (keySelection === 'Other account') {
 			const param = Object.keys(values).find((key) => key.includes(keyName + 'Other'));
 
 			return {
