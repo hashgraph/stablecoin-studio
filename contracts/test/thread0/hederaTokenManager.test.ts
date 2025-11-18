@@ -306,6 +306,7 @@ describe('➡️ HederaTokenManager Tests', function () {
             tokenDecimals: 8,
             originalSender: '0x4444444444444444444444444444444444444444',
             reserveAddress: '0x5555555555555555555555555555555555555555',
+            updatedAtThreshold: 0,
             roles: [
                 {
                     account: '0x6666666666666666666666666666666666666666',

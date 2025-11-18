@@ -143,6 +143,7 @@ export abstract class HederaTransactionAdapter extends TransactionAdapter {
 		configId: string,
 		configVersion: number,
 		proxyOwnerAccount: HederaId,
+		updatedAtThreshold: string,
 		reserveAddress?: ContractId,
 		reserveInitialAmount?: BigDecimal,
 		reserveConfigId?: string,
@@ -262,6 +263,7 @@ export abstract class HederaTransactionAdapter extends TransactionAdapter {
 								reserveAddress.value,
 							)
 					  ).evmAddress,
+				updatedAtThreshold,
 				reserveInitialAmount
 					? reserveInitialAmount.toFixedNumber()
 					: BigDecimal.ZERO.toFixedNumber(),

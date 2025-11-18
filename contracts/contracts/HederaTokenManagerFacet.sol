@@ -60,7 +60,7 @@ contract HederaTokenManagerFacet is
         returns (address)
     {
         _setMetadata(init.tokenMetadataURI);
-        __reserveInit(init.reserveAddress); // Initialize reserve
+        __reserveInit(init.reserveAddress, init.updatedAtThreshold); // Initialize reserve
         _grantInitialRoles(init.originalSender, init.roles, init.cashinRole);
 
         (int64 responseCode, address createdTokenAddress) = IHederaTokenService(_PRECOMPILED_ADDRESS)

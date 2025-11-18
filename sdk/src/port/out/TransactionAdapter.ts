@@ -66,6 +66,7 @@ interface ITransactionAdapter {
 		configId: string,
 		configVersion: number,
 		proxyOwnerAccount: HederaId,
+		updatedAtThreshold: string,
 		reserveAddress?: ContractId,
 		reserveInitialAmount?: BigDecimal,
 	): Promise<TransactionResponse>;
@@ -339,6 +340,7 @@ export default abstract class TransactionAdapter
 		configId: string,
 		configVersion: number,
 		proxyOwnerAccount: HederaId,
+		updatedAtThreshold: string,
 		reserveAddress?: ContractId,
 		reserveInitialAmount?: BigDecimal,
 		reserveConfigId?: string,

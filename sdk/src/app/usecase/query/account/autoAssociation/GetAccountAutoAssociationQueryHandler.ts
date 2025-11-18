@@ -18,25 +18,32 @@
  *
  */
 
-import {QueryHandler} from '../../../../../core/decorator/QueryHandlerDecorator.js';
+import { QueryHandler } from '../../../../../core/decorator/QueryHandlerDecorator.js';
 import Injectable from '../../../../../core/Injectable.js';
-import {IQueryHandler} from '../../../../../core/query/QueryHandler.js';
-import {MirrorNodeAdapter} from '../../../../../port/out/mirror/MirrorNodeAdapter.js';
-import {GetAccountAutoAssociationQuery, GetAccountAutoAssociationQueryResponse} from "./GetAccountAutoAssociationQuery";
+import { IQueryHandler } from '../../../../../core/query/QueryHandler.js';
+import { MirrorNodeAdapter } from '../../../../../port/out/mirror/MirrorNodeAdapter.js';
+import {
+	GetAccountAutoAssociationQuery,
+	GetAccountAutoAssociationQueryResponse,
+} from './GetAccountAutoAssociationQuery';
 
 @QueryHandler(GetAccountAutoAssociationQuery)
 @QueryHandler(GetAccountAutoAssociationQuery)
 export class GetAccountAutoAssociationQueryHandler
-	implements IQueryHandler<GetAccountAutoAssociationQuery> {
-
+	implements IQueryHandler<GetAccountAutoAssociationQuery>
+{
 	constructor(
-		public readonly repo: MirrorNodeAdapter = Injectable.resolve(MirrorNodeAdapter),
+		public readonly repo: MirrorNodeAdapter = Injectable.resolve(
+			MirrorNodeAdapter,
+		),
 	) {}
 
 	async execute(
 		query: GetAccountAutoAssociationQuery,
 	): Promise<GetAccountAutoAssociationQueryResponse> {
-		const res = await this.repo.getAccountAutoAssociationInfo(query.targetId);
+		const res = await this.repo.getAccountAutoAssociationInfo(
+			query.targetId,
+		);
 		return new GetAccountAutoAssociationQueryResponse(res);
 	}
 }

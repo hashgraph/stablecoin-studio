@@ -37,6 +37,7 @@ export interface DeployStableCoinCommandNewParams extends DeployStableCoinComman
     tokenInformation: TokenInformation
     allToContract?: boolean
     reserveAddress?: string
+    updatedAtThreshold?: string
     initialAmountDataFeed?: string
     createReserve?: boolean
     addKyc?: boolean
@@ -91,6 +92,7 @@ export default class DeployStableCoinCommand {
         initialAmountDataFeed,
         createReserve = true,
         reserveAddress = ADDRESS_ZERO,
+        updatedAtThreshold = '0',
         addKyc = false,
         addFeeSchedule = false,
         allRolesToCreator = true,
@@ -120,6 +122,7 @@ export default class DeployStableCoinCommand {
             tokenMaxSupply: tokenInformation.maxSupply ?? NUMBER_ZERO,
             freeze: tokenInformation.freeze,
             reserveAddress,
+            updatedAtThreshold,
             reserveInitialAmount: initialAmountDataFeed ?? tokenInformation.initialSupply,
             createReserve,
             keys: keys.map((key) => ({

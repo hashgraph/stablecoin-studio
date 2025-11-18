@@ -109,6 +109,7 @@ describe('🧪 [ADAPTER] RPCTransactionAdapter', () => {
 			configId,
 			configVersion,
 			account.id,
+			'0',
 			undefined,
 			BigDecimal.fromString(reserve.toString(), RESERVE_DECIMALS),
 		);

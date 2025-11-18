@@ -1190,6 +1190,7 @@ jest.mock('../src/port/out/hs/hts/HTSTransactionAdapter', () => {
 				reserveInitialAmount
 					? reserveInitialAmount.toFixedNumber()
 					: BigDecimal.ZERO.toFixedNumber(),
+				'0',
 				createReserve,
 				keys,
 				roles,

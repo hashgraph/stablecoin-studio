@@ -114,9 +114,7 @@ import { GetHoldForQueryHandler } from '../app/usecase/query/stablecoin/hold/get
 import { GetHeldAmountForQueryHandler } from '../app/usecase/query/stablecoin/hold/getHeldAmountFor/GetHeldAmountForQueryHandler.js';
 import { GetHoldCountForQueryHandler } from '../app/usecase/query/stablecoin/hold/getHoldCountFor/GetHoldCountForQueryHandler.js';
 import { GetBurnableAmountQueryHandler } from '../app/usecase/query/stablecoin/burn/getBurnableAmount/GetBurnableAmountQueryHandler.js';
-import {
-	GetAccountAutoAssociationQueryHandler
-} from "../app/usecase/query/account/autoAssociation/GetAccountAutoAssociationQueryHandler";
+import { GetAccountAutoAssociationQueryHandler } from '../app/usecase/query/account/autoAssociation/GetAccountAutoAssociationQueryHandler';
 
 export const TOKENS = {
 	COMMAND_HANDLER: Symbol('CommandHandler'),

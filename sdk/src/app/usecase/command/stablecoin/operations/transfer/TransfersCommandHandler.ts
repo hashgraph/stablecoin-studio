@@ -43,8 +43,8 @@ import {
 	TransfersCommand,
 	TransfersCommandResponse,
 } from './TransfersCommand.js';
-import {GetAccountAutoAssociationQuery} from "../../../../query/account/autoAssociation/GetAccountAutoAssociationQuery";
-import {StableCoinMaxAutoAssociationReached} from "../../error/StableCoinMaxAutoAssociationReached";
+import { GetAccountAutoAssociationQuery } from '../../../../query/account/autoAssociation/GetAccountAutoAssociationQuery';
+import { StableCoinMaxAutoAssociationReached } from '../../error/StableCoinMaxAutoAssociationReached';
 
 @CommandHandler(TransfersCommand)
 export class TransfersCommandHandler
@@ -85,19 +85,29 @@ export class TransfersCommandHandler
 			if (!tokenRelationship) {
 				const autoAssociationInfo = (
 					await this.stableCoinService.queryBus.execute(
-						new GetAccountAutoAssociationQuery(targetId)
+						new GetAccountAutoAssociationQuery(targetId),
 					)
 				).payload;
 
 				if (!autoAssociationInfo) {
-					throw new StableCoinNotAssociated(targetId.toString(), tokenId.toString());
+					throw new StableCoinNotAssociated(
+						targetId.toString(),
+						tokenId.toString(),
+					);
 				}
 
-				const max = Number(autoAssociationInfo.maxAutoAssociations ?? 0);
-				const remaining = Number(autoAssociationInfo.remainingAutoAssociations ?? 0);
+				const max = Number(
+					autoAssociationInfo.maxAutoAssociations ?? 0,
+				);
+				const remaining = Number(
+					autoAssociationInfo.remainingAutoAssociations ?? 0,
+				);
 
 				if (max === 0) {
-					throw new StableCoinNotAssociated(targetId.toString(), tokenId.toString());
+					throw new StableCoinNotAssociated(
+						targetId.toString(),
+						tokenId.toString(),
+					);
 				}
 
 				const isUnlimited = max === -1 || remaining === -1;
@@ -105,10 +115,9 @@ export class TransfersCommandHandler
 				if (!isUnlimited && remaining <= 0) {
 					throw new StableCoinMaxAutoAssociationReached(
 						targetId.toString(),
-						max
+						max,
 					);
 				}
-
 			} else {
 				if (tokenRelationship.freezeStatus === FreezeStatus.FROZEN) {
 					throw new AccountFreeze(targetId.toString());
