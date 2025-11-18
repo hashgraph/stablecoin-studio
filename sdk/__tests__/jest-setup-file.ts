@@ -386,7 +386,7 @@ function smartContractCalls(functionName: string, decoded: any): void {
 		metadata = requestedToken.metadata;
 		proxyOwner = requestedToken.proxyAdminOwnerAccount;
 
-		const keys = requestedToken[10];
+		const keys = requestedToken[11];
 
 		keys.forEach(
 			(key: {
@@ -1077,6 +1077,7 @@ jest.mock('../src/port/out/hs/hts/HTSTransactionAdapter', () => {
 		configId: string,
 		configVersion: number,
 		proxyOwnerAccount: HederaId,
+		updatedAtThreshold: string,
 		reserveAddress?: ContractId,
 		reserveInitialAmount?: BigDecimal,
 	): Promise<TransactionResponse<any, Error>> {
@@ -1187,6 +1188,7 @@ jest.mock('../src/port/out/hs/hts/HTSTransactionAdapter', () => {
 								reserveAddress.value,
 							)
 					  ).evmAddress,
+				updatedAtThreshold,
 				reserveInitialAmount
 					? reserveInitialAmount.toFixedNumber()
 					: BigDecimal.ZERO.toFixedNumber(),

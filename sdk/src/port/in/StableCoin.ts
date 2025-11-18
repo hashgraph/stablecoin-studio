@@ -219,6 +219,7 @@ class StableCoinInPort implements IStableCoinInPort {
 		handleValidation('CreateRequest', req);
 		const {
 			reserveAddress,
+			updatedAtThreshold,
 			reserveInitialAmount,
 			createReserve,
 			proxyOwnerAccount,
@@ -314,6 +315,7 @@ class StableCoinInPort implements IStableCoinInPort {
 					? new ContractId(stableCoinFactoryId)
 					: undefined,
 				reserveAddressId ? new ContractId(reserveAddressId) : undefined,
+				updatedAtThreshold,
 				reserveInitialAmount
 					? BigDecimal.fromString(
 							reserveInitialAmount,

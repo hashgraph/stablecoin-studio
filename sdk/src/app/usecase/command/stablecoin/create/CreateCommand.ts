@@ -47,6 +47,7 @@ export class CreateCommand extends Command<CreateCommandResponse> {
 		public readonly createReserve: boolean,
 		public readonly factory?: ContractId,
 		public readonly reserveAddress?: ContractId,
+		public readonly updatedAtThreshold?: string,
 		public readonly reserveInitialAmount?: BigDecimal,
 		public readonly proxyOwnerAccount?: HederaId,
 		public readonly resolver?: ContractId,

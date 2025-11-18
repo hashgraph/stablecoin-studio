@@ -24,8 +24,9 @@ abstract contract ReserveStorageWrapper is IReserveStorageWrapper, TokenOwnerSto
         _;
     }
 
-    function __reserveInit(address dataFeed) internal {
-        _reserveStorage().reserveAddress = dataFeed;
+    function __reserveInit(address _dataFeed, uint256 _updatedAtThreshold) internal {
+        _reserveStorage().reserveAddress = _dataFeed;
+        _reserveStorage().updatedAtThreshold = _updatedAtThreshold;
     }
 
     /**
@@ -38,8 +39,10 @@ abstract contract ReserveStorageWrapper is IReserveStorageWrapper, TokenOwnerSto
         if (reserveAddress == address(0)) return true;
 
         (int256 reserveAmount, uint256 updatedAt) = _getReserveAmount();
-        if (_getUpdatedAtThreshold() > 0 && updatedAt > _getUpdatedAtThreshold()) {
-            revert ReserveAmountOutdated(updatedAt, _getUpdatedAtThreshold());
+        uint256 updatedAtThreshold = _getUpdatedAtThreshold();
+        assert(updatedAt <= block.timestamp);
+        if (updatedAtThreshold > 0 && (block.timestamp - updatedAt) > updatedAtThreshold) {
+            revert ReserveAmountOutdated(updatedAt, updatedAtThreshold);
         }
         assert(reserveAmount >= 0);
 
