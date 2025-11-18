@@ -90,8 +90,9 @@ export default class TransactionController {
       ),
     );
     try {
-      const transaction: Transaction =
-        await this.transactionService.create(createTransactionDto);
+      const transaction: Transaction = await this.transactionService.create(
+        createTransactionDto,
+      );
       return new CreateTransactionResponseDto(transaction.id);
     } catch (error) {
       this.loggerService.error(
