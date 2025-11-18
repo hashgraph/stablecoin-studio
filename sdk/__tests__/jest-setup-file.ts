@@ -1077,6 +1077,7 @@ jest.mock('../src/port/out/hs/hts/HTSTransactionAdapter', () => {
 		configId: string,
 		configVersion: number,
 		proxyOwnerAccount: HederaId,
+		updatedAtThreshold: string,
 		reserveAddress?: ContractId,
 		reserveInitialAmount?: BigDecimal,
 	): Promise<TransactionResponse<any, Error>> {
@@ -1190,7 +1191,7 @@ jest.mock('../src/port/out/hs/hts/HTSTransactionAdapter', () => {
 				reserveInitialAmount
 					? reserveInitialAmount.toFixedNumber()
 					: BigDecimal.ZERO.toFixedNumber(),
-				'0',
+				updatedAtThreshold,
 				createReserve,
 				keys,
 				roles,
