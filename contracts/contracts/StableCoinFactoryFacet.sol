@@ -167,7 +167,8 @@ contract StableCoinFactoryFacet is IStaticFunctionSelectors, IStableCoinFactory,
 
         uint256 updatedAtThreshold = requestedToken.updatedAtThreshold;
 
-        if (updatedAtThreshold > 0 && updatedAt > updatedAtThreshold) {
+        assert(updatedAt <= block.timestamp);
+        if (updatedAtThreshold > 0 && (block.timestamp - updatedAt) > updatedAtThreshold) {
             revert IReserveStorageWrapper.ReserveAmountOutdated(updatedAt, updatedAtThreshold);
         }
 
