@@ -397,7 +397,7 @@ describe('Reserve Tests with reserve decimals lower than token decimals', functi
         const totalReserve = result[0]
 
         await reserveFacet.updateUpdatedAtThreshold('1')
-        await delay({ time: 2, unit: 'sec' })
+        await delay({ time: 15, unit: 'sec' })
 
         await expect(cashInFacet.mint(operator.address, totalReserve - 1n)).to.be.revertedWithCustomError(
             cashInFacet,
