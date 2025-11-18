@@ -386,7 +386,7 @@ function smartContractCalls(functionName: string, decoded: any): void {
 		metadata = requestedToken.metadata;
 		proxyOwner = requestedToken.proxyAdminOwnerAccount;
 
-		const keys = requestedToken.keys;
+		const keys = requestedToken[11];
 
 		keys.forEach(
 			(key: {
@@ -663,7 +663,7 @@ function smartContractCalls(functionName: string, decoded: any): void {
 		metadata = updatedToken.tokenMetadataURI;
 		autoRenewPeriod = parseInt(updatedToken.autoRenewPeriod.toString());
 
-		const keys = updatedToken.keys;
+		const keys = updatedToken[2];
 		keys.forEach(
 			(key: {
 				publicKey: string;
