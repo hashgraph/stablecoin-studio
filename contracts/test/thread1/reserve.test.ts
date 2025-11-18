@@ -389,7 +389,7 @@ describe('Reserve Tests with reserve decimals lower than token decimals', functi
         await expect(new ValidateTxResponseCommand({ txResponse: mintResponse }).execute()).to.be.rejectedWith(Error)
     })
 
-    it.only('Can not mint tokens if updated at date expired', async function () {
+    it('Can not mint tokens if updated at date expired', async function () {
         // Retrieve current reserve amount
         const result = await reserveFacet.getReserveAmount({
             gasLimit: GAS_LIMIT.hederaTokenManager.getReserveAmount,
@@ -397,7 +397,7 @@ describe('Reserve Tests with reserve decimals lower than token decimals', functi
         const totalReserve = result[0]
 
         await reserveFacet.updateUpdatedAtThreshold('1')
-        await delay({ time: 15, unit: 'sec' })
+        await delay({ time: 2, unit: 'sec' })
 
         await expect(cashInFacet.mint(operator.address, totalReserve - 1n)).to.be.revertedWithCustomError(
             cashInFacet,

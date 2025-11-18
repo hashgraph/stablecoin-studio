@@ -115,8 +115,8 @@ contract HederaReserveFacet is IStaticFunctionSelectors, IHederaReserve, HederaR
         return (
             _ROUND_ID,
             _hederaReserveDataStorage().reserveAmount,
-            block.timestamp, // solhint-disable-line not-rely-on-time
-            block.timestamp, // solhint-disable-line not-rely-on-time
+            block.timestamp - 10, // solhint-disable-line not-rely-on-time
+            block.timestamp - 10, // solhint-disable-line not-rely-on-time
             _ROUND_ID
         );
     }
