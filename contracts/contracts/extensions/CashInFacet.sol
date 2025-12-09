@@ -2,7 +2,6 @@
 pragma solidity 0.8.18;
 
 import {ICashIn} from './Interfaces/ICashIn.sol';
-import {IRoles} from './Interfaces/IRoles.sol';
 import {SupplierAdminStorageWrapper} from './SupplierAdminStorageWrapper.sol';
 // solhint-disable-next-line max-line-length
 import {IHederaTokenService} from '@hashgraph/smart-contracts/contracts/system-contracts/hedera-token-service/IHederaTokenService.sol';
@@ -10,6 +9,7 @@ import {ReserveStorageWrapper} from './ReserveStorageWrapper.sol';
 import {SafeCast} from '@openzeppelin/contracts/utils/math/SafeCast.sol';
 import {_CASH_IN_RESOLVER_KEY} from '../constants/resolverKeys.sol';
 import {IStaticFunctionSelectors} from '../resolver/interfaces/resolverProxy/IStaticFunctionSelectors.sol';
+import {_CASHIN_ROLE} from '../constants/roles.sol';
 
 contract CashInFacet is ICashIn, IStaticFunctionSelectors, SupplierAdminStorageWrapper, ReserveStorageWrapper {
     /**
@@ -25,7 +25,7 @@ contract CashInFacet is ICashIn, IStaticFunctionSelectors, SupplierAdminStorageW
     )
         external
         override(ICashIn)
-        onlyRole(_getRoleId(IRoles.RoleName.CASHIN))
+        onlyRole(_CASHIN_ROLE)
         checkReserveIncrease(SafeCast.toUint256(amount))
         addressIsNotZero(account)
         amountIsNotNegative(amount, false)

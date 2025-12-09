@@ -205,11 +205,11 @@ export default class Configuration {
 
             if (address !== EMPTY_STRING) {
                 const proxyAddress = Configuration._getEnvironmentVariable({
-                    name: `${network.toUpperCase()}_${contractName}${SUFIXES.proxy}`,
+                    name: `${network.toUpperCase()}_${contractName.toUpperCase()}${SUFIXES.proxy}`,
                     defaultValue: EMPTY_STRING,
                 })
                 const proxyAdminAddress = Configuration._getEnvironmentVariable({
-                    name: `${network.toUpperCase()}_${contractName}${SUFIXES.proxyAdmin}`,
+                    name: `${network.toUpperCase()}_${contractName.toUpperCase()}${SUFIXES.proxyAdmin}`,
                     defaultValue: EMPTY_STRING,
                 })
 

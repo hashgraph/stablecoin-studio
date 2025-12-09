@@ -27,6 +27,8 @@
 - **[Testnet reset procedure](#testnet-reset-procedure)**<br>
 - **[Deploying the stablecoin factories](#deploying-the-stablecoin-factories)**<br>
 - **[v1 to v2 Migration](#v1-to-v2-migration)**<br>
+- **[v2 to v3 Migration](#v2-to-v3-migration)**<br>
+- **[v3 to v4 Migration](#v3-to-v4-migration)**<br>
 - **[Development manifesto](#development-manifesto)**<br>
 - **[Support](#support)**<br>
 - **[Contributing](#contributing)**<br>
@@ -271,6 +273,16 @@ Follow the steps in the [contracts docs](https://github.com/hashgraph/stablecoin
 V2 smart contracts are not compatible with V1.
 
 If you have deployed Stablecoins in V1 and want to migrate them to V2 please follow the procedure described in the `contracts/README`document `V1 to V2 migration` section.
+
+# V2 to V3 Migration
+V3 BLR smart contracts are not compatible with V2.
+
+If you have deployed Stablecoins that refer to a BLR V2 and want them to start refering to a BLR V3 please follow the procedure described in the `contracts/README`document `V2 to V3 migration` section.
+
+# V3 to V4 Migration
+Existing v3 StableCoins can be updated to v4 with no migration procedure, only bug fixes have been added to the stablecoin code.
+
+However the StableCoin factory deployment method has a new parameter `updatedAtThreshold` that makes previous backends or smart contracts interacting with it incompatible. 
 
 # Testnet reset procedure
 

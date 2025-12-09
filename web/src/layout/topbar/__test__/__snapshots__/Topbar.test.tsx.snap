@@ -205,7 +205,9 @@ exports[`<Topbar /> should render correctly 1`] = `
               <p
                 class="chakra-text css-gegx7f"
                 data-testid="topbar-right-network"
-              />
+              >
+                testnet
+              </p>
             </div>
           </div>
           <svg

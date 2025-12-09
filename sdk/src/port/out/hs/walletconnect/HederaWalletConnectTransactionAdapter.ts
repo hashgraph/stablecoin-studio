@@ -271,6 +271,8 @@ export class HederaWalletConnectTransactionAdapter extends HederaTransactionAdap
 				recognized: true,
 				factoryId:
 					this.networkService.configuration?.factoryAddress || '',
+				resolverId:
+					this.networkService.configuration.resolverAddress || '',
 			},
 		};
 		this.eventService.emit(WalletEvents.walletPaired, eventData);

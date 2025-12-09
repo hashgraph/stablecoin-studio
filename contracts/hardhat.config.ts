@@ -20,7 +20,7 @@ const hardhatConfig: HardhatUserConfig = {
             evmVersion: DEFAULT_EVM_VERSION,
         },
     },
-    defaultNetwork: NETWORK_LIST.name[1],
+    defaultNetwork: NETWORK_LIST.name[3],
     networks: {
         [NETWORK_LIST.name[0]]: {
             chainId: NETWORK_LIST.chainId[0],

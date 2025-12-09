@@ -88,7 +88,6 @@ export function allTokenKeysToKey({
     ]
 }
 
-// TODO: this function should be moved to ???
 export function rolesToAccounts({
     allToContract,
     allRolesToCreator,

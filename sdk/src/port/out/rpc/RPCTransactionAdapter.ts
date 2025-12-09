@@ -107,6 +107,7 @@ import {
 	RELEASE_HOLD_GAS,
 	RECLAIM_HOLD_GAS,
 	CONTROLLER_CREATE_HOLD_GAS,
+	UINT256_MAX,
 } from '../../../core/Constants.js';
 import { MetaMaskInpageProvider } from '@metamask/providers';
 import { WalletConnectError } from '../../../domain/context/network/error/WalletConnectError.js';
@@ -195,6 +196,7 @@ export default class RPCTransactionAdapter extends TransactionAdapter {
 		configId: string,
 		configVersion: number,
 		proxyOwnerAccount: HederaId,
+		updatedAtThreshold: string,
 		reserveAddress?: ContractId,
 		reserveInitialAmount?: BigDecimal,
 		reserveConfigId?: string,
@@ -207,10 +209,16 @@ export default class RPCTransactionAdapter extends TransactionAdapter {
 					coin.cashInRoleAccount.toString() == '0.0.0'
 						? '0x0000000000000000000000000000000000000000'
 						: await this.getEVMAddress(coin.cashInRoleAccount),
-				allowance: coin.cashInRoleAllowance
-					? coin.cashInRoleAllowance.toFixedNumber()
-					: BigDecimal.ZERO.toFixedNumber(),
+				allowance:
+					!coin.cashInRoleAllowance ||
+					coin.cashInRoleAllowance.toString() == '0'
+						? UINT256_MAX.toString()
+						: coin.cashInRoleAllowance.toFixedNumber(),
 			};
+
+			LogService.logTrace('Cashin Role: ', {
+				cashinRole: cashinRole,
+			});
 
 			const providedKeys = [
 				coin.adminKey,
@@ -312,6 +320,7 @@ export default class RPCTransactionAdapter extends TransactionAdapter {
 								reserveAddress.value,
 							)
 					  ).evmAddress,
+				updatedAtThreshold,
 				reserveInitialAmount
 					? reserveInitialAmount.toFixedNumber()
 					: BigDecimal.ZERO.toFixedNumber(),
@@ -753,10 +762,12 @@ export default class RPCTransactionAdapter extends TransactionAdapter {
 					message: `StableCoin ${coin.coin.name} does not have a proxy address`,
 				});
 
-			const res = await ReserveFacet__factory.connect(
-				coin.coin.evmProxyAddress?.toString(),
-				this.signerOrProvider,
-			).getReserveAmount();
+			const res = (
+				await ReserveFacet__factory.connect(
+					coin.coin.evmProxyAddress?.toString(),
+					this.signerOrProvider,
+				).getReserveAmount()
+			)[0];
 
 			return new TransactionResponse(
 				undefined,
@@ -884,7 +895,9 @@ export default class RPCTransactionAdapter extends TransactionAdapter {
 
 			const amountsFormatted: bigint[] = [];
 			amounts.forEach((amount) => {
-				amountsFormatted.push(amount.toBigInt());
+				if (amount.isGreaterThan(BigDecimal.fromString('0')))
+					amountsFormatted.push(amount.toBigInt());
+				else amountsFormatted.push(UINT256_MAX);
 			});
 
 			const accounts: string[] = [];

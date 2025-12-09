@@ -42,6 +42,8 @@ import { GetReserveAmountQuery } from '../../../../query/stablecoin/getReserveAm
 import { RESERVE_DECIMALS } from '../../../../../../domain/context/reserve/Reserve.js';
 import { MirrorNodeAdapter } from '../../../../../../port/out/mirror/MirrorNodeAdapter.js';
 import { TokenSupplyType } from '@hashgraph/sdk';
+import { GetAccountAutoAssociationQuery } from '../../../../query/account/autoAssociation/GetAccountAutoAssociationQuery';
+import { StableCoinMaxAutoAssociationReached } from '../../error/StableCoinMaxAutoAssociationReached';
 
 const MAX_SUPPLY = 9_223_372_036_854_775_807n;
 
@@ -64,6 +66,7 @@ export class CashInCommandHandler implements ICommandHandler<CashInCommand> {
 		const { amount, targetId, tokenId, startDate } = command;
 		const handler = this.transactionService.getHandler();
 		const account = this.accountService.getCurrentAccount();
+
 		const tokenRelationship = (
 			await this.stableCoinService.queryBus.execute(
 				new GetAccountTokenRelationshipQuery(targetId, tokenId),
@@ -71,17 +74,47 @@ export class CashInCommandHandler implements ICommandHandler<CashInCommand> {
 		).payload;
 
 		if (!tokenRelationship) {
-			throw new StableCoinNotAssociated(
-				targetId.toString(),
-				tokenId.toString(),
-			);
-		}
-		if (tokenRelationship.freezeStatus === FreezeStatus.FROZEN) {
-			throw new AccountFreeze(targetId.toString());
-		}
+			const autoAssociationInfo = (
+				await this.stableCoinService.queryBus.execute(
+					new GetAccountAutoAssociationQuery(targetId),
+				)
+			).payload;
 
-		if (tokenRelationship.kycStatus === KycStatus.REVOKED) {
-			throw new AccountNotKyc(targetId.toString());
+			if (!autoAssociationInfo) {
+				throw new StableCoinNotAssociated(
+					targetId.toString(),
+					tokenId.toString(),
+				);
+			}
+
+			const max = Number(autoAssociationInfo.maxAutoAssociations ?? 0);
+			const remaining = Number(
+				autoAssociationInfo.remainingAutoAssociations ?? 0,
+			);
+
+			if (max === 0) {
+				throw new StableCoinNotAssociated(
+					targetId.toString(),
+					tokenId.toString(),
+				);
+			}
+
+			const isUnlimited = max === -1 || remaining === -1;
+
+			if (!isUnlimited && remaining <= 0) {
+				throw new StableCoinMaxAutoAssociationReached(
+					targetId.toString(),
+					max,
+				);
+			}
+		} else {
+			if (tokenRelationship.freezeStatus === FreezeStatus.FROZEN) {
+				throw new AccountFreeze(targetId.toString());
+			}
+
+			if (tokenRelationship.kycStatus === KycStatus.REVOKED) {
+				throw new AccountNotKyc(targetId.toString());
+			}
 		}
 
 		const capabilities = await this.stableCoinService.getCapabilities(

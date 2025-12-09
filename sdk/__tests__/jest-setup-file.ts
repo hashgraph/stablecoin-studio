@@ -85,6 +85,7 @@ import {
 	CREATE_SC_GAS,
 	EVM_ZERO_ADDRESS,
 	TOKEN_CREATION_COST_HBAR,
+	UINT256_MAX,
 } from '../src/core/Constants.js';
 import LogService from '../src/app/service/LogService.js';
 import {
@@ -385,7 +386,7 @@ function smartContractCalls(functionName: string, decoded: any): void {
 		metadata = requestedToken.metadata;
 		proxyOwner = requestedToken.proxyAdminOwnerAccount;
 
-		const keys = requestedToken[10];
+		const keys = requestedToken[11];
 
 		keys.forEach(
 			(key: {
@@ -428,7 +429,7 @@ function smartContractCalls(functionName: string, decoded: any): void {
 		newRoles.forEach((newRole: StableCoinRole) => {
 			if (newRole == StableCoinRole.CASHIN_ROLE) {
 				for (let i = 0; i < accounts.length; i++) {
-					if (amounts[i] == 0)
+					if (amounts[i] == UINT256_MAX)
 						grantUnlimitedSupplierRole(
 							'0x' + accounts[i].toUpperCase().substring(2),
 						);
@@ -1076,6 +1077,7 @@ jest.mock('../src/port/out/hs/hts/HTSTransactionAdapter', () => {
 		configId: string,
 		configVersion: number,
 		proxyOwnerAccount: HederaId,
+		updatedAtThreshold: string,
 		reserveAddress?: ContractId,
 		reserveInitialAmount?: BigDecimal,
 	): Promise<TransactionResponse<any, Error>> {
@@ -1186,6 +1188,7 @@ jest.mock('../src/port/out/hs/hts/HTSTransactionAdapter', () => {
 								reserveAddress.value,
 							)
 					  ).evmAddress,
+				updatedAtThreshold,
 				reserveInitialAmount
 					? reserveInitialAmount.toFixedNumber()
 					: BigDecimal.ZERO.toFixedNumber(),

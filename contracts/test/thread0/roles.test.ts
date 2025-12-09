@@ -3,6 +3,7 @@ import { SignerWithAddress } from '@nomicfoundation/hardhat-ethers/signers'
 import { ethers } from 'hardhat'
 import { RolesFacet, RolesFacet__factory } from '@contracts'
 import {
+    ADDRESS_ZERO,
     delay,
     deployFullInfrastructure,
     DeployFullInfrastructureCommand,
@@ -92,6 +93,13 @@ describe('➡️ Roles Tests', function () {
         expect(hasBurnRole).to.equals(true)
     })
 
+    it('Granting role to account 0 fails', async function () {
+        await expect(rolesFacet.grantRole(ROLES.burn.hash, ADDRESS_ZERO)).to.be.revertedWithCustomError(
+            rolesFacet,
+            'AddressZero'
+        )
+    })
+
     it('Non Admin account can not revoke role from an account', async function () {
         // Non operator has burn role
         let hasBurnRole = await rolesFacet.hasRole(ROLES.burn.hash, nonOperator, {
@@ -135,6 +143,29 @@ describe('➡️ Roles Tests', function () {
             gasLimit: GAS_LIMIT.hederaTokenManager.hasRole,
         })
         expect(hasBurnRole).to.equals(false)
+    })
+
+    it('Can not revoke all admin role from a token', async function () {
+        const Admins = await rolesFacet.getAccountsWithRole(ROLES.defaultAdmin.hash, {
+            gasLimit: GAS_LIMIT.hederaTokenManager.getAccountsWithRole,
+        })
+
+        const Length = Admins.length
+
+        for (let i = 0; i < Length - 1; i++) {
+            await rolesFacet.revokeRole(ROLES.defaultAdmin.hash, Admins[i], {
+                gasLimit: GAS_LIMIT.hederaTokenManager.revokeRole,
+            })
+        }
+
+        const revokeRoleResponse = await rolesFacet.revokeRole(ROLES.defaultAdmin.hash, Admins[Length - 1], {
+            gasLimit: GAS_LIMIT.hederaTokenManager.revokeRole,
+        })
+        await expect(
+            new ValidateTxResponseCommand({
+                txResponse: revokeRoleResponse,
+            }).execute()
+        ).to.be.rejectedWith(Error)
     })
     // * Initial State again
 
@@ -316,49 +347,21 @@ describe('➡️ Roles Tests', function () {
         }
     })
 
-    it('Getting roles Id', async function () {
-        // Retreive role Ids
-        const roleAdmin = rolesFacet.getRoleId(ROLES.defaultAdmin.id, {
-            gasLimit: GAS_LIMIT.hederaTokenManager.getRoles,
-        })
-        const roleCashin = rolesFacet.getRoleId(ROLES.cashin.id, {
-            gasLimit: GAS_LIMIT.hederaTokenManager.getRoles,
-        })
-        const roleBurn = rolesFacet.getRoleId(ROLES.burn.id, {
-            gasLimit: GAS_LIMIT.hederaTokenManager.getRoles,
-        })
-        const rolePause = rolesFacet.getRoleId(ROLES.pause.id, {
-            gasLimit: GAS_LIMIT.hederaTokenManager.getRoles,
-        })
-        const roleWipe = rolesFacet.getRoleId(ROLES.wipe.id, {
-            gasLimit: GAS_LIMIT.hederaTokenManager.getRoles,
-        })
-        const roleRescue = rolesFacet.getRoleId(ROLES.rescue.id, {
-            gasLimit: GAS_LIMIT.hederaTokenManager.getRoles,
-        })
-        const roleFreeze = rolesFacet.getRoleId(ROLES.freeze.id, {
-            gasLimit: GAS_LIMIT.hederaTokenManager.getRoles,
-        })
-        const roleDelete = rolesFacet.getRoleId(ROLES.delete.id, {
-            gasLimit: GAS_LIMIT.hederaTokenManager.getRoles,
-        })
-        const roleKyc = rolesFacet.getRoleId(ROLES.kyc.id, {
-            gasLimit: GAS_LIMIT.hederaTokenManager.getRoles,
-        })
-        const roleCustomFees = rolesFacet.getRoleId(ROLES.customFees.id, {
-            gasLimit: GAS_LIMIT.hederaTokenManager.getRoles,
-        })
+    it('Retrieve list of existing Roles', async function () {
+        const rolesList = await rolesFacet.getRolesList()
 
-        // Check
-        expect((await roleAdmin).toUpperCase()).to.equals(ROLES.defaultAdmin.hash.toUpperCase())
-        expect((await roleCashin).toUpperCase()).to.equals(ROLES.cashin.hash.toUpperCase())
-        expect((await roleBurn).toUpperCase()).to.equals(ROLES.burn.hash.toUpperCase())
-        expect((await rolePause).toUpperCase()).to.equals(ROLES.pause.hash.toUpperCase())
-        expect((await roleWipe).toUpperCase()).to.equals(ROLES.wipe.hash.toUpperCase())
-        expect((await roleRescue).toUpperCase()).to.equals(ROLES.rescue.hash.toUpperCase())
-        expect((await roleFreeze).toUpperCase()).to.equals(ROLES.freeze.hash.toUpperCase())
-        expect((await roleDelete).toUpperCase()).to.equals(ROLES.delete.hash.toUpperCase())
-        expect((await roleKyc).toUpperCase()).to.equals(ROLES.kyc.hash.toUpperCase())
-        expect((await roleCustomFees).toUpperCase()).to.equals(ROLES.customFees.hash.toUpperCase())
+        expect(rolesList.length).to.be.equal(11)
+
+        expect(rolesList[0].toString().toUpperCase()).to.be.equal(ROLES.defaultAdmin.hash.toUpperCase())
+        expect(rolesList[1].toString().toUpperCase()).to.be.equal(ROLES.cashin.hash.toUpperCase())
+        expect(rolesList[2].toString().toUpperCase()).to.be.equal(ROLES.burn.hash.toUpperCase())
+        expect(rolesList[3].toString().toUpperCase()).to.be.equal(ROLES.wipe.hash.toUpperCase())
+        expect(rolesList[4].toString().toUpperCase()).to.be.equal(ROLES.rescue.hash.toUpperCase())
+        expect(rolesList[5].toString().toUpperCase()).to.be.equal(ROLES.pause.hash.toUpperCase())
+        expect(rolesList[6].toString().toUpperCase()).to.be.equal(ROLES.freeze.hash.toUpperCase())
+        expect(rolesList[7].toString().toUpperCase()).to.be.equal(ROLES.delete.hash.toUpperCase())
+        expect(rolesList[8].toString().toUpperCase()).to.be.equal(ROLES.kyc.hash.toUpperCase())
+        expect(rolesList[9].toString().toUpperCase()).to.be.equal(ROLES.customFees.hash.toUpperCase())
+        expect(rolesList[10].toString().toUpperCase()).to.be.equal(ROLES.hold.hash.toUpperCase())
     })
 })

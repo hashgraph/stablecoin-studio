@@ -1,5 +1,8 @@
 | Version | Contract name  | Address     | Network |
-| ------- | -------------- | ----------- | ------- |
+|---------| -------------- | ----------- | ------- |
+| 4.0.0   | FactoryAddress | 0.0.7353542 | Testnet |
+| 3.0.1   | FactoryAddress | 0.0.7095398 | Testnet |
+| 3.0.0   | FactoryAddress | 0.0.7095398 | Testnet |
 | 2.1.6   | FactoryAddress | 0.0.6431833 | Testnet |
 | 2.1.5   | FactoryAddress | 0.0.6349500 | Testnet |
 | 2.1.0   | FactoryAddress | 0.0.6176922 | Testnet |

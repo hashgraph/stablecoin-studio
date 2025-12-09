@@ -3,15 +3,14 @@ pragma solidity 0.8.18;
 
 // solhint-disable max-line-length
 import {IHoldManagement} from './Interfaces/IHoldManagement.sol';
-import {IHederaTokenService} from '@hashgraph/smart-contracts/contracts/system-contracts/hedera-token-service/IHederaTokenService.sol';
 import {EnumerableSet} from '@openzeppelin/contracts/utils/structs/EnumerableSet.sol';
 import {IHederaTokenService} from '@hashgraph/smart-contracts/contracts/system-contracts/hedera-token-service/IHederaTokenService.sol';
 import {RolesStorageWrapper} from './RolesStorageWrapper.sol';
 import {TokenOwnerStorageWrapper} from './TokenOwnerStorageWrapper.sol';
 import {HoldManagementStorageWrapper} from './HoldManagementStorageWrapper.sol';
 import {_HOLD_MANAGEMENT_RESOLVER_KEY} from '../constants/resolverKeys.sol';
-import {IRoles} from './Interfaces/IRoles.sol';
 import {IStaticFunctionSelectors} from '../resolver/interfaces/resolverProxy/IStaticFunctionSelectors.sol';
+import {_HOLD_CREATOR_ROLE} from '../constants/roles.sol';
 
 // solhint-enable max-line-length
 
@@ -52,8 +51,15 @@ contract HoldManagementFacet is
      * @param expirationTimestamp The expiration timestamp of the hold
      */
     modifier nonExpired(uint256 expirationTimestamp) {
-        if (expirationTimestamp < block.timestamp) {
+        if (expirationTimestamp <= block.timestamp) {
             revert HoldExpired(expirationTimestamp);
+        }
+        _;
+    }
+
+    modifier expired(uint256 expirationTimestamp) {
+        if (expirationTimestamp > block.timestamp) {
+            revert HoldNotExpired(expirationTimestamp);
         }
         _;
     }
@@ -150,7 +156,7 @@ contract HoldManagementFacet is
         validExpiration(_hold.expirationTimestamp)
         addressIsNotZero(_hold.escrow)
         addressIsNotZero(_from)
-        onlyRole(_getRoleId(IRoles.RoleName.HOLD_CREATOR))
+        onlyRole(_HOLD_CREATOR_ROLE)
         amountIsNotNegative(_hold.amount, false)
         returns (bool success_, uint256 holdId_)
     {
@@ -265,14 +271,18 @@ contract HoldManagementFacet is
      */
     function reclaimHold(
         HoldIdentifier calldata _holdIdentifier
-    ) external validHold(_holdIdentifier) returns (bool success_) {
+    )
+        external
+        validHold(_holdIdentifier)
+        expired(
+            _holdDataStorage()
+            .holdsByAccountAndId[_holdIdentifier.tokenHolder][_holdIdentifier.holdId].expirationTimestamp
+        )
+        returns (bool success_)
+    {
         HoldData storage holdData = _holdDataStorage().holdsByAccountAndId[_holdIdentifier.tokenHolder][
             _holdIdentifier.holdId
         ];
-
-        if (holdData.expirationTimestamp > block.timestamp) {
-            revert HoldNotExpired(holdData.expirationTimestamp);
-        }
 
         int64 amount = holdData.amount;
         _decreaseHoldAmount(_holdIdentifier.tokenHolder, _holdIdentifier.holdId, amount);
@@ -349,7 +359,9 @@ contract HoldManagementFacet is
             data: hold.data,
             operatorData: operatorData
         });
-        holdDataStorage.holdIdsByAccount[tokenHolder].add(holdId);
+        if (!holdDataStorage.holdIdsByAccount[tokenHolder].add(holdId)) {
+            revert ErrorAddingHold(tokenHolder, holdId);
+        }
         holdDataStorage.totalHeldAmount += hold.amount;
         holdDataStorage.totalHeldAmountByAccount[tokenHolder] += hold.amount;
     }
@@ -369,7 +381,9 @@ contract HoldManagementFacet is
         holdDataStorage.totalHeldAmountByAccount[tokenHolder] -= amount;
 
         if (hold.amount == 0) {
-            holdDataStorage.holdIdsByAccount[tokenHolder].remove(holdId);
+            if (!holdDataStorage.holdIdsByAccount[tokenHolder].remove(holdId)) {
+                revert ErrorRemovingHold(tokenHolder, holdId);
+            }
             delete holdDataStorage.holdsByAccountAndId[tokenHolder][holdId];
         }
     }
