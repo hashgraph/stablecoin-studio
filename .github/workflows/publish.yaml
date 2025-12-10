@@ -266,7 +266,6 @@ jobs:
         uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4.4.0
         with:
           node-version: '20'
-          token: ${{ secrets.NPM_TOKEN }}
           registry-url: 'https://registry.npmjs.org'
 
       - name: Install NPM latest
@@ -287,7 +286,7 @@ jobs:
         with:
           name: cli-package
 
-      - name: Publish Contracts Package
+      - name: Publish Packages
         env:
           CONTRACTS_PKG_NAME: "./contracts/${{ needs.contracts.outputs.artifact-name }}"
           SDK_PKG_NAME: "./sdk/${{ needs.sdk.outputs.artifact-name }}"
