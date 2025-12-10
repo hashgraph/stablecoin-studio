@@ -17,6 +17,7 @@ defaults:
     shell: bash
 
 permissions:
+  id-token: write
   contents: read
 
 jobs:
@@ -24,9 +25,9 @@ jobs:
     runs-on: token-studio-linux-medium
     container:
       image: node@sha256:db5dd2f30cb82a8bdbd16acd4a8f3f2789f5b24f6ce43f98aa041be848c82e45 # node:20.17.0-bookworm
-    permissions:
-      contents: read
-
+    outputs:
+      publish-args: ${{ steps.set-publish-data.outputs.publish-args }}
+      artifact-name: ${{ steps.set-publish-data.outputs.artifact-name }}
     steps:
       # * Initial steps
       - name: Harden Runner
@@ -45,14 +46,6 @@ jobs:
         with:
           node-version: '20'
           token: ${{ secrets.NPM_TOKEN }}
-
-      - name: Create file .npmrc
-        env:
-          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
-        run: |
-          cat << 'EOF' > .npmrc
-          //registry.npmjs.org/:_authToken=${NODE_AUTH_TOKEN}
-          EOF
 
       - name: Change references to repo
         run:  |
@@ -68,28 +61,50 @@ jobs:
         with:
           module: "contracts"
 
-      - name: Publish contracts
+      - name: Set Publish Data
+        id: set-publish-data
         env:
-          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
           DRY_RUN: ${{ inputs.dry-run-enabled }}
         run: |
+          echo "::group::Set Publish Args"
           echo "DRY_RUN is set to: '${DRY_RUN}'"
           
           ARGS=("--access=public")
           if [[ "${DRY_RUN}" == "true" ]]; then
-            ARGS+=("--dry-run")
+            ARGS="${ARGS} --dry-run"
           fi
+          echo "::endgroup::"
+          
+          echo "::group::Set Artifact Name"
+          CONTRACTS_VERSION="$(jq -r '.version' './sdk/package.json')"
+          PKG_NAME="hashgraph-stablecoin-npm-contracts-${CONTRACTS_VERSION}.tgz"
+          echo "::endgroup::"
+          
+          echo "::group::Outputs"
+          echo "publish-args=${ARGS}" >> $GITHUB_OUTPUT
+          echo "artifact-name=${PKG_NAME}" >> $GITHUB_OUTPUT
+          echo "::endgroup::"
 
-          npm run publish:contracts -- "${ARGS[@]}"
+      - name: Package Contracts Module
+        run: |
+          npm run pack:contracts
+          ls -lh ${{ steps.set-publish-data.outputs.artifact-name }}
+
+      - name: Upload Contracts Package Artifact
+        uses: actions/upload-artifact@330a01c490aca151604b8cf639adc76d48f6c5d4 # v5.0.0
+        with:
+          name: contracts-package
+          path: ./contracts/${{ steps.set-publish-data.outputs.artifact-name }}
+          if-no-files-found: error
 
   sdk:
     # needs: contracts
     runs-on: token-studio-linux-medium
     container:
       image: node@sha256:db5dd2f30cb82a8bdbd16acd4a8f3f2789f5b24f6ce43f98aa041be848c82e45 # node:20.17.0-bookworm
-    permissions:
-      contents: read
-
+    outputs:
+      publish-args: ${{ steps.set-publish-data.outputs.publish-args }}
+      artifact-name: ${{ steps.set-publish-data.outputs.artifact-name }}
     steps:
       # * Initial steps
       - name: Harden Runner
@@ -108,14 +123,6 @@ jobs:
         with:
           node-version: '20'
           token: ${{ secrets.NPM_TOKEN }}
-
-      - name: Create file .npmrc
-        env:
-          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
-        run: |
-          cat << 'EOF' > .npmrc
-          //registry.npmjs.org/:_authToken=${NODE_AUTH_TOKEN}
-          EOF
 
       - name: Change references to repo
         run:  |
@@ -127,28 +134,50 @@ jobs:
         with:
           module: "sdk"
 
-      - name: Publish sdk package
+      - name: Set Publish Data
+        id: set-publish-data
         env:
-          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
           DRY_RUN: ${{ inputs.dry-run-enabled }}
         run: |
+          echo "::group::Set Publish Args"
           echo "DRY_RUN is set to: '${DRY_RUN}'"
           
           ARGS=("--access=public")
           if [[ "${DRY_RUN}" == "true" ]]; then
-            ARGS+=("--dry-run")
+            ARGS="${ARGS} --dry-run"
           fi
+          echo "::endgroup::"
+          
+          echo "::group::Set Artifact Name"
+          SDK_VERSION="$(jq -r '.version' './sdk/package.json')"
+          PKG_NAME="hashgraph-stablecoin-npm-sdk-${SDK_VERSION}.tgz"
+          echo "::endgroup::"
+          
+          echo "::group::Outputs"
+          echo "publish-args=${ARGS}" >> $GITHUB_OUTPUT
+          echo "artifact-name=${PKG_NAME}" >> $GITHUB_OUTPUT
+          echo "::endgroup::"
 
-          npm run publish:sdk -- "${ARGS[@]}"
+      - name: Package SDK Module
+        run: |
+          npm run pack:sdk
+          ls -lh ${{ steps.set-publish-data.outputs.artifact-name }}
+
+      - name: Upload SDK Package Artifact
+        uses: actions/upload-artifact@330a01c490aca151604b8cf639adc76d48f6c5d4 # v5.0.0
+        with:
+          name: sdk-package
+          path: ./sdk/${{ steps.set-publish-data.outputs.artifact-name }}
+          if-no-files-found: error
 
   cli:
     # needs: sdk
     runs-on: token-studio-linux-medium
     container:
       image: node@sha256:db5dd2f30cb82a8bdbd16acd4a8f3f2789f5b24f6ce43f98aa041be848c82e45 # node:20.17.0-bookworm
-    permissions:
-      contents: read
-
+    outputs:
+      publish-args: ${{ steps.set-publish-data.outputs.publish-args }}
+      artifact-name: ${{ steps.set-publish-data.outputs.artifact-name }}
     steps:
       # * Initial steps
       - name: Harden Runner
@@ -168,14 +197,6 @@ jobs:
           node-version: '20'
           token: ${{ secrets.NPM_TOKEN }}
 
-      - name: Create file .npmrc
-        env:
-          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
-        run: |
-          cat << 'EOF' > .npmrc
-          //registry.npmjs.org/:_authToken=${NODE_AUTH_TOKEN}
-          EOF
-
       - name: Change references to repo
         run: |
           ${GITHUB_WORKSPACE}/changeProjectsReferencesToRepo.sh
@@ -186,16 +207,118 @@ jobs:
         with:
           module: "cli"
 
-      - name: Publish cli package
+      - name: Set Publish Data
+        id: set-publish-data
         env:
-          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
           DRY_RUN: ${{ inputs.dry-run-enabled }}
         run: |
+          echo "::group::Set Publish Args"
           echo "DRY_RUN is set to: '${DRY_RUN}'"
           
           ARGS=("--access=public")
           if [[ "${DRY_RUN}" == "true" ]]; then
-            ARGS+=("--dry-run")
+            ARGS="${ARGS} --dry-run"
           fi
+          echo "::endgroup::"
+          
+          echo "::group::Set Artifact Name"
+          CLI_VERSION="$(jq -r '.version' './cli/package.json')"
+          PKG_NAME="hashgraph-stablecoin-npm-cli-${CLI_VERSION}.tgz"
+          echo "::endgroup::"
+          
+          echo "::group::Outputs"
+          echo "publish-args=${ARGS}" >> $GITHUB_OUTPUT
+          echo "artifact-name=${PKG_NAME}" >> $GITHUB_OUTPUT
+          echo "::endgroup::"
 
-          npm run publish:cli -- "${ARGS[@]}"
+      - name: Package CLI Module
+        run: |
+          npm run pack:cli
+          ls -lh ${{ steps.set-publish-data.outputs.artifact-name }}
+
+      - name: Upload CLI Package Artifact
+        uses: actions/upload-artifact@330a01c490aca151604b8cf639adc76d48f6c5d4 # v5.0.0
+        with:
+          name: cli-package
+          path: ./cli/${{ steps.set-publish-data.outputs.artifact-name }}
+          if-no-files-found: error
+
+  publish:
+    name: Publish Packages
+    runs-on: ubuntu-latest
+    needs:
+      - contracts
+      - sdk
+      - cli
+    steps:
+      - name: Harden Runner
+        uses: step-security/harden-runner@95d9a5deda9de15063e7595e9719c11c38c90ae2 # v2.13.2
+        with:
+          egress-policy: audit
+
+      - name: Checkout repository
+        uses: actions/checkout@08eba0b27e820071cde6df949e0beb9ba4906955 # v4.3.0
+        with:
+          ref: ${{ inputs.ref }}
+          fetch-depth: '0'
+
+      - name: Setup NPM
+        uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4.4.0
+        with:
+          node-version: '20'
+          token: ${{ secrets.NPM_TOKEN }}
+          registry-url: 'https://registry.npmjs.org'
+
+      - name: Install NPM latest
+        run: npm install -g npm@11.7.0
+
+      - name: Download Contracts Package Artifact
+        uses: actions/download-artifact@018cc2cf5baa6db3ef3c5f8a56943fffe632ef53 # v6.0.0
+        with:
+          name: contracts-package
+          path: ./contracts
+
+      - name: Download SDK Package Artifact
+        uses: actions/download-artifact@018cc2cf5baa6db3ef3c5f8a56943fffe632ef53 # v6.0.0
+        with:
+          name: sdk-package
+          path: ./sdk
+
+      - name: Download CLI Package Artifact
+        uses: actions/download-artifact@018cc2cf5baa6db3ef3c5f8a56943fffe632ef53 # v6.0.0
+        with:
+          name: cli-package
+          path: ./cli
+
+      - name: Publish Contracts Package
+        env:
+          CONTRACTS_PKG_NAME: "./contracts/${{ needs.contracts.outputs.artifact-name }}"
+          SDK_PKG_NAME: "./sdk/${{ needs.sdk.outputs.artifact-name }}"
+          CLI_PKG_NAME: "./cli/${{ needs.cli.outputs.artifact-name }}"
+          CONTRACTS_ARGS: ${{ needs.contracts.outputs.publish-args }}
+          SDK_ARGS: ${{ needs.sdk.outputs.publish-args }}
+          CLI_ARGS: ${{ needs.cli.outputs.publish-args }}
+        run: |
+          publish_tarball() {
+            local PKG_NAME=$1
+            local WORKSPACE=$2
+            shift 2
+            local ARGS=("$@")
+            echo "************************************"
+            echo "Publishing package: ${PKG_NAME} from workspace: ${WORKSPACE} with args: ${ARGS[*]}"
+            npm publish "${PKG_NAME}" --workspace="${WORKSPACE}" -- "${ARGS[@]}"
+            echo "Published package: ${PKG_NAME}"
+            echo "************************************"
+          }
+          
+          echo "::group::Publish Contracts Package"
+          publish_tarball "${CONTRACTS_PKG_NAME}" "contracts" ${CONTRACTS_ARGS}
+          echo "::endgroup::"
+          
+          echo "::group::Publish SDK Package"
+          publish_tarball "${SDK_PKG_NAME}" "sdk" ${SDK_ARGS}
+          echo "::endgroup::"
+          
+          echo "::group::Publish CLI Package"
+          publish_tarball "${CLI_PKG_NAME}" "cli" ${CLI_ARGS}
+          echo "::endgroup::"
