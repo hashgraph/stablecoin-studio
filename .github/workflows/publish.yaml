@@ -76,7 +76,7 @@ jobs:
           echo "::endgroup::"
           
           echo "::group::Set Artifact Name"
-          CONTRACTS_VERSION="$(jq -r '.version' './sdk/package.json')"
+          CONTRACTS_VERSION="$(jq -r '.version' './contracts/package.json')"
           PKG_NAME="hashgraph-stablecoin-npm-contracts-${CONTRACTS_VERSION}.tgz"
           echo "::endgroup::"
           
@@ -94,7 +94,7 @@ jobs:
         uses: actions/upload-artifact@330a01c490aca151604b8cf639adc76d48f6c5d4 # v5.0.0
         with:
           name: contracts-package
-          path: ./contracts/${{ steps.set-publish-data.outputs.artifact-name }}
+          path: ./${{ steps.set-publish-data.outputs.artifact-name }}
           if-no-files-found: error
 
   sdk:
@@ -167,7 +167,7 @@ jobs:
         uses: actions/upload-artifact@330a01c490aca151604b8cf639adc76d48f6c5d4 # v5.0.0
         with:
           name: sdk-package
-          path: ./sdk/${{ steps.set-publish-data.outputs.artifact-name }}
+          path: ./${{ steps.set-publish-data.outputs.artifact-name }}
           if-no-files-found: error
 
   cli:
@@ -240,7 +240,7 @@ jobs:
         uses: actions/upload-artifact@330a01c490aca151604b8cf639adc76d48f6c5d4 # v5.0.0
         with:
           name: cli-package
-          path: ./cli/${{ steps.set-publish-data.outputs.artifact-name }}
+          path: ./${{ steps.set-publish-data.outputs.artifact-name }}
           if-no-files-found: error
 
   publish:
@@ -276,19 +276,16 @@ jobs:
         uses: actions/download-artifact@018cc2cf5baa6db3ef3c5f8a56943fffe632ef53 # v6.0.0
         with:
           name: contracts-package
-          path: ./contracts
 
       - name: Download SDK Package Artifact
         uses: actions/download-artifact@018cc2cf5baa6db3ef3c5f8a56943fffe632ef53 # v6.0.0
         with:
           name: sdk-package
-          path: ./sdk
 
       - name: Download CLI Package Artifact
         uses: actions/download-artifact@018cc2cf5baa6db3ef3c5f8a56943fffe632ef53 # v6.0.0
         with:
           name: cli-package
-          path: ./cli
 
       - name: Publish Contracts Package
         env:
