@@ -71,7 +71,7 @@ jobs:
           
           ARGS=("--access=public")
           if [[ "${DRY_RUN}" == "true" ]]; then
-            ARGS="${ARGS} --dry-run"
+            ARGS+=("--dry-run")
           fi
           echo "::endgroup::"
           
@@ -144,7 +144,7 @@ jobs:
           
           ARGS=("--access=public")
           if [[ "${DRY_RUN}" == "true" ]]; then
-            ARGS="${ARGS} --dry-run"
+            ARGS+=("--dry-run")
           fi
           echo "::endgroup::"
           
@@ -217,7 +217,7 @@ jobs:
           
           ARGS=("--access=public")
           if [[ "${DRY_RUN}" == "true" ]]; then
-            ARGS="${ARGS} --dry-run"
+            ARGS+=("--dry-run")
           fi
           echo "::endgroup::"
           
@@ -306,7 +306,8 @@ jobs:
             local ARGS=("$@")
             echo "************************************"
             echo "Publishing package: ${PKG_NAME} from workspace: ${WORKSPACE} with args: ${ARGS[*]}"
-            npm publish "${PKG_NAME}" --workspace="${WORKSPACE}" -- "${ARGS[@]}"
+            ARGS+=("--workspace=${WORKSPACE}")
+            npm publish "${PKG_NAME}" "${ARGS[@]}"
             echo "Published package: ${PKG_NAME}"
             echo "************************************"
           }
