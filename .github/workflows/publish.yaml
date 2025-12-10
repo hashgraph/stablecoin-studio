@@ -288,9 +288,9 @@ jobs:
 
       - name: Publish Packages
         env:
-          CONTRACTS_PKG_NAME: "./contracts/${{ needs.contracts.outputs.artifact-name }}"
-          SDK_PKG_NAME: "./sdk/${{ needs.sdk.outputs.artifact-name }}"
-          CLI_PKG_NAME: "./cli/${{ needs.cli.outputs.artifact-name }}"
+          CONTRACTS_PKG_NAME: ${{ needs.contracts.outputs.artifact-name }}
+          SDK_PKG_NAME: ${{ needs.sdk.outputs.artifact-name }}
+          CLI_PKG_NAME: ${{ needs.cli.outputs.artifact-name }}
           CONTRACTS_ARGS: ${{ needs.contracts.outputs.publish-args }}
           SDK_ARGS: ${{ needs.sdk.outputs.publish-args }}
           CLI_ARGS: ${{ needs.cli.outputs.publish-args }}
