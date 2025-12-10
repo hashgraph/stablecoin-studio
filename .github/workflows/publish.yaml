@@ -319,13 +319,16 @@ jobs:
           }
           
           echo "::group::Publish Contracts Package"
-          publish_tarball "${CONTRACTS_PKG_NAME}" "${CONTRACTS_ARGS}"
+          IFS=' ' read -ra CONTRACTS_ARGS_ARRAY <<< "${CONTRACTS_ARGS}"
+          publish_tarball "${CONTRACTS_PKG_NAME}" "${CONTRACTS_ARGS_ARRAY[@]}"
           echo "::endgroup::"
           
           echo "::group::Publish SDK Package"
-          publish_tarball "${SDK_PKG_NAME}" "${SDK_ARGS}"
+          IFS=' ' read -ra SDK_ARGS_ARRAY <<< "${SDK_ARGS}"
+          publish_tarball "${SDK_PKG_NAME}" "${SDK_ARGS_ARRAY[@]}"
           echo "::endgroup::"
           
           echo "::group::Publish CLI Package"
-          publish_tarball "${CLI_PKG_NAME}" "${CLI_ARGS}"
+          IFS=' ' read -ra CLI_ARGS_ARRAY <<< "${CLI_ARGS}"
+          publish_tarball "${CLI_PKG_NAME}" "${CLI_ARGS_ARRAY[@]}"
           echo "::endgroup::"
