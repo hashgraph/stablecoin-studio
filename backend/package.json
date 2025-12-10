@@ -4,6 +4,7 @@
   "description": "",
   "author": "",
   "license": "Apache-2.0",
+  "repository": "https://github.com/hashgraph/stablecoin-studio",
   "scripts": {
     "build": "nest build",
     "prettier": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\"",

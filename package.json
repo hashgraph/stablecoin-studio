@@ -9,6 +9,7 @@
     "blockchain"
   ],
   "license": "Apache-2.0",
+  "repository": "https://github.com/hashgraph/stablecoin-studio",
   "scripts": {
     "setup": "npm run install:all",
     "install:all": "npm install && npm run build --workspaces",

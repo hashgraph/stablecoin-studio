@@ -70,6 +70,7 @@
 		"prepack": "npm run build"
 	},
 	"license": "Apache-2.0",
+	"repository": "https://github.com/hashgraph/stablecoin-studio",
 	"dependencies": {
 		"@hashgraph/cryptography": "1.4.3",
 		"@hashgraph/hedera-custodians-integration": "^1.4.1",

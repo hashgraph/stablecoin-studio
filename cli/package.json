@@ -39,6 +39,7 @@
   "keywords": [],
   "author": "",
   "license": "Apache-2.0",
+  "repository": "https://github.com/hashgraph/stablecoin-studio",
   "devDependencies": {
     "@types/colors": "^1.2.1",
     "@types/fs-extra": "^11.0.4",

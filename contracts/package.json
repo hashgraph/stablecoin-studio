@@ -65,6 +65,7 @@
     },
     "author": "",
     "license": "Apache-2.0",
+    "repository": "https://github.com/hashgraph/stablecoin-studio",
     "devDependencies": {
         "@chainlink/contracts": "^0.5.1",
         "@commitlint/cli": "^19.7.1",
