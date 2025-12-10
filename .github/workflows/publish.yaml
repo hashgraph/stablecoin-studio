@@ -81,7 +81,7 @@ jobs:
           echo "::endgroup::"
           
           echo "::group::Outputs"
-          echo "publish-args=${ARGS}" >> $GITHUB_OUTPUT
+          echo "publish-args=${ARGS[*]}" >> $GITHUB_OUTPUT
           echo "artifact-name=${PKG_NAME}" >> $GITHUB_OUTPUT
           echo "::endgroup::"
 
@@ -154,7 +154,7 @@ jobs:
           echo "::endgroup::"
           
           echo "::group::Outputs"
-          echo "publish-args=${ARGS}" >> $GITHUB_OUTPUT
+          echo "publish-args=${ARGS[*]}" >> $GITHUB_OUTPUT
           echo "artifact-name=${PKG_NAME}" >> $GITHUB_OUTPUT
           echo "::endgroup::"
 
@@ -227,7 +227,7 @@ jobs:
           echo "::endgroup::"
           
           echo "::group::Outputs"
-          echo "publish-args=${ARGS}" >> $GITHUB_OUTPUT
+          echo "publish-args=${ARGS[*]}" >> $GITHUB_OUTPUT
           echo "artifact-name=${PKG_NAME}" >> $GITHUB_OUTPUT
           echo "::endgroup::"
 
@@ -298,25 +298,23 @@ jobs:
         run: |
           publish_tarball() {
             local PKG_NAME=$1
-            local WORKSPACE=$2
-            shift 2
+            shift 1
             local ARGS=("$@")
             echo "************************************"
-            echo "Publishing package: ${PKG_NAME} from workspace: ${WORKSPACE} with args: ${ARGS[*]}"
-            ARGS+=("--workspace=${WORKSPACE}")
+            echo "Publishing package: ${PKG_NAME} with args: ${ARGS[*]}"
             npm publish "${PKG_NAME}" "${ARGS[@]}"
             echo "Published package: ${PKG_NAME}"
             echo "************************************"
           }
           
           echo "::group::Publish Contracts Package"
-          publish_tarball "${CONTRACTS_PKG_NAME}" "contracts" ${CONTRACTS_ARGS}
+          publish_tarball "${CONTRACTS_PKG_NAME}" "${CONTRACTS_ARGS}"
           echo "::endgroup::"
           
           echo "::group::Publish SDK Package"
-          publish_tarball "${SDK_PKG_NAME}" "sdk" ${SDK_ARGS}
+          publish_tarball "${SDK_PKG_NAME}" "${SDK_ARGS}"
           echo "::endgroup::"
           
           echo "::group::Publish CLI Package"
-          publish_tarball "${CLI_PKG_NAME}" "cli" ${CLI_ARGS}
+          publish_tarball "${CLI_PKG_NAME}" "${CLI_ARGS}"
           echo "::endgroup::"
