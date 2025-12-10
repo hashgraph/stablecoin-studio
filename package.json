@@ -1,6 +1,6 @@
 {
   "name": "@hashgraph/hedera-stable-coin",
-  "version": "4.0.0",
+  "version": "4.0.2",
   "private": true,
   "description": "Stablecoin studio",
   "keywords": [
@@ -9,6 +9,7 @@
     "blockchain"
   ],
   "license": "Apache-2.0",
+  "repository": "https://github.com/hashgraph/stablecoin-studio",
   "scripts": {
     "setup": "npm run install:all",
     "install:all": "npm install && npm run build --workspaces",
@@ -24,11 +25,11 @@
     "build:backend": "npm run build --workspace=backend",
     "build:contracts": "npm run compile:force --workspace=contracts",
     "build:web": "npm run build --workspace=web",
-    "publish:backend": "npm publish --workspace=backend",
-    "publish:contracts": "npm publish --workspace=contracts",
-    "publish:sdk": "npm publish --workspace=sdk",
-    "publish:cli": "npm publish --workspace=cli",
-    "publish:web": "npm publish --workspace=web",
+    "pack:backend": "npm pack --workspace=backend",
+    "pack:contracts": "npm pack --workspace=contracts",
+    "pack:sdk": "npm pack --workspace=sdk",
+    "pack:cli": "npm pack --workspace=cli",
+    "pack:web": "npm pack --workspace=web",
     "clean": "concurrently \"npm run --silent clean:all:build\" \"npm run --silent clean:all:modules\" > '/dev/null' 2>&1",
     "clean:all:modules": "concurrently \"npx --yes rimraf node_modules\" \"npm run clean:sdk:modules\" \"npm run clean:backend:modules\" \"npm run clean:cli:modules\" \"npm run clean:web:modules\" \"npm run clean:contracts:modules\"",
     "clean:sdk:modules": "npm run clean:modules --workspace=sdk",

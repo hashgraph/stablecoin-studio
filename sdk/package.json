@@ -1,6 +1,6 @@
 {
 	"name": "@hashgraph/stablecoin-npm-sdk",
-	"version": "4.0.0",
+	"version": "4.0.2",
 	"description": "stablecoin studio SDK",
 	"main": "./build/cjs/src/index.js",
 	"module": "./build/esm/src/index.js",
@@ -70,6 +70,7 @@
 		"prepack": "npm run build"
 	},
 	"license": "Apache-2.0",
+	"repository": "https://github.com/hashgraph/stablecoin-studio",
 	"dependencies": {
 		"@hashgraph/cryptography": "1.4.3",
 		"@hashgraph/hedera-custodians-integration": "^1.4.1",
