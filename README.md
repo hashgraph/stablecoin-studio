@@ -2,7 +2,7 @@
 
 # Stablecoin Studio
 
-[![License](https://img.shields.io/badge/license-apache2-blue.svg)](LICENSE)
+[![License](https://img.shields.io/badge/license-apache2-blue.svg)](LICENSE.md)
 
 </div>
 
@@ -355,7 +355,7 @@ to [oss@hedera.com](mailto:oss@hedera.com).
 
 # License
 
-[Apache License 2.0](LICENSE)
+[Apache License 2.0](LICENSE.md)
 
 # 🔐 Security
 
