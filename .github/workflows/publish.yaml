@@ -95,7 +95,7 @@ jobs:
           ls -lh ${{ steps.set-publish-data.outputs.artifact-name }}
 
       - name: Upload Contracts Package Artifact
-        uses: actions/upload-artifact@330a01c490aca151604b8cf639adc76d48f6c5d4 # v5.0.0
+        uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6.0.0
         with:
           name: contracts-package
           path: ./${{ steps.set-publish-data.outputs.artifact-name }}
@@ -172,7 +172,7 @@ jobs:
           ls -lh ${{ steps.set-publish-data.outputs.artifact-name }}
 
       - name: Upload SDK Package Artifact
-        uses: actions/upload-artifact@330a01c490aca151604b8cf639adc76d48f6c5d4 # v5.0.0
+        uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6.0.0
         with:
           name: sdk-package
           path: ./${{ steps.set-publish-data.outputs.artifact-name }}
@@ -249,7 +249,7 @@ jobs:
           ls -lh ${{ steps.set-publish-data.outputs.artifact-name }}
 
       - name: Upload CLI Package Artifact
-        uses: actions/upload-artifact@330a01c490aca151604b8cf639adc76d48f6c5d4 # v5.0.0
+        uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6.0.0
         with:
           name: cli-package
           path: ./${{ steps.set-publish-data.outputs.artifact-name }}
