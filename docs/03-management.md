@@ -1,13 +1,13 @@
 # 🔑 Role & Asset Management
 
-Stablecoin Studio uses a sophisticated Role-Based Access Control (RBAC) to ensure institutional compliance.
+Stablecoin Studio provides fine-grained control over who can perform sensitive operations.
 
-## Roles Definition
-| Role | Capability |
+## Available Roles 👤
+| Role | Responsibility |
 | :--- | :--- |
-| **Admin** | Can change other roles and upgrade the contract. |
-| **Cashier** | Can Mint and Burn tokens. |
-| **Compliance** | Can Freeze, Unfreeze, and Wipe tokens from users. |
-| **Rescue** | Can recover tokens sent accidentally to the contract. |
+| **Admin** | Can upgrade contracts and assign roles. |
+| **Cashier** | Authorized to Mint and Burn tokens. |
+| **Compliance** | Can Freeze accounts and Wipe (remove) fraudulent funds. |
+| **Rescue** | Can recover assets sent to the contract address by mistake. |
 
 [⬅️ Back to Home](../README.md)

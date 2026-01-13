@@ -1,36 +1,28 @@
-# 💻 Developer & API Reference
+# 💻 Developer: SDK & CLI Reference
 
-## 🛠️ Stablecoin SDK API Reference
-The `@hashgraph/stablecoin-sdk` is the core library for programmatic management.
+## 🛠️ SDK API Reference
+The `@hashgraph/stablecoin-sdk` is the primary tool for custom integrations.
 
-### Static Methods
-- `Stablecoin.get(tokenId)`: Connects to an existing token.
-- `Stablecoin.create(params)`: Deploys HTS token + Smart Contract.
-- `Stablecoin.list(options)`: Lists all stablecoins associated with the operator.
-
-### Instance Methods
+### Main Methods
 | Method | Description |
 | :--- | :--- |
-| `mint(amount)` | Creates new units to the treasury. |
-| `burn(amount)` | Destroys tokens from the treasury. |
-| `wipe(amount, account)` | Removes tokens from a user (Compliance). |
-| `freeze(account)` | Blocks transfers for a specific account. |
-| `unfreeze(account)` | Re-enables transfers for an account. |
-| `rescue(amount)` | Recovers tokens from the contract address. |
+| `Stablecoin.get(id)` | Connects to an existing token. |
+| `mint(amount)` | Creates new supply to treasury. |
+| `burn(amount)` | Destroys supply from treasury. |
+| `wipe(amount, account)` | Force-removes tokens from a user. |
+| `getCapabilities()` | Returns allowed actions for current operator. |
 
-### Role Management API
+### SDK Code Example
 ```typescript
-await stablecoin.assignRole({
-    role: StablecoinRole.CASHIER,
-    account: "0.0.XXXXXX"
-});
+const coin = await Stablecoin.get("0.0.xxxx");
+if ((await coin.getCapabilities()).canMint) {
+    await coin.mint(1000);
+}
 ```
 
-## 🖥️ CLI Usage
-- `stablecoin create`: CLI Wizard to deploy a new stablecoin.
-- `stablecoin list`: List all coins managed by your operator.
-
-## 🛡️ Security Audits
-All Smart Contracts have been audited by **CertiK**. Reports are available in `contracts/audits/`.
+## 🖥️ CLI Commands
+- `stablecoin create`: Step-by-step wizard to deploy.
+- `stablecoin list`: Shows all tokens you manage.
+- `stablecoin manage`: Sub-menu for Mint/Burn/Wipe.
 
 [⬅️ Back to Home](../README.md)

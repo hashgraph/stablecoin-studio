@@ -1,27 +1,21 @@
 # 🪙 Stablecoin Studio by Hedera
 
-The ultimate open-source framework for financial institutions to issue, manage, and operate stablecoins using the **Hedera Token Service (HTS)**.
+## 🎯 Project Overview
+**Stablecoin Studio** is an institutional-grade framework to issue and manage stablecoins on **Hedera**. It leverages the **Hedera Token Service (HTS)** for speed and **Smart Contracts** for programmable compliance.
 
-## 🏛️ Documentation Map
-* **[⚙️ Getting Started](./docs/01-getting-started.md)** - Environment setup and first issuance.
-* **[🏗️ System Architecture](./docs/02-architecture.md)** - Deep dive into Factory and Proxy patterns.
-* **[🆔 Role & Asset Management](./docs/03-management.md)** - How to handle Minting, Burning, and Compliance.
-* **[💻 Developer & API Reference](./docs/04-dev-reference.md)** - Full SDK API methods and CLI usage.
-* **[⚖️ Standards & Compliance](./docs/05-standards.md)** - Token standards and OpenZeppelin comparisons.
+### Key Objectives:
+* ⚖️ **Institutional Compliance:** Native support for KYC/AML, account freezing, and asset recovery.
+* 🚀 **Operational Efficiency:** Low gas fees and high throughput via Hedera Token Service.
+* 🛡️ **Security First:** Audited smart contract templates with Role-Based Access Control (RBAC).
+* ⚙️ **Seamless Integration:** Comprehensive SDK and CLI to bridge traditional banking and DLT.
 
-
-# 👁️Project Overview
-
-Stablecoin Studio is an all-in-one institutional-grade framework designed to simplify the issuance and management of stablecoins on the Hedera network. By combining the speed of the Hedera Token Service (HTS) with the flexibility of programmable Smart Contracts, it provides a secure, low-cost, and compliant solution for digital assets.
-
-Key Objectives:
-Institutional Compliance: Native support for KYC/AML requirements, account freezing, and asset recovery.
-
-Operational Efficiency: Drastically reduce gas fees and transaction latency compared to traditional EVM networks.
-
-Security First: Audited smart contract templates with built-in Role-Based Access Control (RBAC) and Proof of Reserve (PoR) integration.
-
-Seamless Integration: A comprehensive SDK and CLI to bridge the gap between traditional core banking systems and decentralized ledgers.
+## 🏁 Documentation Map
+* **[🚀 Getting Started](./docs/01-getting-started.md)** - Account setup, .env configuration, and first issuance.
+* **[🏗️ Smart Contracts & Architecture](./docs/02-architecture.md)** - Factory, Proxies, and Solidity structure.
+* **[🔑 Role & Asset Management](./docs/03-management.md)** - Minting, Burning, and Compliance roles.
+* **[💻 Developer: SDK & CLI](./docs/04-dev-reference.md)** - Technical API Reference and CLI Wizard guide.
+* **[📜 Standards & Compliance](./docs/05-standards.md)** - HIPs and OpenZeppelin comparisons.
+* **[🛠️ Troubleshooting](./docs/06-troubleshooting.md)** - Common errors (Keys, Docker, Fees).
 
 ---
 [Hedera Documentation](https://docs.hedera.com) | [Audit Reports](./docs/04-dev-reference.md#security-audits)

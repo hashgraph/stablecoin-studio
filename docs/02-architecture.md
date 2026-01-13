@@ -1,12 +1,20 @@
-# 🏗️ System Architecture
+# 🏗️ Smart Contracts & Architecture
 
-Stablecoin Studio leverages the **Hedera Token Service (HTS)** for high performance (10k+ TPS) and low fees.
+The architecture separates token issuance (HTS) from management logic (EVM).
 
-[Image of Hedera Token Service ecosystem and Smart Contract integration]
+## 1. Factory-Proxy Pattern
+- **Factory**: Deploys the stablecoin and its management contract.
+- **Proxy (HIP-482)**: A Transparent Proxy that keeps the same Contract ID while allowing logic upgrades.
 
-### Core Components
-1. **The Factory**: A smart contract that deploys your specific stablecoin instance.
-2. **The Proxy**: All stablecoins use the Transparent Proxy Pattern, allowing for logic upgrades while keeping the same Token ID.
-3. **The SDK**: A TypeScript wrapper that handles the complexity of Hedera transactions and multi-sig logic.
+## 2. Dependency Tree
+The contracts rely on industry-standard libraries:
+* **OpenZeppelin**: For RBAC and security patterns.
+* **Hedera Token Service (HTS) Library**: Allows the Smart Contract to "talk" to the native ledger.
+
+| Contract | Role |
+| :--- | :--- |
+| `StablecoinFactory.sol` | Entry point for new issuances. |
+| `Stablecoin.sol` | Core logic (Mint, Burn, Wipe). |
+| `ProxyAdmin.sol` | Manages upgrade rights. |
 
 [⬅️ Back to Home](../README.md)
