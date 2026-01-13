@@ -29,7 +29,7 @@ import {
   TransactionResponse,
   TransactionReceipt,
   Status,
-} from '@hashgraph/sdk';
+} from '@hiero-ledger/sdk';
 import { GetTransactionsResponseDto } from '../transaction/dto/get-transactions-response.dto';
 import { hexToUint8Array } from '../utils/utils';
 import { LoggerService } from '../logger/logger.service.js';

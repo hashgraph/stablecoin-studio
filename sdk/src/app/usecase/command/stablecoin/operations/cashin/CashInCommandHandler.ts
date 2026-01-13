@@ -41,7 +41,7 @@ import { AccountNotKyc } from '../../error/AccountNotKyc.js';
 import { GetReserveAmountQuery } from '../../../../query/stablecoin/getReserveAmount/GetReserveAmountQuery.js';
 import { RESERVE_DECIMALS } from '../../../../../../domain/context/reserve/Reserve.js';
 import { MirrorNodeAdapter } from '../../../../../../port/out/mirror/MirrorNodeAdapter.js';
-import { TokenSupplyType } from '@hashgraph/sdk';
+import { TokenSupplyType } from '@hiero-ledger/sdk';
 import { GetAccountAutoAssociationQuery } from '../../../../query/account/autoAssociation/GetAccountAutoAssociationQuery';
 import { StableCoinMaxAutoAssociationReached } from '../../error/StableCoinMaxAutoAssociationReached';
 

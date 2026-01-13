@@ -31,7 +31,7 @@ import { HederaId } from '../../domain/context/shared/HederaId.js';
 import {
 	CustomFee as HCustomFee,
 	PublicKey as HPublicKey,
-} from '@hashgraph/sdk';
+} from '@hiero-ledger/sdk';
 import { MirrorNodeAdapter } from './mirror/MirrorNodeAdapter.js';
 import { Environment } from '../../domain/context/network/Environment.js';
 import LogService from '../../app/service/LogService.js';
@@ -39,7 +39,7 @@ import PublicKey from '../../domain/context/account/PublicKey.js';
 import { KeysStruct } from '../../domain/context/factory/FactoryKey.js';
 import FireblocksSettings from '../../domain/context/custodialwalletsettings/FireblocksSettings';
 import DfnsSettings from '../../domain/context/custodialwalletsettings/DfnsSettings';
-import { Transaction } from '@hashgraph/sdk';
+import { Transaction } from '@hiero-ledger/sdk';
 import AWSKMSSettings from '../../domain/context/custodialwalletsettings/AWSKMSSettings';
 import HWCSettings from '../../domain/context/hwalletconnectsettings/HWCSettings.js';
 import { EVM_ZERO_ADDRESS } from '../../core/Constants.js';

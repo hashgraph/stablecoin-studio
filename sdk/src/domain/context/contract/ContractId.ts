@@ -2,7 +2,7 @@ import {
 	DelegateContractId,
 	ContractId as HContractId,
 	Long,
-} from '@hashgraph/sdk';
+} from '@hiero-ledger/sdk';
 import { proto } from '@hashgraph/proto';
 import InvalidKeyForContract from './error/InvalidKeyForContract.js';
 import BaseError from '../../../core/error/BaseError.js';
