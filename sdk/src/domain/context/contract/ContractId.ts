@@ -11,7 +11,7 @@ import { InvalidContractId } from './error/InvalidContractId.js';
 import { HederaId } from '../shared/HederaId.js';
 
 export default class ContractId extends HederaId {
-	public readonly value: string;
+	declare public readonly value: string;
 
 	constructor(value: string) {
 		if (value.length == 42 && value.startsWith('0x')) {

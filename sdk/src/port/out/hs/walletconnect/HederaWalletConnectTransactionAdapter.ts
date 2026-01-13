@@ -96,7 +96,8 @@ if (typeof window !== 'undefined') {
  */
 export class HederaWalletConnectTransactionAdapter extends HederaTransactionAdapter {
 	public account: Account;
-	public signer: Signer;
+	// @ts-ignore - DAppSigner from hedera-wallet-connect uses @hashgraph/sdk types, incompatible with @hiero-ledger/sdk
+	public signer: Signer | any;
 	protected network: Environment;
 	protected projectId: string;
 	protected dAppConnector: InstanceType<typeof DAppConnector> | undefined;
@@ -247,8 +248,9 @@ export class HederaWalletConnectTransactionAdapter extends HederaTransactionAdap
 		}
 
 		// Create account object and set network
+		// @ts-ignore - Type mismatch between @hashgraph/sdk and @hiero-ledger/sdk AccountId
 		this.signer = this.dAppConnector.getSigner(
-			AccountId.fromString(accountId),
+			AccountId.fromString(accountId) as any,
 		);
 		this.account = new Account({
 			id: accountId,
@@ -354,9 +356,9 @@ export class HederaWalletConnectTransactionAdapter extends HederaTransactionAdap
 		try {
 			this.ensureTransactionFrozen(transaction);
 			// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-			// @ts-ignore
+			// @ts-ignore - Transaction type mismatch between @hashgraph/sdk and @hiero-ledger/sdk
 			const params: SignAndExecuteTransactionParams = {
-				transactionList: transactionToBase64String(transaction),
+				transactionList: transactionToBase64String(transaction as any),
 				signerAccountId: `${
 					this.chainId
 				}:${this.account.id.toString()}`,
@@ -430,8 +432,9 @@ export class HederaWalletConnectTransactionAdapter extends HederaTransactionAdap
 	private ensureTransactionFrozen(transaction: Transaction): void {
 		if (!transaction.isFrozen()) {
 			LogService.logTrace(`🔒 Tx not frozen, freezing transaction...`);
+			// @ts-ignore - AccountId type mismatch between @hashgraph/sdk and @hiero-ledger/sdk
 			transaction._freezeWithAccountId(
-				AccountId.fromString(this.account.id.toString()),
+				AccountId.fromString(this.account.id.toString()) as any,
 			);
 		}
 	}
@@ -469,9 +472,9 @@ export class HederaWalletConnectTransactionAdapter extends HederaTransactionAdap
 		try {
 			this.ensureTransactionFrozen(message);
 
-			// @ts-ignore
+			// @ts-ignore - Transaction type mismatch between @hashgraph/sdk and @hiero-ledger/sdk
 			const params: SignTransactionParams = {
-				transaction: message,
+				transaction: message as any,
 				signerAccountId: `${
 					this.chainId
 				}:${this.account.id.toString()}`,
