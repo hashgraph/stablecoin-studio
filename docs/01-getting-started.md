@@ -2,6 +2,11 @@
 
 Follow this guide to set up your environment and issue your first institutional stablecoin on Hedera.
 
+## 📋 System Requirements
+To ensure compatibility with cryptographic dependencies (specifically \`ed25519\`) and the Hedera SDK:
+- **Node.js**: **v18.16.0 or higher** (LTS version recommended).
+- **Docker**: Required for running the local Mirror Node .
+
 ## 1. Create a Hedera Testnet Account 🔑
 1. Go to the **[Hedera Developer Portal](https://portal.hedera.com/)**.
 2. Create a **Testnet Account**.
