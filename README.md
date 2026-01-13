@@ -15,7 +15,6 @@
 * **[🔑 Role & Asset Management](./docs/03-management.md)** - Minting, Burning, and Compliance roles.
 * **[💻 Developer: SDK & CLI](./docs/04-dev-reference.md)** - Technical API Reference and CLI Wizard guide.
 * **[📜 Standards & Compliance](./docs/05-standards.md)** - HIPs and OpenZeppelin comparisons.
-* **[🛠️ Troubleshooting](./docs/06-troubleshooting.md)** - Common errors (Keys, Docker, Fees).
 
 ---
 [Hedera Documentation](https://docs.hedera.com) | [Audit Reports](./docs/04-dev-reference.md#security-audits)
