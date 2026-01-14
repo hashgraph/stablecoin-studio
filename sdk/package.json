@@ -61,7 +61,7 @@
 		"test:watch": "concurrently --kill-others \"npm run build:watch\" \"npm run test:jest:watch\"",
 		"test:jest:watch": "NODE_OPTIONS=--experimental-vm-modules npx jest --watch",
 		"test:ci": "NODE_OPTIONS=--max-old-space-size=8192 npx jest --ci --forceExit --runInBand",
-		"clear-cache": "npx jest --clearCach++e",
+		"clear-cache": "npx jest --clearCache",
 		"prettier": "prettier --config .prettierrc --write .",
 		"prettier:check": "prettier --config .prettierrc --check .",
 		"format:imports": "npx format-imports ./src",
