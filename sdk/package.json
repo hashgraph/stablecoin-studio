@@ -74,7 +74,7 @@
 	"dependencies": {
 		"@hashgraph/cryptography": "1.4.3",
 		"@hashgraph/hedera-custodians-integration": "^1.4.1",
-		"@hashgraph/hedera-wallet-connect": "2.0.4",
+		"@hashgraph/hedera-wallet-connect": "1.4.1-canary.abcf6e8.0",
 		"@hashgraph/stablecoin-npm-contracts": "*",
 		"@hiero-ledger/sdk": "2.79.0",
 		"@metamask/detect-provider": "^2.0.0",
