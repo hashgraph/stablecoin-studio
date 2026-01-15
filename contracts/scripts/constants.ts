@@ -318,3 +318,5 @@ export const DEFAULT_TOKEN = (() => {
 
 export const ONE_TOKEN = DEFAULT_TOKEN.tokenFactor
 export const TEN_TOKENS = DEFAULT_TOKEN.tokenFactor * 10n
+
+export const HEDERA_PRECOMPILED_ADDRESS = "0x0000000000000000000000000000000000000167";

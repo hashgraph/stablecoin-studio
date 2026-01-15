@@ -20,15 +20,12 @@ const hardhatConfig: HardhatUserConfig = {
             evmVersion: DEFAULT_EVM_VERSION,
         },
     },
-    defaultNetwork: NETWORK_LIST.name[3],
+    defaultNetwork: NETWORK_LIST.name[0],
     networks: {
         [NETWORK_LIST.name[0]]: {
             chainId: NETWORK_LIST.chainId[0],
             hardfork: DEFAULT_EVM_VERSION,
             blockGasLimit: GAS_LIMIT.max,
-            accounts: {
-                mnemonic: configuration.mnemonic.hardhat?.phrase || undefined,
-            },
             // * Forking (not working when precompiled contracts are used)
             // accounts: configuration.privateKeys.testnet.map((key) => ({
             //     privateKey: key,
