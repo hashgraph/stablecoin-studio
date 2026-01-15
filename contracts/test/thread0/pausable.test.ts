@@ -4,12 +4,17 @@ import { ethers } from 'hardhat'
 import { IHRC__factory, PausableFacet, PausableFacet__factory } from '@contracts'
 import {
     DEFAULT_TOKEN,
+    MESSAGES,
+    ROLES,
     deployFullInfrastructure,
     DeployFullInfrastructureCommand,
-    MESSAGES,
-    ValidateTxResponseCommand,
+    ValidateTxResponseCommand
 } from '@scripts'
-import { deployStableCoinInTests, GAS_LIMIT } from '@test/shared'
+import {
+  deployStableCoinInTests,
+  deployFullInfrastructureInTests,
+  GAS_LIMIT
+} from '@test/shared'
 
 describe('Pause Tests', function () {
     // Contracts
@@ -30,7 +35,7 @@ describe('Pause Tests', function () {
         console.info(MESSAGES.deploy.info.deployFullInfrastructureInTests)
         ;[operator, nonOperator] = await ethers.getSigners()
 
-        const { ...deployedContracts } = await deployFullInfrastructure(
+        const { ...deployedContracts } = await deployFullInfrastructureInTests(
             await DeployFullInfrastructureCommand.newInstance({
                 signer: operator,
                 useDeployed: false,
@@ -48,10 +53,12 @@ describe('Pause Tests', function () {
     })
 
     it("An account without PAUSE role can't pause a token", async function () {
-        const response = await pausableFacet
-            .connect(nonOperator)
-            .pause({ gasLimit: GAS_LIMIT.hederaTokenManager.pause })
-        await expect(new ValidateTxResponseCommand({ txResponse: response }).execute()).to.be.rejectedWith(Error)
+      pausableFacet = pausableFacet.connect(nonOperator)
+
+      await expect(pausableFacet.pause({
+        gasLimit: GAS_LIMIT.hederaTokenManager.pause,
+      })).to.be.revertedWithCustomError(pausableFacet, "AccountHasNoRole")
+        .withArgs(nonOperator, ROLES.pause.hash)
     })
 
     it("An account with PAUSE role can pause and unpause a token + An account without PAUSE role can't unpause a token", async function () {
@@ -65,38 +72,23 @@ describe('Pause Tests', function () {
         }).execute()
 
         // Pause token
-        const pauseResponse = await pausableFacet.pause({ gasLimit: GAS_LIMIT.hederaTokenManager.pause })
-        await new ValidateTxResponseCommand({ txResponse: pauseResponse, confirmationEvent: 'TokenPaused' }).execute()
+        pausableFacet = pausableFacet.connect(operator)
+        await expect(pausableFacet.pause({
+          gasLimit: GAS_LIMIT.hederaTokenManager.pause,
+        })).to.emit(pausableFacet, "TokenPaused")
+          .withArgs(tokenAddress)
 
-        //! Dissociate should fail?? It IS working
-        // // Dissociate token from nonOperator account should fail
-        // const dissociatePausedResponse = await IHRC__factory.connect(tokenAddress, nonOperator).dissociate({
-        //     gasLimit: GAS_LIMIT.hederaTokenManager.dissociate,
-        // })
+        pausableFacet = pausableFacet.connect(nonOperator)
+        await expect(pausableFacet.unpause({
+          gasLimit: GAS_LIMIT.hederaTokenManager.unpause,
+        })).to.be.revertedWithCustomError(pausableFacet, "AccountHasNoRole")
+          .withArgs(nonOperator, ROLES.pause.hash)
 
-        // await expect(
-        //     await new ValidateTxResponseCommand({
-        //         txResponse: dissociatePausedResponse,
-        //         errorMessage: MESSAGES.hederaTokenManager.error.dissociate,
-        //     }).execute()
-        // ).to.be.rejectedWith(Error)
-
-        // Unpause token from nonOperator account should fail
-        const nonOperatorUnpauseResponse = await pausableFacet.connect(nonOperator).unpause({
-            gasLimit: GAS_LIMIT.hederaTokenManager.unpause,
-        })
-        await expect(
-            new ValidateTxResponseCommand({
-                txResponse: nonOperatorUnpauseResponse,
-            }).execute()
-        ).to.be.rejectedWith(Error)
-
-        // Unpause token from operator account
-        const unpauseResponse = await pausableFacet.unpause({ gasLimit: GAS_LIMIT.hederaTokenManager.unpause })
-        await new ValidateTxResponseCommand({
-            txResponse: unpauseResponse,
-            confirmationEvent: 'TokenUnpaused',
-        }).execute()
+        pausableFacet = pausableFacet.connect(operator)
+        await expect(pausableFacet.unpause({
+          gasLimit: GAS_LIMIT.hederaTokenManager.unpause,
+        })).to.emit(pausableFacet, "TokenUnpaused")
+          .withArgs(tokenAddress)
 
         // Dissociate token from nonOperator account should pass
         const dissociateUnpausedResponse = await IHRC__factory.connect(tokenAddress, nonOperator).dissociate({

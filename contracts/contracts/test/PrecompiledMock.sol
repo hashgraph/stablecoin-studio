@@ -33,6 +33,10 @@ interface IPrecompiledMock {
     ) external returns (int64 responseCode);
 
     function revokeTokenKyc(address token, address account) external returns (int64 responseCode);
+
+    function pauseToken(address token) external returns (int64 responseCode);
+
+    function unpauseToken(address token) external returns (int64 responseCode);
 }
 
 contract PrecompiledMockStorageWrapper {
@@ -79,6 +83,14 @@ contract PrecompiledMockStorageWrapper {
         }
         return HederaResponseCodes.SUCCESS;
     }
+
+    function _pauseToken(address) internal pure returns (int64 responseCode) {
+        return HederaResponseCodes.SUCCESS;
+    }
+
+    function _unpauseToken(address) internal pure returns (int64 responseCode) {
+        return HederaResponseCodes.SUCCESS;
+    }
 }
 
 contract PrecompiledMock is IPrecompiledMock, PrecompiledMockStorageWrapper {
@@ -117,5 +129,13 @@ contract PrecompiledMock is IPrecompiledMock, PrecompiledMockStorageWrapper {
         int64 amount
     ) external view returns (int64 responseCode) {
         return _transferToken(token, sender, recipient, amount);
+    }
+
+    function pauseToken(address token) external pure returns (int64 responseCode) {
+        return _pauseToken(token);
+    }
+
+    function unpauseToken(address token) external pure returns (int64 responseCode) {
+        return _unpauseToken(token);
     }
 }
