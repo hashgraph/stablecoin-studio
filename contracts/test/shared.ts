@@ -1,3 +1,4 @@
+import { ethers } from 'hardhat';
 import { computeAddress, Wallet } from 'ethers'
 import {
     DEFAULT_TOKEN,
@@ -7,7 +8,11 @@ import {
     NUMBER_ZERO,
     tokenKeysToContract,
     TokenKeysToContractCommand,
-} from '@scripts'
+    deployFullInfrastructure,
+    DeployFullInfrastructureCommand,
+    DeployFullInfrastructureResult,
+    HEDERA_PRECOMPILED_ADDRESS
+} from '@scripts';
 import { SignerWithAddress } from '@nomicfoundation/hardhat-ethers/signers'
 import { IHederaTokenManager } from '@contracts'
 
@@ -27,6 +32,24 @@ export const DEFAULT_UPDATE_TOKEN_STRUCT = {
 } as IHederaTokenManager.UpdateTokenStructStructOutput
 
 let deployedResult: DeployStableCoinResult | undefined
+
+export async function deployFullInfrastructureInTests(
+    command: DeployFullInfrastructureCommand
+  ): Promise<DeployFullInfrastructureResult>
+{
+    // * Deploy precompiled mock
+    await _deployPrecompiledMock();
+
+    return await deployFullInfrastructure(command);
+}
+
+async function _deployPrecompiledMock() {
+  const PrecompiledMock = await ethers.getContractFactory("PrecompiledMock");
+  const precompiledMock = await PrecompiledMock.deploy();
+  const runtimeBytecode = await ethers.provider.getCode(await precompiledMock.getAddress());
+  await ethers.provider.send("hardhat_setCode", [HEDERA_PRECOMPILED_ADDRESS, runtimeBytecode]);
+  const mockPrecompiled = await ethers.getContractAt("PrecompiledMock", HEDERA_PRECOMPILED_ADDRESS);
+}
 
 export async function deployStableCoinInTests({
     signer,
