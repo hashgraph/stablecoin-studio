@@ -20,10 +20,10 @@ import { IHRC } from '../Interfaces/IHRC.sol';
 contract StableCoinTokenMock is IERC20Upgradeable, IERC20MetadataUpgradeable, IHRC {
     error NotImplemented();
 
-    uint256 private balance = 0;
+    uint256 private balance;
+    uint256 private tokensTotalSupply;
     string private tokenName;
     string private tokenSymbol;
-    int64 private tokenInitialTotalSupply;
     int32 private tokenDecimals;
 
     constructor(
@@ -33,7 +33,8 @@ contract StableCoinTokenMock is IERC20Upgradeable, IERC20MetadataUpgradeable, IH
     ) {
         tokenName = _token.name;
         tokenSymbol = _token.symbol;
-        tokenInitialTotalSupply = _initialTotalSupply;
+        balance = (uint256(uint64(_initialTotalSupply)));
+        tokensTotalSupply = (uint256(uint64(_initialTotalSupply)));
         tokenDecimals = _decimals;
     }
 
@@ -49,8 +50,8 @@ contract StableCoinTokenMock is IERC20Upgradeable, IERC20MetadataUpgradeable, IH
         return balance;
     }
 
-    function totalSupply() external pure override returns (uint256) {
-        return 1;
+    function totalSupply() external view override returns (uint256) {
+        return tokensTotalSupply;
     }
 
     function transfer(address, uint256) external pure override returns (bool) {
@@ -86,6 +87,12 @@ contract StableCoinTokenMock is IERC20Upgradeable, IERC20MetadataUpgradeable, IH
     }
 
     function increaseBalance(uint256 amount) external {
+        tokensTotalSupply = tokensTotalSupply + amount;
         balance = balance + amount;
+    }
+
+    function decreaseBalance(uint256 amount) external {
+        tokensTotalSupply = tokensTotalSupply - amount;
+        balance = balance - amount;
     }
 }

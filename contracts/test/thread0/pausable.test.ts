@@ -6,7 +6,6 @@ import {
     DEFAULT_TOKEN,
     MESSAGES,
     ROLES,
-    deployFullInfrastructure,
     DeployFullInfrastructureCommand,
     ValidateTxResponseCommand
 } from '@scripts'

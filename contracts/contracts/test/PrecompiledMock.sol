@@ -25,6 +25,12 @@ interface IPrecompiledMock {
         bytes[] memory metadata
     ) external returns (int64 responseCode, int64 newTotalSupply, int64[] memory serialNumbers);
 
+    function burnToken(
+        address token,
+        int64 amount,
+        int64[] memory serialNumbers
+    ) external returns (int64 responseCode, int64 newTotalSupply);
+
     function transferToken(
         address token,
         address sender,
@@ -70,6 +76,15 @@ contract PrecompiledMockStorageWrapper {
     ) internal returns (int64 responseCode, int64 newTotalSupply, int64[] memory serialNumbers) {
         StableCoinTokenMock(hederaToken).increaseBalance(uint256(uint64(amount)));
         return (HederaResponseCodes.SUCCESS, amount, serialNumbers);
+    }
+
+    function _burnToken(
+        address,
+        int64 amount,
+        int64[] memory
+    ) internal returns (int64 responseCode, int64 newTotalSupply) {
+        StableCoinTokenMock(hederaToken).decreaseBalance(uint256(uint64(amount)));
+        return (HederaResponseCodes.SUCCESS, newTotalSupply);
     }
 
     function _transferToken(
@@ -120,6 +135,14 @@ contract PrecompiledMock is IPrecompiledMock, PrecompiledMockStorageWrapper {
         bytes[] memory metadata
     ) external returns (int64 responseCode, int64 newTotalSupply, int64[] memory serialNumbers) {
         return _mintToken(token, amount, metadata);
+    }
+
+    function burnToken(
+        address token,
+        int64 amount,
+        int64[] memory serialNumbers
+    ) external returns (int64 responseCode, int64 newTotalSupply) {
+        return _burnToken(token, amount, serialNumbers);
     }
 
     function transferToken(
