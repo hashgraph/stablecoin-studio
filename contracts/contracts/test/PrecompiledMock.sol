@@ -43,6 +43,12 @@ interface IPrecompiledMock {
     function pauseToken(address token) external returns (int64 responseCode);
 
     function unpauseToken(address token) external returns (int64 responseCode);
+
+    function updateFungibleTokenCustomFees(
+        address token,
+        IHederaTokenService.FixedFee[] memory fixedFees,
+        IHederaTokenService.FractionalFee[] memory fractionalFees
+    ) external returns (int64 responseCode);
 }
 
 contract PrecompiledMockStorageWrapper {
@@ -106,6 +112,14 @@ contract PrecompiledMockStorageWrapper {
     function _unpauseToken(address) internal pure returns (int64 responseCode) {
         return HederaResponseCodes.SUCCESS;
     }
+
+    function _updateFungibleTokenCustomFees(
+        address,
+        IHederaTokenService.FixedFee[] memory,
+        IHederaTokenService.FractionalFee[] memory
+    ) internal pure returns (int64 responseCode) {
+        return HederaResponseCodes.SUCCESS;
+    }
 }
 
 contract PrecompiledMock is IPrecompiledMock, PrecompiledMockStorageWrapper {
@@ -160,5 +174,13 @@ contract PrecompiledMock is IPrecompiledMock, PrecompiledMockStorageWrapper {
 
     function unpauseToken(address token) external pure returns (int64 responseCode) {
         return _unpauseToken(token);
+    }
+
+    function updateFungibleTokenCustomFees(
+        address token,
+        IHederaTokenService.FixedFee[] memory fixedFees,
+        IHederaTokenService.FractionalFee[] memory fractionalFees
+    ) external pure returns (int64 responseCode) {
+        return _updateFungibleTokenCustomFees(token, fixedFees, fractionalFees);
     }
 }
