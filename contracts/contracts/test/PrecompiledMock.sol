@@ -49,11 +49,14 @@ interface IPrecompiledMock {
         IHederaTokenService.FixedFee[] memory fixedFees,
         IHederaTokenService.FractionalFee[] memory fractionalFees
     ) external returns (int64 responseCode);
+
+    function deleteToken(address token) external returns (int64 responseCode);
 }
 
 contract PrecompiledMockStorageWrapper {
     address private hederaToken;
     bool private kyc;
+    bool private deleted;
 
     function _createFungibleToken(
         IHederaTokenService.HederaToken memory token,
@@ -80,6 +83,9 @@ contract PrecompiledMockStorageWrapper {
         int64 amount,
         bytes[] memory
     ) internal returns (int64 responseCode, int64 newTotalSupply, int64[] memory serialNumbers) {
+        if (deleted) {
+            return (HederaResponseCodes.TOKEN_WAS_DELETED, 0, serialNumbers);
+        }
         StableCoinTokenMock(hederaToken).increaseBalance(uint256(uint64(amount)));
         return (HederaResponseCodes.SUCCESS, amount, serialNumbers);
     }
@@ -118,6 +124,11 @@ contract PrecompiledMockStorageWrapper {
         IHederaTokenService.FixedFee[] memory,
         IHederaTokenService.FractionalFee[] memory
     ) internal pure returns (int64 responseCode) {
+        return HederaResponseCodes.SUCCESS;
+    }
+
+    function _deleteToken(address) internal returns (int64 responseCode) {
+        deleted = true;
         return HederaResponseCodes.SUCCESS;
     }
 }
@@ -182,5 +193,9 @@ contract PrecompiledMock is IPrecompiledMock, PrecompiledMockStorageWrapper {
         IHederaTokenService.FractionalFee[] memory fractionalFees
     ) external pure returns (int64 responseCode) {
         return _updateFungibleTokenCustomFees(token, fixedFees, fractionalFees);
+    }
+
+    function deleteToken(address token) external returns (int64 responseCode) {
+        return _deleteToken(token);
     }
 }

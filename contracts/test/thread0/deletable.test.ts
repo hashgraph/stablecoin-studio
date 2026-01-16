@@ -8,9 +8,10 @@ import {
     DeletableFacet__factory,
     RolesFacet,
     RolesFacet__factory,
+    KYCFacet,
+    KYCFacet__factory,
 } from '@contracts'
 import {
-    deployFullInfrastructure,
     DeployFullInfrastructureCommand,
     MESSAGES,
     ONE_TOKEN,
@@ -18,14 +19,22 @@ import {
     validateTxResponse,
     ValidateTxResponseCommand,
 } from '@scripts'
-import { deployStableCoinInTests, GAS_LIMIT } from '@test/shared'
+import {
+  deployStableCoinInTests,
+  deployFullInfrastructureInTests,
+  GAS_LIMIT
+} from '@test/shared'
 
 describe('➡️ Delete Tests', function () {
+    const TOKEN_WAS_DELETED = 179;
+
     // Contracts
     let stableCoinProxyAddress: string
     let deletableFacet: DeletableFacet
     let rolesFacet: RolesFacet
     let cashInFacet: CashInFacet
+    let kycFacet: KYCFacet
+    let tokenAddress: string
     // Accounts
     let operator: SignerWithAddress
     let nonOperator: SignerWithAddress
@@ -34,6 +43,7 @@ describe('➡️ Delete Tests', function () {
         deletableFacet = DeletableFacet__factory.connect(address, operator)
         rolesFacet = RolesFacet__factory.connect(address, operator)
         cashInFacet = CashInFacet__factory.connect(address, operator)
+        kycFacet = KYCFacet__factory.connect(address, operator)
     }
 
     before(async () => {
@@ -42,14 +52,14 @@ describe('➡️ Delete Tests', function () {
         console.info(MESSAGES.deploy.info.deployFullInfrastructureInTests)
         ;[operator, nonOperator] = await ethers.getSigners()
 
-        const { ...deployedContracts } = await deployFullInfrastructure(
+        const { ...deployedContracts } = await deployFullInfrastructureInTests(
             await DeployFullInfrastructureCommand.newInstance({
                 signer: operator,
                 useDeployed: false,
                 useEnvironment: true,
             })
         )
-        ;({ stableCoinProxyAddress } = await deployStableCoinInTests({
+        ;({ stableCoinProxyAddress, tokenAddress } = await deployStableCoinInTests({
             signer: operator,
             businessLogicResolverProxyAddress: deployedContracts.businessLogicResolver.proxyAddress!,
             stableCoinFactoryProxyAddress: deployedContracts.stableCoinFactoryFacet.proxyAddress!,
@@ -59,37 +69,49 @@ describe('➡️ Delete Tests', function () {
     })
 
     it("Account without DELETE role can't delete a token", async function () {
-        const response = await deletableFacet.connect(nonOperator).deleteToken({
-            gasLimit: GAS_LIMIT.hederaTokenManager.deleteToken,
-        })
-        await expect(validateTxResponse(new ValidateTxResponseCommand({ txResponse: response }))).to.be.rejectedWith(
-            Error
-        )
+        deletableFacet = deletableFacet.connect(nonOperator)
+
+        await expect(deletableFacet.deleteToken({
+          gasLimit: GAS_LIMIT.hederaTokenManager.deleteToken,
+        })).to.be.revertedWithCustomError(deletableFacet, "AccountHasNoRole")
+          .withArgs(nonOperator, ROLES.delete.hash)
     })
 
     it('Account with DELETE role can delete a token', async function () {
         // We first grant delete role to account
-        const grantRoleResponse = await rolesFacet.grantRole(ROLES.delete.hash, nonOperator.address, {
+        deletableFacet = deletableFacet.connect(operator)
+
+        await expect (rolesFacet.grantRole(ROLES.delete.hash, nonOperator.address, {
             gasLimit: GAS_LIMIT.hederaTokenManager.grantRole,
-        })
-        await validateTxResponse(new ValidateTxResponseCommand({ txResponse: grantRoleResponse }))
+        })).to.emit(rolesFacet, "RoleGranted")
+            .withArgs(ROLES.delete.hash, nonOperator.address, operator.address)
+
+        // Should be able to grant KYC to an account with KYC role
+        await expect(kycFacet.grantKyc(operator.address, {
+          gasLimit: GAS_LIMIT.hederaTokenManager.grantKyc,
+        })).to.emit(kycFacet, "GrantTokenKyc")
+          .withArgs(tokenAddress, operator.address)
+
         // We check that the token exists by minting 1
-        const mintResponse = await cashInFacet.mint(operator.address, ONE_TOKEN, {
-            gasLimit: GAS_LIMIT.hederaTokenManager.mint,
-        })
-        await validateTxResponse(new ValidateTxResponseCommand({ txResponse: mintResponse }))
+        await expect(cashInFacet.mint(operator.address, ONE_TOKEN, {
+          gasLimit: GAS_LIMIT.hederaTokenManager.mint,
+        })).to.emit(cashInFacet, "TokensMinted")
+          .withArgs(operator.address, tokenAddress, ONE_TOKEN, operator.address)
+
+
         // Delete the token
-        const deleteResponse = await deletableFacet.connect(nonOperator).deleteToken({
-            gasLimit: GAS_LIMIT.hederaTokenManager.deleteToken,
-        })
-        await validateTxResponse(new ValidateTxResponseCommand({ txResponse: deleteResponse }))
+        deletableFacet = deletableFacet.connect(nonOperator)
+        await expect(deletableFacet.deleteToken({
+          gasLimit: GAS_LIMIT.hederaTokenManager.deleteToken,
+        })).to.emit(deletableFacet, "TokenDeleted")
+          .withArgs(tokenAddress)
+
         // We check that the token does not exist by unsucessfully trying to mint 1
-        const mintResponse2 = await cashInFacet.mint(nonOperator.address, ONE_TOKEN, {
-            gasLimit: GAS_LIMIT.hederaTokenManager.mint,
-        })
-        await expect(
-            validateTxResponse(new ValidateTxResponseCommand({ txResponse: mintResponse2 }))
-        ).to.be.rejectedWith(Error)
+        await expect(cashInFacet.mint(nonOperator.address, ONE_TOKEN, {
+          gasLimit: GAS_LIMIT.hederaTokenManager.mint,
+        })).to.be.revertedWithCustomError(cashInFacet, "ResponseCodeInvalid")
+          .withArgs(TOKEN_WAS_DELETED)
+
 
         //! The status CANNOT BE reverted since we deleted the token
     })
