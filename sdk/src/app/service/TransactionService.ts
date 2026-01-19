@@ -49,7 +49,7 @@ import {
 	TokenWipeTransaction,
 	Transaction,
 	TransferTransaction,
-} from '@hashgraph/sdk';
+} from '@hiero-ledger/sdk';
 import { MirrorNodeAdapter } from '../../port/out/mirror/MirrorNodeAdapter.js';
 import { HederaTokenManagerFacet__factory } from '@hashgraph/stablecoin-npm-contracts';
 import { ethers } from 'ethers';

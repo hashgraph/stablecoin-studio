@@ -1,4 +1,4 @@
-import { AccountId } from '@hashgraph/sdk';
+import { AccountId } from '@hiero-ledger/sdk';
 import { InvalidIdFormat } from './error/InvalidIdFormat.js';
 
 const HEDERA_FORMAT_ID_REGEX =

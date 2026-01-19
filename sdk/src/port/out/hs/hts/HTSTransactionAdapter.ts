@@ -22,7 +22,7 @@ import {
 	TransactionResponse as HTransactionResponse,
 	Transaction,
 	Client,
-} from '@hashgraph/sdk';
+} from '@hiero-ledger/sdk';
 import { singleton } from 'tsyringe';
 import { HederaTransactionAdapter } from '../HederaTransactionAdapter.js';
 import TransactionResponse from '../../../../domain/context/transaction/TransactionResponse.js';

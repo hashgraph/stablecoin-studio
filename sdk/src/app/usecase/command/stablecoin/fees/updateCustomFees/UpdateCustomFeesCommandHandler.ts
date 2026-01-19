@@ -28,7 +28,7 @@ import {
 	UpdateCustomFeesCommand,
 	UpdateCustomFeesCommandResponse,
 } from './UpdateCustomFeesCommand.js';
-import { CustomFee as HCustomFee } from '@hashgraph/sdk';
+import { CustomFee as HCustomFee } from '@hiero-ledger/sdk';
 import { fromCustomFeesToHCustomFees } from '../../../../../../domain/context/fee/CustomFee.js';
 import { GetAccountTokenRelationshipQuery } from '../../../../query/account/tokenRelationship/GetAccountTokenRelationshipQuery.js';
 import { StableCoinNotAssociated } from '../../error/StableCoinNotAssociated.js';
