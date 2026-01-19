@@ -31,7 +31,7 @@ import {
 import {
 	CustomFee as HCustomFee,
 	CustomFixedFee as HCustomFixedFee,
-} from '@hashgraph/sdk';
+} from '@hiero-ledger/sdk';
 import { fromCustomFeesToHCustomFees } from '../../../../../../domain/context/fee/CustomFee.js';
 import { GetAccountTokenRelationshipQuery } from '../../../../query/account/tokenRelationship/GetAccountTokenRelationshipQuery.js';
 import { StableCoinNotAssociated } from '../../error/StableCoinNotAssociated.js';
@@ -41,7 +41,7 @@ import {
 } from '../../../../../../port/out/mirror/response/AccountTokenRelationViewModel.js';
 import { AccountFreeze } from '../../error/AccountFreeze.js';
 import { AccountNotKyc } from '../../error/AccountNotKyc.js';
-//import FeeAssessmentMethod from '@hashgraph/sdk/lib/token/FeeAssessmentMethod.js';
+//import FeeAssessmentMethod from '@hiero-ledger/sdk/lib/token/FeeAssessmentMethod.js';
 
 @CommandHandler(addFixedFeesCommand)
 export class addFixedFeesCommandHandler
