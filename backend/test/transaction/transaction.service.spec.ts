@@ -28,7 +28,7 @@ import { SignTransactionRequestDto } from '../../src/transaction/dto/sign-transa
 import TransactionMock, { DEFAULT } from './transaction.mock';
 import { LoggerService } from '../../src/logger/logger.service';
 import { TransactionStatus } from '../../src/transaction/status.enum';
-import { Client } from '@hashgraph/sdk';
+import { Client } from '@hiero-ledger/sdk';
 
 describe('Transaction Service Test', () => {
   let service: TransactionService;

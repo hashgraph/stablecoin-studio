@@ -27,7 +27,7 @@ import {
 	CustomFixedFee as HCustomFixedFee,
 	CustomFractionalFee as HCustomFractionalFee,
 	FeeAssessmentMethod,
-} from '@hashgraph/sdk';
+} from '@hiero-ledger/sdk';
 
 export const MAX_CUSTOM_FEES = 10;
 export const MAX_PERCENTAGE_DECIMALS = 2;

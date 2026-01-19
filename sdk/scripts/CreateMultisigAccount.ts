@@ -37,7 +37,7 @@ import {
 	Client,
 	PrivateKey,
 	AccountId,
-} from '@hashgraph/sdk';
+} from '@hiero-ledger/sdk';
 
 // Hex encoded private key of the ED25519 key that will be added to the multisig account's key
 const Multisig_ED25519_privateKey = '';

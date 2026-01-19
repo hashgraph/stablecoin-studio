@@ -41,7 +41,7 @@ import {
 	TokenUpdateTransaction,
 	Timestamp,
 	Long,
-} from '@hashgraph/sdk';
+} from '@hiero-ledger/sdk';
 import LogService from '../../../app/service/LogService.js';
 import { TransactionBuildingError } from './error/TransactionBuildingError.js';
 

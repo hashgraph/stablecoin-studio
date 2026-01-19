@@ -37,7 +37,7 @@ import {
 	TokenUnfreezeTransaction,
 	TokenGrantKycTransaction,
 	TokenRevokeKycTransaction,
-} from '@hashgraph/sdk';
+} from '@hiero-ledger/sdk';
 import { StableCoinFactoryFacet__factory } from '@hashgraph/stablecoin-npm-contracts';
 import {
 	IStrategyConfig,

@@ -27,7 +27,7 @@ import {
 	CustomFee as HCustomFee,
 	Client,
 	Long,
-} from '@hashgraph/sdk';
+} from '@hiero-ledger/sdk';
 import TransactionAdapter from '../TransactionAdapter';
 import TransactionResponse from '../../../domain/context/transaction/TransactionResponse.js';
 import { Operation } from '../../../domain/context/stablecoin/Capability.js';
