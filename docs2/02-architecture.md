@@ -23,11 +23,12 @@ TThe Stablecoin Studio SDK is built following **Hexagonal Architecture** (Ports 
 | \`getCapabilities()\` | Instance | Returns the RBAC permissions for the current operator. |
 
 ### Role Management API
-\`\`\`typescript
+```typescript
 await stablecoin.assignRole({
     role: StablecoinRole.CASHIER,
     account: "0.0.XXXX"
 });
+```
 
 # 📜 Smart Contract Architecture
 
