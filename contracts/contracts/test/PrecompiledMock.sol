@@ -87,11 +87,10 @@ contract PrecompiledMockStorageWrapper {
         int64 initialTotalSupply,
         int32 decimals
     ) internal returns (int64 responseCode, address tokenAddress) {
-        if (_hasKycKey(token)) {
-            tokenKyc = true;
-        }
+        tokenKyc = _hasKycKey(token);
         tokenAddress = address(new StableCoinTokenMock(token, initialTotalSupply, decimals));
         hederaToken = tokenAddress;
+        deleted = false;
         return (HederaResponseCodes.SUCCESS, tokenAddress);
     }
 

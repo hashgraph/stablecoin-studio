@@ -310,9 +310,9 @@ describe('➡️ DiamondCutManager Tests', () => {
             },
         ]
 
-        await expect (diamondCutManager.createConfiguration(CONFIG_ID.stableCoin, facetConfigurations, {
-            gasLimit: GAS_LIMIT.diamondCutManager.createConfiguration,
-        })).to.be.revertedWithCustomError(diamondCutManager, "FacetIdNotRegistered")
+        await expect (diamondCutManager.createConfiguration(
+            CONFIG_ID.stableCoin, facetConfigurations
+        )).to.be.revertedWithCustomError(diamondCutManager, "FacetIdNotRegistered")
     })
 
     it('GIVEN a resolver WHEN adding a new configuration with a duplicated facet THEN fails with DuplicatedFacetInConfiguration', async () => {
@@ -330,9 +330,9 @@ describe('➡️ DiamondCutManager Tests', () => {
                 version: facetVersions[index],
             })
         })
-        await expect (diamondCutManager.createConfiguration(CONFIG_ID.stableCoin, facetConfigurations, {
-            gasLimit: GAS_LIMIT.diamondCutManager.createConfiguration,
-        })).to.be.revertedWithCustomError(diamondCutManager, "DuplicatedFacetInConfiguration")
+        await expect (diamondCutManager.createConfiguration(
+            CONFIG_ID.stableCoin, facetConfigurations
+        )).to.be.revertedWithCustomError(diamondCutManager, "DuplicatedFacetInConfiguration")
     })
 
     it('GIVEN a batch deploying WHEN run cancelBatchConfiguration THEN all the related information is removed', async () => {
@@ -420,10 +420,7 @@ describe('➡️ DiamondCutManager Tests', () => {
         await expect (diamondCutManager.createBatchConfiguration(
             CONFIG_ID.stableCoin,
             facetConfigurations,
-            false,
-            {
-                gasLimit: GAS_LIMIT.diamondCutManager.createConfiguration,
-            }
+            false
         )).to.be.revertedWithCustomError(diamondCutManager, "FacetIdNotRegistered")
     })
 
@@ -445,10 +442,7 @@ describe('➡️ DiamondCutManager Tests', () => {
         await expect (diamondCutManager.createBatchConfiguration(
             CONFIG_ID.stableCoin,
             facetConfigurations,
-            false,
-            {
-                gasLimit: GAS_LIMIT.diamondCutManager.createConfiguration,
-            }
+            false
         )).to.be.revertedWithCustomError(diamondCutManager, "DuplicatedFacetInConfiguration")
     })
     it('GIVEN a resolver WHEN a selector is blacklisted THEN transaction fails with SelectorBlacklisted', async () => {
