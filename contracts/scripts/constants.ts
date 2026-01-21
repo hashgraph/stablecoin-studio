@@ -100,7 +100,7 @@ export const GAS_LIMIT = {
         addRoleToList: 150_000n,
         removeRoleFromList: 150_000n,
         getRoleList: 150_000n,
-        mint: 150_000n,
+        mint: 200_000n,
         freeze: 80_000n,
         unfreeze: 80_000n,
         updateToken: 150_000n,
