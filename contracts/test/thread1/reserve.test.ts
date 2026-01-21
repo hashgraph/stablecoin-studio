@@ -7,18 +7,21 @@ import {
     HederaReserveFacet__factory,
     ReserveFacet,
     ReserveFacet__factory,
+    StableCoinTokenMock__factory
 } from '@contracts'
 import {
     DEFAULT_TOKEN,
     delay,
-    deployFullInfrastructure,
     DeployFullInfrastructureCommand,
     deployStableCoin,
     DeployStableCoinCommand,
     MESSAGES,
     ValidateTxResponseCommand,
 } from '@scripts'
-import { GAS_LIMIT } from '@test/shared'
+import {
+  deployFullInfrastructureInTests,
+  GAS_LIMIT
+} from '@test/shared'
 
 let operator: SignerWithAddress
 let nonOperator: SignerWithAddress
@@ -45,7 +48,7 @@ before(async () => {
     console.info(MESSAGES.deploy.info.deployFullInfrastructureInTests)
     ;[operator, nonOperator] = await ethers.getSigners()
 
-    const { ...deployedContracts } = await deployFullInfrastructure(
+    const { ...deployedContracts } = await deployFullInfrastructureInTests(
         await DeployFullInfrastructureCommand.newInstance({
             signer: operator,
             useDeployed: false,
@@ -163,6 +166,7 @@ describe('➡️ Reserve Tests', function () {
 describe('Reserve Tests with reserve and token with same Decimals', function () {
     // Contracts
     let stableCoinProxyAddress: string
+    let tokenAddress: string
     let reserveFacet: ReserveFacet
     let cashInFacet: CashInFacet
 
@@ -192,6 +196,10 @@ describe('Reserve Tests with reserve and token with same Decimals', function () 
         })
         const result = await deployStableCoin(deployCommand)
         stableCoinProxyAddress = result.stableCoinProxyAddress
+        tokenAddress = result.tokenAddress
+
+        await StableCoinTokenMock__factory.connect(tokenAddress, operator)
+          .setStableCoinAddress(stableCoinProxyAddress)
 
         await setFacets(stableCoinProxyAddress)
     })
@@ -229,18 +237,17 @@ describe('Reserve Tests with reserve and token with same Decimals', function () 
         const totalReserve = result[0]
 
         // Cashin more tokens than reserve amount: fail
-        const mintResponse = await cashInFacet.mint(operator.address, totalReserve + 1n, {
+        await expect (cashInFacet.mint(operator.address, totalReserve + 1n, {
             gasLimit: GAS_LIMIT.hederaTokenManager.mint,
-        })
-        await expect(
-            new ValidateTxResponseCommand({ txResponse: mintResponse }).execute()
-        ).to.eventually.be.rejectedWith(Error)
+        })).to.be.revertedWithCustomError(cashInFacet, "AmountBiggerThanReserve")
+            .withArgs(totalReserve + 1n)
     })
 })
 
 describe('Reserve Tests with reserve decimals higher than token decimals', function () {
     // Contracts
     let stableCoinProxyAddress: string
+    let tokenAddress: string
     let reserveFacet: ReserveFacet
     let cashInFacet: CashInFacet
 
@@ -268,8 +275,13 @@ describe('Reserve Tests with reserve decimals higher than token decimals', funct
             businessLogicResolverProxyAddress: businessLogicResolver,
             stableCoinFactoryProxyAddress: stableCoinFactoryProxy,
         })
+
         const result = await deployStableCoin(deployCommand)
         stableCoinProxyAddress = result.stableCoinProxyAddress
+        tokenAddress = result.tokenAddress
+
+        await StableCoinTokenMock__factory.connect(tokenAddress, operator)
+          .setStableCoinAddress(stableCoinProxyAddress)
 
         await setFacets(stableCoinProxyAddress)
     })
@@ -307,16 +319,17 @@ describe('Reserve Tests with reserve decimals higher than token decimals', funct
         const totalReserve = result[0]
 
         // Cashin more tokens than reserve amount: fail
-        const mintResponse = await cashInFacet.mint(operator.address, totalReserve + 1n, {
+        await expect (cashInFacet.mint(operator.address, totalReserve + 1n, {
             gasLimit: GAS_LIMIT.hederaTokenManager.mint,
-        })
-        await expect(new ValidateTxResponseCommand({ txResponse: mintResponse }).execute()).to.be.rejectedWith(Error)
+        })).to.be.revertedWithCustomError(cashInFacet, "AmountBiggerThanReserve")
+            .withArgs(totalReserve + 1n)
     })
 })
 
 describe('Reserve Tests with reserve decimals lower than token decimals', function () {
     // Contracts
     let stableCoinProxyAddress: string
+    let tokenAddress: string
     let reserveFacet: ReserveFacet
     let cashInFacet: CashInFacet
 
@@ -346,6 +359,10 @@ describe('Reserve Tests with reserve decimals lower than token decimals', functi
         })
         const result = await deployStableCoin(deployCommand)
         stableCoinProxyAddress = result.stableCoinProxyAddress
+        tokenAddress = result.tokenAddress
+
+        await StableCoinTokenMock__factory.connect(tokenAddress, operator)
+          .setStableCoinAddress(stableCoinProxyAddress)
 
         await setFacets(stableCoinProxyAddress)
     })
@@ -383,10 +400,10 @@ describe('Reserve Tests with reserve decimals lower than token decimals', functi
         const totalReserve = result[0]
 
         // Cashin more tokens than reserve amount: fail
-        const mintResponse = await cashInFacet.mint(operator.address, totalReserve + 1n, {
+        await expect (cashInFacet.mint(operator.address, totalReserve + 1n, {
             gasLimit: GAS_LIMIT.hederaTokenManager.mint,
-        })
-        await expect(new ValidateTxResponseCommand({ txResponse: mintResponse }).execute()).to.be.rejectedWith(Error)
+        })).to.be.revertedWithCustomError(cashInFacet, "FormatNumberIncorrect")
+            .withArgs(totalReserve + 1n)
     })
 
     it('Can not mint tokens if updated at date expired', async function () {

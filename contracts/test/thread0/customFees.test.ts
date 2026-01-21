@@ -1,7 +1,14 @@
 import { expect } from 'chai'
 import { SignerWithAddress } from '@nomicfoundation/hardhat-ethers/signers'
 import { ethers } from 'hardhat'
-import { CustomFeesFacet, CustomFeesFacet__factory, IHederaTokenService, IHRC__factory } from '@contracts'
+import {
+  CustomFeesFacet,
+  CustomFeesFacet__factory,
+  IHederaTokenService,
+  IHRC__factory,
+  StableCoinTokenMock,
+  StableCoinTokenMock__factory,
+} from '@contracts'
 import {
     ADDRESS_ZERO,
     MESSAGES,
@@ -75,6 +82,9 @@ describe('➡️ Custom Fees Tests', function () {
                 feeCollector: ADDRESS_ZERO,
             },
         ]
+
+        await StableCoinTokenMock__factory.connect(tokenAddress, operator)
+          .setStableCoinAddress(stableCoinProxyAddress);
 
         await setFacets(stableCoinProxyAddress)
     })

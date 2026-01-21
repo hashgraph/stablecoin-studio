@@ -6,6 +6,8 @@ import {
     HederaTokenManagerFacet__factory,
     HederaTokenManagerFacet,
     BurnableFacet,
+    StableCoinTokenMock,
+    StableCoinTokenMock__factory,
 } from '@contracts'
 import {
     DEFAULT_TOKEN,
@@ -56,6 +58,9 @@ describe('➡️ Burn Tests', () => {
             businessLogicResolverProxyAddress: deployedContracts.businessLogicResolver.proxyAddress!,
             stableCoinFactoryProxyAddress: deployedContracts.stableCoinFactoryFacet.proxyAddress!,
         }))
+
+        await StableCoinTokenMock__factory.connect(tokenAddress, operator)
+          .setStableCoinAddress(stableCoinProxyAddress);
 
         await setFacets(stableCoinProxyAddress)
     })

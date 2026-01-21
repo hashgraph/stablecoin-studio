@@ -1,7 +1,13 @@
 import { expect } from 'chai'
 import { SignerWithAddress } from '@nomicfoundation/hardhat-ethers/signers'
 import { ethers } from 'hardhat'
-import { IHRC__factory, PausableFacet, PausableFacet__factory } from '@contracts'
+import {
+  IHRC__factory,
+  PausableFacet,
+  PausableFacet__factory,
+  StableCoinTokenMock,
+  StableCoinTokenMock__factory
+} from '@contracts'
 import {
     DEFAULT_TOKEN,
     MESSAGES,
@@ -47,6 +53,9 @@ describe('Pause Tests', function () {
             stableCoinFactoryProxyAddress: deployedContracts.stableCoinFactoryFacet.proxyAddress!,
             initialAmountDataFeed: DEFAULT_TOKEN.initialAmountDataFeed.toString(),
         }))
+
+        await StableCoinTokenMock__factory.connect(tokenAddress, operator)
+          .setStableCoinAddress(stableCoinProxyAddress);
 
         await setFacets(stableCoinProxyAddress)
     })

@@ -51,30 +51,71 @@ interface IPrecompiledMock {
     ) external returns (int64 responseCode);
 
     function deleteToken(address token) external returns (int64 responseCode);
+
+    function freezeToken(address token, address account) external returns (int64 responseCode);
+
+    function unfreezeToken(address token, address account) external returns (int64 responseCode);
+
+    function wipeTokenAccount(
+        address token,
+        address account,
+        int64 amount
+    ) external returns (int64 responseCode);
+
+    function getTokenInfo(address token)
+    external returns (int64 responseCode, IHederaTokenService.TokenInfo memory tokenInfo);
+
+    function updateTokenInfo(address token, IHederaTokenService.HederaToken memory tokenInfo)
+    external
+    returns (int64 responseCode);
+
+    function getTokenKey(address token, uint keyType)
+    external
+    returns (int64 responseCode, IHederaTokenService.KeyValue memory key);
 }
 
 contract PrecompiledMockStorageWrapper {
     address private hederaToken;
-    bool private kyc;
+    IHederaTokenService.TokenInfo private tokenInfo;
     bool private deleted;
+    bool private tokenKyc;
+    mapping(address account => bool kyc) private kyc;
+    mapping(address account => bool frozen) private frozen;
 
     function _createFungibleToken(
         IHederaTokenService.HederaToken memory token,
         int64 initialTotalSupply,
         int32 decimals
     ) internal returns (int64 responseCode, address tokenAddress) {
+        if (_hasKycKey(token)) {
+            tokenKyc = true;
+        }
         tokenAddress = address(new StableCoinTokenMock(token, initialTotalSupply, decimals));
         hederaToken = tokenAddress;
         return (HederaResponseCodes.SUCCESS, tokenAddress);
     }
 
-    function _grantTokenKyc(address, address) internal returns (int64 responseCode) {
-        kyc = true;
+    function _hasKycKey(
+        IHederaTokenService.HederaToken memory token
+    ) private pure returns (bool) {
+        uint256 KYC_KEY_BIT = 1 << 1;
+
+        for (uint256 i = 0; i < token.tokenKeys.length; i++) {
+            if ((token.tokenKeys[i].keyType & KYC_KEY_BIT) != 0) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    function _grantTokenKyc(address, address account) internal returns (int64 responseCode) {
+        kyc[account] = true;
         return HederaResponseCodes.SUCCESS;
     }
 
-    function _revokeTokenKyc(address, address) internal returns (int64 responseCode) {
-        kyc = false;
+    function _revokeTokenKyc(address, address account) internal returns (int64 responseCode) {
+        kyc[account] = false;
         return HederaResponseCodes.SUCCESS;
     }
 
@@ -86,7 +127,7 @@ contract PrecompiledMockStorageWrapper {
         if (deleted) {
             return (HederaResponseCodes.TOKEN_WAS_DELETED, 0, serialNumbers);
         }
-        StableCoinTokenMock(hederaToken).increaseBalance(uint256(uint64(amount)));
+        StableCoinTokenMock(hederaToken).increaseTotalSupply(uint256(uint64(amount)));
         return (HederaResponseCodes.SUCCESS, amount, serialNumbers);
     }
 
@@ -95,19 +136,26 @@ contract PrecompiledMockStorageWrapper {
         int64 amount,
         int64[] memory
     ) internal returns (int64 responseCode, int64 newTotalSupply) {
-        StableCoinTokenMock(hederaToken).decreaseBalance(uint256(uint64(amount)));
+        StableCoinTokenMock(hederaToken).decreaseTotalSupply(uint256(uint64(amount)));
         return (HederaResponseCodes.SUCCESS, newTotalSupply);
     }
 
     function _transferToken(
         address,
-        address,
-        address,
-        int64
-    ) internal view returns (int64 responseCode) {
-        if (!kyc) {
+        address sender,
+        address recipient,
+        int64 amount
+    ) internal returns (int64 responseCode) {
+        // Checking the sender is not needed since the sender will be always the stablecoin contract itself
+        // In the tests we will assume that the stablecoin contract has the KYC granted
+        if (tokenKyc && (!kyc[recipient])) {
             return (HederaResponseCodes.ACCOUNT_KYC_NOT_GRANTED_FOR_TOKEN);
         }
+        if (frozen[sender] || frozen[recipient]) {
+            return (HederaResponseCodes.ACCOUNT_FROZEN_FOR_TOKEN);
+        }
+        StableCoinTokenMock(hederaToken).increaseBalance(recipient, uint256(uint64(amount)));
+        StableCoinTokenMock(hederaToken).decreaseBalance(sender, uint256(uint64(amount)));
         return HederaResponseCodes.SUCCESS;
     }
 
@@ -130,6 +178,62 @@ contract PrecompiledMockStorageWrapper {
     function _deleteToken(address) internal returns (int64 responseCode) {
         deleted = true;
         return HederaResponseCodes.SUCCESS;
+    }
+
+    function _freezeToken(address, address account) internal returns (int64 responseCode) {
+        frozen[account] = true;
+        return HederaResponseCodes.SUCCESS;
+    }
+
+    function _unfreezeToken(address, address account) internal returns (int64 responseCode) {
+        frozen[account] = false;
+        return HederaResponseCodes.SUCCESS;
+    }
+
+    function _wipeTokenAccount(
+        address,
+        address account,
+        int64 amount
+    ) internal returns (int64 responseCode) {
+        if (StableCoinTokenMock(hederaToken).balanceOf(account) < uint256(uint64(amount))) {
+            return (HederaResponseCodes.INVALID_WIPING_AMOUNT);
+        }
+        StableCoinTokenMock(hederaToken).decreaseBalance(account, uint256(uint64(amount)));
+        StableCoinTokenMock(hederaToken).decreaseTotalSupply(uint256(uint64(amount)));
+        return HederaResponseCodes.SUCCESS;
+    }
+
+    function _getTokenInfo(address)
+    internal view returns (int64, IHederaTokenService.TokenInfo memory) {
+        return (HederaResponseCodes.SUCCESS, tokenInfo);
+    }
+
+    function _updateTokenInfo(address, IHederaTokenService.HederaToken memory)
+    internal pure
+    returns (int64 responseCode) {
+        return (HederaResponseCodes.SUCCESS);
+    }
+
+    function _getTokenKey(address, uint keyType)
+    internal view
+    returns (int64 responseCode, IHederaTokenService.KeyValue memory key) {
+        IHederaTokenService.TokenKey[] memory tokenKeys = StableCoinTokenMock(hederaToken).getTokenKeys();
+        for (uint256 i = 0; i < tokenKeys.length; i++) {
+            if ((tokenKeys[i].keyType & keyType) != 0) {
+                return (HederaResponseCodes.SUCCESS, tokenKeys[i].key);
+            }
+        }
+        // key not found
+        return  (
+            HederaResponseCodes.KEY_NOT_PROVIDED,
+            IHederaTokenService.KeyValue({
+                inheritAccountKey: false,
+                contractId: address(0),
+                ed25519: "",
+                ECDSA_secp256k1: "",
+                delegatableContractId: address(0)
+            })
+        );
     }
 }
 
@@ -175,7 +279,7 @@ contract PrecompiledMock is IPrecompiledMock, PrecompiledMockStorageWrapper {
         address sender,
         address recipient,
         int64 amount
-    ) external view returns (int64 responseCode) {
+    ) external returns (int64 responseCode) {
         return _transferToken(token, sender, recipient, amount);
     }
 
@@ -197,5 +301,38 @@ contract PrecompiledMock is IPrecompiledMock, PrecompiledMockStorageWrapper {
 
     function deleteToken(address token) external returns (int64 responseCode) {
         return _deleteToken(token);
+    }
+
+    function freezeToken(address token, address account) external returns (int64 responseCode) {
+        return _freezeToken(token, account);
+    }
+
+    function unfreezeToken(address token, address account) external returns (int64 responseCode) {
+        return _unfreezeToken(token, account);
+    }
+
+    function wipeTokenAccount(
+        address token,
+        address account,
+        int64 amount
+    ) external returns (int64 responseCode) {
+        return _wipeTokenAccount(token, account, amount);
+    }
+
+    function getTokenInfo(address token)
+    external view returns (int64 responseCode, IHederaTokenService.TokenInfo memory tokenInfo) {
+        return _getTokenInfo(token);
+    }
+
+    function updateTokenInfo(address token, IHederaTokenService.HederaToken memory tokenInfo)
+    external pure
+    returns (int64 responseCode) {
+        return _updateTokenInfo(token, tokenInfo);
+    }
+
+    function getTokenKey(address token, uint keyType)
+    external view
+    returns (int64 responseCode, IHederaTokenService.KeyValue memory key) {
+        return _getTokenKey(token, keyType);
     }
 }

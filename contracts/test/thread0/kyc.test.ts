@@ -1,7 +1,13 @@
 import { expect } from 'chai'
 import { SignerWithAddress } from '@nomicfoundation/hardhat-ethers/signers'
 import { ethers } from 'hardhat'
-import { CashInFacet, CashInFacet__factory, KYCFacet, KYCFacet__factory } from '@contracts'
+import {
+  CashInFacet,
+  CashInFacet__factory,
+  KYCFacet,
+  KYCFacet__factory,
+  StableCoinTokenMock__factory,
+} from '@contracts'
 import {
     ADDRESS_ZERO,
     MESSAGES,
@@ -38,7 +44,6 @@ describe('➡️ KYC Tests', function () {
         console.log = () => {} // eslint-disable-line
         console.info(MESSAGES.deploy.info.deployFullInfrastructureInTests)
         ;[operator, nonOperator] = await ethers.getSigners()
-
         const { ...deployedContracts } = await deployFullInfrastructureInTests(
             await DeployFullInfrastructureCommand.newInstance({
                 signer: operator,
@@ -53,6 +58,9 @@ describe('➡️ KYC Tests', function () {
             addKyc: true,
             grantKYCToOriginalSender: true,
         }))
+
+        await StableCoinTokenMock__factory.connect(tokenAddress, operator)
+          .setStableCoinAddress(stableCoinProxyAddress)
 
         await setFacets(stableCoinProxyAddress)
     })

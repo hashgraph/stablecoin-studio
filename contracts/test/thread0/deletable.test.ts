@@ -8,8 +8,8 @@ import {
     DeletableFacet__factory,
     RolesFacet,
     RolesFacet__factory,
-    KYCFacet,
-    KYCFacet__factory,
+    StableCoinTokenMock,
+    StableCoinTokenMock__factory,
 } from '@contracts'
 import {
     DeployFullInfrastructureCommand,
@@ -33,7 +33,6 @@ describe('➡️ Delete Tests', function () {
     let deletableFacet: DeletableFacet
     let rolesFacet: RolesFacet
     let cashInFacet: CashInFacet
-    let kycFacet: KYCFacet
     let tokenAddress: string
     // Accounts
     let operator: SignerWithAddress
@@ -43,7 +42,6 @@ describe('➡️ Delete Tests', function () {
         deletableFacet = DeletableFacet__factory.connect(address, operator)
         rolesFacet = RolesFacet__factory.connect(address, operator)
         cashInFacet = CashInFacet__factory.connect(address, operator)
-        kycFacet = KYCFacet__factory.connect(address, operator)
     }
 
     before(async () => {
@@ -65,6 +63,9 @@ describe('➡️ Delete Tests', function () {
             stableCoinFactoryProxyAddress: deployedContracts.stableCoinFactoryFacet.proxyAddress!,
         }))
 
+        await StableCoinTokenMock__factory.connect(tokenAddress, operator)
+          .setStableCoinAddress(stableCoinProxyAddress);
+
         await setFacets(stableCoinProxyAddress)
     })
 
@@ -85,12 +86,6 @@ describe('➡️ Delete Tests', function () {
             gasLimit: GAS_LIMIT.hederaTokenManager.grantRole,
         })).to.emit(rolesFacet, "RoleGranted")
             .withArgs(ROLES.delete.hash, nonOperator.address, operator.address)
-
-        // Should be able to grant KYC to an account with KYC role
-        await expect(kycFacet.grantKyc(operator.address, {
-          gasLimit: GAS_LIMIT.hederaTokenManager.grantKyc,
-        })).to.emit(kycFacet, "GrantTokenKyc")
-          .withArgs(tokenAddress, operator.address)
 
         // We check that the token exists by minting 1
         await expect(cashInFacet.mint(operator.address, ONE_TOKEN, {
