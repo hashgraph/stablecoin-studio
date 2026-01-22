@@ -15,15 +15,15 @@ const config: Config = {
   },
 
   // Set the production url of your site here
-  url: 'https://your-docusaurus-site.example.com',
+  url: 'https://hashgraph.github.io',
   // Set the /<baseUrl>/ pathname under which your site is served
   // For GitHub pages deployment, it is often '/<projectName>/'
-  baseUrl: '/stable-coin-studio/',
+  baseUrl: '/stablecoin-studio/',
 
   // GitHub pages deployment config.
   // If you aren't using GitHub pages, you don't need these.
-  organizationName: 'facebook', // Usually your GitHub org/user name.
-  projectName: 'stable-coin-studio', // Usually your repo name.
+  organizationName: 'hashgraph', // Usually your GitHub org/user name.
+  projectName: 'stablecoin-studio', // Usually your repo name.
 
   onBrokenLinks: 'throw',
 
@@ -37,32 +37,12 @@ const config: Config = {
 
   presets: [
     [
-      'classic',
+      "classic",
       {
-        docs: {
-          sidebarPath: './sidebars.ts',
-          // Please change this to your repo.
-          // Remove this to remove the "edit this page" links.
-          editUrl:
-            'https://github.com/facebook/docusaurus/tree/main/packages/create-docusaurus/templates/shared/',
-        },
-        blog: {
-          showReadingTime: true,
-          feedOptions: {
-            type: ['rss', 'atom'],
-            xslt: true,
-          },
-          // Please change this to your repo.
-          // Remove this to remove the "edit this page" links.
-          editUrl:
-            'https://github.com/facebook/docusaurus/tree/main/packages/create-docusaurus/templates/shared/',
-          // Useful options to enforce blogging best practices
-          onInlineTags: 'warn',
-          onInlineAuthors: 'warn',
-          onUntruncatedBlogPosts: 'warn',
-        },
+        docs: false, // Disable default docs plugin
+        blog: false, // Blog disabled
         theme: {
-          customCss: './src/css/custom.css',
+          customCss: "./src/css/custom.css",
         },
       } satisfies Preset.Options,
     ],
@@ -73,15 +53,18 @@ const config: Config = {
       "@docusaurus/plugin-content-docs",
       {
         id: "scs",
-        path: "../docs2/",
+        path: "../documentation",
         routeBasePath: "scs",
         sidebarPath: "./sidebars.ts",
-        editUrl: "https://github.com/hashgraph/stable-coin-studio/tree/main/",
+        editUrl: "https://github.com/hashgraph/stablecoin-studio/tree/main/",
       },
     ]
     
   ],
 
+  markdown: {
+    mermaid: true,
+  },
 
   themes: ["@docusaurus/theme-mermaid"],
 
@@ -98,7 +81,18 @@ const config: Config = {
         src: "img/logo.svg",
       },
       items: [
-        
+        {
+          type: "doc",
+          docId: "intro",
+          docsPluginId: "scs",
+          position: "left",
+          label: "SCS",
+        },
+        {
+          href: "https://github.com/hashgraph/stablecoin-studio",
+          label: "GitHub",
+          position: "right",
+        }
       ],
     },
     footer: {
@@ -109,7 +103,7 @@ const config: Config = {
           items: [
             {
               label: "SCS Getting Started",
-              to: "docs/intro.md",
+              to: "/scs/docs/getting-started",
             },
           ],
         },
@@ -117,13 +111,9 @@ const config: Config = {
           title: "Products",
           items: [
             {
-              label: "Asset Tokenization Studio",
-              href: "https://github.com/hashgraph/asset-tokenization-studio/tree/main/packages/ats",
-            },
-            {
-              label: "Mass Payout",
-              href: "https://github.com/hashgraph/asset-tokenization-studio/tree/main/packages/mass-payout",
-            },
+              label: "Stable Coin Studio",
+              href: "https://github.com/hashgraph/stablecoin-studio/tree/main",
+            }
           ],
         },
         {
@@ -131,15 +121,15 @@ const config: Config = {
           items: [
             {
               label: "GitHub",
-              href: "https://github.com/hashgraph/asset-tokenization-studio",
+              href: "https://github.com/hashgraph/stablecoin-studio",
             },
             {
               label: "Issues",
-              href: "https://github.com/hashgraph/asset-tokenization-studio/issues",
+              href: "https://github.com/hashgraph/stablecoin-studio/issues",
             },
             {
               label: "Contributing",
-              href: "https://github.com/hashgraph/asset-tokenization-studio/blob/main/CONTRIBUTING.md",
+              href: "https://github.com/hashgraph/stablecoin-studio/blob/main/CONTRIBUTING.md",
             },
           ],
         },

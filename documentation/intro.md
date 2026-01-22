@@ -1,3 +1,10 @@
+---
+id: intro
+title: Stable Coin Studio
+sidebar_position: 0
+slug: /
+---
+
 # 🪙 Stablecoin Studio by Hedera
 
 ## 🎯 Project Overview

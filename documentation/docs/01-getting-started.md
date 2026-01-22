@@ -1,3 +1,9 @@
+---
+id: getting-started
+title: Getting Started
+sidebar_position: 1
+---
+
 # 🚀 Getting Started
 
 Follow this guide to set up your environment and issue your first institutional stablecoin on Hedera.
