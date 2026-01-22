@@ -5,6 +5,7 @@ import 'hardhat-contract-sizer'
 import '@openzeppelin/hardhat-upgrades'
 import '@primitivefi/hardhat-dodoc'
 import { Configuration, DEFAULT_EVM_VERSION, NETWORK_LIST, GAS_LIMIT } from '@configuration'
+import 'solidity-coverage'
 import '@tasks'
 
 export const configuration = new Configuration()
@@ -74,6 +75,12 @@ const hardhatConfig: HardhatUserConfig = {
         disambiguatePaths: false,
         runOnCompile: true,
         strict: true,
+    },
+    gasReporter: {
+        enabled: true,
+        showTimeSpent: true,
+        outputFile: 'gas-report.txt', // Force output to a file
+        noColors: true, // Recommended for file output
     },
     typechain: {
         outDir: './typechain-types',

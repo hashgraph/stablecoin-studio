@@ -2,29 +2,17 @@ import { expect } from 'chai'
 import { SignerWithAddress } from '@nomicfoundation/hardhat-ethers/signers'
 import { ethers } from 'hardhat'
 import {
-  CashInFacet,
-  CashInFacet__factory,
-  FreezableFacet,
-  FreezableFacet__factory,
-  StableCoinTokenMock,
-  StableCoinTokenMock__factory,
+    CashInFacet,
+    CashInFacet__factory,
+    FreezableFacet,
+    FreezableFacet__factory,
+    StableCoinTokenMock__factory,
 } from '@contracts'
-import {
-    DeployFullInfrastructureCommand,
-    MESSAGES,
-    ROLES,
-    ONE_TOKEN,
-    validateTxResponse,
-    ValidateTxResponseCommand,
-} from '@scripts'
-import {
-  deployStableCoinInTests,
-  deployFullInfrastructureInTests,
-  GAS_LIMIT
-} from '@test/shared'
+import { DeployFullInfrastructureCommand, MESSAGES, ROLES, ONE_TOKEN } from '@scripts'
+import { deployStableCoinInTests, deployFullInfrastructureInTests, GAS_LIMIT } from '@test/shared'
 
 describe('➡️ Freeze Tests', function () {
-    const ACCOUNT_FROZEN_FOR_TOKEN = 165;
+    const ACCOUNT_FROZEN_FOR_TOKEN = 165
 
     // Contracts
     let stableCoinProxyAddress: string
@@ -60,59 +48,78 @@ describe('➡️ Freeze Tests', function () {
             stableCoinFactoryProxyAddress: deployedContracts.stableCoinFactoryFacet.proxyAddress!,
         }))
 
-        await StableCoinTokenMock__factory.connect(tokenAddress, operator)
-          .setStableCoinAddress(stableCoinProxyAddress);
+        await StableCoinTokenMock__factory.connect(tokenAddress, operator).setStableCoinAddress(stableCoinProxyAddress)
 
         await setFacets(stableCoinProxyAddress)
     })
 
     it("Account without FREEZE role can't freeze transfers of the token for the account", async function () {
         freezableFacet = freezableFacet.connect(nonOperator)
-        await expect(freezableFacet.freeze(operator.address, {
-          gasLimit: GAS_LIMIT.hederaTokenManager.freeze,
-        })).to.be.revertedWithCustomError(freezableFacet, "AccountHasNoRole")
-          .withArgs(nonOperator, ROLES.freeze.hash)
+        await expect(
+            freezableFacet.freeze(operator.address, {
+                gasLimit: GAS_LIMIT.hederaTokenManager.freeze,
+            })
+        )
+            .to.be.revertedWithCustomError(freezableFacet, 'AccountHasNoRole')
+            .withArgs(nonOperator, ROLES.freeze.hash)
     })
 
     it("Account with FREEZE role can freeze and unfreeze transfers of the token for the account + Account without FREEZE role can't unfreeze transfers of the token for the account", async function () {
         // Should be able to mint tokens before freezing
-        await expect(cashInFacet.mint(operator.address, ONE_TOKEN, {
-          gasLimit: GAS_LIMIT.hederaTokenManager.mint,
-        })).to.emit(cashInFacet, "TokensMinted")
-          .withArgs(operator.address, tokenAddress, ONE_TOKEN, operator.address)
+        await expect(
+            cashInFacet.mint(operator.address, ONE_TOKEN, {
+                gasLimit: GAS_LIMIT.hederaTokenManager.mint,
+            })
+        )
+            .to.emit(cashInFacet, 'TokensMinted')
+            .withArgs(operator.address, tokenAddress, ONE_TOKEN, operator.address)
 
         // Freeze transfers
         freezableFacet = freezableFacet.connect(operator)
-        await expect(freezableFacet.freeze(operator.address, {
-          gasLimit: GAS_LIMIT.hederaTokenManager.freeze,
-        })).to.emit(freezableFacet, "TransfersFrozen")
-          .withArgs(tokenAddress, operator.address)
+        await expect(
+            freezableFacet.freeze(operator.address, {
+                gasLimit: GAS_LIMIT.hederaTokenManager.freeze,
+            })
+        )
+            .to.emit(freezableFacet, 'TransfersFrozen')
+            .withArgs(tokenAddress, operator.address)
 
         // Should NOT be able to mint more tokens
-        await expect(cashInFacet.mint(operator.address, ONE_TOKEN, {
-          gasLimit: GAS_LIMIT.hederaTokenManager.mint,
-        })).to.be.revertedWithCustomError(cashInFacet, "ResponseCodeInvalid")
-          .withArgs(ACCOUNT_FROZEN_FOR_TOKEN)
+        await expect(
+            cashInFacet.mint(operator.address, ONE_TOKEN, {
+                gasLimit: GAS_LIMIT.hederaTokenManager.mint,
+            })
+        )
+            .to.be.revertedWithCustomError(cashInFacet, 'ResponseCodeInvalid')
+            .withArgs(ACCOUNT_FROZEN_FOR_TOKEN)
 
         // Should NOT be able to unfreeze from non-operator account
         freezableFacet = freezableFacet.connect(nonOperator)
-        await expect(freezableFacet.unfreeze(operator.address, {
-          gasLimit: GAS_LIMIT.hederaTokenManager.unfreeze,
-        })).to.be.revertedWithCustomError(freezableFacet, "AccountHasNoRole")
-          .withArgs(nonOperator, ROLES.freeze.hash)
-
+        await expect(
+            freezableFacet.unfreeze(operator.address, {
+                gasLimit: GAS_LIMIT.hederaTokenManager.unfreeze,
+            })
+        )
+            .to.be.revertedWithCustomError(freezableFacet, 'AccountHasNoRole')
+            .withArgs(nonOperator, ROLES.freeze.hash)
 
         // Should be able to unfreeze transfers from operator account
         freezableFacet = freezableFacet.connect(operator)
-        await expect(freezableFacet.unfreeze(operator.address, {
-          gasLimit: GAS_LIMIT.hederaTokenManager.unfreeze,
-        })).to.emit(freezableFacet, "TransfersUnfrozen")
-          .withArgs(tokenAddress, operator.address)
+        await expect(
+            freezableFacet.unfreeze(operator.address, {
+                gasLimit: GAS_LIMIT.hederaTokenManager.unfreeze,
+            })
+        )
+            .to.emit(freezableFacet, 'TransfersUnfrozen')
+            .withArgs(tokenAddress, operator.address)
 
         // Should be able to mint more tokens again
-        await expect(cashInFacet.mint(operator.address, ONE_TOKEN, {
-          gasLimit: GAS_LIMIT.hederaTokenManager.mint,
-        })).to.emit(cashInFacet, "TokensMinted")
-          .withArgs(operator.address, tokenAddress, ONE_TOKEN, operator.address)
+        await expect(
+            cashInFacet.mint(operator.address, ONE_TOKEN, {
+                gasLimit: GAS_LIMIT.hederaTokenManager.mint,
+            })
+        )
+            .to.emit(cashInFacet, 'TokensMinted')
+            .withArgs(operator.address, tokenAddress, ONE_TOKEN, operator.address)
     })
 })

@@ -19,10 +19,10 @@ import {
     ValidateTxResponseCommand,
 } from '@scripts'
 import {
-  deployStableCoinInTests,
-  deployFullInfrastructureInTests,
-  GAS_LIMIT,
-  randomAccountAddressList
+    deployStableCoinInTests,
+    deployFullInfrastructureInTests,
+    GAS_LIMIT,
+    randomAccountAddressList,
 } from '@test/shared'
 import { toBigInt } from 'ethers'
 
@@ -80,11 +80,13 @@ describe('➡️ Role Management Tests', function () {
 
         // Granting roles with non Admin should fail
         roleManagementFacet = roleManagementFacet.connect(nonOperator)
-        await expect (roleManagementFacet
-            .grantRoles([ROLES.burn.hash, ROLES.freeze.hash], randomAccountList, [], {
+        await expect(
+            roleManagementFacet.grantRoles([ROLES.burn.hash, ROLES.freeze.hash], randomAccountList, [], {
                 gasLimit: GAS_LIMIT.hederaTokenManager.grantRoles,
-            })).to.be.revertedWithCustomError(roleManagementFacet, "AccountHasNoRole")
-                .withArgs(nonOperator, ROLES.defaultAdmin.hash)
+            })
+        )
+            .to.be.revertedWithCustomError(roleManagementFacet, 'AccountHasNoRole')
+            .withArgs(nonOperator, ROLES.defaultAdmin.hash)
 
         // Check roles after failed grant
         for (const account of randomAccountList) {
@@ -142,17 +144,15 @@ describe('➡️ Role Management Tests', function () {
             for (const rol of roles) {
                 expect(Array.from(rolesToGrant)).to.include(rol)
             }
-            const allowance = await supplierAdminFacet
-                .getSupplierAllowance(randomAccountList[accountIndex], {
-                    gasLimit: GAS_LIMIT.hederaTokenManager.getSupplierAllowance,
-                })
+            const allowance = await supplierAdminFacet.getSupplierAllowance(randomAccountList[accountIndex], {
+                gasLimit: GAS_LIMIT.hederaTokenManager.getSupplierAllowance,
+            })
 
             expect(allowance.toString()).to.eq((accountIndex + 1).toString())
 
-            const isUnlimited = await supplierAdminFacet
-                .isUnlimitedSupplierAllowance(randomAccountList[accountIndex], {
-                    gasLimit: GAS_LIMIT.hederaTokenManager.isUnlimitedSupplierAllowance,
-                })
+            const isUnlimited = await supplierAdminFacet.isUnlimitedSupplierAllowance(randomAccountList[accountIndex], {
+                gasLimit: GAS_LIMIT.hederaTokenManager.isUnlimitedSupplierAllowance,
+            })
             expect(isUnlimited).to.eq(false)
         }
     })
@@ -172,11 +172,13 @@ describe('➡️ Role Management Tests', function () {
 
         // Granting roles with non Admin should fail
         roleManagementFacet = roleManagementFacet.connect(nonOperator)
-        await expect (roleManagementFacet
-            .revokeRoles([ROLES.burn.hash, ROLES.freeze.hash], randomAccountList, {
+        await expect(
+            roleManagementFacet.revokeRoles([ROLES.burn.hash, ROLES.freeze.hash], randomAccountList, {
                 gasLimit: GAS_LIMIT.hederaTokenManager.revokeRoles,
-            })).to.be.revertedWithCustomError(roleManagementFacet, "AccountHasNoRole")
-                .withArgs(nonOperator, ROLES.defaultAdmin.hash)
+            })
+        )
+            .to.be.revertedWithCustomError(roleManagementFacet, 'AccountHasNoRole')
+            .withArgs(nonOperator, ROLES.defaultAdmin.hash)
 
         await delay({ time: 2, unit: 'ms' })
         // Check roles after failed grant
@@ -238,10 +240,9 @@ describe('➡️ Role Management Tests', function () {
             })
             expect(allowance.toString()).to.eq('0')
 
-            const isUnlimited = await supplierAdminFacet
-                .isUnlimitedSupplierAllowance(randomAccountList[i], {
-                    gasLimit: GAS_LIMIT.hederaTokenManager.isUnlimitedSupplierAllowance,
-                })
+            const isUnlimited = await supplierAdminFacet.isUnlimitedSupplierAllowance(randomAccountList[i], {
+                gasLimit: GAS_LIMIT.hederaTokenManager.isUnlimitedSupplierAllowance,
+            })
             expect(isUnlimited).to.eq(false)
         }
     })
@@ -251,11 +252,17 @@ describe('➡️ Role Management Tests', function () {
         const Roles = [ROLES.cashin.hash]
         const amounts: bigint[] = []
 
-        await expect (roleManagementFacet.grantRoles(
-            Roles, randomAccountList, amounts.map((_, index) => toBigInt(index)), {
-                gasLimit: GAS_LIMIT.hederaTokenManager.grantRoles,
-            }
-        )).to.be.revertedWithCustomError(roleManagementFacet, 'ArraysLengthNotEqual')
+        await expect(
+            roleManagementFacet.grantRoles(
+                Roles,
+                randomAccountList,
+                amounts.map((_, index) => toBigInt(index)),
+                {
+                    gasLimit: GAS_LIMIT.hederaTokenManager.grantRoles,
+                }
+            )
+        )
+            .to.be.revertedWithCustomError(roleManagementFacet, 'ArraysLengthNotEqual')
             .withArgs(3, 0)
     })
 
@@ -271,9 +278,11 @@ describe('➡️ Role Management Tests', function () {
             adminAccounts.push(Admins[i])
         }
 
-        await expect (roleManagementFacet.revokeRoles([ROLES.defaultAdmin.hash], adminAccounts, {
-            gasLimit: GAS_LIMIT.hederaTokenManager.revokeRoles,
-        })).to.be.revertedWithCustomError(roleManagementFacet, 'NoAdminsLeft')
+        await expect(
+            roleManagementFacet.revokeRoles([ROLES.defaultAdmin.hash], adminAccounts, {
+                gasLimit: GAS_LIMIT.hederaTokenManager.revokeRoles,
+            })
+        ).to.be.revertedWithCustomError(roleManagementFacet, 'NoAdminsLeft')
     })
 
     it('An account can get all roles of any account', async function () {
@@ -341,10 +350,9 @@ describe('➡️ Role Management Tests', function () {
         )
 
         for (let i = 0; i < randomAccountList.length; i++) {
-            const isUnlimited = await supplierAdminFacet
-                .isUnlimitedSupplierAllowance(randomAccountList[i], {
-                    gasLimit: GAS_LIMIT.hederaTokenManager.isUnlimitedSupplierAllowance,
-                })
+            const isUnlimited = await supplierAdminFacet.isUnlimitedSupplierAllowance(randomAccountList[i], {
+                gasLimit: GAS_LIMIT.hederaTokenManager.isUnlimitedSupplierAllowance,
+            })
             expect(isUnlimited).to.eq(true)
         }
     })

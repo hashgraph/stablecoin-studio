@@ -10,7 +10,7 @@ import {
     HoldManagementFacet,
     CashInFacet,
     CashInFacet__factory,
-    StableCoinTokenMock__factory
+    StableCoinTokenMock__factory,
 } from '@contracts'
 import {
     DEFAULT_TOKEN,
@@ -22,11 +22,7 @@ import {
     validateTxResponse,
     ValidateTxResponseCommand,
 } from '@scripts'
-import {
-  deployStableCoinInTests,
-  deployFullInfrastructureInTests,
-  GAS_LIMIT
-} from '@test/shared'
+import { deployStableCoinInTests, deployFullInfrastructureInTests, GAS_LIMIT } from '@test/shared'
 
 const EMPTY_HEX_BYTES = '0x'
 const _DATA = '0x1234'
@@ -126,8 +122,7 @@ describe('➡️ Hold Management Tests', () => {
             holdId: 1,
         }
 
-        await StableCoinTokenMock__factory.connect(tokenAddress, operator)
-            .setStableCoinAddress(stableCoinProxyAddress)
+        await StableCoinTokenMock__factory.connect(tokenAddress, operator).setStableCoinAddress(stableCoinProxyAddress)
 
         await setFacets(stableCoinProxyAddress)
 
@@ -167,10 +162,12 @@ describe('➡️ Hold Management Tests', () => {
         })
         it('GIVEN an account without HOLD_CREATOR_ROLE role WHEN createHoldByController THEN transaction fails with AccountHasNoRole', async () => {
             holdManagementFacet = holdManagementFacet.connect(nonOperator)
-            await expect (holdManagementFacet
-                .createHoldByController(account_nonOperator, hold, EMPTY_HEX_BYTES, {
+            await expect(
+                holdManagementFacet.createHoldByController(account_nonOperator, hold, EMPTY_HEX_BYTES, {
                     gasLimit: GAS_LIMIT.hold.createHoldByController,
-            })).to.be.revertedWithCustomError(holdManagementFacet, 'AccountHasNoRole')
+                })
+            )
+                .to.be.revertedWithCustomError(holdManagementFacet, 'AccountHasNoRole')
                 .withArgs(nonOperator.address, ROLES.hold.hash)
         })
     })
@@ -194,8 +191,7 @@ describe('➡️ Hold Management Tests', () => {
             )
             holdManagementFacet = holdManagementFacet.connect(operator)
             await expect(
-                holdManagementFacet
-                    .createHoldByController(account_Operator, hold_wrong, EMPTY_HEX_BYTES)
+                holdManagementFacet.createHoldByController(account_Operator, hold_wrong, EMPTY_HEX_BYTES)
             ).to.be.revertedWithCustomError(holdManagementFacet, 'ResponseCodeInvalid')
         })
         it('GIVEN a Token WHEN create hold passing empty escrow THEN transaction fails with AddressZero', async () => {
@@ -211,8 +207,7 @@ describe('➡️ Hold Management Tests', () => {
                 'AddressZero'
             )
             await expect(
-                holdManagementFacet
-                    .createHoldByController(account_Operator, hold_wrong, EMPTY_HEX_BYTES)
+                holdManagementFacet.createHoldByController(account_Operator, hold_wrong, EMPTY_HEX_BYTES)
             ).to.be.revertedWithCustomError(holdManagementFacet, 'AddressZero')
         })
         it('GIVEN a Token WHEN createHoldByController passing empty from THEN transaction fails with AddressZero', async () => {
@@ -234,8 +229,7 @@ describe('➡️ Hold Management Tests', () => {
                 'InvalidExpiration'
             )
             await expect(
-                holdManagementFacet
-                    .createHoldByController(account_Operator, hold_wrong, EMPTY_HEX_BYTES)
+                holdManagementFacet.createHoldByController(account_Operator, hold_wrong, EMPTY_HEX_BYTES)
             ).to.be.revertedWithCustomError(holdManagementFacet, 'InvalidExpiration')
         })
         it('GIVEN a Token WHEN create hold passing negative amount THEN transaction fails with NegativeAmount', async () => {
@@ -251,8 +245,7 @@ describe('➡️ Hold Management Tests', () => {
                 'NegativeAmount'
             )
             await expect(
-                holdManagementFacet
-                    .createHoldByController(account_Operator, hold_wrong, EMPTY_HEX_BYTES)
+                holdManagementFacet.createHoldByController(account_Operator, hold_wrong, EMPTY_HEX_BYTES)
             ).to.be.revertedWithCustomError(holdManagementFacet, 'NegativeAmount')
         })
         it('GIVEN a Token WHEN create hold passing zero amount THEN transaction fails with NegativeAmount', async () => {
@@ -268,8 +261,7 @@ describe('➡️ Hold Management Tests', () => {
                 'NegativeAmount'
             )
             await expect(
-                holdManagementFacet
-                    .createHoldByController(account_Operator, hold_wrong, EMPTY_HEX_BYTES)
+                holdManagementFacet.createHoldByController(account_Operator, hold_wrong, EMPTY_HEX_BYTES)
             ).to.be.revertedWithCustomError(holdManagementFacet, 'NegativeAmount')
         })
     })
@@ -379,17 +371,19 @@ describe('➡️ Hold Management Tests', () => {
         it('GIVEN a wrong escrow WHEN releaseHold THEN transaction fails with UnauthorizedEscrow', async () => {
             await expect(holdManagementFacet.createHold(hold)).to.emit(holdManagementFacet, 'HoldCreated')
             await delay({ time: 1, unit: 'sec' })
-            await expect(
-                holdManagementFacet.releaseHold(holdIdentifier, 1)
-            ).to.be.revertedWithCustomError(holdManagementFacet, 'UnauthorizedEscrow')
+            await expect(holdManagementFacet.releaseHold(holdIdentifier, 1)).to.be.revertedWithCustomError(
+                holdManagementFacet,
+                'UnauthorizedEscrow'
+            )
         })
         it('GIVEN a hold WHEN releaseHold for an amount larger than the total held amount THEN transaction fails with InsufficientHoldAmount', async () => {
             await expect(holdManagementFacet.createHold(hold)).to.emit(holdManagementFacet, 'HoldCreated')
             await delay({ time: 1, unit: 'sec' })
             holdManagementFacet = holdManagementFacet.connect(nonOperator)
-            await expect(
-                holdManagementFacet.releaseHold(holdIdentifier, 2 * 10)
-            ).to.be.revertedWithCustomError(holdManagementFacet, 'InsufficientHoldAmount')
+            await expect(holdManagementFacet.releaseHold(holdIdentifier, 2 * 10)).to.be.revertedWithCustomError(
+                holdManagementFacet,
+                'InsufficientHoldAmount'
+            )
         })
         it('GIVEN a wrong tokenHolder id WHEN releaseHold THEN transaction fails with HoldNotFound', async () => {
             await expect(holdManagementFacet.createHold(hold)).to.emit(holdManagementFacet, 'HoldCreated')
@@ -398,9 +392,10 @@ describe('➡️ Hold Management Tests', () => {
                 holdId: 1,
             }
             holdManagementFacet = holdManagementFacet.connect(operator)
-            await expect(
-                holdManagementFacet.releaseHold(holdIdentifier, 1)
-            ).to.be.revertedWithCustomError(holdManagementFacet, 'HoldNotFound')
+            await expect(holdManagementFacet.releaseHold(holdIdentifier, 1)).to.be.revertedWithCustomError(
+                holdManagementFacet,
+                'HoldNotFound'
+            )
         })
         it('GIVEN an expire hold WHEN releaseHold THEN transaction fails with HoldExpired', async () => {
             const currentTimestamp = (await ethers.provider.getBlock('latest'))!.timestamp
@@ -418,9 +413,10 @@ describe('➡️ Hold Management Tests', () => {
             }
             await expect(holdManagementFacet.createHold(hold)).to.emit(holdManagementFacet, 'HoldCreated')
             await delay({ time: 6, unit: 'sec' })
-            await expect(
-                holdManagementFacet.releaseHold(holdIdentifier, 1)
-            ).to.be.revertedWithCustomError(holdManagementFacet, 'HoldExpired')
+            await expect(holdManagementFacet.releaseHold(holdIdentifier, 1)).to.be.revertedWithCustomError(
+                holdManagementFacet,
+                'HoldExpired'
+            )
         })
     })
     describe('Reclaim with wrong input arguments', () => {
@@ -433,16 +429,18 @@ describe('➡️ Hold Management Tests', () => {
                 tokenHolder: account_nonOperator,
                 holdId: 1,
             }
-            await expect(
-                holdManagementFacet.reclaimHold(holdIdentifier)
-            ).to.be.revertedWithCustomError(holdManagementFacet, 'HoldNotFound')
+            await expect(holdManagementFacet.reclaimHold(holdIdentifier)).to.be.revertedWithCustomError(
+                holdManagementFacet,
+                'HoldNotFound'
+            )
         })
         it('GIVEN hold WHEN reclaimHold before expiration date THEN transaction fails with HoldNotExpired', async () => {
             await expect(holdManagementFacet.createHold(hold)).to.emit(holdManagementFacet, 'HoldCreated')
             await delay({ time: 1, unit: 'sec' })
-            await expect(
-                holdManagementFacet.reclaimHold(holdIdentifier)
-            ).to.be.revertedWithCustomError(holdManagementFacet, 'HoldNotExpired')
+            await expect(holdManagementFacet.reclaimHold(holdIdentifier)).to.be.revertedWithCustomError(
+                holdManagementFacet,
+                'HoldNotExpired'
+            )
         })
     })
     describe('Execute OK', () => {
@@ -455,8 +453,9 @@ describe('➡️ Hold Management Tests', () => {
             await delay({ time: 1, unit: 'sec' })
             holdManagementFacet = holdManagementFacet.connect(nonOperator)
             await expect(
-                holdManagementFacet
-                    .executeHold(holdIdentifier, account_nonOperator, _AMOUNT, { gasLimit: GAS_LIMIT.hold.executeHold })
+                holdManagementFacet.executeHold(holdIdentifier, account_nonOperator, _AMOUNT, {
+                    gasLimit: GAS_LIMIT.hold.executeHold,
+                })
             )
                 .to.emit(holdManagementFacet, 'HoldExecuted')
                 .withArgs(account_Operator, 1, _AMOUNT, account_nonOperator)
@@ -487,8 +486,7 @@ describe('➡️ Hold Management Tests', () => {
             await delay({ time: 1, unit: 'sec' })
             holdManagementFacet = holdManagementFacet.connect(nonOperator)
             await expect(
-                holdManagementFacet
-                    .releaseHold(holdIdentifier, _AMOUNT, { gasLimit: GAS_LIMIT.hold.releaseHold })
+                holdManagementFacet.releaseHold(holdIdentifier, _AMOUNT, { gasLimit: GAS_LIMIT.hold.releaseHold })
             )
                 .to.emit(holdManagementFacet, 'HoldReleased')
                 .withArgs(account_Operator, 1, _AMOUNT)
@@ -528,10 +526,7 @@ describe('➡️ Hold Management Tests', () => {
             await expect(holdManagementFacet.createHold(hold)).to.emit(holdManagementFacet, 'HoldCreated')
             await delay({ time: 6, unit: 'sec' })
             holdManagementFacet = holdManagementFacet.connect(nonOperator)
-            await expect(
-                holdManagementFacet
-                    .reclaimHold(holdIdentifier, { gasLimit: GAS_LIMIT.hold.reclaimHold })
-            )
+            await expect(holdManagementFacet.reclaimHold(holdIdentifier, { gasLimit: GAS_LIMIT.hold.reclaimHold }))
                 .to.emit(holdManagementFacet, 'HoldReclaimed')
                 .withArgs(account_nonOperator, account_Operator, 1, 10)
             await checkCreatedHold_expected(

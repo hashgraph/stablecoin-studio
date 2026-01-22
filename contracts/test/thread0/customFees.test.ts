@@ -2,27 +2,20 @@ import { expect } from 'chai'
 import { SignerWithAddress } from '@nomicfoundation/hardhat-ethers/signers'
 import { ethers } from 'hardhat'
 import {
-  CustomFeesFacet,
-  CustomFeesFacet__factory,
-  IHederaTokenService,
-  IHRC__factory,
-  StableCoinTokenMock,
-  StableCoinTokenMock__factory,
+    CustomFeesFacet,
+    CustomFeesFacet__factory,
+    IHederaTokenService,
+    IHRC__factory,
+    StableCoinTokenMock__factory,
 } from '@contracts'
 import {
-    ADDRESS_ZERO,
-    MESSAGES,
-    ROLES,
-    delay,
-    DeployFullInfrastructureCommand,
-    validateTxResponse,
-    ValidateTxResponseCommand,
+  ADDRESS_ZERO, MESSAGES,
+  ROLES,
+  delay,
+  DeployFullInfrastructureCommand,
+  ValidateTxResponseCommand
 } from '@scripts'
-import {
-  deployStableCoinInTests,
-  deployFullInfrastructureInTests,
-  GAS_LIMIT
-} from '@test/shared'
+import { deployStableCoinInTests, deployFullInfrastructureInTests, GAS_LIMIT } from '@test/shared'
 
 describe('➡️ Custom Fees Tests', function () {
     // Contracts
@@ -83,8 +76,7 @@ describe('➡️ Custom Fees Tests', function () {
             },
         ]
 
-        await StableCoinTokenMock__factory.connect(tokenAddress, operator)
-          .setStableCoinAddress(stableCoinProxyAddress);
+        await StableCoinTokenMock__factory.connect(tokenAddress, operator).setStableCoinAddress(stableCoinProxyAddress)
 
         await setFacets(stableCoinProxyAddress)
     })
@@ -92,10 +84,13 @@ describe('➡️ Custom Fees Tests', function () {
     it("An account without CUSTOM_FEES role can't update custom fees for a token", async function () {
         customFeesFacet = customFeesFacet.connect(nonOperator)
 
-        await expect(customFeesFacet.updateTokenCustomFees(fixedFees, fractionalFees, {
-          gasLimit: GAS_LIMIT.hederaTokenManager.updateCustomFees,
-        })).to.be.revertedWithCustomError(customFeesFacet, "AccountHasNoRole")
-          .withArgs(nonOperator, ROLES.customFees.hash)
+        await expect(
+            customFeesFacet.updateTokenCustomFees(fixedFees, fractionalFees, {
+                gasLimit: GAS_LIMIT.hederaTokenManager.updateCustomFees,
+            })
+        )
+            .to.be.revertedWithCustomError(customFeesFacet, 'AccountHasNoRole')
+            .withArgs(nonOperator, ROLES.customFees.hash)
     })
 
     it('An account with CUSTOM_FEES role can update custom fees for a token and fees should be updated correctly', async function () {
@@ -114,9 +109,12 @@ describe('➡️ Custom Fees Tests', function () {
         fractionalFees[0].feeCollector = nonOperator.address
 
         customFeesFacet = customFeesFacet.connect(operator)
-        await expect(customFeesFacet.updateTokenCustomFees(fixedFees, fractionalFees, {
-            gasLimit: GAS_LIMIT.hederaTokenManager.updateCustomFees,
-        })).to.emit(customFeesFacet, "TokenCustomFeesUpdated")
+        await expect(
+            customFeesFacet.updateTokenCustomFees(fixedFees, fractionalFees, {
+                gasLimit: GAS_LIMIT.hederaTokenManager.updateCustomFees,
+            })
+        )
+            .to.emit(customFeesFacet, 'TokenCustomFeesUpdated')
             .withArgs(operator.address, tokenAddress)
 
         /*const response = await customFeesFacet.updateTokenCustomFees(fixedFees, fractionalFees, {

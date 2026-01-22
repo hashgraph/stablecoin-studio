@@ -81,15 +81,15 @@ export const GAS_LIMIT = {
     },
     hederaTokenManager: {
         deploy: 5_000_000n,
-        facetDeploy: 800_000n,
+        facetDeploy: 5_500_000n,
         initialize: 60_000n,
         associate: 800_000n,
         dissociate: 800_000n,
-        grantKyc: 80_000n,
+        grantKyc: 90_000n,
         revokeKyc: 80_000n,
         burn: 100_000n,
         updateCustomFees: 100_000n,
-        deleteToken: 80_000n,
+        deleteToken: 90_000n,
         grantRole: 150_000n,
         grantRoles: 7_800_000n,
         grantSupplierRole: 7_800_000n,
@@ -101,12 +101,12 @@ export const GAS_LIMIT = {
         removeRoleFromList: 150_000n,
         getRoleList: 150_000n,
         mint: 200_000n,
-        freeze: 80_000n,
+        freeze: 90_000n,
         unfreeze: 80_000n,
-        updateToken: 150_000n,
+        updateToken: 170_000n,
         pause: 80_000n,
         unpause: 80_000n,
-        rescue: 100_000n,
+        rescue: 120_000n,
         rescueHBAR: 100_000n,
         wipe: 150_000n,
         increaseSupplierAllowance: 100_000n,
@@ -132,7 +132,7 @@ export const GAS_LIMIT = {
     stableCoinFactory: {
         deploy: 5_000_000n,
         initialize: 130_000n,
-        deployStableCoin: 3_600_000n,
+        deployStableCoin: 4_200_000n,
         addHederaTokenManagerVersion: 4_800_000n,
         editHederaTokenManagerAddress: 4_800_000n,
         removeHederaTokenManagerAddress: 4_800_000n, // Added gas limit for removeHederaTokenManagerAddress
@@ -164,7 +164,7 @@ export const GAS_LIMIT = {
         version: 60_000n,
     },
     businessLogicResolver: {
-        deploy: 5_000_000n,
+        deploy: 9_000_000n,
         getStaticResolverKey: 60_000,
         registerBusinessLogics: 7_800_000,
         createConfiguration: 15_000_000,
@@ -174,15 +174,16 @@ export const GAS_LIMIT = {
         upgrade: 200_000n,
     },
     diamondCutManager: {
-        createConfiguration: 100_000n,
+        createConfiguration: 140_000n,
     },
     diamondFacet: {
-        deploy: 2_000_000n,
+        deploy: 3_500_000n,
         updateConfigVersion: 80_000n,
         updateConfig: 80_000n,
         updateResolver: 80_000n,
     },
     hold: {
+        facetDeploy: 6_000_000n,
         createHoldByController: 150_000n,
         executeHold: 1_000_000n,
         releaseHold: 500_000n,
@@ -319,4 +320,4 @@ export const DEFAULT_TOKEN = (() => {
 export const ONE_TOKEN = DEFAULT_TOKEN.tokenFactor
 export const TEN_TOKENS = DEFAULT_TOKEN.tokenFactor * 10n
 
-export const HEDERA_PRECOMPILED_ADDRESS = "0x0000000000000000000000000000000000000167";
+export const HEDERA_PRECOMPILED_ADDRESS = '0x0000000000000000000000000000000000000167'

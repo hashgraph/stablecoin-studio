@@ -21,6 +21,7 @@
         "compile": "npx hardhat compile",
         "compile:force": "npx hardhat compile --force",
         "build": "npm run compile && rimraf build && tsc -p tsconfig.json",
+        "coverage": "npx hardhat coverage --solcoverjs .solcover.js",
         "test": "npx hardhat test test/**/*.test.ts",
         "test:parallel": "npx hardhat test test/**/*.test.ts --parallel",
         "test:ci": "npx hardhat test test/**/*.test.ts --no-compile",
@@ -88,6 +89,7 @@
         "rimraf": "^4.1.1",
         "solhint": "^5.0.5",
         "solhint-plugin-prettier": "^0.1.0",
+        "solidity-coverage": "^0.8.16",
         "ts-node": "^10.9.1",
         "tsconfig-paths": "^4.2.0",
         "typescript": "^5.8.2"

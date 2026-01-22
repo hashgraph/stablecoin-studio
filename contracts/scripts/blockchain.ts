@@ -24,7 +24,7 @@ export async function getFullWalletFromSigner(signer: Signer): Promise<Wallet> {
     const chainId = Number((await signer.provider.getNetwork()).chainId) as NetworkChainId
     const network: NetworkName = NetworkNameByChainId[chainId]
     if (configuration.privateKeys[network] === undefined || configuration.privateKeys[network].length == 0) {
-      return signer as Wallet
+        return signer as Wallet
     }
 
     for (const privateKey of configuration.privateKeys[network]) {

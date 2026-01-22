@@ -7,7 +7,7 @@ import {
     HederaReserveFacet__factory,
     ReserveFacet,
     ReserveFacet__factory,
-    StableCoinTokenMock__factory
+    StableCoinTokenMock__factory,
 } from '@contracts'
 import {
     DEFAULT_TOKEN,
@@ -18,10 +18,7 @@ import {
     MESSAGES,
     ValidateTxResponseCommand,
 } from '@scripts'
-import {
-  deployFullInfrastructureInTests,
-  GAS_LIMIT
-} from '@test/shared'
+import { deployFullInfrastructureInTests, GAS_LIMIT } from '@test/shared'
 
 let operator: SignerWithAddress
 let nonOperator: SignerWithAddress
@@ -198,8 +195,7 @@ describe('Reserve Tests with reserve and token with same Decimals', function () 
         stableCoinProxyAddress = result.stableCoinProxyAddress
         tokenAddress = result.tokenAddress
 
-        await StableCoinTokenMock__factory.connect(tokenAddress, operator)
-          .setStableCoinAddress(stableCoinProxyAddress)
+        await StableCoinTokenMock__factory.connect(tokenAddress, operator).setStableCoinAddress(stableCoinProxyAddress)
 
         await setFacets(stableCoinProxyAddress)
     })
@@ -237,9 +233,12 @@ describe('Reserve Tests with reserve and token with same Decimals', function () 
         const totalReserve = result[0]
 
         // Cashin more tokens than reserve amount: fail
-        await expect (cashInFacet.mint(operator.address, totalReserve + 1n, {
-            gasLimit: GAS_LIMIT.hederaTokenManager.mint,
-        })).to.be.revertedWithCustomError(cashInFacet, "AmountBiggerThanReserve")
+        await expect(
+            cashInFacet.mint(operator.address, totalReserve + 1n, {
+                gasLimit: GAS_LIMIT.hederaTokenManager.mint,
+            })
+        )
+            .to.be.revertedWithCustomError(cashInFacet, 'AmountBiggerThanReserve')
             .withArgs(totalReserve + 1n)
     })
 })
@@ -280,8 +279,7 @@ describe('Reserve Tests with reserve decimals higher than token decimals', funct
         stableCoinProxyAddress = result.stableCoinProxyAddress
         tokenAddress = result.tokenAddress
 
-        await StableCoinTokenMock__factory.connect(tokenAddress, operator)
-          .setStableCoinAddress(stableCoinProxyAddress)
+        await StableCoinTokenMock__factory.connect(tokenAddress, operator).setStableCoinAddress(stableCoinProxyAddress)
 
         await setFacets(stableCoinProxyAddress)
     })
@@ -319,9 +317,12 @@ describe('Reserve Tests with reserve decimals higher than token decimals', funct
         const totalReserve = result[0]
 
         // Cashin more tokens than reserve amount: fail
-        await expect (cashInFacet.mint(operator.address, totalReserve + 1n, {
-            gasLimit: GAS_LIMIT.hederaTokenManager.mint,
-        })).to.be.revertedWithCustomError(cashInFacet, "AmountBiggerThanReserve")
+        await expect(
+            cashInFacet.mint(operator.address, totalReserve + 1n, {
+                gasLimit: GAS_LIMIT.hederaTokenManager.mint,
+            })
+        )
+            .to.be.revertedWithCustomError(cashInFacet, 'AmountBiggerThanReserve')
             .withArgs(totalReserve + 1n)
     })
 })
@@ -361,8 +362,7 @@ describe('Reserve Tests with reserve decimals lower than token decimals', functi
         stableCoinProxyAddress = result.stableCoinProxyAddress
         tokenAddress = result.tokenAddress
 
-        await StableCoinTokenMock__factory.connect(tokenAddress, operator)
-          .setStableCoinAddress(stableCoinProxyAddress)
+        await StableCoinTokenMock__factory.connect(tokenAddress, operator).setStableCoinAddress(stableCoinProxyAddress)
 
         await setFacets(stableCoinProxyAddress)
     })
@@ -400,9 +400,12 @@ describe('Reserve Tests with reserve decimals lower than token decimals', functi
         const totalReserve = result[0]
 
         // Cashin more tokens than reserve amount: fail
-        await expect (cashInFacet.mint(operator.address, totalReserve + 1n, {
-            gasLimit: GAS_LIMIT.hederaTokenManager.mint,
-        })).to.be.revertedWithCustomError(cashInFacet, "FormatNumberIncorrect")
+        await expect(
+            cashInFacet.mint(operator.address, totalReserve + 1n, {
+                gasLimit: GAS_LIMIT.hederaTokenManager.mint,
+            })
+        )
+            .to.be.revertedWithCustomError(cashInFacet, 'FormatNumberIncorrect')
             .withArgs(totalReserve + 1n)
     })
 

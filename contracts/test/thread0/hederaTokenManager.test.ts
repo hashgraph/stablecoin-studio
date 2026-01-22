@@ -10,7 +10,6 @@ import {
     SupplierAdminFacet__factory,
     WipeableFacet,
     WipeableFacet__factory,
-    StableCoinTokenMock,
     StableCoinTokenMock__factory,
 } from '@contracts'
 import {
@@ -26,15 +25,13 @@ import {
     ROLES,
     tokenKeysToKey,
     TokenKeysToKeyCommand,
-    validateTxResponse,
-    ValidateTxResponseCommand,
 } from '@scripts'
 import {
-  DEFAULT_UPDATE_TOKEN_STRUCT,
-  deployStableCoinInTests,
-  deployFullInfrastructureInTests,
-  GAS_LIMIT,
-  OTHER_AUTO_RENEW_PERIOD
+    DEFAULT_UPDATE_TOKEN_STRUCT,
+    deployStableCoinInTests,
+    deployFullInfrastructureInTests,
+    GAS_LIMIT,
+    OTHER_AUTO_RENEW_PERIOD,
 } from '@test/shared'
 import { toBigInt, Wallet, Signer, SigningKey, hashMessage } from 'ethers'
 
@@ -58,10 +55,10 @@ describe('➡️ HederaTokenManager Tests', function () {
     }
 
     async function getAccountPublicKey(operatorSigner: Signer) {
-        const message = "test"
+        const message = 'test'
         const signature = await operatorSigner.signMessage(message)
         const digest = hashMessage(message)
-        return SigningKey.recoverPublicKey(digest, signature);
+        return SigningKey.recoverPublicKey(digest, signature)
     }
 
     before(async () => {
@@ -89,8 +86,7 @@ describe('➡️ HederaTokenManager Tests', function () {
             addFeeSchedule: true,
         }))
 
-        await StableCoinTokenMock__factory.connect(tokenAddress, operator)
-          .setStableCoinAddress(stableCoinProxyAddress);
+        await StableCoinTokenMock__factory.connect(tokenAddress, operator).setStableCoinAddress(stableCoinProxyAddress)
 
         await setFacets(stableCoinProxyAddress)
     })
@@ -108,17 +104,18 @@ describe('➡️ HederaTokenManager Tests', function () {
         } as IHederaTokenManager.UpdateTokenStructStructOutput
 
         hederaTokenManagerFacet = hederaTokenManagerFacet.connect(nonOperator)
-        await expect(hederaTokenManagerFacet.updateToken(updateTokenStruct, {
-          gasLimit: GAS_LIMIT.hederaTokenManager.updateToken,
-        })).to.be.revertedWithCustomError(hederaTokenManagerFacet, "AccountHasNoRole")
-          .withArgs(nonOperator, ROLES.defaultAdmin.hash)
+        await expect(
+            hederaTokenManagerFacet.updateToken(updateTokenStruct, {
+                gasLimit: GAS_LIMIT.hederaTokenManager.updateToken,
+            })
+        )
+            .to.be.revertedWithCustomError(hederaTokenManagerFacet, 'AccountHasNoRole')
+            .withArgs(nonOperator, ROLES.defaultAdmin.hash)
     })
 
     it('Admin cannot update token if metadata exceeds 100 characters', async function () {
         const operatorPublicKey = await getAccountPublicKey(operator)
-        const keys = tokenKeysToKey(
-            new TokenKeysToKeyCommand({ publicKey: operatorPublicKey, addKyc: false })
-        )
+        const keys = tokenKeysToKey(new TokenKeysToKeyCommand({ publicKey: operatorPublicKey, addKyc: false }))
         const longMetadata = 'X'.repeat(101)
 
         const updateTokenStruct = {
@@ -130,16 +127,16 @@ describe('➡️ HederaTokenManager Tests', function () {
             tokenMetadataURI: longMetadata,
         } as IHederaTokenManager.UpdateTokenStructStructOutput
 
-        await expect(hederaTokenManagerFacet.updateToken(updateTokenStruct, {
-          gasLimit: GAS_LIMIT.hederaTokenManager.updateToken,
-        })).to.be.revertedWithCustomError(hederaTokenManagerFacet, "MoreThan100Error")
+        await expect(
+            hederaTokenManagerFacet.updateToken(updateTokenStruct, {
+                gasLimit: GAS_LIMIT.hederaTokenManager.updateToken,
+            })
+        ).to.be.revertedWithCustomError(hederaTokenManagerFacet, 'MoreThan100Error')
     })
 
     it('Admin can update token', async function () {
         const operatorPublicKey = await getAccountPublicKey(operator)
-        const keys = tokenKeysToKey(
-            new TokenKeysToKeyCommand({ publicKey: operatorPublicKey, addKyc: false })
-        )
+        const keys = tokenKeysToKey(new TokenKeysToKeyCommand({ publicKey: operatorPublicKey, addKyc: false }))
         const updateTokenStruct = {
             tokenName: 'newName',
             tokenSymbol: 'newSymbol',
@@ -150,10 +147,11 @@ describe('➡️ HederaTokenManager Tests', function () {
         } as IHederaTokenManager.UpdateTokenStructStructOutput
 
         hederaTokenManagerFacet = hederaTokenManagerFacet.connect(operator)
-        await expect(hederaTokenManagerFacet.updateToken(updateTokenStruct, {
-          gasLimit: GAS_LIMIT.hederaTokenManager.updateToken,
-        })).to.emit(hederaTokenManagerFacet, "TokenUpdated")
-          //.withArgs(currentTokenAddress, updateTokenStruct)
+        await expect(
+            hederaTokenManagerFacet.updateToken(updateTokenStruct, {
+                gasLimit: GAS_LIMIT.hederaTokenManager.updateToken,
+            })
+        ).to.emit(hederaTokenManagerFacet, 'TokenUpdated')
 
         const newMetadata = await hederaTokenManagerFacet.getMetadata({
             gasLimit: GAS_LIMIT.hederaTokenManager.getMetadata,
@@ -161,17 +159,16 @@ describe('➡️ HederaTokenManager Tests', function () {
         expect(newMetadata).to.equal('newMemo')
 
         // Update back to initial values
-        await expect(hederaTokenManagerFacet.updateToken(DEFAULT_UPDATE_TOKEN_STRUCT, {
-          gasLimit: GAS_LIMIT.hederaTokenManager.updateToken,
-        })).to.emit(hederaTokenManagerFacet, "TokenUpdated")
-          //.withArgs(currentTokenAddress, DEFAULT_UPDATE_TOKEN_STRUCT)
+        await expect(
+            hederaTokenManagerFacet.updateToken(DEFAULT_UPDATE_TOKEN_STRUCT, {
+                gasLimit: GAS_LIMIT.hederaTokenManager.updateToken,
+            })
+        ).to.emit(hederaTokenManagerFacet, 'TokenUpdated')
     })
 
     it('Admin and supply token keys cannot be updated', async function () {
         const operatorPublicKey = await getAccountPublicKey(operator)
-        const keys = allTokenKeysToKey(
-            new AllTokenKeysToKeyCommand({ publicKey: operatorPublicKey, addKyc: false })
-        )
+        const keys = allTokenKeysToKey(new AllTokenKeysToKeyCommand({ publicKey: operatorPublicKey, addKyc: false }))
         const updateTokenStruct = {
             tokenName: 'newName',
             tokenSymbol: 'newSymbol',
@@ -181,18 +178,23 @@ describe('➡️ HederaTokenManager Tests', function () {
             tokenMetadataURI: DEFAULT_TOKEN.memo,
         } as IHederaTokenManager.UpdateTokenStructStructOutput
 
-        await expect(hederaTokenManagerFacet.updateToken(updateTokenStruct, {
-            gasLimit: GAS_LIMIT.hederaTokenManager.updateToken,
-        })).to.be.revertedWithCustomError(hederaTokenManagerFacet, "AdminKeyUpdateError")
+        await expect(
+            hederaTokenManagerFacet.updateToken(updateTokenStruct, {
+                gasLimit: GAS_LIMIT.hederaTokenManager.updateToken,
+            })
+        ).to.be.revertedWithCustomError(hederaTokenManagerFacet, 'AdminKeyUpdateError')
     })
 
     it('Mint token throw error format number incorrect', async () => {
         const initialTotalSupply = await hederaTokenManagerFacet.totalSupply({
             gasLimit: GAS_LIMIT.hederaTokenManager.totalSupply,
         })
-        await expect (cashInFacet.mint(operator.address, 1, {
-            gasLimit: GAS_LIMIT.hederaTokenManager.mint,
-        })).to.be.revertedWithCustomError(cashInFacet, "FormatNumberIncorrect")
+        await expect(
+            cashInFacet.mint(operator.address, 1, {
+                gasLimit: GAS_LIMIT.hederaTokenManager.mint,
+            })
+        )
+            .to.be.revertedWithCustomError(cashInFacet, 'FormatNumberIncorrect')
             .withArgs(1)
 
         const afterErrorTotalSupply = await hederaTokenManagerFacet.totalSupply({
@@ -200,25 +202,35 @@ describe('➡️ HederaTokenManager Tests', function () {
         })
         expect(initialTotalSupply).to.equal(afterErrorTotalSupply)
 
-        await expect (cashInFacet.mint(operator.address, ONE_TOKEN, {
-            gasLimit: GAS_LIMIT.hederaTokenManager.mint,
-        })).to.emit(cashInFacet, "TokensMinted")
+        await expect(
+            cashInFacet.mint(operator.address, ONE_TOKEN, {
+                gasLimit: GAS_LIMIT.hederaTokenManager.mint,
+            })
+        )
+            .to.emit(cashInFacet, 'TokensMinted')
             .withArgs(operator.address, tokenAddress, ONE_TOKEN, operator.address)
 
         await delay({ time: 500, unit: 'ms' })
-        expect (await hederaTokenManagerFacet.totalSupply({
-            gasLimit: GAS_LIMIT.hederaTokenManager.totalSupply,
-        })).to.equal(initialTotalSupply + ONE_TOKEN)
+        expect(
+            await hederaTokenManagerFacet.totalSupply({
+                gasLimit: GAS_LIMIT.hederaTokenManager.totalSupply,
+            })
+        ).to.equal(initialTotalSupply + ONE_TOKEN)
 
-        await expect(wipeFacet.wipe(operator.address, ONE_TOKEN, {
-          gasLimit: GAS_LIMIT.hederaTokenManager.wipe,
-        })).to.emit(wipeFacet, "TokensWiped")
-          .withArgs(operator.address, tokenAddress, operator.address, ONE_TOKEN)
+        await expect(
+            wipeFacet.wipe(operator.address, ONE_TOKEN, {
+                gasLimit: GAS_LIMIT.hederaTokenManager.wipe,
+            })
+        )
+            .to.emit(wipeFacet, 'TokensWiped')
+            .withArgs(operator.address, tokenAddress, operator.address, ONE_TOKEN)
 
         await delay({ time: 500, unit: 'ms' })
-        expect (await hederaTokenManagerFacet.totalSupply({
-            gasLimit: GAS_LIMIT.hederaTokenManager.totalSupply,
-        })).to.equal(initialTotalSupply)
+        expect(
+            await hederaTokenManagerFacet.totalSupply({
+                gasLimit: GAS_LIMIT.hederaTokenManager.totalSupply,
+            })
+        ).to.equal(initialTotalSupply)
     })
 
     it('deploy SC with roles associated to another account', async function () {
@@ -372,9 +384,11 @@ describe('➡️ HederaTokenManager Tests', function () {
         }
 
         // Initiliaze : fail
-        await expect(hederaTokenManagerFacet.initialize(dummyStruct, {
-          gasLimit: GAS_LIMIT.hederaTokenManager.initialize,
-        })).to.be.revertedWithCustomError(hederaTokenManagerFacet, "ContractIsAlreadyInitialized")
-          //.withArgs(currentTokenAddress, updateTokenStruct)
+        await expect(
+            hederaTokenManagerFacet.initialize(dummyStruct, {
+                gasLimit: GAS_LIMIT.hederaTokenManager.initialize,
+            })
+        ).to.be.revertedWithCustomError(hederaTokenManagerFacet, 'ContractIsAlreadyInitialized')
+        //.withArgs(currentTokenAddress, updateTokenStruct)
     })
 })

@@ -1,25 +1,9 @@
 import { expect } from 'chai'
 import { SignerWithAddress } from '@nomicfoundation/hardhat-ethers/signers'
 import { ethers } from 'hardhat'
-import {
-  IHRC__factory,
-  PausableFacet,
-  PausableFacet__factory,
-  StableCoinTokenMock,
-  StableCoinTokenMock__factory
-} from '@contracts'
-import {
-    DEFAULT_TOKEN,
-    MESSAGES,
-    ROLES,
-    DeployFullInfrastructureCommand,
-    ValidateTxResponseCommand
-} from '@scripts'
-import {
-  deployStableCoinInTests,
-  deployFullInfrastructureInTests,
-  GAS_LIMIT
-} from '@test/shared'
+import { IHRC__factory, PausableFacet, PausableFacet__factory, StableCoinTokenMock__factory } from '@contracts'
+import { DEFAULT_TOKEN, MESSAGES, ROLES, DeployFullInfrastructureCommand, ValidateTxResponseCommand } from '@scripts'
+import { deployStableCoinInTests, deployFullInfrastructureInTests, GAS_LIMIT } from '@test/shared'
 
 describe('Pause Tests', function () {
     // Contracts
@@ -54,19 +38,21 @@ describe('Pause Tests', function () {
             initialAmountDataFeed: DEFAULT_TOKEN.initialAmountDataFeed.toString(),
         }))
 
-        await StableCoinTokenMock__factory.connect(tokenAddress, operator)
-          .setStableCoinAddress(stableCoinProxyAddress);
+        await StableCoinTokenMock__factory.connect(tokenAddress, operator).setStableCoinAddress(stableCoinProxyAddress)
 
         await setFacets(stableCoinProxyAddress)
     })
 
     it("An account without PAUSE role can't pause a token", async function () {
-      pausableFacet = pausableFacet.connect(nonOperator)
+        pausableFacet = pausableFacet.connect(nonOperator)
 
-      await expect(pausableFacet.pause({
-        gasLimit: GAS_LIMIT.hederaTokenManager.pause,
-      })).to.be.revertedWithCustomError(pausableFacet, "AccountHasNoRole")
-        .withArgs(nonOperator, ROLES.pause.hash)
+        await expect(
+            pausableFacet.pause({
+                gasLimit: GAS_LIMIT.hederaTokenManager.pause,
+            })
+        )
+            .to.be.revertedWithCustomError(pausableFacet, 'AccountHasNoRole')
+            .withArgs(nonOperator, ROLES.pause.hash)
     })
 
     it("An account with PAUSE role can pause and unpause a token + An account without PAUSE role can't unpause a token", async function () {
@@ -81,22 +67,31 @@ describe('Pause Tests', function () {
 
         // Pause token
         pausableFacet = pausableFacet.connect(operator)
-        await expect(pausableFacet.pause({
-          gasLimit: GAS_LIMIT.hederaTokenManager.pause,
-        })).to.emit(pausableFacet, "TokenPaused")
-          .withArgs(tokenAddress)
+        await expect(
+            pausableFacet.pause({
+                gasLimit: GAS_LIMIT.hederaTokenManager.pause,
+            })
+        )
+            .to.emit(pausableFacet, 'TokenPaused')
+            .withArgs(tokenAddress)
 
         pausableFacet = pausableFacet.connect(nonOperator)
-        await expect(pausableFacet.unpause({
-          gasLimit: GAS_LIMIT.hederaTokenManager.unpause,
-        })).to.be.revertedWithCustomError(pausableFacet, "AccountHasNoRole")
-          .withArgs(nonOperator, ROLES.pause.hash)
+        await expect(
+            pausableFacet.unpause({
+                gasLimit: GAS_LIMIT.hederaTokenManager.unpause,
+            })
+        )
+            .to.be.revertedWithCustomError(pausableFacet, 'AccountHasNoRole')
+            .withArgs(nonOperator, ROLES.pause.hash)
 
         pausableFacet = pausableFacet.connect(operator)
-        await expect(pausableFacet.unpause({
-          gasLimit: GAS_LIMIT.hederaTokenManager.unpause,
-        })).to.emit(pausableFacet, "TokenUnpaused")
-          .withArgs(tokenAddress)
+        await expect(
+            pausableFacet.unpause({
+                gasLimit: GAS_LIMIT.hederaTokenManager.unpause,
+            })
+        )
+            .to.emit(pausableFacet, 'TokenUnpaused')
+            .withArgs(tokenAddress)
 
         // Dissociate token from nonOperator account should pass
         const dissociateUnpausedResponse = await IHRC__factory.connect(tokenAddress, nonOperator).dissociate({

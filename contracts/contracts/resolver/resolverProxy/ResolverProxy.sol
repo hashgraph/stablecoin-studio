@@ -1,4 +1,5 @@
 // SPDX-License-Identifier: MIT
+// solhint-disable-next-line one-contract-per-file
 pragma solidity 0.8.18;
 
 import {ResolverProxyUnstructured} from './unstructured/ResolverProxyUnstructured.sol';

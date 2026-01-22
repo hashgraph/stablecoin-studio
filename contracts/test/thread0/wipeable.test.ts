@@ -8,23 +8,10 @@ import {
     HederaTokenManagerFacet__factory,
     WipeableFacet,
     WipeableFacet__factory,
-    StableCoinTokenMock,
     StableCoinTokenMock__factory,
 } from '@contracts'
-import {
-    delay,
-    DeployFullInfrastructureCommand,
-    MESSAGES,
-    ONE_TOKEN,
-    ROLES,
-    validateTxResponse,
-    ValidateTxResponseCommand,
-} from '@scripts'
-import {
-  deployStableCoinInTests,
-  deployFullInfrastructureInTests,
-  GAS_LIMIT
-} from '@test/shared'
+import { delay, DeployFullInfrastructureCommand, MESSAGES, ONE_TOKEN, ROLES } from '@scripts'
+import { deployStableCoinInTests, deployFullInfrastructureInTests, GAS_LIMIT } from '@test/shared'
 
 describe('➡️ Wipe Tests', function () {
     // Contracts
@@ -63,8 +50,7 @@ describe('➡️ Wipe Tests', function () {
             stableCoinFactoryProxyAddress: deployedContracts.stableCoinFactoryFacet.proxyAddress!,
         }))
 
-        await StableCoinTokenMock__factory.connect(tokenAddress, operator)
-          .setStableCoinAddress(stableCoinProxyAddress);
+        await StableCoinTokenMock__factory.connect(tokenAddress, operator).setStableCoinAddress(stableCoinProxyAddress)
 
         await setFacets(stableCoinProxyAddress)
     })
@@ -73,25 +59,34 @@ describe('➡️ Wipe Tests', function () {
         const tokensToMint = 20n * ONE_TOKEN
 
         // Mint 20 tokens
-        await expect(cashInFacet.mint(operator.address, tokensToMint, {
-          gasLimit: GAS_LIMIT.hederaTokenManager.mint,
-        })).to.emit(cashInFacet, "TokensMinted")
-          .withArgs(operator.address, tokenAddress, tokensToMint, operator.address)
+        await expect(
+            cashInFacet.mint(operator.address, tokensToMint, {
+                gasLimit: GAS_LIMIT.hederaTokenManager.mint,
+            })
+        )
+            .to.emit(cashInFacet, 'TokensMinted')
+            .withArgs(operator.address, tokenAddress, tokensToMint, operator.address)
 
         wipeFacet = wipeFacet.connect(nonOperator)
-        await expect(wipeFacet.wipe(operator.address, 1n, {
-          gasLimit: GAS_LIMIT.hederaTokenManager.wipe,
-        })).to.be.revertedWithCustomError(wipeFacet, "AccountHasNoRole")
-          .withArgs(nonOperator, ROLES.wipe.hash)
+        await expect(
+            wipeFacet.wipe(operator.address, 1n, {
+                gasLimit: GAS_LIMIT.hederaTokenManager.wipe,
+            })
+        )
+            .to.be.revertedWithCustomError(wipeFacet, 'AccountHasNoRole')
+            .withArgs(nonOperator, ROLES.wipe.hash)
     })
 
     it('Account with WIPE role cannot wipe a negative amount', async function () {
         // Wipe a negative amount of tokens : fail
         wipeFacet = wipeFacet.connect(operator)
-        await expect(wipeFacet.wipe(operator.address, -1n, {
-          gasLimit: GAS_LIMIT.hederaTokenManager.wipe,
-        })).to.be.revertedWithCustomError(wipeFacet, "NegativeAmount")
-          .withArgs(-1n)
+        await expect(
+            wipeFacet.wipe(operator.address, -1n, {
+                gasLimit: GAS_LIMIT.hederaTokenManager.wipe,
+            })
+        )
+            .to.be.revertedWithCustomError(wipeFacet, 'NegativeAmount')
+            .withArgs(-1n)
     })
 
     it('Account with WIPE role can wipe 10 tokens from an account with 20 tokens', async function () {
@@ -99,11 +94,13 @@ describe('➡️ Wipe Tests', function () {
         const tokensToWipe = 10n * ONE_TOKEN
 
         // Mint 20 tokens
-        await expect(cashInFacet.mint(operator.address, tokensToMint, {
-          gasLimit: GAS_LIMIT.hederaTokenManager.mint,
-        })).to.emit(cashInFacet, "TokensMinted")
-          .withArgs(operator.address, tokenAddress, tokensToMint, operator.address)
-
+        await expect(
+            cashInFacet.mint(operator.address, tokensToMint, {
+                gasLimit: GAS_LIMIT.hederaTokenManager.mint,
+            })
+        )
+            .to.emit(cashInFacet, 'TokensMinted')
+            .withArgs(operator.address, tokenAddress, tokensToMint, operator.address)
 
         // Get the initial total supply and account's balanceOf
         await delay({ time: 1, unit: 'sec' })
@@ -112,11 +109,13 @@ describe('➡️ Wipe Tests', function () {
 
         // Wipe 10 tokens
         wipeFacet = wipeFacet.connect(operator)
-        await expect(wipeFacet.wipe(operator.address, tokensToWipe, {
-          gasLimit: GAS_LIMIT.hederaTokenManager.wipe,
-        })).to.emit(wipeFacet, "TokensWiped")
-          .withArgs(operator.address, tokenAddress, operator.address, tokensToWipe)
-
+        await expect(
+            wipeFacet.wipe(operator.address, tokensToWipe, {
+                gasLimit: GAS_LIMIT.hederaTokenManager.wipe,
+            })
+        )
+            .to.emit(wipeFacet, 'TokensWiped')
+            .withArgs(operator.address, tokenAddress, operator.address, tokensToWipe)
 
         // Check balance of account and total supply : success
         await delay({ time: 1, unit: 'sec' })
@@ -133,19 +132,25 @@ describe('➡️ Wipe Tests', function () {
         const tokensToMint = 20n * ONE_TOKEN
 
         // Mint 20 tokens
-        await expect(cashInFacet.mint(operator.address, tokensToMint, {
-          gasLimit: GAS_LIMIT.hederaTokenManager.mint,
-        })).to.emit(cashInFacet, "TokensMinted")
-          .withArgs(operator.address, tokenAddress, tokensToMint, operator.address)
+        await expect(
+            cashInFacet.mint(operator.address, tokensToMint, {
+                gasLimit: GAS_LIMIT.hederaTokenManager.mint,
+            })
+        )
+            .to.emit(cashInFacet, 'TokensMinted')
+            .withArgs(operator.address, tokenAddress, tokensToMint, operator.address)
 
         // Get the current balance for account
         await delay({ time: 1, unit: 'sec' })
         const currentBalance = await hederaTokenManagerFacet.balanceOf(operator.address)
 
         // Wipe more than account's balance : fail
-        await expect(wipeFacet.wipe(operator.address, currentBalance + 1n, {
-          gasLimit: GAS_LIMIT.hederaTokenManager.wipe,
-        })).to.be.revertedWithCustomError(wipeFacet, "GreaterThan")
-          .withArgs(currentBalance + 1n, currentBalance)
+        await expect(
+            wipeFacet.wipe(operator.address, currentBalance + 1n, {
+                gasLimit: GAS_LIMIT.hederaTokenManager.wipe,
+            })
+        )
+            .to.be.revertedWithCustomError(wipeFacet, 'GreaterThan')
+            .withArgs(currentBalance + 1n, currentBalance)
     })
 })

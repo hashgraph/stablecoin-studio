@@ -2,19 +2,11 @@
 // solhint-disable one-contract-per-file
 pragma solidity 0.8.18;
 
-import {
-    IERC20MetadataUpgradeable
-} from '@openzeppelin/contracts-upgradeable/token/ERC20/extensions/IERC20MetadataUpgradeable.sol';
-import {
-    IERC20Upgradeable
-} from '@openzeppelin/contracts-upgradeable/token/ERC20/IERC20Upgradeable.sol';
-import {
-    IHederaTokenService
-} from "@hashgraph/smart-contracts/contracts/system-contracts/hedera-token-service/IHederaTokenService.sol";
-import {
-    HederaResponseCodes
-} from "@hashgraph/smart-contracts/contracts/system-contracts/hedera-token-service/HederaTokenService.sol";
-import { IHRC } from '../Interfaces/IHRC.sol';
+import {IERC20MetadataUpgradeable} from '@openzeppelin/contracts-upgradeable/token/ERC20/extensions/IERC20MetadataUpgradeable.sol';
+import {IERC20Upgradeable} from '@openzeppelin/contracts-upgradeable/token/ERC20/IERC20Upgradeable.sol';
+import {IHederaTokenService} from '@hashgraph/smart-contracts/contracts/system-contracts/hedera-token-service/IHederaTokenService.sol';
+import {HederaResponseCodes} from '@hashgraph/smart-contracts/contracts/system-contracts/hedera-token-service/HederaTokenService.sol';
+import {IHRC} from '../Interfaces/IHRC.sol';
 
 contract StableCoinTokenMock is IERC20Upgradeable, IERC20MetadataUpgradeable, IHRC {
     error NotImplemented();
@@ -28,11 +20,7 @@ contract StableCoinTokenMock is IERC20Upgradeable, IERC20MetadataUpgradeable, IH
     address private stableCoinAddress;
     IHederaTokenService.TokenKey[] private tokenKeys;
 
-    constructor(
-        IHederaTokenService.HederaToken memory _token,
-        int64 _initialTotalSupply,
-        int32 _decimals
-    ) {
+    constructor(IHederaTokenService.HederaToken memory _token, int64 _initialTotalSupply, int32 _decimals) {
         tokenName = _token.name;
         tokenSymbol = _token.symbol;
         balance = (uint256(uint64(_initialTotalSupply)));

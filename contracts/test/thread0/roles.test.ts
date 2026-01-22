@@ -2,20 +2,8 @@ import { expect } from 'chai'
 import { SignerWithAddress } from '@nomicfoundation/hardhat-ethers/signers'
 import { ethers } from 'hardhat'
 import { RolesFacet, RolesFacet__factory } from '@contracts'
-import {
-    ADDRESS_ZERO,
-    delay,
-    deployFullInfrastructure,
-    DeployFullInfrastructureCommand,
-    MESSAGES,
-    ROLES,
-    ValidateTxResponseCommand,
-} from '@scripts'
-import {
-  deployStableCoinInTests,
-  deployFullInfrastructureInTests,
-  GAS_LIMIT
-} from '@test/shared'
+import { ADDRESS_ZERO, DeployFullInfrastructureCommand, MESSAGES, ROLES, ValidateTxResponseCommand } from '@scripts'
+import { deployStableCoinInTests, deployFullInfrastructureInTests, GAS_LIMIT } from '@test/shared'
 import { ContractTransactionResponse } from 'ethers'
 
 describe('➡️ Roles Tests', function () {
@@ -54,83 +42,113 @@ describe('➡️ Roles Tests', function () {
 
     it('Non Admin account can not grant a role to an account', async function () {
         // Non operator has not burn role
-        expect (await rolesFacet.hasRole(ROLES.burn.hash, nonOperator, {
-          gasLimit: GAS_LIMIT.hederaTokenManager.hasRole,
-        })).to.equal(false)
+        expect(
+            await rolesFacet.hasRole(ROLES.burn.hash, nonOperator, {
+                gasLimit: GAS_LIMIT.hederaTokenManager.hasRole,
+            })
+        ).to.equal(false)
 
         // Non Admin grants burn role : fail
         rolesFacet = rolesFacet.connect(nonOperator)
-        await expect(rolesFacet.grantRole(ROLES.burn.hash, operator.address, {
-           gasLimit: GAS_LIMIT.hederaTokenManager.grantRole,
-        })).to.be.revertedWithCustomError(rolesFacet, "AccountHasNoRole")
-           .withArgs(nonOperator, ROLES.defaultAdmin.hash)
+        await expect(
+            rolesFacet.grantRole(ROLES.burn.hash, operator.address, {
+                gasLimit: GAS_LIMIT.hederaTokenManager.grantRole,
+            })
+        )
+            .to.be.revertedWithCustomError(rolesFacet, 'AccountHasNoRole')
+            .withArgs(nonOperator, ROLES.defaultAdmin.hash)
 
         // Non operator stil has not burn role
-        expect (await rolesFacet.hasRole(ROLES.burn.hash, nonOperator, {
-          gasLimit: GAS_LIMIT.hederaTokenManager.hasRole,
-        })).to.equal(false)
+        expect(
+            await rolesFacet.hasRole(ROLES.burn.hash, nonOperator, {
+                gasLimit: GAS_LIMIT.hederaTokenManager.hasRole,
+            })
+        ).to.equal(false)
     })
 
     it('Admin account can grant role to an account', async function () {
         // Non operator has not burn role
         rolesFacet = rolesFacet.connect(operator)
-        expect (await rolesFacet.hasRole(ROLES.burn.hash, nonOperator, {
-            gasLimit: GAS_LIMIT.hederaTokenManager.hasRole,
-        })).to.equal(false)
+        expect(
+            await rolesFacet.hasRole(ROLES.burn.hash, nonOperator, {
+                gasLimit: GAS_LIMIT.hederaTokenManager.hasRole,
+            })
+        ).to.equal(false)
 
         // Admin grants burn role : success
-        await expect (rolesFacet.grantRole(ROLES.burn.hash, nonOperator.address, {
-            gasLimit: GAS_LIMIT.hederaTokenManager.grantRole,
-        })).to.emit(rolesFacet, "RoleGranted")
+        await expect(
+            rolesFacet.grantRole(ROLES.burn.hash, nonOperator.address, {
+                gasLimit: GAS_LIMIT.hederaTokenManager.grantRole,
+            })
+        )
+            .to.emit(rolesFacet, 'RoleGranted')
             .withArgs(ROLES.burn.hash, nonOperator.address, operator.address)
 
         // Non operator has burn role
-        expect (await rolesFacet.hasRole(ROLES.burn.hash, nonOperator, {
-            gasLimit: GAS_LIMIT.hederaTokenManager.hasRole,
-        })).to.equal(true)
+        expect(
+            await rolesFacet.hasRole(ROLES.burn.hash, nonOperator, {
+                gasLimit: GAS_LIMIT.hederaTokenManager.hasRole,
+            })
+        ).to.equal(true)
     })
 
     it('Granting role to account 0 fails', async function () {
-        await expect(rolesFacet.grantRole(ROLES.burn.hash, ADDRESS_ZERO)
-        ).to.be.revertedWithCustomError(rolesFacet, 'AddressZero')
+        await expect(rolesFacet.grantRole(ROLES.burn.hash, ADDRESS_ZERO)).to.be.revertedWithCustomError(
+            rolesFacet,
+            'AddressZero'
+        )
     })
 
     it('Non Admin account can not revoke role from an account', async function () {
         // Non operator has burn role
-        expect (await rolesFacet.hasRole(ROLES.burn.hash, nonOperator, {
-          gasLimit: GAS_LIMIT.hederaTokenManager.hasRole,
-        })).to.equal(true)
+        expect(
+            await rolesFacet.hasRole(ROLES.burn.hash, nonOperator, {
+                gasLimit: GAS_LIMIT.hederaTokenManager.hasRole,
+            })
+        ).to.equal(true)
 
         // Non Admin revokes burn role : fail
         rolesFacet = rolesFacet.connect(nonOperator)
-        await expect (rolesFacet.revokeRole(ROLES.burn.hash, nonOperator.address, {
-            gasLimit: GAS_LIMIT.hederaTokenManager.revokeRole,
-        })).to.be.revertedWithCustomError(rolesFacet, "AccountHasNoRole")
+        await expect(
+            rolesFacet.revokeRole(ROLES.burn.hash, nonOperator.address, {
+                gasLimit: GAS_LIMIT.hederaTokenManager.revokeRole,
+            })
+        )
+            .to.be.revertedWithCustomError(rolesFacet, 'AccountHasNoRole')
             .withArgs(nonOperator, ROLES.defaultAdmin.hash)
 
         // Non operator stil has burn role
-        expect (await rolesFacet.hasRole(ROLES.burn.hash, nonOperator, {
-            gasLimit: GAS_LIMIT.hederaTokenManager.hasRole,
-        })).to.equal(true)
+        expect(
+            await rolesFacet.hasRole(ROLES.burn.hash, nonOperator, {
+                gasLimit: GAS_LIMIT.hederaTokenManager.hasRole,
+            })
+        ).to.equal(true)
     })
 
     it('Admin account can revoke role from an account', async function () {
         // Non operator has burn role
-        expect (await rolesFacet.hasRole(ROLES.burn.hash, nonOperator, {
-            gasLimit: GAS_LIMIT.hederaTokenManager.hasRole,
-        })).to.equal(true)
+        expect(
+            await rolesFacet.hasRole(ROLES.burn.hash, nonOperator, {
+                gasLimit: GAS_LIMIT.hederaTokenManager.hasRole,
+            })
+        ).to.equal(true)
 
         // Admin revokes burn role : success
         rolesFacet = rolesFacet.connect(operator)
-        await expect (rolesFacet.revokeRole(ROLES.burn.hash, nonOperator.address, {
-           gasLimit: GAS_LIMIT.hederaTokenManager.revokeRole,
-        })).to.emit(rolesFacet, "RoleRevoked")
-           .withArgs(ROLES.burn.hash, nonOperator.address, operator.address)
+        await expect(
+            rolesFacet.revokeRole(ROLES.burn.hash, nonOperator.address, {
+                gasLimit: GAS_LIMIT.hederaTokenManager.revokeRole,
+            })
+        )
+            .to.emit(rolesFacet, 'RoleRevoked')
+            .withArgs(ROLES.burn.hash, nonOperator.address, operator.address)
 
         // Non operator has not burn role
-        expect (await rolesFacet.hasRole(ROLES.burn.hash, nonOperator, {
-            gasLimit: GAS_LIMIT.hederaTokenManager.hasRole,
-        })).to.equal(false)
+        expect(
+            await rolesFacet.hasRole(ROLES.burn.hash, nonOperator, {
+                gasLimit: GAS_LIMIT.hederaTokenManager.hasRole,
+            })
+        ).to.equal(false)
     })
 
     it('Can not revoke all admin role from a token', async function () {
@@ -145,9 +163,11 @@ describe('➡️ Roles Tests', function () {
             })
         }
 
-        await expect (rolesFacet.revokeRole(ROLES.defaultAdmin.hash, Admins[Length - 1], {
-           gasLimit: GAS_LIMIT.hederaTokenManager.revokeRole,
-        })).to.be.revertedWithCustomError(rolesFacet, "NoAdminsLeft")
+        await expect(
+            rolesFacet.revokeRole(ROLES.defaultAdmin.hash, Admins[Length - 1], {
+                gasLimit: GAS_LIMIT.hederaTokenManager.revokeRole,
+            })
+        ).to.be.revertedWithCustomError(rolesFacet, 'NoAdminsLeft')
     })
     // * Initial State again
 

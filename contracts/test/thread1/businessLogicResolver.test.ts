@@ -58,9 +58,11 @@ describe('➡️ BusinessLogicResolver Tests', () => {
     })
 
     it('GIVEN an initialized contract WHEN trying to initialize it again THEN transaction fails with AlreadyInitialized', async () => {
-        await expect (businessLogicResolver.initialize_BusinessLogicResolver({
-            gasLimit: GAS_LIMIT.initialize.businessLogicResolver,
-        })).to.be.revertedWithCustomError(businessLogicResolver, 'ContractIsAlreadyInitialized')
+        await expect(
+            businessLogicResolver.initialize_BusinessLogicResolver({
+                gasLimit: GAS_LIMIT.initialize.businessLogicResolver,
+            })
+        ).to.be.revertedWithCustomError(businessLogicResolver, 'ContractIsAlreadyInitialized')
     })
 
     describe('AccessControl', () => {
@@ -68,9 +70,12 @@ describe('➡️ BusinessLogicResolver Tests', () => {
             // Using nonOperator (non role)
             businessLogicResolver = businessLogicResolver.connect(nonOperator)
 
-            await expect (businessLogicResolver.registerBusinessLogics(BUSINESS_LOGIC_KEYS.slice(0, 2), {
-                gasLimit: GAS_LIMIT.businessLogicResolver.registerBusinessLogics,
-            })).to.be.revertedWithCustomError(businessLogicResolver, 'AccountHasNoRole')
+            await expect(
+                businessLogicResolver.registerBusinessLogics(BUSINESS_LOGIC_KEYS.slice(0, 2), {
+                    gasLimit: GAS_LIMIT.businessLogicResolver.registerBusinessLogics,
+                })
+            )
+                .to.be.revertedWithCustomError(businessLogicResolver, 'AccountHasNoRole')
                 .withArgs(nonOperator, ROLES.defaultAdmin.hash)
         })
     })
@@ -106,25 +111,31 @@ describe('➡️ BusinessLogicResolver Tests', () => {
                 },
             ]
 
-            await expect (businessLogicResolver.registerBusinessLogics(BUSINESS_LOGICS_TO_REGISTER, {
-                gasLimit: GAS_LIMIT.businessLogicResolver.registerBusinessLogics,
-            })).to.be.revertedWithCustomError(businessLogicResolver, 'ZeroKeyNotValidForBusinessLogic')
+            await expect(
+                businessLogicResolver.registerBusinessLogics(BUSINESS_LOGICS_TO_REGISTER, {
+                    gasLimit: GAS_LIMIT.businessLogicResolver.registerBusinessLogics,
+                })
+            ).to.be.revertedWithCustomError(businessLogicResolver, 'ZeroKeyNotValidForBusinessLogic')
         })
 
         it('GIVEN an duplicated key WHEN registerBusinessLogics THEN Fails with BusinessLogicKeyDuplicated', async () => {
             const BUSINESS_LOGICS_TO_REGISTER = [BUSINESS_LOGIC_KEYS[0], BUSINESS_LOGIC_KEYS[0]]
 
-            await expect (businessLogicResolver.registerBusinessLogics(BUSINESS_LOGICS_TO_REGISTER, {
-                gasLimit: GAS_LIMIT.businessLogicResolver.registerBusinessLogics,
-            })).to.be.revertedWithCustomError(businessLogicResolver, 'BusinessLogicKeyDuplicated')
+            await expect(
+                businessLogicResolver.registerBusinessLogics(BUSINESS_LOGICS_TO_REGISTER, {
+                    gasLimit: GAS_LIMIT.businessLogicResolver.registerBusinessLogics,
+                })
+            ).to.be.revertedWithCustomError(businessLogicResolver, 'BusinessLogicKeyDuplicated')
         })
 
         it('GIVEN a list of logics WHEN registerBusinessLogics THEN Fails if some key is not informed with AllBusinessLogicKeysMustBeenInformed', async () => {
             await businessLogicResolver.registerBusinessLogics([BUSINESS_LOGIC_KEYS[0]])
 
-            await expect (businessLogicResolver.registerBusinessLogics([BUSINESS_LOGIC_KEYS[1]], {
-                gasLimit: GAS_LIMIT.businessLogicResolver.registerBusinessLogics,
-            })).to.be.revertedWithCustomError(businessLogicResolver, 'AllBusinessLogicKeysMustBeenInformed')
+            await expect(
+                businessLogicResolver.registerBusinessLogics([BUSINESS_LOGIC_KEYS[1]], {
+                    gasLimit: GAS_LIMIT.businessLogicResolver.registerBusinessLogics,
+                })
+            ).to.be.revertedWithCustomError(businessLogicResolver, 'AllBusinessLogicKeysMustBeenInformed')
         })
 
         it('GIVEN an empty registry WHEN registerBusinessLogics THEN queries responds with correct values', async () => {

@@ -9,11 +9,8 @@ import {
     DeployFullInfrastructureCommand,
     GAS_LIMIT,
     MESSAGES,
-    ValidateTxResponseCommand,
 } from '@scripts'
-import {
-  deployFullInfrastructureInTests,
-} from '@test/shared'
+import { deployFullInfrastructureInTests } from '@test/shared'
 import {
     BusinessLogicResolver,
     DiamondCutManager,
@@ -279,9 +276,11 @@ describe('➡️ DiamondCutManager Tests', () => {
             })
         )
 
-        await expect (diamondCutManager.createConfiguration(configId, facetConfigurations, {
-            gasLimit: GAS_LIMIT.diamondCutManager.createConfiguration,
-        })).to.be.revertedWithCustomError(diamondCutManager, "DefaultValueForConfigurationIdNotPermitted")
+        await expect(
+            diamondCutManager.createConfiguration(configId, facetConfigurations, {
+                gasLimit: GAS_LIMIT.diamondCutManager.createConfiguration,
+            })
+        ).to.be.revertedWithCustomError(diamondCutManager, 'DefaultValueForConfigurationIdNotPermitted')
     })
 
     it('GIVEN a resolver and a non admin user WHEN adding a new configuration THEN fails with AccountHasNoRole', async () => {
@@ -294,9 +293,12 @@ describe('➡️ DiamondCutManager Tests', () => {
                 version: stableCoinFacetVersionList[index],
             })
         )
-        await expect (diamondCutManager.createConfiguration(CONFIG_ID.stableCoin, facetConfigurations, {
-            gasLimit: GAS_LIMIT.diamondCutManager.createConfiguration,
-        })).to.be.revertedWithCustomError(diamondCutManager, "AccountHasNoRole")
+        await expect(
+            diamondCutManager.createConfiguration(CONFIG_ID.stableCoin, facetConfigurations, {
+                gasLimit: GAS_LIMIT.diamondCutManager.createConfiguration,
+            })
+        )
+            .to.be.revertedWithCustomError(diamondCutManager, 'AccountHasNoRole')
             .withArgs(nonOperator, ROLES.defaultAdmin.hash)
     })
 
@@ -310,9 +312,11 @@ describe('➡️ DiamondCutManager Tests', () => {
             },
         ]
 
-        await expect (diamondCutManager.createConfiguration(
-            CONFIG_ID.stableCoin, facetConfigurations
-        )).to.be.revertedWithCustomError(diamondCutManager, "FacetIdNotRegistered")
+        await expect(
+            diamondCutManager.createConfiguration(CONFIG_ID.stableCoin, facetConfigurations, {
+                gasLimit: GAS_LIMIT.diamondCutManager.createConfiguration,
+            })
+        ).to.be.revertedWithCustomError(diamondCutManager, 'FacetIdNotRegistered')
     })
 
     it('GIVEN a resolver WHEN adding a new configuration with a duplicated facet THEN fails with DuplicatedFacetInConfiguration', async () => {
@@ -330,9 +334,9 @@ describe('➡️ DiamondCutManager Tests', () => {
                 version: facetVersions[index],
             })
         })
-        await expect (diamondCutManager.createConfiguration(
-            CONFIG_ID.stableCoin, facetConfigurations
-        )).to.be.revertedWithCustomError(diamondCutManager, "DuplicatedFacetInConfiguration")
+        await expect(
+            diamondCutManager.createConfiguration(CONFIG_ID.stableCoin, facetConfigurations)
+        ).to.be.revertedWithCustomError(diamondCutManager, 'DuplicatedFacetInConfiguration')
     })
 
     it('GIVEN a batch deploying WHEN run cancelBatchConfiguration THEN all the related information is removed', async () => {
@@ -380,9 +384,11 @@ describe('➡️ DiamondCutManager Tests', () => {
             })
         )
 
-        await expect (diamondCutManager.createBatchConfiguration(configId, facetConfigurations, false, {
-            gasLimit: GAS_LIMIT.diamondCutManager.createConfiguration,
-        })).to.be.revertedWithCustomError(diamondCutManager, "DefaultValueForConfigurationIdNotPermitted")
+        await expect(
+            diamondCutManager.createBatchConfiguration(configId, facetConfigurations, false, {
+                gasLimit: GAS_LIMIT.diamondCutManager.createConfiguration,
+            })
+        ).to.be.revertedWithCustomError(diamondCutManager, 'DefaultValueForConfigurationIdNotPermitted')
     })
 
     it('GIVEN a resolver and a non admin user WHEN adding a new configuration with createBatchConfiguration THEN fails with AccountHasNoRole', async () => {
@@ -396,14 +402,12 @@ describe('➡️ DiamondCutManager Tests', () => {
             })
         )
 
-        await expect (diamondCutManager.createBatchConfiguration(
-            CONFIG_ID.stableCoin,
-            facetConfigurations,
-            false,
-            {
+        await expect(
+            diamondCutManager.createBatchConfiguration(CONFIG_ID.stableCoin, facetConfigurations, false, {
                 gasLimit: GAS_LIMIT.diamondCutManager.createConfiguration,
-            }
-        )).to.be.revertedWithCustomError(diamondCutManager, "AccountHasNoRole")
+            })
+        )
+            .to.be.revertedWithCustomError(diamondCutManager, 'AccountHasNoRole')
             .withArgs(nonOperator, ROLES.defaultAdmin.hash)
     })
 
@@ -417,11 +421,11 @@ describe('➡️ DiamondCutManager Tests', () => {
             },
         ]
 
-        await expect (diamondCutManager.createBatchConfiguration(
-            CONFIG_ID.stableCoin,
-            facetConfigurations,
-            false
-        )).to.be.revertedWithCustomError(diamondCutManager, "FacetIdNotRegistered")
+        await expect(
+            diamondCutManager.createBatchConfiguration(CONFIG_ID.stableCoin, facetConfigurations, false, {
+                gasLimit: GAS_LIMIT.diamondCutManager.createConfiguration,
+            })
+        ).to.be.revertedWithCustomError(diamondCutManager, 'FacetIdNotRegistered')
     })
 
     it('GIVEN a resolver WHEN adding a new configuration with a duplicated facet using createBatchConfiguration THEN fails with DuplicatedFacetInConfiguration', async () => {
@@ -439,11 +443,9 @@ describe('➡️ DiamondCutManager Tests', () => {
                 version: facetVersions[index],
             })
         })
-        await expect (diamondCutManager.createBatchConfiguration(
-            CONFIG_ID.stableCoin,
-            facetConfigurations,
-            false
-        )).to.be.revertedWithCustomError(diamondCutManager, "DuplicatedFacetInConfiguration")
+        await expect(
+            diamondCutManager.createBatchConfiguration(CONFIG_ID.stableCoin, facetConfigurations, false)
+        ).to.be.revertedWithCustomError(diamondCutManager, 'DuplicatedFacetInConfiguration')
     })
     it('GIVEN a resolver WHEN a selector is blacklisted THEN transaction fails with SelectorBlacklisted', async () => {
         const blackListedSelectors = ['0x8456cb59'] // pause() selector
