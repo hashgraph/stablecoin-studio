@@ -20,7 +20,7 @@ function HomepageHeader() {
         <div className={styles.buttons}>
           <Link
             className="button button--secondary button--lg"
-            to="/stablecoin-studio/scs/docs/getting-started">
+            to="/stablecoin-studio/scs/gettingStarted/getting-started">
             Get Started
           </Link>
         </div>

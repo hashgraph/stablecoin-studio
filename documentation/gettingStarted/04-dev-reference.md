@@ -25,4 +25,4 @@ if ((await coin.getCapabilities()).canMint) {
 - `stablecoin list`: Shows all tokens you manage.
 - `stablecoin manage`: Sub-menu for Mint/Burn/Wipe.
 
-[⬅️ Back to Home](../README.md)
+[⬅️ Back to Home](../intro.md)

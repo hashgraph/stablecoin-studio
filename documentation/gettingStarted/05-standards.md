@@ -12,4 +12,4 @@
 | Proxy Logic | [TransparentUpgradeableProxy](https://docs.openzeppelin.com/contracts/5.x/api/proxy) |
 | Roles | [AccessControl](https://docs.openzeppelin.com/contracts/5.x/api/access) |
 
-[⬅️ Back to Home](../README.md)
+[⬅️ Back to Home](../intro.md)

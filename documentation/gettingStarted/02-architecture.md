@@ -55,4 +55,4 @@ We leverage the industry-standard **OpenZeppelin** libraries, adapted for the He
 3. **Factory** deploys a **Proxy** pointing to the **Stablecoin Logic**.
 4. **Admin Keys** of the Token are assigned to the **Proxy Contract**.
 \`\`\`
-[⬅️ Back to Home](../README.md)
+[⬅️ Back to Home](../intro.md)

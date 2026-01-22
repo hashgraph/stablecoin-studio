@@ -9,4 +9,4 @@ The recipient account MUST associate with the Token ID before you can transfer f
 ### 3. Docker Errors 🐋
 If the Mirror Node fails, ensure ports **5432** (DB) and **8080** (API) are free.
 
-[⬅️ Back to Home](../README.md)
+[⬅️ Back to Home](../intro.md)

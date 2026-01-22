@@ -75,9 +75,9 @@ const config: Config = {
       respectPrefersColorScheme: true,
     },
     navbar: {
-      title: "Stable coin Studio",
+      title: "Stable Coin Studio",
       logo: {
-        alt: "Stable coin Studio Logo",
+        alt: "Stable Coin Studio Logo",
         src: "img/logo.svg",
       },
       items: [
@@ -86,7 +86,7 @@ const config: Config = {
           docId: "intro",
           docsPluginId: "scs",
           position: "left",
-          label: "SCS",
+          label: "Documentation",
         },
         {
           href: "https://github.com/hashgraph/stablecoin-studio",
@@ -103,7 +103,7 @@ const config: Config = {
           items: [
             {
               label: "SCS Getting Started",
-              to: "/scs/docs/getting-started",
+              to: "/scs/gettingStarted/getting-started",
             },
           ],
         },

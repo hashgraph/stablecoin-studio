@@ -6,22 +6,22 @@
 
 </div>
 
-### Table of Contents
+# Table of Contents
 
-- **[Overview](#overview)**<br>
-- **[Installation](#installation)**<br>
-- **[Build](#build)**<br>
-- **[Quick Start](#quick-start)**<br>
-  - [ENV vars](#env-vars)<br>
-  - [Starting the UI](#starting-the-ui)<br>
-  - [Pairing a wallet](#pairing-a-wallet)<br>
-- **[Usage](#usage)**<br>
-  - [Supported Wallets](#supported-wallets)<br>
-  - [Web Flow](#web-flow)<br>
-- **[Testing](#testing)**<br>
-- **[Contributing](#contributing)**<br>
-- **[Code of Conduct](#code-of-conduct)**<br>
-- **[License](#license)**<br>
+- **[Overview](#overview)**
+- **[Installation](#installation)**
+- **[Build](#build)**
+- **[Quick Start](#quick-start)**
+  - [ENV vars](#env-vars)
+  - [Starting the UI](#starting-the-ui)
+  - [Pairing a wallet](#pairing-a-wallet)
+- **[Usage](#usage)**
+  - [Supported Wallets](#supported-wallets)
+  - [Web Flow](#web-flow)
+- **[Testing](#testing)**
+- **[Contributing](#contributing)**
+- **[Code of Conduct](#code-of-conduct)**
+- **[License](#license)**
 
 # Overview
 
@@ -108,7 +108,7 @@ npm run start
 
 ## Pairing a wallet
 
-![Alt text](docs/images/wallets.png?raw=true 'selecting a wallet')
+![Alt text](../../web/docs/images/wallets.png?raw=true 'selecting a wallet')
 
 The front end will automatically detect how many compatible wallets are available and ask you to select one of them to operate with.
 
@@ -158,19 +158,19 @@ If you select an account that does not exist in the Hedera network.
 
 In order to create a new stablecoin using the web application, you must click on the "Create Coin" button at the top of the page then fill-in all the required information :
 
-![Create stablecoin](docs/images/create.png?raw=true 'Create stablecoin')
+![Create stablecoin](../../web/docs/images/create.png?raw=true 'Create stablecoin')
 
 **Basic details**
 
 Basic information about the stablecoin. You can choose the name and the symbol of the stable coin and the config id (0x0000000000000000000000000000000000000000000000000000000000000002 by default) and version (1 by default).
 
-![Create stablecoin details](docs/images/create_stable_coin_details.png?raw=true 'Create stablecoin details')
+![Create stablecoin details](../../web/docs/images/create_stable_coin_details.png?raw=true 'Create stablecoin details')
 
 **Optional details**
 
 Stablecoin supply and accuracy definition (initial supply, max supply, decimals)
 
-![Create stablecoin details and metadata](docs/images/create_stable_coin_supply.png?raw=true 'Create stablecoin supply and metadata')
+![Create stablecoin details and metadata](../../web/docs/images/create_stable_coin_supply.png?raw=true 'Create stablecoin supply and metadata')
 
 **Manage permissions**
 
@@ -178,20 +178,20 @@ Underlying token's keys definition (stablecoin smart contract, current key, anot
 
 In this step, the user can also configure the stablecoin proxy admin owner. By default, this ownership belongs to the account creating the stablecoin, but the user has the chance to change this default behaviour by configuring another account id, which can belongs to a contract, like a timelock controller, a cold wallet, or whatever account.
 
-![Create stablecoin configure permissions](docs/images/create_stable_coin_permissions.png?raw=true 'Create stablecoin configure permissions')
+![Create stablecoin configure permissions](../../web/docs/images/create_stable_coin_permissions.png?raw=true 'Create stablecoin configure permissions')
 
 **Proof of reserve**
 
 Choose if the stablecoin will have a proof of reserve (PoR) associated to it or not.
 If so, the user will have two options, either submit the address of an already existing PoR contract or generate a completely new one (using the demo implementation of a PoR contract included in the project) specifying an initial Reserve amount. The config id (0x0000000000000000000000000000000000000000000000000000000000000003 by default) and the config version (1 by default)
 
-![Create stablecoin proof of reserve](docs/images/create_stable_coin_reserve.png?raw=true 'Create stablecoin proof of reserve')
+![Create stablecoin proof of reserve](../../web/docs/images/create_stable_coin_reserve.png?raw=true 'Create stablecoin proof of reserve')
 
 **Review**
 
 Final validation before creating the stablecoin.
 
-![Create stablecoin review](docs/images/create_stable_coin_create.png?raw=true 'Create stablecoin review')
+![Create stablecoin review](../../web/docs/images/create_stable_coin_create.png?raw=true 'Create stablecoin review')
 
 You will then have to validate the transaction using the wallet you paired to.
 
@@ -247,11 +247,11 @@ If (and only if) the PoR contract attached to your stablecoin is the PoR demo im
 
 This option allows the user to manage the stablecoin business logic resolver contract. These contracts are both upgradeable, using an implementation of the OpenZeppelin **TransparentUpgradeableProxy** contract. This proxy can only be managed by an administrator contract. Therefore, only the account which is the owner of the proxy's administrator contract will be able to manage the proxy, and this management allows the user to change the resolver contract.
 
-![Settings](docs/images/settings.png?raw=true 'Settings')
+![Settings](../../web/docs/images/settings.png?raw=true 'Settings')
 
 If the user selects the option to manage the stablecoin, it could change the **Business Logic Resolver Proxy** contract, the config id and the config version.
 
-![Settings update](docs/images/settings_update.png?raw=true 'Settings update')
+![Settings update](../../web/docs/images/settings_update.png?raw=true 'Settings update')
 
 ### Multisig transactions
 
@@ -278,11 +278,11 @@ The operations that you can perform on a transaction are:
 - **SEND**: Submits the transaction to the Hedera DLT.
 - **REMOVE**: Removes the transaction from the backend, the transaction will be "discarded".
 
-![Alt text](docs/images/MultisigTransactions.png?raw=true)
+![Alt text](../../web/docs/images/MultisigTransactions.png?raw=true)
 
 In order to view the **DETAILS** of a transaction you can click on its **DESCRIPTION**
 
-![Alt text](docs/images/MultisigTransactionDetails.png?raw=true)
+![Alt text](../../web/docs/images/MultisigTransactionDetails.png?raw=true)
 
 # Testing
 
