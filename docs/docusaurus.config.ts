@@ -66,7 +66,7 @@ const config: Config = {
     mermaid: true,
   },
 
-  themes: ["@docusaurus/theme-mermaid"],
+  themes: ['@docusaurus/theme-mermaid'],
 
   themeConfig: {
     // Social card for link previews (optional)

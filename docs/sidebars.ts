@@ -47,7 +47,14 @@ const sidebars: SidebarsConfig = {
       type: 'category',
       label: '👤 Client',
       items: [
-        'client/README',
+        'client/quick-start',
+        'client/configuration',
+        'client/commands',
+        'client/architecture',
+        'client/factories-resolvers',
+        'client/usage',
+        'client/troubleshooting',
+        'client/community'
       ],
     },
     {
