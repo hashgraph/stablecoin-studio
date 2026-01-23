@@ -1,19 +1,42 @@
 ---
 id: quick-start
-title: "💻 CLI Overview"
-sidebar_label: "Introduction"
+title: "🚀 Introduction"
+sidebar_label: "🚀 Introduction"
 slug: /client
 ---
 
-# Stable Coin Studio CLI
+<div align="center">
+
+[![License](https://img.shields.io/badge/license-apache2-blue.svg)](../LICENSE.md)
+
+</div>
+
+# Table of contents
+
+- [Introduction](#-introduction)
+- [Quick Start](#-quick-start)
+    - [Pre-requirements](#pre-requirements)
+    - [Installation](#installation)
+- [Starting the CLI](#-starting-the-cli)
+- [First Run & Configuration](#first-run--configuration)
+- [Environment Warning](#environment-warning)
+- [Authenticating an Account](#-authenticating-an-account)
+
+<br/><br/>
+
+
+# 🚀 Introduction
+---
 
 The **Stable Coin Studio Command Line Interface (CLI)** provides a streamlined workflow to create, configure, and operate stablecoins.
 
 It uses the API exposed by the SDK and it is meant as a "demo tool" to showcase the project's functionalities.
+<br/><br/>
 
-## 🚀 Quick Start
+# 🚀 Quick Start
+---
 
-### Pre-requirements
+## Pre-requirements
 
 You must have installed
 
@@ -25,7 +48,7 @@ Then you must install and build the following projects :
 1. [Contract installation](https://github.com/hashgraph/stablecoin-studio/blob/main/contracts/README.md#installation)
 2. [SDK installation](https://github.com/hashgraph/stablecoin-studio/blob/main/sdk/README.md#installation)
 
-### Installation
+## Installation
 
 Clone the repository:
 ```bash
@@ -48,8 +71,10 @@ Once installed globally, you can use the `accelerator wizard` command.
 ```bash
 npm install
 ```
+<br/><br/>
 
-## 🏁 Starting the CLI
+# 🏁 Starting the CLI
+---
 
 Once you run install command, you can interact with the tool in two ways:
 
@@ -62,23 +87,23 @@ npm start
 ```bash
 npm run start:wizard
 ```
+<br/><br/>
 
-### First Run & Configuration
+# First Run & Configuration
+---
 The first time you execute the accelerator wizard command in your terminal, if you haven't added your default configuration path the interface will ask you whether you want to create a new configuration file in the default path. When the configuration file is created you must configure the default network, operating accounts and the factory contract id.
+<br/><br/>
 
-
-### Environment Warning
+# Environment Warning
+---
 > ⚠️ **Important**: For testing purposes, you should create a **Testnet** account. Everything executed on Mainnet will incur real HBAR costs.
+<br/><br/>
 
-## 🔐 Authenticating an Account
+# 🔐 Authenticating an Account
+---
 The CLI supports three modes to configure your operating account:
 
 1. **Self-Custodial (Private Key)**: Support for **ED25519** or **ECDSA** keys. Recommended for use with the Hedera Developer Portal, HashPack, or Blade.
 2. **Custodial Wallets**: Native support for **Dfns** and **Fireblocks**.
 3. **Multi-signature Account**: Allows creating transactions that require multiple signatures. A [backend](../backend) is required to manage the signature collection.
-
----
-
-## 🗺️ Next Steps
-- [Advanced Configuration & Manual Setup](./configuration)
-- [Contributing to the Project](./contributing)
+<br/><br/>

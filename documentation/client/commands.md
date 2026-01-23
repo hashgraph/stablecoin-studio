@@ -1,10 +1,10 @@
 ---
 id: commands
-title: "🛠️ Commands Reference"
-sidebar_label: "Commands"
+title: "⌨️ Scripting & Commands Reference"
+sidebar_label: "⌨️ Scripting & Commands Reference"
 ---
 
-# Commands Reference
+# ⌨️ Scripting & Commands Reference
 
 The CLI uses a hierarchical command structure: `scs <category> <action> [options]`.
 

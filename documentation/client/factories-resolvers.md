@@ -1,10 +1,10 @@
 ---
 id: factories-resolvers
-title: "🧩 Factories & Resolvers addresses"
-sidebar_label: "Factories and Resolvers"
+title: "🏭 Factories & Resolvers"
+sidebar_label: "🏭 Factories & Resolvers"
 ---
 
-# 🧩 Factories and Resolvers
+# 🏭 Factories & Resolvers
 
 The "Resolver" logic is a core part of the CLI. Instead of hardcoding addresses, the CLI queries a versioning contract or an internal map to ensure that your commands are always sent to the correct version of the Stable Coin Studio protocol.
 

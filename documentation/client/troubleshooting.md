@@ -1,10 +1,10 @@
 ---
 id: troubleshooting
 title: "🔍 Troubleshooting"
-sidebar_label: "Troubleshooting"
+sidebar_label: "🔍 Troubleshooting"
 ---
 
-# Troubleshooting
+# 🔍 Troubleshooting
 
 Solutions to common issues encountered while using the Stable Coin Studio CLI.
 

@@ -1,10 +1,10 @@
 ---
 id: configuration
 title: "⚙️ Configuration & Manual Setup"
-sidebar_label: "Configuration"
+sidebar_label: "⚙️ Configuration & Manual Setup"
 ---
 
-# Configuration Guide
+# ⚙️ Configuration & Manual Setup
 
 The CLI needs to know which account to use and how to connect to the Hedera network. You can achieve this via the Accelerator Wizard or by manually creating the configuration files.
 

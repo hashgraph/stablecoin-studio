@@ -1,10 +1,10 @@
 ---
 id: community
 title: "🤝 Community & Contributing"
-sidebar_label: "Community"
+sidebar_label: "🤝 Community & Guidelines"
 ---
 
-# Community Guidelines
+# 🤝 Community & Guidelines
 
 ## Contributing
 We welcome contributions to Stable Coin Studio! To contribute:

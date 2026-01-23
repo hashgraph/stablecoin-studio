@@ -1,10 +1,10 @@
 ---
 id: architecture
-title: "🏗️ Architecture & CLI Flow"
-sidebar_label: "Architecture"
+title: "🏗️ Internal Architecture"
+sidebar_label: "🏗️ Internal Architecture"
 ---
 
-# Internal Architecture
+# 🏗️ Internal Architecture
 
 ## 🌊 Detailed CLI Flow
 The Stable Coin Studio CLI is not just a wrapper; it manages a complex lifecycle for every transaction to guarantee consensus on Hedera.
