@@ -19,6 +19,7 @@
     "install:cli": "npm install --workspace=cli",
     "install:web": "npm install --workspace=web",
     "compile:contracts": "npm run compile --workspace=contracts",
+    "coverage:contracts": "npm run coverage --workspace=contracts",
     "build:sdk": "npm run build --workspace=sdk",
     "build:cli": "npm run build --workspace=cli",
     "build:cli:full": "npm run build:backend && npm run build:contracts && npm run build:sdk && npm run build:cli",

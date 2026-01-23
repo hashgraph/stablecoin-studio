@@ -9,151 +9,63 @@ on:
       - "package*.json"
       - "contracts/hardhat.config.ts"
       - "contracts/tsconfig.json"
+      - "contracts/.solcover.js"
   push:
     branches:
       - main
-    paths:
-      - "contracts/contracts/**"
-      - "contracts/test/**"
-      - "contracts/scripts/**"
-      - "package*.json"
-      - "contracts/hardhat.config.ts"
-      - "contracts/tsconfig.json"
-env:
-  # Local (Right now using testnet)
-  LOCAL_PRIVATE_KEY_0: "0x105d050185ccb907fba04dd92d8de9e32c18305e097ab41dadda21489a211524"
-  LOCAL_PRIVATE_KEY_1: "0x2e1d968b041d84dd120a5860cee60cd83f9374ef527ca86996317ada3d0d03e7"
-  LOCAL_PRIVATE_KEY_2: "0x45a5a7108a18dd5013cf2d5857a28144beadc9c70b3bdbd914e38df4e804b8d8"
-  LOCAL_PRIVATE_KEY_3: "0x6e9d61a325be3f6675cf8b7676c70e4a004d2308e3e182370a41f5653d52c6bd"
-  LOCAL_PRIVATE_KEY_4: "0x0b58b1bd44469ac9f813b5aeaf6213ddaea26720f0b2f133d08b6f234130a64f"
-  LOCAL_JSON_RPC_ENDPOINT: "http://localhost:7546"
-  LOCAL_MIRROR_NODE_ENDPOINT: "http://localhost:5551"
-  # Tesnet
-  TESTNET_JSON_RPC_ENDPOINT: "https://296.rpc.thirdweb.com"
-  TESTNET_MIRROR_NODE_ENDPOINT: "https://testnet.mirrornode.hedera.com"
-
-permissions:
-  contents: read
-
-# ! It does NOT work if running locally using ACT (file sharing issue)
 
 jobs:
-  thread0:
+  test-contracts:
+    name: Test Stablecoin Studio Contracts
     runs-on: token-studio-linux-medium
-    # ! Cannot use container with Hedera Local Network
-    # container:
-    #   image: node:20.17.0-alpine3.20 # Using alpine for a smaller image
-    permissions:
-      contents: read
-
+    #timeout-minutes: 10
     steps:
-      # * Initial steps
       - name: Harden Runner
-        uses: step-security/harden-runner@20cf305ff2072d973412fa9b1e3a4f227bda3c76 #v2.14.0
+        uses: step-security/harden-runner@v2
         with:
           egress-policy: audit
 
-      - name: Checkout repository
-        uses: actions/checkout@08eba0b27e820071cde6df949e0beb9ba4906955 # v4.3.0
+      - name: Checkout code
+        uses: actions/checkout@v4
 
       - name: Setup Node.js
-        uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 #v4.4.0
+        uses: actions/setup-node@v4
         with:
-          node-version: "20.x"
+          node-version: "22"
+          cache: npm
 
-      - name: Initial steps
-        uses: ./.github/actions/initial-steps
+      - name: Restore dependencies from cache
+        uses: actions/cache/restore@v4
         with:
-          module: "contracts"
-          docker-engine-ubuntu: "true"
-          # deps-create-env-file: "true" # Needed for testnet
+          path: |
+            node_modules
+            */*/node_modules
+            */*/*/node_modules
+            ~/.npm
+          key: ${{ runner.os }}-deps-${{ hashFiles('**/package-lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-deps-
+          fail-on-cache-miss: true
 
-      - name: Install and run Hedera Local Network
+      - name: Cache Hardhat artifacts
+        uses: actions/cache@v4
+        with:
+          path: |
+            contracts/artifacts
+            contracts/cache
+            contracts/typechain-types
+          # Include package-lock.json in key to invalidate cache when dependencies change
+          key: ${{ runner.os }}-hardhat-${{ hashFiles('**/package-lock.json', 'contracts/**/*.sol') }}
+          restore-keys: |
+            ${{ runner.os }}-hardhat-
+
+      - name: Compile contracts
         run: |
-          npm install @hashgraph/hedera-local -g
-          hedera start --detached
+          echo "🔨 Compiling Stablecoin Studio contracts..."
+          npm run build:contracts          
+          echo "✅ Contracts compiled successfully"
 
-      # Needed for testnet
-      # - name: Export ENV variables for contracts
-      #   uses: ./.github/actions/create-env-file
-      #   with:
-      #     api-access-token-1: ${{ secrets.API_ACCESS_TOKEN_1 }}
-      #     api-access-token-2: ${{ secrets.API_ACCESS_TOKEN_2 }}
-      #     module: "contracts"
-
-      - name: Install and build Contracts
-        uses: ./.github/actions/install-and-build
-        with:
-          module: "contracts"
-
-      # * Actual test command
-      - name: Run
-        run: npm run test:ci:thread0 --workspace=contracts -- --network local
-
-      - name: Stop Hedera Local Network
-        if: always()
-        run: hedera stop
-
-      - name: Clean project
-        if: always()
-        run: npm run clean --workspace=contracts
-
-  thread1:
-    runs-on: token-studio-linux-medium
-    # ! Cannot use container with Hedera Local Network
-    # container:
-    #   image: node:20.17.0-alpine3.20 # Using alpine for a smaller image
-    permissions:
-      contents: read
-
-    steps:
-      # * Initial steps
-      - name: Harden Runner
-        uses: step-security/harden-runner@20cf305ff2072d973412fa9b1e3a4f227bda3c76 #v2.14.0
-        with:
-          egress-policy: audit
-
-      - name: Checkout repository
-        uses: actions/checkout@08eba0b27e820071cde6df949e0beb9ba4906955 # v4.3.0
-
-      - name: Setup Node.js
-        uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 #v4.4.0
-        with:
-          node-version: "20.x"
-
-      - name: Initial steps
-        uses: ./.github/actions/initial-steps
-        with:
-          module: "contracts"
-          deps-contracts-install: "true"
-          # deps-create-env-file: "true" # Needed for testnet
-
-      - name: Install and run Hedera Local Network
+      - name: Run tests with coverage
         run: |
-          npm install @hashgraph/hedera-local -g
-          hedera start --detached
-
-      # Needed for testnet
-      # - name: Export ENV variables for contracts
-      #   uses: ./.github/actions/create-env-file
-      #   with:
-      #     api-access-token-1: ${{ secrets.API_ACCESS_TOKEN_1 }}
-      #     api-access-token-2: ${{ secrets.API_ACCESS_TOKEN_2 }}
-      #     module: "contracts"
-
-      - name: Install and build Contracts
-        uses: ./.github/actions/install-and-build
-        with:
-          module: "contracts"
-
-      # * Actual test command
-      - name: Run
-        run: npm run test:ci:thread1 --workspace=contracts -- --network local
-
-      - name: Stop Hedera Local Network
-        if: always()
-        run: hedera stop
-
-      - name: Clean project
-        if: always()
-        run: npm run clean --workspace=contracts
+          echo "🧪 Running tests with coverage for Stablecoin Studio contracts..."
+          npm run coverage:contracts
