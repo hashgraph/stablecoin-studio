@@ -50,9 +50,9 @@ const sidebars: SidebarsConfig = {
         'client/quick-start',
         'client/configuration',
         'client/commands',
-        'client/architecture',
-        'client/factories-resolvers',
         'client/usage',
+        'client/factories-resolvers',
+        'client/architecture',
         'client/troubleshooting',
         'client/community'
       ],

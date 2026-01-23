@@ -79,16 +79,19 @@ Each account entry in the list requires:
    - **selected** : _true_ if this is the currently selected RPC, _false_ otherwise. At least one RPC node must be selected.
    - **apiKey** : _(Optional)_ API Key that must be provided to the RPC node in order to authenticate the request.
    - **headerName** : _(Optional)_ http header name that will contain the API Key.
-- **logs** :
-   - **path** : log file path. Typically './logs'
-   - **level** : log level ERROR, TRACE, ...
 
-### 4. Backend Configuration
+### 4. System Logs & Debugging
+To help diagnose issues, you can configure the internal logger:
+- **logs**:
+   - **path**: Directory for log files (Default: `./logs`).
+   - **level**: Verbosity level. Options: `ERROR` (Critical only), `WARN`, `INFO` (Standard), `DEBUG` (Dev), `TRACE` (Deep inspection).
+
+### 5. Backend Configuration
 Required for Multi-signature flows:
 - **backend**: (Optional - required if using MultiSig)
     - **endpoint**: the URL where the backend is listening
 
-### 5. Factories & Resolvers
+### 6. Factories & Resolvers
 Used to locate the Stablecoin Studio logic on-chain.
 - **factories** : list of factories, at most one per network.
     - **id** : Factory Id.

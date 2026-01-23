@@ -1,7 +1,7 @@
 ---
 id: usage
 title: "🧭 Interactive Menu Flow"
-sidebar_label: "Interactive Usage"
+sidebar_label: "🧭 Interactive Menu Flow"
 ---
 
 # 🧭 Interactive Menu Flow
@@ -25,8 +25,7 @@ This wizard guides you through the deployment of a generic stablecoin contract.
     * **Grant KYC**: If enabled, accounts must be explicitly approved before holding tokens.
 
 ## 2. Manage Imported Tokens
-Useful for **Disaster Recovery** or **Team Collaboration**.
-* Allows you to manage a stablecoin created on a different machine or by another user.
+Allows you to manage a stablecoin created on a different machine or by another user.
 * **Requirement**: You must know the `Token ID` and possess the private keys for the roles you want to exercise.
 
 ## 3. Operate with Stablecoin
@@ -47,16 +46,30 @@ The operational hub for day-to-day management.
 * **Pause Token**: Halts ALL transfers globally.
 * **Delete Token**: Permanently removes the token from the ledger (Irreversible).
 
-## 4. Multi-Signature Transactions
-Manage the asynchronous flow of multi-sig operations via the configured backend.
-* **List**: See pending transactions waiting for signatures.
-* **Details**: Inspect the transaction payload before signing.
-* **Sign**: Use your local key to add a signature.
-* **Remove**: Delete a pending transaction from the backend.
-* **Send**: Once the signature threshold is met, submit to Hedera network.
-
-## 5. Configuration (Settings)
+## 4. Configuration (Settings)
 Modify your environment on the fly without editing files manually.
-* **Mirrors/RPCs**: Switch between providers, or **Add/Remove** custom node URLs.
+* **Mirrors/RPCs**: Switch providers or add custom URLs.
+    > ⚠️ **Note**: You can remove custom nodes, but you cannot delete the node currently in use. Switch to another node first.
 * **Factories**: Update the pointer to the smart contract logic.
 * **Backend**: Connect or disconnect the Multi-sig coordination server.
+
+---
+
+# ⚡ Advanced Scenarios
+
+### Scenario A: Disaster Recovery (Lost Config)
+**Problem**: Your computer crashed, and you lost your `hsca-config.yaml`, but you have your Private Key and the Token ID.
+**Solution**:
+1. Re-install the CLI and run the Wizard to set up your account (using your Private Key).
+2. Go to **"Manage Imported Tokens"**.
+3. Enter the Token ID (e.g., `0.0.12345`).
+4. The CLI will query Hedera, verify you have admin permissions with your key, and restore full control.
+
+### Scenario B: Key Rotation (Security Upgrade)
+**Problem**: You deployed a token using a single developer key, but now you want to move to a Multi-sig governance.
+**Solution**:
+1. Ensure the Multi-sig account is created on Hedera.
+2. Go to **"Operate with Stablecoin"** > **"Management"** > **"Update Roles"**.
+3. Select the `Admin` role (and others if needed).
+4. Input the Account ID of the Multi-sig wallet.
+5. Confirm. The developer key no longer controls the token; the Multi-sig now rules.
