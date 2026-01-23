@@ -34,17 +34,8 @@ jobs:
           node-version: "22"
           cache: npm
 
-      - name: Restore dependencies from cache
-        uses: actions/cache/restore@v4
-        with:
-          path: |
-            node_modules
-            */*/node_modules
-            */*/*/node_modules
-            ~/.npm
-          key: ${{ runner.os }}-deps-${{ hashFiles('**/package-lock.json') }}
-          restore-keys: |
-            ${{ runner.os }}-deps-
+      - name: Install dependencies
+        run: npm ci
 
       - name: Cache Hardhat artifacts
         uses: actions/cache@v4
