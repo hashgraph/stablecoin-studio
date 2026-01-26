@@ -11,11 +11,10 @@
 
 ## 🏁 Documentation Map
 * **[🚀 Getting Started](./gettingStarted/01-getting-started.md)** - Account setup, .env configuration, and first issuance.
-* **[🏗️ Smart Contracts & Architecture](./gettingStarted/02-architecture.md)** - Factory, Proxies, and Solidity structure.
-* **[🔑 Role & Asset Management](./gettingStarted/03-management.md)** - Minting, Burning, and Compliance roles.
-* **[💻 Developer: SDK & CLI](./gettingStarted/04-dev-reference.md)** - Technical API Reference and CLI Wizard guide.
-* **[📜 Standards & Compliance](./gettingStarted/05-standards.md)** - HIPs and OpenZeppelin comparisons.
-* **[🛠️ Troubleshooting](./gettingStarted/06-troubleshooting.md)** - Common errors (Keys, Docker, Fees).
+* **[🧰 SDK](./sdk/README.md)** - SDK to manage Hedera tokens throughout their lifecycle.
+* **[🖇️ Backend](./backend/index.md)** - Enable multi-signatures for stable coins maagement operations.
+* **[💻 Client](./client/quick-start.md)** - Creates, configures, and operates stablecoins.
+* **[🌐 Web](./web/README.md)** - Uses the API exposed by the SDK to create, manage and operate stablecoins HIPs and OpenZeppelin comparisons
 
 ---
 [Hedera Documentation](https://docs.hedera.com) | [Audit Reports](./gettingStarted/04-dev-reference.md#security-audits)
