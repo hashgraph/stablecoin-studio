@@ -40,7 +40,11 @@ const sidebars: SidebarsConfig = {
       type: 'category',
       label: '⚙️ Backend',
       items: [
-        'backend/README',
+        'backend/index',
+        'backend/architecture',
+        'backend/installation',
+        'backend/api-reference',
+        'backend/troubleshooting',
       ],
     },
     {
