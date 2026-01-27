@@ -1,3 +1,10 @@
+---
+id: overview
+title: "🏠 API Overview"
+sidebar_label: "🏠 API Overview"
+slug: /overview
+---
+
 # 🧭 API Overview
 
 Below is a summary of the primary interfaces available in the `StableCoinClient`.

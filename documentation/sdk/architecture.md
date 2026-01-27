@@ -1,3 +1,9 @@
+---
+id: architecture
+title: "🏗️ SDK Architecture"
+sidebar_label: "🏗️ SDK Architecture"
+---
+
 # 🏗️ SDK Architecture
 
 The Stablecoin Studio SDK acts as a bridge between your application (CLI, DApp, Backend) and the Hedera Network. It utilizes a hybrid connectivity approach to ensure the best balance between performance (gRPC) and compatibility (RPC/EVM).
@@ -8,22 +14,22 @@ The following diagram illustrates how the SDK interacts with the Hedera Ecosyste
 
 ```mermaid
 graph TD
-    subgraph Client_Side [Client Side Application]
-        App[Your App / CLI]
-        SDK[Stablecoin Studio SDK]
+    subgraph Client_Side ["Client Side Application"]
+        App["Your App / CLI"]
+        SDK["Stablecoin Studio SDK"]
     end
 
-    subgraph Connectivity_Layer [Connectivity Layer]
-        H_SDK[Hedera SDK (gRPC)]
-        RPC[JSON-RPC Provider]
-        Mirror[Mirror Node Client]
+    subgraph Connectivity_Layer ["Connectivity Layer"]
+        H_SDK["Hedera SDK (gRPC)"]
+        RPC["JSON-RPC Provider"]
+        Mirror["Mirror Node Client"]
     end
 
-    subgraph Hedera_Network [Hedera Network]
-        Consensus[Consensus Nodes]
-        HTS[Hedera Token Service]
-        HSCS[Smart Contract Service]
-        MirrorNode[Mirror Node Service]
+    subgraph Hedera_Network ["Hedera Network"]
+        Consensus["Consensus Nodes"]
+        HTS["Hedera Token Service"]
+        HSCS["Smart Contract Service"]
+        MirrorNode["Mirror Node Service"]
     end
 
     App -->|Uses| SDK

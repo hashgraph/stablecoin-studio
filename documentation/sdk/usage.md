@@ -1,3 +1,9 @@
+---
+id: usage
+title: "🚀 Getting Started & Usagew"
+sidebar_label: "🚀 Getting Started & Usage"
+---
+
 # 🚀 Getting Started & Usage
 
 This guide covers the fundamental operations you can perform with the Stablecoin Studio SDK.

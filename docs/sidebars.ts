@@ -33,7 +33,9 @@ const sidebars: SidebarsConfig = {
       type: 'category',
       label: '🛠️ SDK',
       items: [
-        'sdk/README',
+        'sdk/overview',
+        'sdk/architecture',
+        'sdk/usage',
       ],
     },
     {
