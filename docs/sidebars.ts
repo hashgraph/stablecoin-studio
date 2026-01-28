@@ -1,4 +1,4 @@
-import type {SidebarsConfig} from '@docusaurus/plugin-content-docs';
+import type { SidebarsConfig } from "@docusaurus/plugin-content-docs";
 
 // This runs in Node.js - Don't use client-side code here (browser APIs, JSX...)
 
@@ -15,59 +15,59 @@ import type {SidebarsConfig} from '@docusaurus/plugin-content-docs';
 const sidebars: SidebarsConfig = {
   // By default, Docusaurus generates a sidebar from the docs folder structure
   tutorialSidebar: [
-    'intro',
+    "intro",
     {
-      type: 'category',
-      label: '🚀 Getting Started',
+      type: "category",
+      label: "🚀 Getting Started",
       items: [
-        'gettingStarted/getting-started',
-        'gettingStarted/architecture',
-        'gettingStarted/management',
-        'gettingStarted/dev-reference',
-        'gettingStarted/standards',
-        'gettingStarted/troubleshooting',
-        'gettingStarted/security',
+        "gettingStarted/getting-started",
+        "gettingStarted/architecture",
+        "gettingStarted/management",
+        "gettingStarted/dev-reference",
+        "gettingStarted/standards",
+        "gettingStarted/troubleshooting",
+        "gettingStarted/security",
       ],
     },
     {
-      type: 'category',
-      label: '🛠️ SDK',
+      type: "category",
+      label: "🛠️ SDK",
+      items: ["sdk/overview", "sdk/architecture", "sdk/usage"],
+    },
+    {
+      type: "category",
+      label: "⚙️ Backend",
       items: [
-        'sdk/overview',
-        'sdk/architecture',
-        'sdk/usage',
+        "backend/index",
+        "backend/architecture",
+        "backend/installation",
+        "backend/api-reference",
+        "backend/troubleshooting",
       ],
     },
     {
-      type: 'category',
-      label: '⚙️ Backend',
+      type: "category",
+      label: "👤 Client",
       items: [
-        'backend/index',
-        'backend/architecture',
-        'backend/installation',
-        'backend/api-reference',
-        'backend/troubleshooting',
+        "client/quick-start",
+        "client/configuration",
+        "client/commands",
+        "client/usage",
+        "client/factories-resolvers",
+        "client/architecture",
+        "client/troubleshooting",
+        "client/community",
       ],
     },
     {
-      type: 'category',
-      label: '👤 Client',
+      type: "category",
+      label: "🌐 Web",
       items: [
-        'client/quick-start',
-        'client/configuration',
-        'client/commands',
-        'client/usage',
-        'client/factories-resolvers',
-        'client/architecture',
-        'client/troubleshooting',
-        'client/community'
-      ],
-    },
-    {
-      type: 'category',
-      label: '🌐 Web',
-      items: [
-        'web/README',
+        "web/quick-start",
+        "web/configuration",
+        "web/usage",
+        "web/architecture",
+        "web/security",
       ],
     },
   ],
