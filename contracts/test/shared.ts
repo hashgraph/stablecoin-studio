@@ -1,4 +1,4 @@
-import { ethers } from 'hardhat'
+import { ethers, network } from 'hardhat'
 import { computeAddress, Wallet } from 'ethers'
 import {
     DEFAULT_TOKEN,
@@ -36,8 +36,11 @@ let deployedResult: DeployStableCoinResult | undefined
 export async function deployFullInfrastructureInTests(
     command: DeployFullInfrastructureCommand
 ): Promise<DeployFullInfrastructureResult> {
-    // * Deploy precompiled mock
-    await _deployPrecompiledMock()
+
+    if (network.name == 'hardhat') {
+      // * Deploy precompiled mock
+      await _deployPrecompiledMock()
+    }
 
     return await deployFullInfrastructure(command)
 }
