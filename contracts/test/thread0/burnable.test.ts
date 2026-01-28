@@ -29,7 +29,7 @@ describe('➡️ Burn Tests', () => {
 
     before(async () => {
         // mute | mock console.log
-        console.log = () => {} // eslint-disable-line
+        //console.log = () => {} // eslint-disable-line
         console.info(MESSAGES.deploy.info.deployFullInfrastructureInTests)
         ;[operator, nonOperator] = await ethers.getSigners()
 
@@ -95,8 +95,6 @@ describe('➡️ Burn Tests', () => {
 
         // Get the initial total supply and treasury account's balanceOf
         const initialTotalSupply = await hederaTokenManagerFacet.totalSupply()
-
-        console.log(await burnFacet.getBurnableAmount())
 
         // burn some tokens
         await expect(

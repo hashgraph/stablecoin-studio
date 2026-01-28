@@ -103,6 +103,16 @@ describe('➡️ Rescue Tests', function () {
         expect(finalClientBalance.toString()).to.equals(expectedClientBalance.toString())
     })
 
+    it('Account with RESCUE role cannot rescue zero or less tokens', async function () {
+        await expect(
+            rescuableFacet.rescue(0, {
+                gasLimit: GAS_LIMIT.hederaTokenManager.rescue,
+            })
+        )
+            .to.be.revertedWithCustomError(rescuableFacet, 'NegativeAmount')
+            .withArgs(0)
+    })
+
     it('Account with RESCUE role cannot rescue more tokens than the token owner balance', async function () {
         // Get the initial balance of the token owner
         const TokenOwnerBalance = await hederaTokenManagerFacet.balanceOf(stableCoinProxyAddress, {

@@ -34,20 +34,20 @@ export const DEFAULT_UPDATE_TOKEN_STRUCT = {
 let deployedResult: DeployStableCoinResult | undefined
 
 export async function deployFullInfrastructureInTests(
-    command: DeployFullInfrastructureCommand
+    command: DeployFullInfrastructureCommand,
+    anyAccountBalance = 0
 ): Promise<DeployFullInfrastructureResult> {
-
     if (network.name == 'hardhat') {
       // * Deploy precompiled mock
-      await _deployPrecompiledMock()
+      await _deployPrecompiledMock(anyAccountBalance)
     }
 
     return await deployFullInfrastructure(command)
 }
 
-async function _deployPrecompiledMock() {
+async function _deployPrecompiledMock(anyAccountBalance = 0) {
     const PrecompiledMock = await ethers.getContractFactory('PrecompiledMock')
-    const precompiledMock = await PrecompiledMock.deploy()
+    const precompiledMock = await PrecompiledMock.deploy(anyAccountBalance)
     const runtimeBytecode = await ethers.provider.getCode(await precompiledMock.getAddress())
     await ethers.provider.send('hardhat_setCode', [HEDERA_PRECOMPILED_ADDRESS, runtimeBytecode])
     const mockPrecompiled = await ethers.getContractAt('PrecompiledMock', HEDERA_PRECOMPILED_ADDRESS)

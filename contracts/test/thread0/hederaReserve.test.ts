@@ -1,9 +1,56 @@
+import { Overrides } from 'ethers'
 import { SignerWithAddress } from '@nomicfoundation/hardhat-ethers/signers'
 import { expect } from 'chai'
 import { deployFullInfrastructureInTests, deployStableCoinInTests } from '@test/shared'
 import { HederaReserveFacet, HederaReserveFacet__factory } from '@contracts'
-import { DEFAULT_TOKEN, delay, DeployFullInfrastructureCommand, GAS_LIMIT, MESSAGES } from '@scripts'
+import {
+  DEFAULT_TOKEN,
+  delay,
+  deployContract,
+  DeployContractCommand,
+  DeployFullInfrastructureCommand,
+  GAS_LIMIT,
+  MESSAGES,
+  ADDRESS_ZERO
+} from '@scripts'
 import { ethers } from 'hardhat'
+
+describe('HederaReserve Tests Before Deploying Full Infrastructure', function () {
+    // Accounts
+    let operator: SignerWithAddress
+
+    const reserve = 100n * DEFAULT_TOKEN.tokenFactor
+
+    before(async () => {
+        // mute | mock console.log
+        console.log = () => {} // eslint-disable-line
+        ;[operator] = await ethers.getSigners()
+    })
+
+    it('Cannot initialize with zero address admin', async function () {
+        const hederaReserveContract = await deployContract(
+            await DeployContractCommand.newInstance({
+                factory: new HederaReserveFacet__factory(),
+                signer: operator,
+                deployType: 'tup',
+                deployedContract: undefined,
+                overrides: { gasLimit: GAS_LIMIT.high },
+            })
+        )
+
+        const hederaReserve = HederaReserveFacet__factory.connect(
+          hederaReserveContract.proxyAddress!, operator
+        )
+
+        await expect(
+            hederaReserve.initialize(reserve, ADDRESS_ZERO, {
+                gasLimit: GAS_LIMIT.hederaReserve.initialize,
+            })
+        )
+            .to.be.revertedWithCustomError(hederaReserve, 'AddressZero')
+            .withArgs(ADDRESS_ZERO)
+    })
+})
 
 describe('HederaReserve Tests', function () {
     // Contracts
@@ -43,10 +90,22 @@ describe('HederaReserve Tests', function () {
 
     it('Check initialize can only be run once', async function () {
         await expect(
-            hederaReserveFacet.initialize(reserveProxyAddress, operator.address, {
+            hederaReserveFacet.initialize(reserve, operator.address, {
                 gasLimit: GAS_LIMIT.hederaReserve.initialize,
             })
         ).to.be.revertedWithCustomError(hederaReserveFacet, 'ContractIsAlreadyInitialized')
+    })
+
+    it('Cannot update admin with zero address', async function () {
+        const ONE = 1
+
+        await expect(
+            hederaReserveFacet.setAdmin(ADDRESS_ZERO, {
+                gasLimit: GAS_LIMIT.hederaReserve.setAdmin,
+            })
+        )
+            .to.be.revertedWithCustomError(hederaReserveFacet, 'AddressZero')
+            .withArgs(ADDRESS_ZERO)
     })
 
     it('Update admin address', async function () {
@@ -188,5 +247,10 @@ describe('HederaReserve Tests', function () {
             gasLimit: GAS_LIMIT.hederaReserve.latestRoundData,
         })
         expect(amountReset.answer).to.equals(reserve.toString())
+    })
+
+    it('Get round data is not implemented', async function () {
+        await expect(hederaReserveFacet.getRoundData(1))
+          .to.be.revertedWithCustomError(hederaReserveFacet, 'NotImplemented')
     })
 })

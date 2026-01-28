@@ -10,6 +10,8 @@ import {
     SupplierAdminFacet__factory,
     WipeableFacet,
     WipeableFacet__factory,
+    TokenOwnerFacet,
+    TokenOwnerFacet__factory,
     StableCoinTokenMock__factory,
 } from '@contracts'
 import {
@@ -43,6 +45,7 @@ describe('➡️ HederaTokenManager Tests', function () {
     let hederaTokenManagerFacet: HederaTokenManagerFacet
     let cashInFacet: CashInFacet
     let wipeFacet: WipeableFacet
+    let tokenOwnerFacet: TokenOwnerFacet
     let tokenAddress: string
     // Accounts
     let operator: Wallet // ! usign Wallet instead of SignerWithAddress because need public key
@@ -52,6 +55,7 @@ describe('➡️ HederaTokenManager Tests', function () {
         hederaTokenManagerFacet = HederaTokenManagerFacet__factory.connect(address, operator)
         cashInFacet = CashInFacet__factory.connect(address, operator)
         wipeFacet = WipeableFacet__factory.connect(address, operator)
+        tokenOwnerFacet = TokenOwnerFacet__factory.connect(address, operator)
     }
 
     async function getAccountPublicKey(operatorSigner: Signer) {
@@ -89,6 +93,10 @@ describe('➡️ HederaTokenManager Tests', function () {
         await StableCoinTokenMock__factory.connect(tokenAddress, operator).setStableCoinAddress(stableCoinProxyAddress)
 
         await setFacets(stableCoinProxyAddress)
+    })
+
+    it('Can get the token address', async function () {
+      expect (await tokenOwnerFacet.getTokenAddress()).to.equal(tokenAddress)
     })
 
     it('Cannot Update token if not Admin', async function () {

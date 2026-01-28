@@ -19,8 +19,14 @@ contract StableCoinTokenMock is IERC20Upgradeable, IERC20MetadataUpgradeable, IH
     int32 private tokenDecimals;
     address private stableCoinAddress;
     IHederaTokenService.TokenKey[] private tokenKeys;
+    uint256 private anyAccountBalance;
 
-    constructor(IHederaTokenService.HederaToken memory _token, int64 _initialTotalSupply, int32 _decimals) {
+    constructor(
+        IHederaTokenService.HederaToken memory _token,
+        int64 _initialTotalSupply,
+        int32 _decimals,
+        uint256 _anyAccountBalance
+    ) {
         tokenName = _token.name;
         tokenSymbol = _token.symbol;
         balance = (uint256(uint64(_initialTotalSupply)));
@@ -29,6 +35,7 @@ contract StableCoinTokenMock is IERC20Upgradeable, IERC20MetadataUpgradeable, IH
         for (uint256 i = 0; i < _token.tokenKeys.length; i++) {
             tokenKeys.push(_token.tokenKeys[i]);
         }
+        anyAccountBalance = _anyAccountBalance;
     }
 
     function getKeys() external view returns (IHederaTokenService.TokenKey[] memory) {
@@ -49,7 +56,7 @@ contract StableCoinTokenMock is IERC20Upgradeable, IERC20MetadataUpgradeable, IH
     }
 
     function balanceOf(address account) external view override returns (uint256) {
-        return balances[account];
+        return anyAccountBalance == 0 ? balances[account] : anyAccountBalance;
     }
 
     function totalSupply() external view override returns (uint256) {
