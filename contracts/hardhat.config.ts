@@ -5,6 +5,7 @@ import 'hardhat-contract-sizer'
 import '@openzeppelin/hardhat-upgrades'
 import '@primitivefi/hardhat-dodoc'
 import { Configuration, DEFAULT_EVM_VERSION, NETWORK_LIST, GAS_LIMIT } from '@configuration'
+import 'solidity-coverage'
 import '@tasks'
 
 export const configuration = new Configuration()
@@ -20,15 +21,12 @@ const hardhatConfig: HardhatUserConfig = {
             evmVersion: DEFAULT_EVM_VERSION,
         },
     },
-    defaultNetwork: NETWORK_LIST.name[3],
+    defaultNetwork: NETWORK_LIST.name[0],
     networks: {
         [NETWORK_LIST.name[0]]: {
             chainId: NETWORK_LIST.chainId[0],
             hardfork: DEFAULT_EVM_VERSION,
             blockGasLimit: GAS_LIMIT.max,
-            accounts: {
-                mnemonic: configuration.mnemonic.hardhat?.phrase || undefined,
-            },
             // * Forking (not working when precompiled contracts are used)
             // accounts: configuration.privateKeys.testnet.map((key) => ({
             //     privateKey: key,
@@ -77,6 +75,12 @@ const hardhatConfig: HardhatUserConfig = {
         disambiguatePaths: false,
         runOnCompile: true,
         strict: true,
+    },
+    gasReporter: {
+        enabled: true,
+        showTimeSpent: true,
+        outputFile: 'gas-report.txt', // Force output to a file
+        noColors: true, // Recommended for file output
     },
     typechain: {
         outDir: './typechain-types',

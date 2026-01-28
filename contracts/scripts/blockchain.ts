@@ -15,12 +15,18 @@ export async function getFullWalletFromSigner(signer: Signer): Promise<Wallet> {
     if (!signer.provider) {
         throw new SignerWithoutProviderError()
     }
+
     // If the signer is a wallet, return it
     if (signer instanceof Wallet && signer.privateKey) {
         return signer as Wallet
     }
+
     const chainId = Number((await signer.provider.getNetwork()).chainId) as NetworkChainId
     const network: NetworkName = NetworkNameByChainId[chainId]
+    if (configuration.privateKeys[network] === undefined || configuration.privateKeys[network].length == 0) {
+        return signer as Wallet
+    }
+
     for (const privateKey of configuration.privateKeys[network]) {
         const wallet = new Wallet(privateKey, signer.provider)
         if (wallet.address === (await signer.getAddress())) {

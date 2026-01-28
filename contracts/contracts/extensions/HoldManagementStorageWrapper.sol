@@ -12,6 +12,7 @@ abstract contract HoldManagementStorageWrapper {
     struct HoldDataStorage {
         int64 totalHeldAmount;
         mapping(address tokenHolder => int64 totalHeldAmount) totalHeldAmountByAccount;
+        // solhint-disable-next-line max-line-length
         mapping(address tokenHolder => mapping(uint256 holdId => IHoldManagement.HoldData holdData)) holdsByAccountAndId;
         mapping(address tokenHolder => EnumerableSet.UintSet holdIdSet) holdIdsByAccount;
         mapping(address tokenHolder => uint256 nextHoldId) nextHoldIdByAccount;

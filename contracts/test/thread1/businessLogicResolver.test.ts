@@ -2,7 +2,7 @@ import { ethers } from 'hardhat'
 import { expect } from 'chai'
 import { SignerWithAddress } from '@nomicfoundation/hardhat-ethers/signers'
 import { BusinessLogicResolver } from '@contracts'
-import { ADDRESS_ZERO, CONFIG_ID, decodeEvent, delay, GAS_LIMIT, ValidateTxResponseCommand } from '@scripts'
+import { ADDRESS_ZERO, CONFIG_ID, ROLES, decodeEvent, delay, GAS_LIMIT } from '@scripts'
 
 describe('➡️ BusinessLogicResolver Tests', () => {
     let operator: SignerWithAddress
@@ -58,10 +58,11 @@ describe('➡️ BusinessLogicResolver Tests', () => {
     })
 
     it('GIVEN an initialized contract WHEN trying to initialize it again THEN transaction fails with AlreadyInitialized', async () => {
-        const initResponse = await businessLogicResolver.initialize_BusinessLogicResolver({
-            gasLimit: GAS_LIMIT.initialize.businessLogicResolver,
-        })
-        await expect(new ValidateTxResponseCommand({ txResponse: initResponse }).execute()).to.be.rejectedWith(Error)
+        await expect(
+            businessLogicResolver.initialize_BusinessLogicResolver({
+                gasLimit: GAS_LIMIT.initialize.businessLogicResolver,
+            })
+        ).to.be.revertedWithCustomError(businessLogicResolver, 'ContractIsAlreadyInitialized')
     })
 
     describe('AccessControl', () => {
@@ -69,12 +70,13 @@ describe('➡️ BusinessLogicResolver Tests', () => {
             // Using nonOperator (non role)
             businessLogicResolver = businessLogicResolver.connect(nonOperator)
 
-            const initResponse = await businessLogicResolver.registerBusinessLogics(BUSINESS_LOGIC_KEYS.slice(0, 2), {
-                gasLimit: GAS_LIMIT.businessLogicResolver.registerBusinessLogics,
-            })
-            await expect(new ValidateTxResponseCommand({ txResponse: initResponse }).execute()).to.be.rejectedWith(
-                Error
+            await expect(
+                businessLogicResolver.registerBusinessLogics(BUSINESS_LOGIC_KEYS.slice(0, 2), {
+                    gasLimit: GAS_LIMIT.businessLogicResolver.registerBusinessLogics,
+                })
             )
+                .to.be.revertedWithCustomError(businessLogicResolver, 'AccountHasNoRole')
+                .withArgs(nonOperator, ROLES.defaultAdmin.hash)
         })
     })
 
@@ -109,28 +111,31 @@ describe('➡️ BusinessLogicResolver Tests', () => {
                 },
             ]
 
-            const response = await businessLogicResolver.registerBusinessLogics(BUSINESS_LOGICS_TO_REGISTER, {
-                gasLimit: GAS_LIMIT.businessLogicResolver.registerBusinessLogics,
-            })
-            await expect(new ValidateTxResponseCommand({ txResponse: response }).execute()).to.be.rejectedWith(Error)
+            await expect(
+                businessLogicResolver.registerBusinessLogics(BUSINESS_LOGICS_TO_REGISTER, {
+                    gasLimit: GAS_LIMIT.businessLogicResolver.registerBusinessLogics,
+                })
+            ).to.be.revertedWithCustomError(businessLogicResolver, 'ZeroKeyNotValidForBusinessLogic')
         })
 
         it('GIVEN an duplicated key WHEN registerBusinessLogics THEN Fails with BusinessLogicKeyDuplicated', async () => {
             const BUSINESS_LOGICS_TO_REGISTER = [BUSINESS_LOGIC_KEYS[0], BUSINESS_LOGIC_KEYS[0]]
 
-            const response = await businessLogicResolver.registerBusinessLogics(BUSINESS_LOGICS_TO_REGISTER, {
-                gasLimit: GAS_LIMIT.businessLogicResolver.registerBusinessLogics,
-            })
-            await expect(new ValidateTxResponseCommand({ txResponse: response }).execute()).to.be.rejectedWith(Error)
+            await expect(
+                businessLogicResolver.registerBusinessLogics(BUSINESS_LOGICS_TO_REGISTER, {
+                    gasLimit: GAS_LIMIT.businessLogicResolver.registerBusinessLogics,
+                })
+            ).to.be.revertedWithCustomError(businessLogicResolver, 'BusinessLogicKeyDuplicated')
         })
 
         it('GIVEN a list of logics WHEN registerBusinessLogics THEN Fails if some key is not informed with AllBusinessLogicKeysMustBeenInformed', async () => {
             await businessLogicResolver.registerBusinessLogics([BUSINESS_LOGIC_KEYS[0]])
 
-            const response = await businessLogicResolver.registerBusinessLogics([BUSINESS_LOGIC_KEYS[1]], {
-                gasLimit: GAS_LIMIT.businessLogicResolver.registerBusinessLogics,
-            })
-            await expect(new ValidateTxResponseCommand({ txResponse: response }).execute()).to.be.rejectedWith(Error)
+            await expect(
+                businessLogicResolver.registerBusinessLogics([BUSINESS_LOGIC_KEYS[1]], {
+                    gasLimit: GAS_LIMIT.businessLogicResolver.registerBusinessLogics,
+                })
+            ).to.be.revertedWithCustomError(businessLogicResolver, 'AllBusinessLogicKeysMustBeenInformed')
         })
 
         it('GIVEN an empty registry WHEN registerBusinessLogics THEN queries responds with correct values', async () => {
