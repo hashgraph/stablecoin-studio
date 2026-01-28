@@ -52,14 +52,27 @@ const config: Config = {
     [
       "@docusaurus/plugin-content-docs",
       {
-        id: "scs",
+        id: "default", // Cambiamos 'scs' por 'default'
         path: "../documentation",
-        routeBasePath: "scs",
+        routeBasePath: "scs", // Mantenemos la URL /scs que querías
         sidebarPath: "./sidebars.ts",
         editUrl: "https://github.com/hashgraph/stablecoin-studio/tree/main/",
       },
-    ]
-    
+    ],
+    [
+      require.resolve("@easyops-cn/docusaurus-search-local"),
+      {
+        hashed: true,
+        language: ["en"],
+        indexDocs: true,
+        indexBlog: false,
+        indexPages: true,
+        docsRouteBasePath: "/scs", // El buscador encontrará los docs por esta ruta
+        highlightSearchTermsOnTargetPage: true,
+        searchResultLimits: 8,
+        searchResultContextMaxLength: 50,
+      },
+    ],    
   ],
 
   markdown: {
@@ -84,7 +97,7 @@ const config: Config = {
         {
           type: "doc",
           docId: "intro",
-          docsPluginId: "scs",
+          //docsPluginId: "scs",
           position: "left",
           label: "SCS",
         },

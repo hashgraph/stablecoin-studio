@@ -66,7 +66,7 @@ Once installed globally, you can use the `accelerator wizard` command.
 2. **From Source (Local Build):**
     
     If you are working on the repository:
-    1. Ensure you have built the [Contracts](../contracts) and the [SDK](../sdk).
+    1. Ensure you have built the contracts and the [SDK](../sdk/api-overview.md).
     2. Inside the `/cli` folder:
 ```bash
 npm install
@@ -105,5 +105,5 @@ The CLI supports three modes to configure your operating account:
 
 1. **Self-Custodial (Private Key)**: Support for **ED25519** or **ECDSA** keys. Recommended for use with the Hedera Developer Portal, HashPack, or Blade.
 2. **Custodial Wallets**: Native support for **Dfns** and **Fireblocks**.
-3. **Multi-signature Account**: Allows creating transactions that require multiple signatures. A [backend](../backend) is required to manage the signature collection.
+3. **Multi-signature Account**: Allows creating transactions that require multiple signatures. A [backend](../backend/index.md) is required to manage the signature collection.
 <br/><br/>
