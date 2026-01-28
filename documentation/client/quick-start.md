@@ -13,19 +13,19 @@ slug: /client
 
 # Table of contents
 
-- [Introduction](#-introduction)
-- [Quick Start](#-quick-start)
+- [Introduction](#introduction)
+- [Quick Start](#quick-start)
     - [Pre-requirements](#pre-requirements)
     - [Installation](#installation)
-- [Starting the CLI](#-starting-the-cli)
-- [First Run & Configuration](#first-run--configuration)
+- [Starting the CLI](#starting-the-cli)
+- [First Run & Configuration](#first-run-configuration)
 - [Environment Warning](#environment-warning)
-- [Authenticating an Account](#-authenticating-an-account)
+- [Authenticating an Account](#authenticating-an-account)
 
 <br/><br/>
 
 
-# 🚀 Introduction
+# 🚀 Introduction{#introduction}
 ---
 
 The **Stable Coin Studio Command Line Interface (CLI)** provides a streamlined workflow to create, configure, and operate stablecoins.
@@ -33,7 +33,7 @@ The **Stable Coin Studio Command Line Interface (CLI)** provides a streamlined w
 It uses the API exposed by the SDK and it is meant as a "demo tool" to showcase the project's functionalities.
 <br/><br/>
 
-# 🚀 Quick Start
+# 🚀 Quick Start{#quick-start}
 ---
 
 ## Pre-requirements
@@ -73,7 +73,7 @@ npm install
 ```
 <br/><br/>
 
-# 🏁 Starting the CLI
+# 🏁 Starting the CLI{#starting-the-cli}
 ---
 
 Once you run install command, you can interact with the tool in two ways:
@@ -89,17 +89,17 @@ npm run start:wizard
 ```
 <br/><br/>
 
-# First Run & Configuration
+# First Run & Configuration{#first-run-configuration}
 ---
 The first time you execute the accelerator wizard command in your terminal, if you haven't added your default configuration path the interface will ask you whether you want to create a new configuration file in the default path. When the configuration file is created you must configure the default network, operating accounts and the factory contract id.
 <br/><br/>
 
-# Environment Warning
+# Environment Warning{#environment-warning}
 ---
 > ⚠️ **Important**: For testing purposes, you should create a **Testnet** account. Everything executed on Mainnet will incur real HBAR costs.
 <br/><br/>
 
-# 🔐 Authenticating an Account
+# 🔐 Authenticating an Account{#authenticating-an-account}
 ---
 The CLI supports three modes to configure your operating account:
 

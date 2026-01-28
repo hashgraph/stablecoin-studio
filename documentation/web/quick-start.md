@@ -6,7 +6,7 @@ sidebar_label: "🚀 Introduction"
 
 > **Web UI Documentation**
 >
-> [🚀 Getting Started](./README.md) • [🏗️ Architecture & Stack](./architecture.md) • [🕹️ Usage & Workflows](./usage.md) • [⚙️ Configuration](./configuration.md) • [🛡️ Security](./security.md)
+> [🚀 Getting Started](./quick-start.md) • [🏗️ Architecture & Stack](./architecture.md) • [🕹️ Usage & Workflows](./usage.md) • [⚙️ Configuration](./configuration.md) • [🛡️ Security](./security.md)
 ---
 
 # 🚀 Getting Started with the Web DApp

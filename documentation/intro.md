@@ -14,7 +14,7 @@
 * **[🧰 SDK](./sdk/README.md)** - SDK to manage Hedera tokens throughout their lifecycle.
 * **[🖇️ Backend](./backend/index.md)** - Enable multi-signatures for stable coins maagement operations.
 * **[💻 Client](./client/quick-start.md)** - Creates, configures, and operates stablecoins.
-* **[🌐 Web](./web/README.md)** - Uses the API exposed by the SDK to create, manage and operate stablecoins HIPs and OpenZeppelin comparisons
+* **[🌐 Web](./web/quick-start.md)** - Uses the API exposed by the SDK to create, manage and operate stablecoins HIPs and OpenZeppelin comparisons
 
 ---
 [Hedera Documentation](https://docs.hedera.com) | [Audit Reports](./gettingStarted/04-dev-reference.md#security-audits)
