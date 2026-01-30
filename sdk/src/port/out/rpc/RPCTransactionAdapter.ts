@@ -26,7 +26,7 @@ import TransactionResponse from '../../../domain/context/transaction/Transaction
 import {
 	ContractId as HContractId,
 	CustomFee as HCustomFee,
-} from '@hashgraph/sdk';
+} from '@hiero-ledger/sdk';
 import {
 	BurnableFacet__factory,
 	CashInFacet__factory,

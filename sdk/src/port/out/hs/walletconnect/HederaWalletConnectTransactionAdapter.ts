@@ -37,8 +37,8 @@ import {
 	Transaction,
 	TransactionResponse as HTransactionResponse,
 	TransactionResponseJSON,
-} from '@hashgraph/sdk';
-import { NetworkName } from '@hashgraph/sdk/lib/client/Client';
+} from '@hiero-ledger/sdk';
+import { NetworkName } from '@hiero-ledger/sdk/lib/client/Client';
 import { HederaTransactionAdapter } from '../HederaTransactionAdapter';
 import { TransactionType } from '../../TransactionResponseEnums';
 import { InitializationData } from '../../TransactionAdapter';
@@ -247,9 +247,9 @@ export class HederaWalletConnectTransactionAdapter extends HederaTransactionAdap
 		}
 
 		// Create account object and set network
-		this.signer = this.dAppConnector.getSigner(
-			AccountId.fromString(accountId),
-		);
+		// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+		// @ts-ignore - @hashgraph/hedera-wallet-connect uses @hashgraph/sdk types, we use @hiero-ledger/sdk
+		this.signer = this.dAppConnector.getSigner(AccountId.fromString(accountId));
 		this.account = new Account({
 			id: accountId,
 			publicKey: accountMirror.publicKey,
@@ -354,8 +354,10 @@ export class HederaWalletConnectTransactionAdapter extends HederaTransactionAdap
 		try {
 			this.ensureTransactionFrozen(transaction);
 			// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-			// @ts-ignore
+			// @ts-ignore - @hashgraph/hedera-wallet-connect uses @hashgraph/sdk types, we use @hiero-ledger/sdk
 			const params: SignAndExecuteTransactionParams = {
+				// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+				// @ts-ignore - @hashgraph/hedera-wallet-connect uses @hashgraph/sdk types, we use @hiero-ledger/sdk
 				transactionList: transactionToBase64String(transaction),
 				signerAccountId: `${
 					this.chainId

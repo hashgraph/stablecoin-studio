@@ -18,11 +18,11 @@ import {
     TokenSupplyType,
     TransactionResponse,
     TransferTransaction,
-} from '@hashgraph/sdk'
+} from '@hiero-ledger/sdk'
 
 import axios from 'axios'
 import { ADDRESS_ZERO } from './constants'
-import FileId from '@hashgraph/sdk/lib/file/FileId'
+import FileId from '@hiero-ledger/sdk/lib/file/FileId'
 import { network as networkName } from 'hardhat'
 
 const SuccessStatus = 22

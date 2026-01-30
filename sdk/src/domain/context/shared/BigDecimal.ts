@@ -18,7 +18,7 @@
  *
  */
 
-import { Long } from '@hashgraph/sdk';
+import { Long } from '@hiero-ledger/sdk';
 import CheckNums from '../../../core/checks/numbers/CheckNums.js';
 import { FixedNumber, FixedFormat, toQuantity } from 'ethers';
 export type BigDecimalFormat = string | number | FixedFormat | undefined;
