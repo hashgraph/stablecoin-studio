@@ -36,7 +36,7 @@ task('migrateBLRToV3', 'Migrate a v2 business logic resolver to v3')
             useDeployed: false,
         })
 
-        const { deployer, ...deployedContractList } = await deployScsContractList(deployCommand)
+        const deployedContractList = await deployScsContractList(deployCommand)
 
         const businessLogicResolverAddress = deployedContractList.businessLogicResolver!.address
 

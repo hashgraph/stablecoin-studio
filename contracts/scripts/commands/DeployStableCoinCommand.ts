@@ -111,7 +111,9 @@ export default class DeployStableCoinCommand {
 
         const keys = allToContract
             ? tokenKeysToContract({ addKyc, addFeeSchedule, addSupply, addWipe })
-            : tokenKeysToKey(new TokenKeysToKeyCommand({ publicKey: wallet.signingKey.publicKey, isEd25519: false }))
+            : wallet.signingKey != null
+              ? tokenKeysToKey(new TokenKeysToKeyCommand({ publicKey: wallet.signingKey.publicKey, isEd25519: false }))
+              : []
 
         const tokenStruct: IStableCoinFactory.TokenStructStruct = {
             tokenName: tokenInformation.name,

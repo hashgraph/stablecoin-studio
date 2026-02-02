@@ -1,7 +1,7 @@
 import { NetworkName } from '@configuration'
 
 export const EMPTY_STRING = ''
-export const DEFAULD_CHAR_INDEX = '#'
+export const DEFAULT_CHAR_INDEX = '#'
 
 export const DEFAULT_EVM_VERSION = 'london'
 
@@ -14,7 +14,7 @@ export const SUFIXES = {
     proxy: '_PROXY',
     proxyAdmin: '_PROXY_ADMIN',
     mnemonic: '_MNEMONIC',
-    privateKey: `_PRIVATE_KEY_${DEFAULD_CHAR_INDEX}`,
+    privateKey: `_PRIVATE_KEY_${DEFAULT_CHAR_INDEX}`,
     jsonRpc: '_JSON_RPC_ENDPOINT',
     mirror: '_MIRROR_NODE_ENDPOINT',
 }

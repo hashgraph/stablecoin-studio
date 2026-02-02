@@ -2,7 +2,7 @@ import {
     CONTRACT_NAMES,
     CONTRACT_NAMES_WITH_TUP,
     CONTRACT_NAMES_WITH_RESOLVER_PROXY,
-    DEFAULD_CHAR_INDEX,
+    DEFAULT_CHAR_INDEX,
     DEFAULT_MNEMONIC_COUNT,
     DEFAULT_MNEMONIC_PATH,
     DEPLOY_TYPES,
@@ -126,7 +126,7 @@ export default class Configuration {
             (result, network) => {
                 const privateKeys = Configuration._getEnvironmentVariableList({
                     name: `${network.toUpperCase()}${SUFIXES.privateKey}`,
-                    indexChar: DEFAULD_CHAR_INDEX,
+                    indexChar: DEFAULT_CHAR_INDEX,
                 })
 
                 if (privateKeys.length === 0) {
@@ -226,7 +226,7 @@ export default class Configuration {
 
     private static _getEnvironmentVariableList({
         name,
-        indexChar = DEFAULD_CHAR_INDEX,
+        indexChar = DEFAULT_CHAR_INDEX,
     }: {
         name: string
         indexChar?: string
