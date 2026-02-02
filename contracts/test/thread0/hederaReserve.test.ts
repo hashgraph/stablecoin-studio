@@ -1,16 +1,8 @@
 import { SignerWithAddress } from '@nomicfoundation/hardhat-ethers/signers'
 import { expect } from 'chai'
-import { deployStableCoinInTests } from '@test/shared'
+import { deployFullInfrastructureInTests, deployStableCoinInTests } from '@test/shared'
 import { HederaReserveFacet, HederaReserveFacet__factory } from '@contracts'
-import {
-    DEFAULT_TOKEN,
-    delay,
-    deployFullInfrastructure,
-    DeployFullInfrastructureCommand,
-    GAS_LIMIT,
-    MESSAGES,
-    ValidateTxResponseCommand,
-} from '@scripts'
+import { DEFAULT_TOKEN, delay, DeployFullInfrastructureCommand, GAS_LIMIT, MESSAGES } from '@scripts'
 import { ethers } from 'hardhat'
 
 describe('HederaReserve Tests', function () {
@@ -33,7 +25,7 @@ describe('HederaReserve Tests', function () {
         console.info(MESSAGES.deploy.info.deployFullInfrastructureInTests)
         ;[operator, nonOperator] = await ethers.getSigners()
 
-        const { ...deployedContracts } = await deployFullInfrastructure(
+        const { ...deployedContracts } = await deployFullInfrastructureInTests(
             await DeployFullInfrastructureCommand.newInstance({
                 signer: operator,
                 useDeployed: false,
@@ -50,41 +42,57 @@ describe('HederaReserve Tests', function () {
     })
 
     it('Check initialize can only be run once', async function () {
-        const initResponse = await hederaReserveFacet.initialize(reserveProxyAddress, operator.address, {
-            gasLimit: GAS_LIMIT.hederaReserve.initialize,
-        })
-        await expect(new ValidateTxResponseCommand({ txResponse: initResponse }).execute()).to.be.rejectedWith(Error)
+        await expect(
+            hederaReserveFacet.initialize(reserveProxyAddress, operator.address, {
+                gasLimit: GAS_LIMIT.hederaReserve.initialize,
+            })
+        ).to.be.revertedWithCustomError(hederaReserveFacet, 'ContractIsAlreadyInitialized')
     })
 
     it('Update admin address', async function () {
         const ONE = 1
 
-        // Set admin to nonOperator
-        const setAdminResponse = await hederaReserveFacet.setAdmin(nonOperator.address, {
-            gasLimit: GAS_LIMIT.hederaReserve.setAdmin,
-        })
-        await new ValidateTxResponseCommand({ txResponse: setAdminResponse }).execute()
+        await expect(
+            hederaReserveFacet.setAdmin(nonOperator.address, {
+                gasLimit: GAS_LIMIT.hederaReserve.setAdmin,
+            })
+        )
+            .to.emit(hederaReserveFacet, 'AdminChanged')
+            .withArgs(operator.address, nonOperator.address)
+
         // Set amount to 1
-        const setAmountResponse = await hederaReserveFacet.connect(nonOperator).setAmount(ONE, {
-            gasLimit: GAS_LIMIT.hederaReserve.setAmount,
-        })
-        await new ValidateTxResponseCommand({ txResponse: setAmountResponse }).execute()
+        hederaReserveFacet = hederaReserveFacet.connect(nonOperator)
+        await expect(
+            hederaReserveFacet.setAmount(ONE, {
+                gasLimit: GAS_LIMIT.hederaReserve.setAmount,
+            })
+        )
+            .to.emit(hederaReserveFacet, 'AmountChanged')
+            .withArgs(100000000000, ONE)
 
         await delay({ time: 1, unit: 'sec' })
-        const amount = await hederaReserveFacet.connect(nonOperator).latestRoundData({
+        const amount = await hederaReserveFacet.latestRoundData({
             gasLimit: GAS_LIMIT.hederaReserve.latestRoundData,
         })
         expect(amount.answer).to.equals(ONE.toString())
 
         // Reset to original state
-        const resetAdminResponse = await hederaReserveFacet.connect(nonOperator).setAdmin(operator.address, {
-            gasLimit: GAS_LIMIT.hederaReserve.setAdmin,
-        })
-        await new ValidateTxResponseCommand({ txResponse: resetAdminResponse }).execute()
-        const resetAmountResponse = await hederaReserveFacet.setAmount(reserve, {
-            gasLimit: GAS_LIMIT.hederaReserve.setAmount,
-        })
-        await new ValidateTxResponseCommand({ txResponse: resetAmountResponse }).execute()
+        await expect(
+            hederaReserveFacet.setAdmin(operator.address, {
+                gasLimit: GAS_LIMIT.hederaReserve.setAdmin,
+            })
+        )
+            .to.emit(hederaReserveFacet, 'AdminChanged')
+            .withArgs(nonOperator.address, operator.address)
+
+        hederaReserveFacet = hederaReserveFacet.connect(operator)
+        await expect(
+            hederaReserveFacet.setAmount(reserve, {
+                gasLimit: GAS_LIMIT.hederaReserve.setAmount,
+            })
+        )
+            .to.emit(hederaReserveFacet, 'AmountChanged')
+            .withArgs(ONE, reserve)
 
         await delay({ time: 1, unit: 'sec' })
         const resetAmount = await hederaReserveFacet.latestRoundData({
@@ -94,27 +102,39 @@ describe('HederaReserve Tests', function () {
     })
 
     it('Update admin address throw error client no isAdmin', async function () {
-        const txResponse = await hederaReserveFacet.connect(nonOperator).setAdmin(nonOperator.address, {
-            gasLimit: GAS_LIMIT.hederaReserve.setAdmin,
-        })
-        await expect(new ValidateTxResponseCommand({ txResponse }).execute()).to.be.rejectedWith(Error)
+        hederaReserveFacet = hederaReserveFacet.connect(nonOperator)
+        await expect(
+            hederaReserveFacet.setAdmin(nonOperator.address, {
+                gasLimit: GAS_LIMIT.hederaReserve.setAdmin,
+            })
+        )
+            .to.be.revertedWithCustomError(hederaReserveFacet, 'OnlyAdmin')
+            .withArgs(nonOperator)
     })
 
     it('Update reserve throw error client no isAdmin', async function () {
-        const txResponse = await hederaReserveFacet.connect(nonOperator).setAmount(1, {
-            gasLimit: GAS_LIMIT.hederaReserve.setAmount,
-        })
-        await expect(new ValidateTxResponseCommand({ txResponse }).execute()).to.be.rejectedWith(Error)
+        await expect(
+            hederaReserveFacet.setAmount(1, {
+                gasLimit: GAS_LIMIT.hederaReserve.setAmount,
+            })
+        )
+            .to.be.revertedWithCustomError(hederaReserveFacet, 'OnlyAdmin')
+            .withArgs(nonOperator)
     })
 
     it('Update reserve', async function () {
+        hederaReserveFacet = hederaReserveFacet.connect(operator)
         const beforeUpdateAmount = await hederaReserveFacet.latestRoundData({
             gasLimit: GAS_LIMIT.hederaReserve.latestRoundData,
         })
-        const setAmountResponse = await hederaReserveFacet.setAmount(1, {
-            gasLimit: GAS_LIMIT.hederaReserve.setAmount,
-        })
-        await new ValidateTxResponseCommand({ txResponse: setAmountResponse }).execute()
+
+        await expect(
+            hederaReserveFacet.setAmount(1, {
+                gasLimit: GAS_LIMIT.hederaReserve.setAmount,
+            })
+        )
+            .to.emit(hederaReserveFacet, 'AmountChanged')
+            .withArgs(reserve, 1)
 
         await delay({ time: 1, unit: 'sec' })
         const afterUpdateAmount = await hederaReserveFacet.latestRoundData({
@@ -124,10 +144,13 @@ describe('HederaReserve Tests', function () {
         expect(afterUpdateAmount.answer).to.equals(1n)
 
         // Reset to original state
-        const resetAmountResponse = await hederaReserveFacet.setAmount(reserve, {
-            gasLimit: GAS_LIMIT.hederaReserve.setAmount,
-        })
-        await new ValidateTxResponseCommand({ txResponse: resetAmountResponse }).execute()
+        await expect(
+            hederaReserveFacet.setAmount(reserve, {
+                gasLimit: GAS_LIMIT.hederaReserve.setAmount,
+            })
+        )
+            .to.emit(hederaReserveFacet, 'AmountChanged')
+            .withArgs(1, reserve)
 
         await delay({ time: 1, unit: 'sec' })
         const amountReset = await hederaReserveFacet.latestRoundData({
@@ -137,24 +160,27 @@ describe('HederaReserve Tests', function () {
     })
 
     it('Get decimals', async function () {
-        const decimals = await hederaReserveFacet.decimals({
-            gasLimit: GAS_LIMIT.hederaReserve.decimals,
-        })
-        expect(decimals).to.equals(2)
+        expect(
+            await hederaReserveFacet.decimals({
+                gasLimit: GAS_LIMIT.hederaReserve.decimals,
+            })
+        ).to.equals(2)
     })
 
     it('Get description', async function () {
-        const description = await hederaReserveFacet.description({
-            gasLimit: GAS_LIMIT.hederaReserve.description,
-        })
-        expect(description).to.equals('Example Hedera Reserve for ChainLink')
+        expect(
+            await hederaReserveFacet.description({
+                gasLimit: GAS_LIMIT.hederaReserve.description,
+            })
+        ).to.equals('Example Hedera Reserve for ChainLink')
     })
 
     it('Get version', async function () {
-        const version = await hederaReserveFacet.version({
-            gasLimit: GAS_LIMIT.hederaReserve.version,
-        })
-        expect(version).to.equals(1)
+        expect(
+            await hederaReserveFacet.version({
+                gasLimit: GAS_LIMIT.hederaReserve.version,
+            })
+        ).to.equals(1)
     })
 
     it('Get latestRoundData', async function () {

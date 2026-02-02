@@ -15,6 +15,7 @@ abstract contract BusinessLogicResolverWrapper is IBusinessLogicResolverWrapper 
         mapping(bytes32 facetId => bool isActive) businessLogicActive;
         mapping(bytes32 facetId => IBusinessLogicResolver.BusinessLogicVersion[] versions) businessLogics;
         mapping(bytes32 facetIdAndVersion => uint256 index) businessLogicVersionIndex;
+        // solhint-disable-next-line max-line-length
         mapping(uint256 version => IBusinessLogicResolver.VersionStatus status) deprecatedVersionStatuses; // not used anymore but left for retrocompatibility
         mapping(bytes32 configId => EnumerableSetBytes4.Bytes4Set list) selectorBlacklist;
         mapping(bytes32 facetId => uint256 lastVersion) latestVersionByFacetId;
