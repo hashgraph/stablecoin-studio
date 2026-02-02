@@ -1,12 +1,5 @@
 import { SignerWithAddress } from '@nomicfoundation/hardhat-ethers/signers'
-import {
-    BusinessLogicRegistryData,
-    delay,
-    FacetConfiguration,
-    GAS_LIMIT,
-    ROLES,
-    ValidateTxResponseCommand,
-} from '@scripts'
+import { BusinessLogicRegistryData, delay, FacetConfiguration, GAS_LIMIT, ROLES } from '@scripts'
 import {
     BusinessLogicResolver,
     DiamondFacet,
@@ -263,10 +256,13 @@ describe('➡️ ResolverProxy Tests', () => {
 
         diamondCut = diamondCut.connect(signer_A)
 
-        const response = await diamondCut.updateConfigVersion(100, {
-            gasLimit: GAS_LIMIT.diamondFacet.updateConfigVersion,
-        })
-        await expect(new ValidateTxResponseCommand({ txResponse: response }).execute()).to.be.rejectedWith(Error)
+        await expect(
+            diamondCut.updateConfigVersion(100, {
+                gasLimit: GAS_LIMIT.diamondFacet.updateConfigVersion,
+            })
+        )
+            .to.be.revertedWithCustomError(resolver, 'ResolverProxyConfigurationNoRegistered')
+            .withArgs(CONFIG_ID, 100)
     })
 
     it('GIVEN resolverProxy and admin user WHEN updating version THEN succeeds', async () => {
@@ -335,15 +331,17 @@ describe('➡️ ResolverProxy Tests', () => {
 
         diamondCut = diamondCut.connect(signer_A)
 
-        const response = await diamondCut.updateConfig(CONFIG_ID_2, 1, {
-            gasLimit: GAS_LIMIT.diamondFacet.updateConfig,
-        })
-
-        await expect(new ValidateTxResponseCommand({ txResponse: response }).execute()).to.be.rejectedWith(Error)
+        await expect(
+            diamondCut.updateConfig(CONFIG_ID_2, 1, {
+                gasLimit: GAS_LIMIT.diamondFacet.updateConfig,
+            })
+        )
+            .to.be.revertedWithCustomError(resolver, 'ResolverProxyConfigurationNoRegistered')
+            .withArgs(CONFIG_ID_2, 1)
     })
 
     it('GIVEN resolverProxy and admin user WHEN updating configID THEN succeeds', async () => {
-        await setUpResolver(businessLogicsRegistryDatas, CONFIG_ID_2)
+        await setUpResolver(businessLogicsRegistryDatas_2, CONFIG_ID_2)
 
         const roles = [
             {
@@ -409,11 +407,13 @@ describe('➡️ ResolverProxy Tests', () => {
 
         diamondCut = diamondCut.connect(signer_A)
 
-        const response = await diamondCut.updateResolver(await resolver_2.getAddress(), CONFIG_ID_2, 2, {
-            gasLimit: GAS_LIMIT.diamondFacet.updateResolver,
-        })
-
-        await expect(new ValidateTxResponseCommand({ txResponse: response }).execute()).to.be.rejectedWith(Error)
+        await expect(
+            diamondCut.updateResolver(await resolver_2.getAddress(), CONFIG_ID_2, 2, {
+                gasLimit: GAS_LIMIT.diamondFacet.updateResolver,
+            })
+        )
+            .to.be.revertedWithCustomError(resolver, 'ResolverProxyConfigurationNoRegistered')
+            .withArgs(CONFIG_ID_2, 2)
     })
 
     it('GIVEN resolverProxy and admin user WHEN updating resolver THEN succeeds', async () => {

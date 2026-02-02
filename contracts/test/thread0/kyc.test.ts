@@ -4,28 +4,27 @@ import { ethers } from 'hardhat'
 import {
     CashInFacet,
     CashInFacet__factory,
-    FreezableFacet,
-    FreezableFacet__factory,
+    KYCFacet,
+    KYCFacet__factory,
     StableCoinTokenMock__factory,
 } from '@contracts'
-import { DeployFullInfrastructureCommand, MESSAGES, ROLES, ONE_TOKEN } from '@scripts'
+import { ADDRESS_ZERO, MESSAGES, ONE_TOKEN, ROLES, DeployFullInfrastructureCommand } from '@scripts'
 import { deployStableCoinInTests, deployFullInfrastructureInTests, GAS_LIMIT } from '@test/shared'
 
-describe('➡️ Freeze Tests', function () {
-    const ACCOUNT_FROZEN_FOR_TOKEN = 165
+describe('➡️ KYC Tests', function () {
+    const ACCOUNT_KYC_NOT_GRANTED_FOR_TOKEN = 176
 
     // Contracts
     let stableCoinProxyAddress: string
-    let freezableFacet: FreezableFacet
-    let cashInFacet: CashInFacet
     let tokenAddress: string
-
+    let kycFacet: KYCFacet
+    let cashInFacet: CashInFacet
     // Accounts
     let operator: SignerWithAddress
     let nonOperator: SignerWithAddress
 
     async function setFacets(address: string) {
-        freezableFacet = FreezableFacet__factory.connect(address, operator)
+        kycFacet = KYCFacet__factory.connect(address, operator)
         cashInFacet = CashInFacet__factory.connect(address, operator)
     }
 
@@ -34,7 +33,6 @@ describe('➡️ Freeze Tests', function () {
         console.log = () => {} // eslint-disable-line
         console.info(MESSAGES.deploy.info.deployFullInfrastructureInTests)
         ;[operator, nonOperator] = await ethers.getSigners()
-
         const { ...deployedContracts } = await deployFullInfrastructureInTests(
             await DeployFullInfrastructureCommand.newInstance({
                 signer: operator,
@@ -46,6 +44,8 @@ describe('➡️ Freeze Tests', function () {
             signer: operator,
             businessLogicResolverProxyAddress: deployedContracts.businessLogicResolver.proxyAddress!,
             stableCoinFactoryProxyAddress: deployedContracts.stableCoinFactoryFacet.proxyAddress!,
+            addKyc: true,
+            grantKYCToOriginalSender: true,
         }))
 
         await StableCoinTokenMock__factory.connect(tokenAddress, operator).setStableCoinAddress(stableCoinProxyAddress)
@@ -53,19 +53,20 @@ describe('➡️ Freeze Tests', function () {
         await setFacets(stableCoinProxyAddress)
     })
 
-    it("Account without FREEZE role can't freeze transfers of the token for the account", async function () {
-        freezableFacet = freezableFacet.connect(nonOperator)
+    it("An account without KYC role can't grant kyc to an account for a token", async function () {
+        kycFacet = kycFacet.connect(nonOperator)
+
         await expect(
-            freezableFacet.freeze(operator.address, {
-                gasLimit: GAS_LIMIT.hederaTokenManager.freeze,
+            kycFacet.grantKyc(operator.address, {
+                gasLimit: GAS_LIMIT.hederaTokenManager.grantKyc,
             })
         )
-            .to.be.revertedWithCustomError(freezableFacet, 'AccountHasNoRole')
-            .withArgs(nonOperator, ROLES.freeze.hash)
+            .to.be.revertedWithCustomError(kycFacet, 'AccountHasNoRole')
+            .withArgs(nonOperator, ROLES.kyc.hash)
     })
 
-    it("Account with FREEZE role can freeze and unfreeze transfers of the token for the account + Account without FREEZE role can't unfreeze transfers of the token for the account", async function () {
-        // Should be able to mint tokens before freezing
+    it("An account with KYC role can grant and revoke kyc to an account for a token + An account without KYC role can't revoke kyc to an account for a token", async function () {
+        // Should be able to mint tokens before granting KYC
         await expect(
             cashInFacet.mint(operator.address, ONE_TOKEN, {
                 gasLimit: GAS_LIMIT.hederaTokenManager.mint,
@@ -74,14 +75,24 @@ describe('➡️ Freeze Tests', function () {
             .to.emit(cashInFacet, 'TokensMinted')
             .withArgs(operator.address, tokenAddress, ONE_TOKEN, operator.address)
 
-        // Freeze transfers
-        freezableFacet = freezableFacet.connect(operator)
+        // Should not be able to revoke KYC from an account without KYC role
+        kycFacet = kycFacet.connect(nonOperator)
         await expect(
-            freezableFacet.freeze(operator.address, {
-                gasLimit: GAS_LIMIT.hederaTokenManager.freeze,
+            kycFacet.revokeKyc(operator.address, {
+                gasLimit: GAS_LIMIT.hederaTokenManager.revokeKyc,
             })
         )
-            .to.emit(freezableFacet, 'TransfersFrozen')
+            .to.be.revertedWithCustomError(kycFacet, 'AccountHasNoRole')
+            .withArgs(nonOperator, ROLES.kyc.hash)
+
+        // Should be able to revoke KYC from an account with KYC role
+        kycFacet = kycFacet.connect(operator)
+        await expect(
+            kycFacet.revokeKyc(operator.address, {
+                gasLimit: GAS_LIMIT.hederaTokenManager.revokeKyc,
+            })
+        )
+            .to.emit(kycFacet, 'RevokeTokenKyc')
             .withArgs(tokenAddress, operator.address)
 
         // Should NOT be able to mint more tokens
@@ -91,26 +102,15 @@ describe('➡️ Freeze Tests', function () {
             })
         )
             .to.be.revertedWithCustomError(cashInFacet, 'ResponseCodeInvalid')
-            .withArgs(ACCOUNT_FROZEN_FOR_TOKEN)
+            .withArgs(ACCOUNT_KYC_NOT_GRANTED_FOR_TOKEN)
 
-        // Should NOT be able to unfreeze from non-operator account
-        freezableFacet = freezableFacet.connect(nonOperator)
+        // Should be able to grant KYC to an account with KYC role
         await expect(
-            freezableFacet.unfreeze(operator.address, {
-                gasLimit: GAS_LIMIT.hederaTokenManager.unfreeze,
+            kycFacet.grantKyc(operator.address, {
+                gasLimit: GAS_LIMIT.hederaTokenManager.grantKyc,
             })
         )
-            .to.be.revertedWithCustomError(freezableFacet, 'AccountHasNoRole')
-            .withArgs(nonOperator, ROLES.freeze.hash)
-
-        // Should be able to unfreeze transfers from operator account
-        freezableFacet = freezableFacet.connect(operator)
-        await expect(
-            freezableFacet.unfreeze(operator.address, {
-                gasLimit: GAS_LIMIT.hederaTokenManager.unfreeze,
-            })
-        )
-            .to.emit(freezableFacet, 'TransfersUnfrozen')
+            .to.emit(kycFacet, 'GrantTokenKyc')
             .withArgs(tokenAddress, operator.address)
 
         // Should be able to mint more tokens again
@@ -121,5 +121,21 @@ describe('➡️ Freeze Tests', function () {
         )
             .to.emit(cashInFacet, 'TokensMinted')
             .withArgs(operator.address, tokenAddress, ONE_TOKEN, operator.address)
+    })
+
+    it('An account with KYC role can`t grant and revoke kyc to the zero account for a token', async function () {
+        kycFacet = kycFacet.connect(operator)
+
+        await expect(
+            kycFacet.grantKyc(ADDRESS_ZERO, {
+                gasLimit: GAS_LIMIT.hederaTokenManager.grantKyc,
+            })
+        ).to.be.revertedWithCustomError(kycFacet, 'AddressZero')
+
+        await expect(
+            kycFacet.revokeKyc(ADDRESS_ZERO, {
+                gasLimit: GAS_LIMIT.hederaTokenManager.revokeKyc,
+            })
+        ).to.be.revertedWithCustomError(kycFacet, 'AddressZero')
     })
 })

@@ -308,7 +308,7 @@ export async function deployScsContractList({
             deployedContract: useDeployed
                 ? configuration.contracts.HederaTokenManagerFacet.addresses?.[network]
                 : undefined,
-            overrides,
+            overrides: { gasLimit: GAS_LIMIT.hederaTokenManager.facetDeploy },
         }),
         hederaReserveFacet: await DeployContractCommand.newInstance({
             factory: new HederaReserveFacet__factory(),
@@ -359,7 +359,7 @@ export async function deployScsContractList({
             deployedContract: useDeployed
                 ? configuration.contracts.HoldManagementFacet.addresses?.[network]
                 : undefined,
-            overrides,
+            overrides: { gasLimit: GAS_LIMIT.hold.facetDeploy },
         }),
         kycFacet: await DeployContractCommand.newInstance({
             factory: new KYCFacet__factory(),

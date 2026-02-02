@@ -4,13 +4,12 @@ import { ethers } from 'hardhat'
 import {
     ADDRESS_ZERO,
     DEFAULT_TOKEN,
-    deployFullInfrastructure,
     DeployFullInfrastructureCommand,
     deployStableCoin,
     DeployStableCoinCommand,
     MESSAGES,
 } from '@scripts'
-import { GAS_LIMIT } from '@test/shared'
+import { deployFullInfrastructureInTests, GAS_LIMIT } from '@test/shared'
 import { HederaReserveFacet__factory, ReserveFacet, ReserveFacet__factory } from '@contracts'
 
 const toReserve = (amount: bigint) => {
@@ -31,7 +30,7 @@ describe('StableCoinFactory Tests', function () {
         console.info(MESSAGES.deploy.info.deployFullInfrastructureInTests)
         ;[operator] = await ethers.getSigners()
 
-        const { ...deployedContracts } = await deployFullInfrastructure(
+        const { ...deployedContracts } = await deployFullInfrastructureInTests(
             await DeployFullInfrastructureCommand.newInstance({
                 signer: operator,
                 useDeployed: false,
