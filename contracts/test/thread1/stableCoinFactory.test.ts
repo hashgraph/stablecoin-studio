@@ -344,7 +344,7 @@ describe('StableCoinFactory Tests', function () {
             allToContract: false,
             createReserve: false,
             reserveAddress: await hederaReserve.getAddress(),
-            updatedAtThreshold: 1,
+            updatedAtThreshold: "1",
             businessLogicResolverProxyAddress: businessLogicResolver,
             stableCoinFactoryProxyAddress: stableCoinFactoryProxy,
         })

@@ -75,7 +75,7 @@ abstract contract BusinessLogicResolverWrapper is IBusinessLogicResolverWrapper 
                 abi.encodePacked(_businessLogicsRegistryData.businessLogicKey, latestVersion_[index])
             );
 
-            businessLogicResolverDataStorage.businessLogicVersionIndex[facetIdAndVersion] = versions.length;
+            businessLogicResolverDataStorage.businessLogicVersionIndex[facetIdAndVersion] = versions.length - 1;
 
             businessLogicResolverDataStorage.statusByFacetIdAndVersion[facetIdAndVersion] = IBusinessLogicResolver
                 .VersionStatus
@@ -90,11 +90,8 @@ abstract contract BusinessLogicResolverWrapper is IBusinessLogicResolverWrapper 
         uint256 length = _selectors.length;
         for (uint256 index; index < length; ) {
             bytes4 selector = _selectors[index];
-            if (!EnumerableSetBytes4.contains(selectorBlacklist, selector)) {
-                if (!EnumerableSetBytes4.add(selectorBlacklist, selector)) {
-                    revert ErrorAddingSelectorToBlacklist(selector);
-                }
-            }
+            EnumerableSetBytes4.add(selectorBlacklist, selector);
+
             unchecked {
                 ++index;
             }
@@ -108,11 +105,8 @@ abstract contract BusinessLogicResolverWrapper is IBusinessLogicResolverWrapper 
         uint256 length = _selectors.length;
         for (uint256 index; index < length; ) {
             bytes4 selector = _selectors[index];
-            if (EnumerableSetBytes4.contains(selectorBlacklist, selector)) {
-                if (!EnumerableSetBytes4.remove(selectorBlacklist, selector)) {
-                    revert ErrorRemovingSelectorFromBlacklist(selector);
-                }
-            }
+            EnumerableSetBytes4.remove(selectorBlacklist, selector);
+
             unchecked {
                 ++index;
             }
@@ -172,11 +166,6 @@ abstract contract BusinessLogicResolverWrapper is IBusinessLogicResolverWrapper 
         uint256 position = businessLogicResolverDataStorage.businessLogicVersionIndex[
             keccak256(abi.encodePacked(_businessLogicKey, _version))
         ];
-
-        if (position == 0) return address(0);
-
-        position--;
-
         IBusinessLogicResolver.BusinessLogicVersion memory businessLogicVersion = businessLogicResolverDataStorage
             .businessLogics[_businessLogicKey][position];
         return businessLogicVersion.businessLogicAddress;

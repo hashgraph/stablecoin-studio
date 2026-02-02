@@ -37,15 +37,16 @@ export async function deployFullInfrastructureInTests(
     command: DeployFullInfrastructureCommand,
     anyAccountBalance = 0
 ): Promise<DeployFullInfrastructureResult> {
+
     if (network.name == 'hardhat') {
       // * Deploy precompiled mock
-      await _deployPrecompiledMock(anyAccountBalance)
+      await deployPrecompiledMock(anyAccountBalance)
     }
 
     return await deployFullInfrastructure(command)
 }
 
-async function _deployPrecompiledMock(anyAccountBalance = 0) {
+export async function deployPrecompiledMock(anyAccountBalance = 0) {
     const PrecompiledMock = await ethers.getContractFactory('PrecompiledMock')
     const precompiledMock = await PrecompiledMock.deploy(anyAccountBalance)
     const runtimeBytecode = await ethers.provider.getCode(await precompiledMock.getAddress())
