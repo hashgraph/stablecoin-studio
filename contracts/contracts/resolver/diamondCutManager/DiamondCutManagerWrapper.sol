@@ -10,6 +10,7 @@ import {_DIAMOND_CUT_MANAGER_STORAGE_POSITION} from '../../constants/storagePosi
 import {EnumerableSetBytes4} from '../../core/EnumerableSetBytes4.sol';
 
 abstract contract DiamondCutManagerWrapper is IDiamondCutManager, BusinessLogicResolverWrapper {
+
     struct DiamondCutManagerStorage {
         bytes32[] configurations;
         mapping(bytes32 configId => bool isActive) activeConfigurations;
@@ -405,15 +406,8 @@ abstract contract DiamondCutManagerWrapper is IDiamondCutManager, BusinessLogicR
         for (uint256 index; index < length; ) {
             bytes4 selector = selectors[index];
             bytes32 configVersionSelectorHash = _buildHashSelector(_configurationId, _version, selector);
-
-            if (_dcms.facetAddress[configVersionSelectorHash] != address(0)) {
-                address previousFacetAddress = _dcms.facetAddress[configVersionSelectorHash];
-                if (previousFacetAddress != selectorAddress)
-                    revert SelectorAlreadyRegistered(previousFacetAddress, selectorAddress);
-            } else {
-                _dcms.facetAddress[configVersionSelectorHash] = selectorAddress;
-                _dcms.selectorToFacetId[configVersionSelectorHash] = _facetId;
-            }
+            _dcms.facetAddress[configVersionSelectorHash] = selectorAddress;
+            _dcms.selectorToFacetId[configVersionSelectorHash] = _facetId;
             unchecked {
                 ++index;
             }

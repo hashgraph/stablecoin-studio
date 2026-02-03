@@ -302,6 +302,18 @@ describe('➡️ DiamondCutManager Tests', () => {
             .withArgs(nonOperator, ROLES.defaultAdmin.hash)
     })
 
+    it('GIVEN a resolver WHEN adding a new empty configuration THEN fails with EmptyConfiguration', async () => {
+        diamondCutManager = diamondCutManager.connect(operator)
+
+        const facetConfigurations: IDiamondCutManager.FacetConfigurationStruct[] = []
+
+        await expect(
+            diamondCutManager.createConfiguration(CONFIG_ID.stableCoin, facetConfigurations, {
+                gasLimit: GAS_LIMIT.diamondCutManager.createConfiguration,
+            })
+        ).to.be.revertedWithCustomError(diamondCutManager, 'EmptyConfiguration')
+    })
+
     it('GIVEN a resolver WHEN adding a new configuration with a non registered facet THEN fails with FacetIdNotRegistered', async () => {
         diamondCutManager = diamondCutManager.connect(operator)
 
@@ -339,8 +351,23 @@ describe('➡️ DiamondCutManager Tests', () => {
         ).to.be.revertedWithCustomError(diamondCutManager, 'DuplicatedFacetInConfiguration')
     })
 
+    it('GIVEN a batch deploying WHEN cancelling a batch configuration with an invalid configId THEN fails with DefaultValueForConfigurationIdNotPermitted', async () => {
+        await expect (
+          diamondCutManager.cancelBatchConfiguration(ethers.ZeroHash)
+        ).to.be.revertedWithCustomError(diamondCutManager, 'DefaultValueForConfigurationIdNotPermitted')
+    })
+
+    it('GIVEN a resolver and a non admin user WHEN cancelling a batch configuration THEN fails with AccountHasNoRole', async () => {
+        diamondCutManager = diamondCutManager.connect(nonOperator)
+        await expect (
+          diamondCutManager.cancelBatchConfiguration("0x" + "1".repeat(64))
+        ).to.be.revertedWithCustomError(diamondCutManager, 'AccountHasNoRole')
+          .withArgs(nonOperator, ROLES.defaultAdmin.hash)
+    })
+
     it('GIVEN a batch deploying WHEN run cancelBatchConfiguration THEN all the related information is removed', async () => {
         console.info(MESSAGES.deploy.info.deployFullInfrastructureInTests)
+        diamondCutManager = diamondCutManager.connect(operator)
         const { ...deployedContracts } = await deployFullInfrastructureInTests(
             await DeployFullInfrastructureCommand.newInstance({
                 signer: operator,
@@ -371,6 +398,18 @@ describe('➡️ DiamondCutManager Tests', () => {
             ).to.equal(0)
         }
         expect(await diamondCutManager.getConfigurationsLength()).to.equal(1)
+    })
+
+    it('GIVEN a resolver WHEN adding a new empty batch configuration THEN fails with EmptyConfiguration', async () => {
+        diamondCutManager = diamondCutManager.connect(operator)
+
+        const facetConfigurations: IDiamondCutManager.FacetConfigurationStruct[] = []
+
+        await expect(
+            diamondCutManager.createBatchConfiguration(CONFIG_ID.stableCoin, facetConfigurations, {
+                gasLimit: GAS_LIMIT.diamondCutManager.createConfiguration,
+            })
+        ).to.be.revertedWithCustomError(diamondCutManager, 'EmptyConfiguration')
     })
 
     it('GIVEN a resolver WHEN adding a new configuration with configId at 0 with createBatchConfiguration THEN fails with DefaultValueForConfigurationIdNotPermitted', async () => {
@@ -447,6 +486,7 @@ describe('➡️ DiamondCutManager Tests', () => {
             diamondCutManager.createBatchConfiguration(CONFIG_ID.stableCoin, facetConfigurations, false)
         ).to.be.revertedWithCustomError(diamondCutManager, 'DuplicatedFacetInConfiguration')
     })
+
     it('GIVEN a resolver WHEN a selector is blacklisted THEN transaction fails with SelectorBlacklisted', async () => {
         const blackListedSelectors = ['0x8456cb59'] // pause() selector
 
@@ -466,5 +506,23 @@ describe('➡️ DiamondCutManager Tests', () => {
         await expect(diamondCutManager.createConfiguration(CONFIG_ID.stableCoin, facetConfigurations))
             .to.be.revertedWithCustomError(diamondCutManager, 'SelectorBlacklisted')
             .withArgs(blackListedSelectors[0])
+
+        await businessLogicResolver.removeSelectorsFromBlacklist(CONFIG_ID.stableCoin, blackListedSelectors)
+    })
+
+    it('GIVEN a resolver and an existing batch configuration WHEN adding a new configuration with a duplicated facet THEN fails with DuplicatedFacetInConfiguration', async () => {
+        const facetConfigurations: IDiamondCutManager.FacetConfigurationStruct[] = []
+        stableCoinFacetIdList.forEach((id, index) => {
+            facetConfigurations.push({
+                id,
+                version: stableCoinFacetVersionList[index],
+            })
+        })
+        await expect(
+            diamondCutManager.createBatchConfiguration(CONFIG_ID.stableCoin, facetConfigurations, false)
+        ).to.emit(diamondCutManager, 'DiamondBatchConfigurationCreated')
+        await expect(
+            diamondCutManager.createConfiguration(CONFIG_ID.stableCoin, facetConfigurations)
+        ).to.be.revertedWithCustomError(diamondCutManager, 'DuplicatedFacetInConfiguration')
     })
 })
