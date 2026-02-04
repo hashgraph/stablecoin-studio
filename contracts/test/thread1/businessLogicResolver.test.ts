@@ -85,6 +85,10 @@ describe('➡️ BusinessLogicResolver Tests', () => {
     })
 
     describe('Business Logic Resolver functionality', () => {
+        it('GIVEN an empty registry WHEN getting keys from page 0 and page length 0 THEN responds empty values', async () => {
+            expect(await businessLogicResolver.getBusinessLogicKeys(0, 0)).is.deep.equal([])
+        })
+
         it('GIVEN an empty registry WHEN getting data THEN responds empty values or BusinessLogicVersionDoesNotExist', async () => {
             expect(await businessLogicResolver.getLatestVersion(BUSINESS_LOGIC_KEYS[0].businessLogicKey)).is.equal(0)
             await expect(
@@ -345,6 +349,22 @@ describe('➡️ BusinessLogicResolver Tests', () => {
                 Array.from(await businessLogicResolver.getSelectorsBlacklist(CONFIG_ID.stableCoin, 0, 100))
             ).to.deep.equal([])
             await businessLogicResolver.removeSelectorsFromBlacklist(CONFIG_ID.stableCoin, blackListedSelectors)
+        })
+        it('GIVEN two selectors in the blacklist WHEN removing one of them THEN queries respond with the other one', async () => {
+            const blackListedSelectors = ['0x8456cb59', '0x3f4ba83a'] // pause() and unpause() selectors
+
+            await businessLogicResolver.addSelectorsToBlacklist(CONFIG_ID.stableCoin, blackListedSelectors)
+            await delay({ time: 1, unit: 'sec' })
+
+            expect(
+                Array.from(await businessLogicResolver.getSelectorsBlacklist(CONFIG_ID.stableCoin, 0, 100))
+            ).to.deep.equal(blackListedSelectors)
+
+            await businessLogicResolver.removeSelectorsFromBlacklist(CONFIG_ID.stableCoin, ['0x8456cb59'])
+            await delay({ time: 1, unit: 'sec' })
+            expect(
+                Array.from(await businessLogicResolver.getSelectorsBlacklist(CONFIG_ID.stableCoin, 0, 100))
+            ).to.deep.equal(['0x3f4ba83a'])
         })
     })
 })
