@@ -31,8 +31,8 @@ contract WipeableFacet is IWipeable, IStaticFunctionSelectors, TokenOwnerStorage
         override(IWipeable)
         onlyRole(_WIPE_ROLE)
         addressIsNotZero(account)
-        amountIsNotNegative(amount, false)
-        valueIsNotGreaterThan(SafeCast.toUint256(amount), _balanceOf(account), true)
+        greaterThanZero(amount)
+        notGreaterThan(SafeCast.toUint256(amount), _balanceOf(account))
         returns (bool)
     {
         address currentTokenAddress = _getTokenAddress();

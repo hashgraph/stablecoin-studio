@@ -81,7 +81,7 @@ abstract contract TokenOwnerStorageWrapper is Common {
     function _transfer(
         address to,
         int64 amount
-    ) internal valueIsNotGreaterThan(uint256(SafeCast.toUint256(amount)), _balanceOf(address(this)), true) {
+    ) internal notGreaterThan(uint256(SafeCast.toUint256(amount)), _balanceOf(address(this))) {
         if (to != address(this)) {
             address currentTokenAddress = _getTokenAddress();
 

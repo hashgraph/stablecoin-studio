@@ -32,8 +32,8 @@ contract RescuableFacet is
         external
         override(IRescuable)
         onlyRole(_RESCUE_ROLE)
-        amountIsNotNegative(amount, false)
-        valueIsNotGreaterThan(SafeCast.toUint256(amount), _balanceOf(address(this)), true)
+        greaterThanZero(amount)
+        notGreaterThan(SafeCast.toUint256(amount), _balanceOf(address(this)))
         returns (bool)
     {
         address currentTokenAddress = _getTokenAddress();
@@ -65,7 +65,7 @@ contract RescuableFacet is
         external
         override(IRescuable)
         onlyRole(_RESCUE_ROLE)
-        valueIsNotGreaterThan(amount, address(this).balance, true)
+        notGreaterThan(amount, address(this).balance)
         nonReentrant
         returns (bool)
     {

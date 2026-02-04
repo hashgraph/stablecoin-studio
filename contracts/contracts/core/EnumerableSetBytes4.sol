@@ -64,27 +64,6 @@ library EnumerableSetBytes4 {
     }
 
     /**
-     * @dev Return the entire set in an array
-     *
-     * WARNING: This operation will copy the entire storage to memory, which can be quite expensive. This is designed
-     * to mostly be used by view accessors that are queried without any gas fees. Developers should keep in mind that
-     * this function has an unbounded cost, and using it as part of a state-changing function may render the function
-     * uncallable if the set grows to a point where copying to memory consumes too much gas to fit in a block.
-     */
-    function values(Bytes4Set storage set) internal view returns (bytes4[] memory) {
-        bytes4[] memory store = _values(set._inner);
-        bytes4[] memory result;
-
-        /// @solidity memory-safe-assembly
-        // solhint-disable-next-line no-inline-assembly
-        assembly {
-            result := store
-        }
-
-        return result;
-    }
-
-    /**
      * @dev Add a value to a set. O(1).
      *
      * Returns true if the value was added to the set, that is if it was not
@@ -168,17 +147,5 @@ library EnumerableSetBytes4 {
      */
     function _at(Set storage set, uint256 index) private view returns (bytes4) {
         return set._values[index];
-    }
-
-    /**
-     * @dev Return the entire set in an array
-     *
-     * WARNING: This operation will copy the entire storage to memory, which can be quite expensive. This is designed
-     * to mostly be used by view accessors that are queried without any gas fees. Developers should keep in mind that
-     * this function has an unbounded cost, and using it as part of a state-changing function may render the function
-     * uncallable if the set grows to a point where copying to memory consumes too much gas to fit in a block.
-     */
-    function _values(Set storage set) private view returns (bytes4[] memory) {
-        return set._values;
     }
 }

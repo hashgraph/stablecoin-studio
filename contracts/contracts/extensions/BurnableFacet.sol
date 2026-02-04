@@ -39,7 +39,7 @@ contract BurnableFacet is
         external
         override(IBurnable)
         onlyRole(_BURN_ROLE)
-        amountIsNotNegative(amount, false)
+        greaterThanZero(amount)
         checkBurnAmount(amount)
         returns (bool)
     {

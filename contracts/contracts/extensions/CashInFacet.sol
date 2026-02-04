@@ -28,7 +28,7 @@ contract CashInFacet is ICashIn, IStaticFunctionSelectors, SupplierAdminStorageW
         onlyRole(_CASHIN_ROLE)
         checkReserveIncrease(SafeCast.toUint256(amount))
         addressIsNotZero(account)
-        amountIsNotNegative(amount, false)
+        greaterThanZero(amount)
         returns (bool)
     {
         if (!_supplierAdminStorage().unlimitedSupplierAllowances[msg.sender])
