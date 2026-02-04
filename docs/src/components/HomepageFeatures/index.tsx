@@ -15,8 +15,8 @@ const FeatureList: FeatureItem[] = [
     icon: "🪙",
     description: (
       <>
-        An institutional-grade framework to issue and manage stablecoins on **Hedera**. 
-        It leverages the <b>Hedera Token Service (HTS)</b> for speed and <b>Smart Contracts</b> for programmable compliance
+        An institutional-grade framework to issue and manage stablecoins on <b>Hedera</b>.
+        It leverages the <b>Hedera Token Service (HTS)</b> for speed and <b>Smart Contracts</b> for programmable compliance.
       </>
     ),
   },
