@@ -62,7 +62,7 @@ The **Read-Only Layer**. Used for reading state and historical data without burd
 * **Purpose:** Data retrieval and event verification.
 * **Usage:** Checking balances, verifying transaction inclusion, querying past events/logs.
 
-### �� 3. JSON-RPC (EVM Compatibility)
+### 💎 3. JSON-RPC (EVM Compatibility)
 The **Web3 Bridge**. For interactions requiring Ethereum Virtual Machine (EVM) compatibility, the SDK leverages the JSON-RPC Relay.
 * **Purpose:** Smart Contract views and standard Web3 tooling integration.
 * **Usage:** Interacting with the Stablecoin Smart Contracts (HSCS) using standard Ethereum protocols.
