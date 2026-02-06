@@ -14,7 +14,7 @@ This section details the internal design of the Backend, intended for developers
 * **Framework**: [NestJS](https://nestjs.com/) (TypeScript)
 * **Database**: [PostgreSQL](https://www.postgresql.org/) 14+
 * **ORM**: [TypeORM](https://typeorm.io/)
-* **Hedera Integration**: [@hashgraph/sdk](https://github.com/hashgraph/hedera-sdk-js) and [@hashgraph/hethers](https://github.com/hashgraph/hethers.js/)
+* **Hedera Integration**: [@hashgraph/sdk](https://github.com/hashgraph/hedera-sdk-js) 
 * **Documentation**: [Swagger](https://swagger.io/) (OpenAPI 3.0)
 * **Logging**: [Winston](https://github.com/winstonjs/winston)
 * **Testing**: [Jest](https://jestjs.io/)

@@ -14,13 +14,20 @@ TThe Stablecoin Studio SDK is built following **Hexagonal Architecture** (Ports 
 ### Core Methods (\`Stablecoin\` Class)
 | Method | Type | Description |
 | :--- | :--- | :--- |
-| \`Stablecoin.get(id)\` | Static | Hydrates an instance from an existing Token ID. |
-| \`Stablecoin.create(args)\` | Static | Orchestrates HTS creation and Contract deployment. |
-| \`mint(amount)\` | Instance | Mints new supply to the Treasury account. |
-| \`burn(amount)\` | Instance | Destroys tokens held in Treasury. |
-| \`wipe(amount, account)\` | Instance | Forced removal of tokens (Regulatory Compliance). |
-| \`freeze(account)\` | Instance | Prevents an account from moving tokens. |
-| \`getCapabilities()\` | Instance | Returns the RBAC permissions for the current operator. |
+| `Stablecoin.get(id)` | Static | Hydrates an instance from an existing Token ID. |
+| `Stablecoin.create(args)` | Static | Orchestrates HTS creation and Contract deployment. |
+| `mint(amount)` | Instance | Mints new supply to the Treasury account. |
+| `burn(amount)` | Instance | Destroys tokens held in Treasury. |
+| `wipe(amount, account)` | Instance | Forced removal of tokens (Regulatory Compliance). |
+| `freeze(account)` | Instance | Prevents an account from moving tokens. |
+| `unfreeze(account)` | Instance | Restores movement capabilities for a frozen account. |
+| `grantKyc(account)` | Instance | Flags an account as KYC verified. |
+| `revokeKyc(account)` | Instance | Removes KYC verification status from an account. |
+| `pause()` | Instance | Halts all token operations (Emergency stop). |
+| `unpause()` | Instance | Resumes all token operations. |
+| `rescue(token, amount)` | Instance | Recovers assets sent accidentally to the contract. |
+| `grantRole(role, account)`| Instance | Assigns a specific RBAC role to an account. |
+| `getCapabilities()` | Instance | Returns the RBAC permissions for the current operator. |
 
 ### Role Management API
 ```typescript
