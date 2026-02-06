@@ -22,7 +22,7 @@ The service is built using a modern and robust stack:
 - **Framework**: [NestJS](https://nestjs.com/)
 - **Database**: [PostgreSQL](https://www.postgresql.org/) & [TypeORM](https://typeorm.io/)
 - **Documentation**: [Swagger](https://swagger.io/)
-- **Hedera SDKs**: [@hashgraph/sdk](https://github.com/hashgraph/hedera-sdk-js) & [@hashgraph/hethers](https://github.com/hashgraph/hethers.js/)
+- **Hedera SDKs**: [@hashgraph/sdk](https://github.com/hashgraph/hedera-sdk-js) 
 - **Logging**: [Winston](https://github.com/winstonjs/winston)
 - **Testing**: [Jest](https://jestjs.io/)
 
