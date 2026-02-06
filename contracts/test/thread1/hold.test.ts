@@ -185,7 +185,7 @@ describe('➡️ Hold Management Tests', () => {
         before(async () => {
             await setInitialData({})
         })
-        it('GIVEN an account without HOLD_CREATOR_ROLE role WHEN createHoldByController THEN transaction fails with AccountHasNoRole', async () => {
+        it('GIVEN an account without HOLD_CREATOR_ROLE role WHEN getHoldFor THEN transaction fails with AccountHasNoRole', async () => {
             const holdIdentifier_nonExistent = {
                 tokenHolder: account_Operator,
                 holdId: 999,
@@ -193,6 +193,10 @@ describe('➡️ Hold Management Tests', () => {
             await expect (holdManagementFacet.getHoldFor(holdIdentifier_nonExistent))
               .to.be.revertedWithCustomError(holdManagementFacet, 'HoldNotFound')
               .withArgs(holdIdentifier_nonExistent.tokenHolder, holdIdentifier_nonExistent.holdId)
+        })
+        it('GIVEN an account with HOLD_CREATOR_ROLE role WHEN getHoldFor from page index 0 and page length 0 THEN it returns an empty array', async () => {
+            expect(await holdManagementFacet.getHoldsIdFor(account_Operator, 0, 0))
+              .to.deep.equal([])
         })
     })
 

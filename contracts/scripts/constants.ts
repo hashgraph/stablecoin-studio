@@ -146,7 +146,7 @@ export const GAS_LIMIT = {
         upgrade: 200_000n,
     },
     tup: {
-        deploy: 2_000_000n,
+        deploy: 1_500_000n,
         upgrade: 200_000n,
     },
     resolverProxy: {
@@ -170,7 +170,8 @@ export const GAS_LIMIT = {
         createConfiguration: 15_000_000,
     },
     migrationProxy: {
-        deploy: 2_000_000n,
+        deploy: 1_500_000n,
+        initialize: 400_000n,
         upgrade: 200_000n,
     },
     diamondCutManager: {

@@ -242,7 +242,7 @@ describe('➡️ ResolverProxy Tests', () => {
         )).to.be.revertedWithCustomError(ResolverProxyFactory, 'ResolverAddressIsZero')
     })
 
-    it('GIVEN deployed facets WHEN deploy a new resolverProxy with resolver proxy configuration id is 0 BLR THEN fails with ConfigurationIdIsZero', async () => {
+    it('GIVEN deployed facets WHEN deploy a new resolverProxy with resolver proxy configuration id is 0 THEN fails with ConfigurationIdIsZero', async () => {
         const ResolverProxyFactory = await ethers.getContractFactory('ResolverProxy')
         await expect (ResolverProxyFactory.deploy(
           await resolver.getAddress(), NO_CONFIG_ID, 1, [],

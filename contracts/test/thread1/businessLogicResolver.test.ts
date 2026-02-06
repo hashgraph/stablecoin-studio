@@ -70,7 +70,7 @@ describe('➡️ BusinessLogicResolver Tests', () => {
     })
 
     describe('AccessControl', () => {
-        it('GIVEN an account without admin role WHEN registrying logics THEN transaction fails with AccountHasNoRole', async () => {
+        it('GIVEN an account without admin role WHEN registering logics THEN transaction fails with AccountHasNoRole', async () => {
             // Using nonOperator (non role)
             businessLogicResolver = businessLogicResolver.connect(nonOperator)
 

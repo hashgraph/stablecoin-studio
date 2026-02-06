@@ -359,9 +359,9 @@ contract HoldManagementFacet is
             data: hold.data,
             operatorData: operatorData
         });
-        if (!holdDataStorage.holdIdsByAccount[tokenHolder].add(holdId)) {
-            revert ErrorAddingHold(tokenHolder, holdId);
-        }
+        bool added = holdDataStorage.holdIdsByAccount[tokenHolder].add(holdId);
+        assert (added == true);
+
         holdDataStorage.totalHeldAmount += hold.amount;
         holdDataStorage.totalHeldAmountByAccount[tokenHolder] += hold.amount;
     }
@@ -381,9 +381,8 @@ contract HoldManagementFacet is
         holdDataStorage.totalHeldAmountByAccount[tokenHolder] -= amount;
 
         if (hold.amount == 0) {
-            if (!holdDataStorage.holdIdsByAccount[tokenHolder].remove(holdId)) {
-                revert ErrorRemovingHold(tokenHolder, holdId);
-            }
+            bool removed = holdDataStorage.holdIdsByAccount[tokenHolder].remove(holdId);
+            assert (removed == true);
             delete holdDataStorage.holdsByAccountAndId[tokenHolder][holdId];
         }
     }

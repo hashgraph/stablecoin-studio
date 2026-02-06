@@ -406,7 +406,7 @@ describe('➡️ DiamondCutManager Tests', () => {
         const facetConfigurations: IDiamondCutManager.FacetConfigurationStruct[] = []
 
         await expect(
-            diamondCutManager.createBatchConfiguration(CONFIG_ID.stableCoin, facetConfigurations, {
+            diamondCutManager.createBatchConfiguration(CONFIG_ID.stableCoin, facetConfigurations, false, {
                 gasLimit: GAS_LIMIT.diamondCutManager.createConfiguration,
             })
         ).to.be.revertedWithCustomError(diamondCutManager, 'EmptyConfiguration')
