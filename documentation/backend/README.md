@@ -8,24 +8,24 @@
 
 ### Table of Contents
 
-- **[Context](#context)**<br>
-- **[Architecture](#architecture)**<br>
-- **[Overview](#overview)**<br>
-  - [Add a transaction](#add-a-transaction)<br>
-  - [Sign a transaction](#sign-a-transaction)<br>
-  - [Update a transaction](#update-a-transaction)<br>
-  - [Delete a transaction](#delete-a-transaction)<br>
-  - [Retrieve all transactions](#retrieve-all-transactions)<br>
-  - [Retrieve transactions for public key](#retrieve-transactions-for-public-key)<br>
-- **[Technologies](#technologies)**<br>
-- **[Installation](#installation)**<br>
-- **[Build](#build)**<br>
-- **[Run](#run)**<br>
-- **[Configuration](#configuration)**<br>
-- **[Testing](#testing)**<br>
-- **[Contributing](#contributing)**<br>
-- **[Code of conduct](#code-of-conduct)**<br>
-- **[License](#license)**<br>
+- **[Context](#context)**
+- **[Architecture](#architecture)**
+- **[Overview](#overview)**
+  - [Add a transaction](#add-a-transaction)
+  - [Sign a transaction](#sign-a-transaction)
+  - [Update a transaction](#update-a-transaction)
+  - [Delete a transaction](#delete-a-transaction)
+  - [Retrieve all transactions](#retrieve-all-transactions)
+  - [Retrieve transactions for public key](#retrieve-transactions-for-public-key)
+- **[Technologies](#technologies)**
+- **[Installation](#installation)**
+- **[Build](#build)**
+- **[Run](#run)**
+- **[Configuration](#configuration)**
+- **[Testing](#testing)**
+- **[Contributing](#contributing)**
+- **[Code of conduct](#code-of-conduct)**
+- **[License](#license)**
 
 # Context
 
@@ -106,7 +106,7 @@ The backend is made of two components:
 
 ## Sign a transaction
 
- - __Path__ : /v1/transactions/{transactionId}/signature
+ - __Path__ : `/v1/transactions/{transactionId}/signature`
  - __HTTP Method__ : PUT
  - __Body__ : 
  ```
@@ -135,7 +135,7 @@ The backend is made of two components:
 
 ## Update a transaction
 
- - __Path__ : /v1/transactions/{transactionId}/update
+ - __Path__ : `/v1/transactions/{transactionId}/update`
  - __HTTP Method__ : PUT
  - __Body__ : 
  ```
@@ -159,7 +159,7 @@ The backend is made of two components:
 
 ## Delete a transaction
 
- - __Path__ : /v1/transactions/{transactionId}
+ - __Path__ : `/v1/transactions/{transactionId}`
  - __HTTP Method__ : DELETE
   __Logic__ : 
     - Success : 
@@ -208,7 +208,7 @@ The backend is made of two components:
 
 ## Retrieve transactions by transactionId
 
- - __Path__ : /v1/transactions/{transactionId}
+ - __Path__ : `/v1/transactions/{transactionId}`
  - __HTTP Method__ : GET
   __Logic__ : 
     - Action : returns all the transaction from the DB for a specific transactionId and status (PENDING/SIGNED) (paginated response).
