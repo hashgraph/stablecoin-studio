@@ -76,6 +76,29 @@ describe('➡️ Rescue Tests', function () {
         await new ValidateTxResponseCommand({ txResponse: response }).execute()
     })
 
+    it("Account trying to reentrant rescue reverts", async () => {
+        const amountToRescue = ONE_HBAR
+        // By https://docs.hedera.com/hedera/tutorials/smart-contracts/hscs-workshop/hardhat#tinybars-vs-weibars
+        const amountToRescueInEvm = amountToRescue / WEIBARS_PER_TINYBAR
+
+        const Attacker = await ethers.getContractFactory("ReentrancyAttacker");
+        const attacker = await Attacker.deploy(await rescuableFacet.getAddress(), amountToRescue);
+        await attacker.waitForDeployment();
+
+        await expect(
+            rolesFacet.grantRole(ROLES.rescue.hash, attacker.getAddress(), {
+                gasLimit: GAS_LIMIT.hederaTokenManager.grantRole,
+            })
+        )
+            .to.emit(rolesFacet, 'RoleGranted')
+            .withArgs(ROLES.rescue.hash, attacker.getAddress(), operator.address)
+
+        await expect(
+          attacker.attack()
+        ).to.be.revertedWithCustomError(rescuableFacet, 'HBARRescueError')
+         .withArgs(ONE_HBAR)
+    });
+
     it('Account with RESCUE role can rescue 10 tokens', async function () {
         // Get the initial balance of the token owner and client
         const initialTokenOwnerBalance = await hederaTokenManagerFacet.balanceOf(stableCoinProxyAddress, {
@@ -167,29 +190,6 @@ describe('➡️ Rescue Tests', function () {
         const expectedTokenOwnerBalance = initialTokenOwnerBalance - amountToRescueInEvm
         expect(finalTokenOwnerBalance.toString()).to.equals(expectedTokenOwnerBalance.toString())
     })
-
-    it("Account trying to reentrant rescue reverts", async () => {
-        const amountToRescue = ONE_HBAR
-        // By https://docs.hedera.com/hedera/tutorials/smart-contracts/hscs-workshop/hardhat#tinybars-vs-weibars
-        const amountToRescueInEvm = amountToRescue / WEIBARS_PER_TINYBAR
-
-        const Attacker = await ethers.getContractFactory("ReentrancyAttacker");
-        const attacker = await Attacker.deploy(await rescuableFacet.getAddress(), amountToRescue);
-        await attacker.waitForDeployment();
-
-        await expect(
-            rolesFacet.grantRole(ROLES.rescue.hash, attacker.getAddress(), {
-                gasLimit: GAS_LIMIT.hederaTokenManager.grantRole,
-            })
-        )
-            .to.emit(rolesFacet, 'RoleGranted')
-            .withArgs(ROLES.rescue.hash, attacker.getAddress(), operator.address)
-
-        await expect(
-          attacker.attack()
-        ).to.be.revertedWithCustomError(rescuableFacet, 'HBARRescueError')
-         .withArgs(ONE_HBAR)
-    });
 
     it('Account with RESCUE role cannot rescue more HBAR than the owner balance', async function () {
         // Get the initial balance of the token owner
