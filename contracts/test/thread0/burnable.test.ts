@@ -96,6 +96,8 @@ describe('➡️ Burn Tests', () => {
         // Get the initial total supply and treasury account's balanceOf
         const initialTotalSupply = await hederaTokenManagerFacet.totalSupply()
 
+        console.log(await burnFacet.getBurnableAmount())
+
         // burn some tokens
         await expect(
             burnFacet.burn(tokensToBurn, {
