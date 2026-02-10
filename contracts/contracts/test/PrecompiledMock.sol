@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: Apache-2.0
 // solhint-disable one-contract-per-file
-pragma solidity 0.8.18;
+pragma solidity 0.8.24;
 
 import {HederaResponseCodes} from '@hashgraph/smart-contracts/contracts/system-contracts/hedera-token-service/HederaTokenService.sol';
 import {IHederaTokenService} from '@hashgraph/smart-contracts/contracts/system-contracts/hedera-token-service/IHederaTokenService.sol';

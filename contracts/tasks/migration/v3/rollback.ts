@@ -36,17 +36,13 @@ task('rollbackBLRToV2', 'Rollback V3 Migrattion to v2')
             )
         }
 
-        const previous_impl = await BLRProxyAdmin.getProxyImplementation(blrproxyaddress)
-
         console.log(`Upgrade BLR proxy implementation on ${network} ...`)
 
-        const upgradeTx = await BLRProxyAdmin.upgrade(blrproxyaddress, blrv2implementationaddress, {
+        const upgradeTx = await BLRProxyAdmin.upgradeAndCall(blrproxyaddress, blrv2implementationaddress, "0x", {
             gasLimit: GAS_LIMIT.resolverProxy.upgrade,
         })
 
         const receipt = await upgradeTx.wait()
-
-        const new_impl = await BLRProxyAdmin.getProxyImplementation(blrproxyaddress)
 
         if (!receipt) {
             throw new TransactionReceiptError({
@@ -61,9 +57,6 @@ task('rollbackBLRToV2', 'Rollback V3 Migrattion to v2')
 
         console.log('✓ BLR implementation upgraded')
         console.log(`   --> Transaction Hash: ${receipt.hash}`)
-
-        console.log(`\n BLR Previous implementation : ${previous_impl}`)
-        console.log(`\n BLR New implementation : ${new_impl}`)
     })
 
 /**

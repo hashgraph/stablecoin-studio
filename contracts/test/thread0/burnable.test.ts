@@ -29,7 +29,7 @@ describe('➡️ Burn Tests', () => {
 
     before(async () => {
         // mute | mock console.log
-        //console.log = () => {} // eslint-disable-line
+        console.log = () => {} // eslint-disable-line
         console.info(MESSAGES.deploy.info.deployFullInfrastructureInTests)
         ;[operator, nonOperator] = await ethers.getSigners()
 

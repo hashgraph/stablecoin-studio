@@ -1,14 +1,14 @@
 // SPDX-License-Identifier: Apache-2.0
 // solhint-disable one-contract-per-file
-pragma solidity 0.8.18;
+pragma solidity 0.8.24;
 
-import {IERC20MetadataUpgradeable} from '@openzeppelin/contracts-upgradeable/token/ERC20/extensions/IERC20MetadataUpgradeable.sol';
-import {IERC20Upgradeable} from '@openzeppelin/contracts-upgradeable/token/ERC20/IERC20Upgradeable.sol';
+import {IERC20Metadata} from '@openzeppelin/contracts/token/ERC20/extensions/IERC20Metadata.sol';
+import {IERC20} from '@openzeppelin/contracts/token/ERC20/IERC20.sol';
 import {IHederaTokenService} from '@hashgraph/smart-contracts/contracts/system-contracts/hedera-token-service/IHederaTokenService.sol';
 import {HederaResponseCodes} from '@hashgraph/smart-contracts/contracts/system-contracts/hedera-token-service/HederaTokenService.sol';
 import {IHRC} from '../Interfaces/IHRC.sol';
 
-contract StableCoinTokenMock is IERC20Upgradeable, IERC20MetadataUpgradeable, IHRC {
+contract StableCoinTokenMock is IERC20, IERC20Metadata, IHRC {
     error NotImplemented();
 
     uint256 private balance;

@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: MIT
-pragma solidity 0.8.18;
+pragma solidity 0.8.24;
 
 import {IHederaTokenManager, RolesStruct} from './IHederaTokenManager.sol';
 import {KeysStruct} from '../library/KeysLib.sol';

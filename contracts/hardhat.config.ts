@@ -12,7 +12,7 @@ export const configuration = new Configuration()
 
 const hardhatConfig: HardhatUserConfig = {
     solidity: {
-        version: '0.8.18',
+        version: '0.8.24',
         settings: {
             optimizer: {
                 enabled: true,

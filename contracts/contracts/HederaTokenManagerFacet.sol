@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: MIT
-pragma solidity 0.8.18;
+pragma solidity 0.8.24;
 
 import {IHederaTokenManager, RolesStruct} from './Interfaces/IHederaTokenManager.sol';
 import {_HEDERA_TOKEN_MANAGER_RESOLVER_KEY} from './constants/resolverKeys.sol';
@@ -9,7 +9,7 @@ import {ReserveStorageWrapper} from './extensions/ReserveStorageWrapper.sol';
 import {IHederaTokenService} from '@hashgraph/smart-contracts/contracts/system-contracts/hedera-token-service/IHederaTokenService.sol';
 import {KeysLib} from './library/KeysLib.sol';
 // solhint-disable-next-line max-line-length
-import {IERC20MetadataUpgradeable} from '@openzeppelin/contracts-upgradeable/token/ERC20/extensions/IERC20MetadataUpgradeable.sol';
+import {IERC20Metadata} from '@openzeppelin/contracts/token/ERC20/extensions/IERC20Metadata.sol';
 import {HederaTokenManagerStorageWrapper} from './HederaTokenManagerStorageWrapper.sol';
 import {IStaticFunctionSelectors} from './resolver/interfaces/resolverProxy/IStaticFunctionSelectors.sol';
 import {ADMIN_ROLE} from './constants/roles.sol';
@@ -81,7 +81,7 @@ contract HederaTokenManagerFacet is
      * @return string The the name of the token
      */
     function name() external view returns (string memory) {
-        return IERC20MetadataUpgradeable(_getTokenAddress()).name();
+        return IERC20Metadata(_getTokenAddress()).name();
     }
 
     /**
@@ -90,7 +90,7 @@ contract HederaTokenManagerFacet is
      * @return string The the symbol of the token
      */
     function symbol() external view returns (string memory) {
-        return IERC20MetadataUpgradeable(_getTokenAddress()).symbol();
+        return IERC20Metadata(_getTokenAddress()).symbol();
     }
 
     /**
