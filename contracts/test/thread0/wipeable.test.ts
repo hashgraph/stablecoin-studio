@@ -10,7 +10,14 @@ import {
     WipeableFacet__factory,
     StableCoinTokenMock__factory,
 } from '@contracts'
-import { delay, DeployFullInfrastructureCommand, MESSAGES, ONE_TOKEN, ROLES } from '@scripts'
+import {
+  delay,
+  DeployFullInfrastructureCommand,
+  ADDRESS_ZERO,
+  MESSAGES,
+  ONE_TOKEN,
+  ROLES
+} from '@scripts'
 import { deployStableCoinInTests, deployFullInfrastructureInTests, GAS_LIMIT } from '@test/shared'
 
 describe('➡️ Wipe Tests', function () {
@@ -75,6 +82,18 @@ describe('➡️ Wipe Tests', function () {
         )
             .to.be.revertedWithCustomError(wipeFacet, 'AccountHasNoRole')
             .withArgs(nonOperator, ROLES.wipe.hash)
+    })
+
+    it('Account with WIPE role cannot wipe in address zero account', async function () {
+        // Wipe in zero address account : fail
+        wipeFacet = wipeFacet.connect(operator)
+        await expect(
+            wipeFacet.wipe(ADDRESS_ZERO, 1n, {
+                gasLimit: GAS_LIMIT.hederaTokenManager.wipe,
+            })
+        )
+            .to.be.revertedWithCustomError(wipeFacet, 'AddressZero')
+            .withArgs(ADDRESS_ZERO)
     })
 
     it('Account with WIPE role cannot wipe a negative amount', async function () {

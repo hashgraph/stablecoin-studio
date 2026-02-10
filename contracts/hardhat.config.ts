@@ -12,7 +12,7 @@ export const configuration = new Configuration()
 
 const hardhatConfig: HardhatUserConfig = {
     solidity: {
-        version: '0.8.18',
+        version: '0.8.24',
         settings: {
             optimizer: {
                 enabled: true,
@@ -27,20 +27,6 @@ const hardhatConfig: HardhatUserConfig = {
             chainId: NETWORK_LIST.chainId[0],
             hardfork: DEFAULT_EVM_VERSION,
             blockGasLimit: GAS_LIMIT.max,
-            // * Forking (not working when precompiled contracts are used)
-            // accounts: configuration.privateKeys.testnet.map((key) => ({
-            //     privateKey: key,
-            //     balance: '10000000000000000000000000',
-            // })),
-            // // allowUnlimitedContractSize: true,
-            // enableRip7212: true,
-            // forking: {
-            // url: configuration.endpoints.testnet.jsonRpc,
-            // // blockNumber: 4053,
-            // enabled: true,
-            // },
-            // initialDate: '2025-01-27T00:00:00Z',
-            // chainId: NETWORK_LIST.chainId[3],
         },
         [NETWORK_LIST.name[1]]: {
             chainId: NETWORK_LIST.chainId[1],

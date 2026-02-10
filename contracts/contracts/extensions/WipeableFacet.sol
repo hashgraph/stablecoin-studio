@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: MIT
-pragma solidity 0.8.18;
+pragma solidity 0.8.24;
 
 import {TokenOwnerStorageWrapper} from './TokenOwnerStorageWrapper.sol';
 import {RolesStorageWrapper} from './RolesStorageWrapper.sol';
@@ -31,8 +31,8 @@ contract WipeableFacet is IWipeable, IStaticFunctionSelectors, TokenOwnerStorage
         override(IWipeable)
         onlyRole(_WIPE_ROLE)
         addressIsNotZero(account)
-        amountIsNotNegative(amount, false)
-        valueIsNotGreaterThan(SafeCast.toUint256(amount), _balanceOf(account), true)
+        greaterThanZero(amount)
+        notGreaterThan(SafeCast.toUint256(amount), _balanceOf(account))
         returns (bool)
     {
         address currentTokenAddress = _getTokenAddress();

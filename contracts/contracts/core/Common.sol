@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: MIT
 
-pragma solidity 0.8.18;
+pragma solidity 0.8.24;
 
 import {Initializable} from './Initializable.sol';
 import {ICommon} from './ICommon.sol';
@@ -13,8 +13,8 @@ abstract contract Common is Initializable, ICommon {
      * @param value The value to check
      * @param ref The ref to compare with
      */
-    modifier valueIsNotLessThan(uint256 value, uint256 ref, bool equalAccepted) {
-        _valueIsNotLessThan(value, ref, equalAccepted);
+    modifier greaterThan(uint256 value, uint256 ref) {
+        _greaterThan(value, ref);
         _;
     }
 
@@ -24,19 +24,18 @@ abstract contract Common is Initializable, ICommon {
      * @param value The value to check
      * @param ref The ref to compare with
      */
-    modifier valueIsNotGreaterThan(uint256 value, uint256 ref, bool equalAccepted) {
-        _valueIsNotGreaterThan(value, ref, equalAccepted);
+    modifier notGreaterThan(uint256 value, uint256 ref) {
+        _notGreaterThan(value, ref);
         _;
     }
 
     /**
-     * @dev Checks if an amount is a negative number
+     * @dev Checks if an amount is greater than zero
      *
      * @param amount The value to check
-     * @param zeroAccepted A flag that indicates if zero value is accepted or not
      */
-    modifier amountIsNotNegative(int256 amount, bool zeroAccepted) {
-        _amountIsNotNegative(amount, zeroAccepted);
+    modifier greaterThanZero(int256 amount) {
+        _greaterThanZero(amount);
         _;
     }
 
@@ -75,13 +74,13 @@ abstract contract Common is Initializable, ICommon {
     }
 
     /**
-     * @dev Checks that value is not less than ref
+     * @dev Checks that value is greater than ref
      *
      * @param value The value to check
      * @param ref The ref to compare with
      */
-    function _valueIsNotLessThan(uint256 value, uint256 ref, bool equalAccepted) private pure {
-        if (equalAccepted ? value < ref : value <= ref) revert LessThan(value, ref);
+    function _greaterThan(uint256 value, uint256 ref) private pure {
+        if (value <= ref) revert LessThan(value, ref);
     }
 
     /**
@@ -90,18 +89,17 @@ abstract contract Common is Initializable, ICommon {
      * @param value The value to check
      * @param ref The ref to compare with
      */
-    function _valueIsNotGreaterThan(uint256 value, uint256 ref, bool equalAccepted) private pure {
-        if (equalAccepted ? value > ref : value >= ref) revert GreaterThan(value, ref);
+    function _notGreaterThan(uint256 value, uint256 ref) private pure {
+        if (value > ref) revert GreaterThan(value, ref);
     }
 
     /**
      * @dev Checks if an amount is a negative number
      *
      * @param amount The value to check
-     * @param zeroAccepted A flag that indicates if zero value is accepted or not
      */
-    function _amountIsNotNegative(int256 amount, bool zeroAccepted) private pure {
-        if (zeroAccepted ? amount < 0 : amount <= 0) revert NegativeAmount(amount);
+    function _greaterThanZero(int256 amount) private pure {
+        if (amount <= 0) revert NegativeAmount(amount);
     }
 
     /**
