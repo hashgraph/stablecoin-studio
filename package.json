@@ -61,14 +61,14 @@
     "commitlint": "commitlint --edit"
   },
   "devDependencies": {
-    "@commitlint/cli": "^19.2.0",
-    "@commitlint/config-conventional": "^19.1.0",
-    "concurrently": "^7.6.0",
-    "dotenv": "^16.3.1",
-    "rimraf": "^4.1.1"
+    "@commitlint/cli": "19.8.0",
+    "@commitlint/config-conventional": "19.8.0",
+    "concurrently": "7.6.0",
+    "dotenv": "16.4.7",
+    "rimraf": "4.4.1"
   },
   "dependencies": {
-    "husky": "^9.1.7"
+    "husky": "9.1.7"
   },
   "overrides": {
     "@walletconnect/core": "2.19.0",
