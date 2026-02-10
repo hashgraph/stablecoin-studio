@@ -282,28 +282,6 @@ describe('StableCoinFactory Tests', function () {
         await expect(deployStableCoin(command)).to.be.rejectedWith(Error)
     })
 
-    it.skip('Create StableCoin setting an initial supply over the reserve, expect it to fail with a very close number', async function () {
-        // Deploy Token using Client
-        const command = await DeployStableCoinCommand.newInstance({
-            signer: operator,
-            useEnvironment: true,
-            tokenInformation: {
-                name: DEFAULT_TOKEN.name,
-                symbol: DEFAULT_TOKEN.symbol,
-                decimals: DEFAULT_TOKEN.decimals,
-                initialSupply: DEFAULT_TOKEN.initialSupply,
-                maxSupply: DEFAULT_TOKEN.maxSupply,
-                memo: DEFAULT_TOKEN.memo,
-                freeze: false,
-            },
-            allToContract: false,
-            initialAmountDataFeed: (toReserve(DEFAULT_TOKEN.initialSupply) - 1n).toString(),
-            businessLogicResolverProxyAddress: businessLogicResolver,
-            stableCoinFactoryProxyAddress: stableCoinFactoryProxy,
-        })
-        await expect(deployStableCoin(command)).to.be.rejectedWith(Error)
-    })
-
     it('Create StableCoin setting a reserve with the amount outdated, expected to fail', async function () {
         // first deploy Hedera Reserve
         const hederaReserveContract = await deployContract(
