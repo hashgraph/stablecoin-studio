@@ -3,22 +3,25 @@ name: Test_Contracts
 on:
   pull_request:
     paths:
-      - "contracts/contracts/**"
-      - "contracts/test/**"
-      - "contracts/scripts/**"
-      - "package*.json"
-      - "contracts/hardhat.config.ts"
-      - "contracts/tsconfig.json"
-      - "contracts/.solcover.js"
+      - "contracts/**"
+      - ".github/workflows/test-contracts.yaml"
   push:
     branches:
       - main
 
 jobs:
-  test-contracts:
+  # ==========================================================================
+  # Job 0: Build contracts (shared by test and coverage jobs)
+  # ==========================================================================
+  # Installs dependencies and builds contracts once, then caches both
+  # node_modules and build artifacts for downstream deployment jobs.
+  # Uses actions/cache (save) here and actions/cache/restore (read-only)
+  # in downstream jobs to avoid redundant npm ci + Solidity compilation.
+  # ==========================================================================
+  build:
     name: Test Stablecoin Studio Contracts
     runs-on: token-studio-linux-medium
-    #timeout-minutes: 10
+    timeout-minutes: 10
     steps:
       - name: Harden Runner
         uses: step-security/harden-runner@v2
@@ -32,10 +35,22 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: "22"
-          cache: npm
 
       - name: Install dependencies
         run: npm ci
+
+      - name: Save dependencies to cache
+        uses: actions/cache/save@v4
+        with:
+          path: |
+            node_modules
+            */node_modules
+            ~/.npm
+          key: ${{ runner.os }}-deps-${{ hashFiles('package-lock.json') }}
+
+      - name: Compile contracts
+        run: |
+          npm run build:contracts          
 
       - name: Cache Hardhat artifacts
         uses: actions/cache@v4
@@ -44,18 +59,53 @@ jobs:
             contracts/artifacts
             contracts/cache
             contracts/typechain-types
-          # Include package-lock.json in key to invalidate cache when dependencies change
-          key: ${{ runner.os }}-hardhat-${{ hashFiles('**/package-lock.json', 'contracts/**/*.sol') }}
-          restore-keys: |
-            ${{ runner.os }}-hardhat-
+          key: ${{ runner.os }}-contracts-build-${{ github.sha }}
 
-      - name: Compile contracts
-        run: |
-          echo "🔨 Compiling Stablecoin Studio contracts..."
-          npm run build:contracts          
-          echo "✅ Contracts compiled successfully"
+  # ==========================================================================
+  # Job 1: Execute coverage tests (depends on build job)
+  # ==========================================================================
+  # Runs the smart contracts coverage.
+  # ==========================================================================
+  coverage:
+    name: Coverage of Stablecoin Studio Contracts
+    needs: [build]
+    runs-on: token-studio-linux-medium
+    timeout-minutes: 15
+
+    steps:
+      - name: Harden Runner
+        uses: step-security/harden-runner@v2
+        with:
+          egress-policy: audit
+
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+
+      - name: Restore dependencies from cache
+        uses: actions/cache/restore@v4
+        with:
+          path: |
+            node_modules
+            */node_modules
+            ~/.npm
+          key: ${{ runner.os }}-deps-${{ hashFiles('package-lock.json') }}
+          fail-on-cache-miss: true
+
+      - name: Restore build artifacts from cache
+        uses: actions/cache/restore@v4
+        with:
+          path: |
+            contracts/artifacts
+            contracts/typechain-types
+            contracts/cache
+          key: ${{ runner.os }}-contracts-build-${{ github.sha }}
+          fail-on-cache-miss: true
 
       - name: Run tests with coverage
         run: |
-          echo "🧪 Running tests with coverage for Stablecoin Studio contracts..."
           npm run coverage:contracts
