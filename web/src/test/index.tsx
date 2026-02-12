@@ -17,7 +17,35 @@ import {
 	mockedSelectedStableCoinConfigInfo,
 	mockedStableCoinsList,
 	mockedWalletData,
+	mockedStableCoinCapabilities,
 } from '../mocks/sdk';
+import { StableCoinRole } from '@hashgraph/stablecoin-npm-sdk';
+
+// Mock localStorage for mirrors
+const mockMirrors = [
+	{
+		Environment: 'testnet',
+		BASE_URL: 'https://testnet.mirrornode.hedera.com/api/v1/',
+	},
+];
+
+// Setup localStorage before tests
+if (typeof window !== 'undefined') {
+	Object.defineProperty(window, 'localStorage', {
+		value: {
+			getItem: jest.fn((key) => {
+				if (key === 'SELECTED_MIRROR') {
+					return JSON.stringify(mockMirrors);
+				}
+				return null;
+			}),
+			setItem: jest.fn(),
+			removeItem: jest.fn(),
+			clear: jest.fn(),
+		},
+		writable: true,
+	});
+}
 
 const walletInitial = {
 	...walletInitialState,
@@ -25,6 +53,9 @@ const walletInitial = {
 	selectedStableCoin: mockedSelectedStableCoin,
 	selectedStableCoinConfigInfo: mockedSelectedStableCoinConfigInfo,
 	stableCoinList: mockedStableCoinsList,
+	accountInfo: mockedStableCoinCapabilities.account,
+	roles: [StableCoinRole.DEFAULT_ADMIN_ROLE],
+	network: 'testnet',
 };
 
 const AllProviders = ({ children }: { children?: React.ReactNode }) => (

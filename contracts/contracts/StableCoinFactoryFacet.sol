@@ -14,6 +14,7 @@ import {ResolverProxy} from './resolver/resolverProxy/ResolverProxy.sol';
 import {Common} from './core/Common.sol';
 import {_STABLE_COIN_FACTORY_RESOLVER_KEY} from './constants/resolverKeys.sol';
 import {IStaticFunctionSelectors} from './resolver/interfaces/resolverProxy/IStaticFunctionSelectors.sol';
+import {IReserveStorageWrapper} from './extensions/Interfaces/IReserveStorageWrapper.sol';
 
 contract StableCoinFactoryFacet is IStaticFunctionSelectors, IStableCoinFactory, Common {
     // Hedera HTS precompiled contract
@@ -31,7 +32,14 @@ contract StableCoinFactoryFacet is IStaticFunctionSelectors, IStableCoinFactory,
 
     function deployStableCoin(
         TokenStruct calldata requestedToken
-    ) external payable override(IStableCoinFactory) returns (DeployedStableCoin memory) {
+    )
+        external
+        payable
+        override(IStableCoinFactory)
+        addressIsNotZero(address(requestedToken.businessLogicResolverAddress))
+        bytes32IsNotZero(requestedToken.stableCoinConfigurationId.key)
+        returns (DeployedStableCoin memory)
+    {
         address reserveAddress = _handleReserve(requestedToken);
         address stableCoinProxy = _deployStableCoinProxy(requestedToken);
         address tokenAddress = _initializeToken(requestedToken, stableCoinProxy, reserveAddress);
@@ -154,7 +162,16 @@ contract StableCoinFactoryFacet is IStaticFunctionSelectors, IStableCoinFactory,
             return reserveProxy;
         }
 
-        (, int256 reserveInitialAmount, , , ) = AggregatorV3Interface(reserveAddress).latestRoundData();
+        (, int256 reserveInitialAmount, , uint256 updatedAt, ) = AggregatorV3Interface(reserveAddress)
+            .latestRoundData();
+
+        uint256 updatedAtThreshold = requestedToken.updatedAtThreshold;
+
+        assert(updatedAt <= block.timestamp);
+        if (updatedAtThreshold > 0 && (block.timestamp - updatedAt) > updatedAtThreshold) {
+            revert IReserveStorageWrapper.ReserveAmountOutdated(updatedAt, updatedAtThreshold);
+        }
+
         _validationReserveInitialAmount(
             AggregatorV3Interface(reserveAddress).decimals(),
             reserveInitialAmount,
@@ -205,6 +222,7 @@ contract StableCoinFactoryFacet is IStaticFunctionSelectors, IStableCoinFactory,
             requestedToken.tokenDecimals,
             msg.sender,
             reserveAddress,
+            requestedToken.updatedAtThreshold,
             requestedToken.roles,
             requestedToken.cashinRole,
             requestedToken.metadata

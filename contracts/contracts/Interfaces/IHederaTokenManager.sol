@@ -17,6 +17,7 @@ interface IHederaTokenManager {
         int32 tokenDecimals;
         address originalSender;
         address reserveAddress;
+        uint256 updatedAtThreshold;
         RolesStruct[] roles;
         CashinRoleStruct cashinRole;
         string tokenMetadataURI;

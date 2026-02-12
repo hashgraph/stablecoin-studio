@@ -19,19 +19,13 @@
  */
 
 import { singleton } from 'tsyringe';
-import {
-	AccountId,
-	Signer,
-	Transaction,
-	ContractExecuteTransaction,
-} from '@hashgraph/sdk';
-import { NetworkName } from '@hashgraph/sdk/lib/client/Client';
+import { AccountId, Signer, Transaction } from '@hiero-ledger/sdk';
+import { NetworkName } from '@hiero-ledger/sdk/lib/client/Client';
 import { InitializationData } from '../TransactionAdapter';
 import { BaseHederaTransactionAdapter } from '../BaseHederaTransactionAdapter';
 import type { PublicStateControllerState } from '@reown/appkit-controllers';
 import LogService from '../../../app/service/LogService';
 import { ethers, Provider } from 'ethers';
-import { RPCTransactionResponseAdapter } from '../rpc/RPCTransactionResponseAdapter';
 import HWCSettings from '../../../domain/context/hwalletconnectsettings/HWCSettings';
 import {
 	Environment,
@@ -50,11 +44,7 @@ import { TransactionType } from '../TransactionResponseEnums';
 import TransactionResponse from '../../../domain/context/transaction/TransactionResponse';
 import { WalletPairedEvent } from '../../../app/service/event/WalletEvent';
 import { SigningError } from '../hs/error/SigningError';
-import StableCoinCapabilities from '../../../domain/context/stablecoin/StableCoinCapabilities';
-import {
-	SC_FixedFee,
-	SC_FractionalFee,
-} from '../../../domain/context/fee/CustomFee';
+import { RPCTransactionResponseAdapter } from '../response/RPCTransactionResponseAdapter';
 
 const { SupportedWallets } = require('@hashgraph/stablecoin-npm-sdk') as any;
 let HederaAdapter: typeof import('@hashgraph/hedera-wallet-connect').HederaAdapter;

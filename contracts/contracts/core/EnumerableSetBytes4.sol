@@ -7,7 +7,7 @@ library EnumerableSetBytes4 {
         bytes4[] _values;
         // Position of the value in the `values` array, plus 1 because index 0
         // means a value is not in the set.
-        mapping(bytes4 => uint256) _indexes;
+        mapping(bytes4 value => uint256 index) _indexes;
     }
 
     // Bytes4Set

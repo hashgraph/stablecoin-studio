@@ -28,7 +28,7 @@ import {
 	TokenDeleteTransaction,
 	TokenId,
 	AccountId,
-} from '@hashgraph/sdk';
+} from '@hiero-ledger/sdk';
 import TransactionResponse from '../../../domain/context/transaction/TransactionResponse';
 import StableCoinCapabilities from '../../../domain/context/stablecoin/StableCoinCapabilities';
 import { HederaId } from '../../../domain/context/shared/HederaId';

@@ -83,14 +83,12 @@ import StableCoinCapabilities from '../../../domain/context/stablecoin/StableCoi
 import TransactionResponse from '../../../domain/context/transaction/TransactionResponse';
 import LogService from '../../../app/service/LogService';
 import { SigningError } from '../hs/error/SigningError';
-import { CustomFee as HCustomFee } from '@hashgraph/sdk/lib/exports';
+import { CustomFee as HCustomFee } from '@hiero-ledger/sdk/lib/exports';
 import {
 	fromHCustomFeeToSCFee,
 	SC_FixedFee,
 	SC_FractionalFee,
 } from '../../../domain/context/fee/CustomFee';
-import PublicKey from '../../../domain/context/account/PublicKey';
-import { KeysStruct } from '../../../domain/context/factory/FactoryKey';
 
 /**
  * Helper utilities for transaction operations

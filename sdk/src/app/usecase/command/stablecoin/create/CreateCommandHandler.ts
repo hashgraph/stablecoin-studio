@@ -18,7 +18,7 @@
  *
  */
 
-import { ContractId as HContractId } from '@hashgraph/sdk';
+import { ContractId as HContractId } from '@hiero-ledger/sdk';
 import { ICommandHandler } from '../../../../../core/command/CommandHandler.js';
 import { CommandHandler } from '../../../../../core/decorator/CommandHandlerDecorator.js';
 import { lazyInject } from '../../../../../core/decorator/LazyInjectDecorator.js';
@@ -62,6 +62,7 @@ export class CreateCommandHandler implements ICommandHandler<CreateCommand> {
 			factory,
 			coin,
 			reserveAddress,
+			updatedAtThreshold,
 			reserveInitialAmount,
 			createReserve,
 			proxyOwnerAccount,
@@ -167,6 +168,7 @@ export class CreateCommandHandler implements ICommandHandler<CreateCommand> {
 			configId,
 			configVersion,
 			proxyOwnerAccount,
+			updatedAtThreshold ? updatedAtThreshold : '0',
 			reserveAddress,
 			reserveInitialAmount,
 			reserveConfigId,

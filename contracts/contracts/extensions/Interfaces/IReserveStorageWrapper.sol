@@ -15,4 +15,13 @@ interface IReserveStorageWrapper {
      * @param amount The value to check
      */
     error FormatNumberIncorrect(uint256 amount);
+
+    /**
+     * @dev Emitted when the provided reserve `amount` is too old
+     *
+     * @param updatedAt The updated At value for the reserve amount
+     * @param updatedAtThreshold The updated At Threshold value for the reserve amount
+
+     */
+    error ReserveAmountOutdated(uint256 updatedAt, uint256 updatedAtThreshold);
 }

@@ -31,6 +31,7 @@
     - [Required parameters](#required-parameters)<br>
     - [When to use this?](#when-to-use-this)<br>
 - **[v1 to v2 Migration](#v1-to-v2-migration)**<br>
+- **[v2 to v3 Migration](#v2-to-v3-migration)**<br>
 - **[Generate documentation](#generate-documentation)**<br>
 - **[Other scripts](#other-scripts)**<br>
 - **[Contributing](#contributing)**<br>
@@ -387,6 +388,60 @@ Then you can start the CLI project with:
  ```shell
  npm run start:wizard
  ```
+# V2 to V3 Migration
+
+These are the necessary steps to migrate from a v2 stablecoin to a v3 (for more information check the referenced sections):
+- First [migrate your BLR v2 to v3](#business-logic-resolver-blr-migration)
+- Then [redeploy all your facets (business logics) and configurations (SC factory, SC, hedera reserve)](#redeploy-all-facets-and-configurations)
+- Finally [migrate all your deployed contracts (SC factories, SCs, hedera reserves) to their new configurations](#migrate-deployed-contracts)
+
+__Scripts have been implemented to make the migration easier.__
+
+__MIGRATION__
+
+- BLR Migration script (execute steps 1 and 2)
+
+> npx hardhat migrateBLRToV3 --blrproxyadminaddress __'BLR_PROXY_ADMIN_EVM_ADDRESS'__ --blrproxyaddress __'BLR_PROXY_EVM_ADDRESS'__ --network __'NETWORK'__
+
+- Stablecoin/Factory/Reserve version upload script (step 3) : OPTIONAL. Only to be executed if your version is not 0.
+
+> npx hardhat upgradeResolverProxyversion --resolverproxyaddress __'STABLECOIN_EVM_ADDRESS'__ --network __'NETWORK'__
+
+> npx hardhat upgradeResolverProxyversion --resolverproxyaddress __'FACTORY_EVM_ADDRESS'__ --network __'NETWORK'__
+
+> npx hardhat upgradeResolverProxyversion --resolverproxyaddress __'RESERVE_EVM_ADDRESS'__ --network __'NETWORK'__
+
+__ROLLBACK__
+
+- Rollback script to undo the _"migration script"_ changes
+
+> npx hardhat rollbackResolverProxyToVersion --blrproxyadminaddress __'BLR_PROXY_ADMIN_EVM_ADDRESS'__ --blrproxyaddress __'BLR_PROXY_EVM_ADDRESS'__ --blrv2implementationaddress __'BLR_V2_IMPLEMENTATION_EVM_ADDRESS'__ --network __'NETWORK'__
+
+- Rollback script to undo the _"stablecoin/factory/reserve version upload script"_ changes
+
+> npx hardhat rollbackSCToVersion --resolverproxyaddress __'STABLECOIN_EVM_ADDRESS'__ --configversion __'VERSION_ID'__ --network __'NETWORK'__
+
+> npx hardhat rollbackSCToVersion --resolverproxyaddress __'FACTORY_EVM_ADDRESS'__ --configversion __'VERSION_ID'__ --network __'NETWORK'__
+
+> npx hardhat rollbackSCToVersion --resolverproxyaddress __'RESERVE_EVM_ADDRESS'__ --configversion __'VERSION_ID'__ --network __'NETWORK'__
+
+
+## Business Logic Resolver (BLR) migration
+
+- Deploy the BLR implementation v3
+- Upgrade you BLR proxy to the v3 implementation
+
+## Redeploy all facets and configurations
+
+- Deploy all facets again
+- Deploy all configurations again using the newly deployed facet versions
+
+## Migrate deployed contracts
+
+For all your SC factories, SCs and hedera reserves __that were not set to version "0"__.
+
+- call `updateConfigVersion` method passing the new config Id
+
 
 # Generate documentation
 

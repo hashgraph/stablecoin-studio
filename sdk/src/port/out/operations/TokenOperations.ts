@@ -25,7 +25,7 @@ import {
 	TokenAssociateTransaction,
 	TokenId,
 	AccountId,
-} from '@hashgraph/sdk';
+} from '@hiero-ledger/sdk';
 import { ethers } from 'ethers';
 import CheckEvmAddress from '../../../core/checks/evmaddress/CheckEvmAddress';
 import TransactionResponse from '../../../domain/context/transaction/TransactionResponse';
@@ -72,6 +72,7 @@ export class TokenOperations {
 		configId: string,
 		configVersion: number,
 		proxyOwnerAccount: HederaId,
+		updatedAtThreshold: string,
 		reserveAddress?: ContractId,
 		reserveInitialAmount?: BigDecimal,
 		reserveConfigId?: string,
@@ -195,6 +196,7 @@ export class TokenOperations {
 					BigDecimal.ZERO.toFixedNumber(),
 				coin.decimals,
 				reserveEvm,
+				updatedAtThreshold,
 				reserveInitialAmount?.toFixedNumber() ??
 					BigDecimal.ZERO.toFixedNumber(),
 				createReserve,

@@ -251,7 +251,6 @@ task(
         writeFileSync('contractAddresses_v2.txt', contractAddresses)
     })
 
-// TODO: add all features. Now only deploys basic contracts without proxy, no args etc...
 task('deploy', 'Deploy new contract')
     .addOptionalParam('contractName', 'The name of the contract to deploy', undefined, types.string)
     .addOptionalParam('privateKey', 'The private key of the account in raw hexadecimal format', undefined, types.string)

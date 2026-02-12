@@ -37,7 +37,7 @@ library KeysLib {
     }
 
     /**
-     * @dev Checks if a token key existis depending on the key bit index and the key type
+     * @dev Checks if a token key exists depending on the key bit index and the key type
      *
      * @param keyBitIndex The key bit index
      * @param keyType The key type

@@ -283,7 +283,7 @@ exports[`<Review /> should render correctly 1`] = `
                   <p
                     class="chakra-text css-mgupmj"
                   >
-                    HederaTokenManager Smart Contract
+                    Hedera Token Manager smart contract
                   </p>
                 </div>
               </div>
@@ -311,7 +311,7 @@ exports[`<Review /> should render correctly 1`] = `
                   <p
                     class="chakra-text css-mgupmj"
                   >
-                    HederaTokenManager Smart Contract
+                    Hedera Token Manager smart contract
                   </p>
                 </div>
               </div>
@@ -619,7 +619,7 @@ exports[`<Review /> should render correctly 1`] = `
                   <p
                     class="chakra-text css-mgupmj"
                   >
-                    HederaTokenManager Smart Contract
+                    Hedera Token Manager smart contract
                   </p>
                 </div>
               </div>

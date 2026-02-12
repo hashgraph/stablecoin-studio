@@ -22,7 +22,7 @@ import {
 	TransactionResponse as HTransactionResponse,
 	Transaction,
 	Client,
-} from '@hashgraph/sdk';
+} from '@hiero-ledger/sdk';
 import { singleton } from 'tsyringe';
 import { BaseHederaTransactionAdapter } from '../BaseHederaTransactionAdapter';
 import TransactionResponse from '../../../domain/context/transaction/TransactionResponse.js';
@@ -37,7 +37,6 @@ import {
 	WalletPairedEvent,
 } from '../../../app/service/event/WalletEvent.js';
 import { SupportedWallets } from '../../in/request/ConnectRequest.js';
-import EventService from '../../../app/service/EventService.js';
 import { lazyInject } from '../../../core/decorator/LazyInjectDecorator.js';
 import { MirrorNodeAdapter } from '../mirror/MirrorNodeAdapter.js';
 import NetworkService from '../../../app/service/NetworkService.js';
@@ -45,6 +44,7 @@ import LogService from '../../../app/service/LogService.js';
 import { WalletConnectError } from '../../../domain/context/network/error/WalletConnectError.js';
 import { SigningError } from '../hs/error/SigningError.js';
 import Hex from '../../../core/Hex.js';
+import EventService from '../../../app/service/event/EventService';
 
 @singleton()
 export class ClientTransactionAdapter extends BaseHederaTransactionAdapter {

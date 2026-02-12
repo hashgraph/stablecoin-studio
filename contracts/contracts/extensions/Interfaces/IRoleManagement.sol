@@ -10,6 +10,12 @@ interface IRoleManagement {
      */
     error ArraysLengthNotEqual(uint256 lengthArray1, uint256 lengthArray2);
 
+    // emitted when trying to remove all admin accounts
+    error NoAdminsLeft();
+
+    // emitted when assigning supplier role with 0 amount
+    error AmountIsZero();
+
     /**
      * @dev Grant the provided "roles" to all the "accounts", if CASHIN then "amounts" are the allowances
      *

@@ -1,9 +1,10 @@
 {
   "name": "@hashgraph/stablecoin-npm-backend",
-  "version": "2.1.6",
+  "version": "4.0.2",
   "description": "",
   "author": "",
   "license": "Apache-2.0",
+  "repository": "https://github.com/hashgraph/stablecoin-studio",
   "scripts": {
     "build": "nest build",
     "prettier": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\"",
@@ -20,13 +21,12 @@
     "test:e2e": "npx jest --config ./test/jest-e2e.json",
     "test:ci": "npx jest --ci --runInBand",
     "clear-cache": "npx jest --clearCache",
-    "clean": "rimraf dist coverage",
     "clean:modules": "rimraf node_modules",
     "deleteAllTransactions": "ts-node ./src/scripts/deleteAllDBTransactions.ts",
     "pre-commit": "npm run lint && npm run prettier"
   },
   "dependencies": {
-    "@hashgraph/sdk": "2.51.0",
+    "@hiero-ledger/sdk": "2.79.0",
     "@nestjs/common": "^10.0.0",
     "@nestjs/config": "^3.2.0",
     "@nestjs/core": "^10.0.0",

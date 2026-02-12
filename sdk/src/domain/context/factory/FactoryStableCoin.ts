@@ -74,6 +74,8 @@ export class FactoryStableCoin {
 	 */
 	public reserveAddress: string;
 
+	public updatedAtThreshold: string;
+
 	/**
 	 * Reserve initial amount
 	 */
@@ -135,6 +137,7 @@ export class FactoryStableCoin {
 		// autoRenewAccountAddress: string,
 		// treasuryAddress: string,
 		reserveAddress: string,
+		updatedAtThreshold: string,
 		reserveInitialAmount: string,
 		createReserve: boolean,
 		// grantKYCToOriginalSender: boolean,
@@ -156,6 +159,7 @@ export class FactoryStableCoin {
 		// this.autoRenewAccountAddress = autoRenewAccountAddress;
 		// this.treasuryAddress = treasuryAddress;
 		this.reserveAddress = reserveAddress;
+		this.updatedAtThreshold = updatedAtThreshold;
 		this.reserveInitialAmount = reserveInitialAmount;
 		this.createReserve = createReserve;
 		// this.grantKYCToOriginalSender = grantKYCToOriginalSender;

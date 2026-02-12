@@ -2,7 +2,7 @@ import { ethers } from 'hardhat'
 import { expect } from 'chai'
 import { SignerWithAddress } from '@nomicfoundation/hardhat-ethers/signers'
 import { BusinessLogicResolver } from '@contracts'
-import { ADDRESS_ZERO, CONFIG_ID, decodeEvent, delay, GAS_LIMIT, ValidateTxResponseCommand } from '@scripts'
+import { ADDRESS_ZERO, CONFIG_ID, ROLES, decodeEvent, delay, GAS_LIMIT } from '@scripts'
 
 describe('➡️ BusinessLogicResolver Tests', () => {
     let operator: SignerWithAddress
@@ -58,10 +58,11 @@ describe('➡️ BusinessLogicResolver Tests', () => {
     })
 
     it('GIVEN an initialized contract WHEN trying to initialize it again THEN transaction fails with AlreadyInitialized', async () => {
-        const initResponse = await businessLogicResolver.initialize_BusinessLogicResolver({
-            gasLimit: GAS_LIMIT.initialize.businessLogicResolver,
-        })
-        await expect(new ValidateTxResponseCommand({ txResponse: initResponse }).execute()).to.be.rejectedWith(Error)
+        await expect(
+            businessLogicResolver.initialize_BusinessLogicResolver({
+                gasLimit: GAS_LIMIT.initialize.businessLogicResolver,
+            })
+        ).to.be.revertedWithCustomError(businessLogicResolver, 'ContractIsAlreadyInitialized')
     })
 
     describe('AccessControl', () => {
@@ -69,22 +70,26 @@ describe('➡️ BusinessLogicResolver Tests', () => {
             // Using nonOperator (non role)
             businessLogicResolver = businessLogicResolver.connect(nonOperator)
 
-            const initResponse = await businessLogicResolver.registerBusinessLogics(BUSINESS_LOGIC_KEYS.slice(0, 2), {
-                gasLimit: GAS_LIMIT.businessLogicResolver.registerBusinessLogics,
-            })
-            await expect(new ValidateTxResponseCommand({ txResponse: initResponse }).execute()).to.be.rejectedWith(
-                Error
+            await expect(
+                businessLogicResolver.registerBusinessLogics(BUSINESS_LOGIC_KEYS.slice(0, 2), {
+                    gasLimit: GAS_LIMIT.businessLogicResolver.registerBusinessLogics,
+                })
             )
+                .to.be.revertedWithCustomError(businessLogicResolver, 'AccountHasNoRole')
+                .withArgs(nonOperator, ROLES.defaultAdmin.hash)
         })
     })
 
     describe('Business Logic Resolver functionality', () => {
         it('GIVEN an empty registry WHEN getting data THEN responds empty values or BusinessLogicVersionDoesNotExist', async () => {
-            expect(await businessLogicResolver.getLatestVersion()).is.equal(0)
-            await expect(businessLogicResolver.getVersionStatus(0)).to.be.revertedWithCustomError(
-                businessLogicResolver,
-                'BusinessLogicVersionDoesNotExist'
-            )
+            expect(await businessLogicResolver.getLatestVersion(BUSINESS_LOGIC_KEYS[0].businessLogicKey)).is.equal(0)
+            await expect(
+                businessLogicResolver.getVersionStatus(BUSINESS_LOGIC_KEYS[0].businessLogicKey, 0)
+            ).to.be.revertedWithCustomError(businessLogicResolver, 'BusinessLogicVersionDoesNotExist')
+            expect(await businessLogicResolver.getLatestVersion(BUSINESS_LOGIC_KEYS[1].businessLogicKey)).is.equal(0)
+            await expect(
+                businessLogicResolver.getVersionStatus(BUSINESS_LOGIC_KEYS[1].businessLogicKey, 0)
+            ).to.be.revertedWithCustomError(businessLogicResolver, 'BusinessLogicVersionDoesNotExist')
             expect(
                 await businessLogicResolver.resolveLatestBusinessLogic(BUSINESS_LOGIC_KEYS[0].businessLogicKey)
             ).is.equal(ADDRESS_ZERO)
@@ -106,28 +111,31 @@ describe('➡️ BusinessLogicResolver Tests', () => {
                 },
             ]
 
-            const response = await businessLogicResolver.registerBusinessLogics(BUSINESS_LOGICS_TO_REGISTER, {
-                gasLimit: GAS_LIMIT.businessLogicResolver.registerBusinessLogics,
-            })
-            await expect(new ValidateTxResponseCommand({ txResponse: response }).execute()).to.be.rejectedWith(Error)
+            await expect(
+                businessLogicResolver.registerBusinessLogics(BUSINESS_LOGICS_TO_REGISTER, {
+                    gasLimit: GAS_LIMIT.businessLogicResolver.registerBusinessLogics,
+                })
+            ).to.be.revertedWithCustomError(businessLogicResolver, 'ZeroKeyNotValidForBusinessLogic')
         })
 
         it('GIVEN an duplicated key WHEN registerBusinessLogics THEN Fails with BusinessLogicKeyDuplicated', async () => {
             const BUSINESS_LOGICS_TO_REGISTER = [BUSINESS_LOGIC_KEYS[0], BUSINESS_LOGIC_KEYS[0]]
 
-            const response = await businessLogicResolver.registerBusinessLogics(BUSINESS_LOGICS_TO_REGISTER, {
-                gasLimit: GAS_LIMIT.businessLogicResolver.registerBusinessLogics,
-            })
-            await expect(new ValidateTxResponseCommand({ txResponse: response }).execute()).to.be.rejectedWith(Error)
+            await expect(
+                businessLogicResolver.registerBusinessLogics(BUSINESS_LOGICS_TO_REGISTER, {
+                    gasLimit: GAS_LIMIT.businessLogicResolver.registerBusinessLogics,
+                })
+            ).to.be.revertedWithCustomError(businessLogicResolver, 'BusinessLogicKeyDuplicated')
         })
 
         it('GIVEN a list of logics WHEN registerBusinessLogics THEN Fails if some key is not informed with AllBusinessLogicKeysMustBeenInformed', async () => {
             await businessLogicResolver.registerBusinessLogics([BUSINESS_LOGIC_KEYS[0]])
 
-            const response = await businessLogicResolver.registerBusinessLogics([BUSINESS_LOGIC_KEYS[1]], {
-                gasLimit: GAS_LIMIT.businessLogicResolver.registerBusinessLogics,
-            })
-            await expect(new ValidateTxResponseCommand({ txResponse: response }).execute()).to.be.rejectedWith(Error)
+            await expect(
+                businessLogicResolver.registerBusinessLogics([BUSINESS_LOGIC_KEYS[1]], {
+                    gasLimit: GAS_LIMIT.businessLogicResolver.registerBusinessLogics,
+                })
+            ).to.be.revertedWithCustomError(businessLogicResolver, 'AllBusinessLogicKeysMustBeenInformed')
         })
 
         it('GIVEN an empty registry WHEN registerBusinessLogics THEN queries responds with correct values', async () => {
@@ -147,10 +155,21 @@ describe('➡️ BusinessLogicResolver Tests', () => {
                 }
             })
             expect(businessLogicsEventNormalized).to.deep.equal(BUSINESS_LOGICS_TO_REGISTER)
-            expect(event.newLatestVersion).to.be.equal(LATEST_VERSION)
+            expect(event.newLatestVersion[0].toString()).to.be.equal(LATEST_VERSION.toString())
+            expect(event.newLatestVersion[1].toString()).to.be.equal(LATEST_VERSION.toString())
 
-            expect(await businessLogicResolver.getLatestVersion()).is.equal(LATEST_VERSION)
-            expect(await businessLogicResolver.getVersionStatus(LATEST_VERSION)).to.be.equal(VersionStatus.ACTIVATED)
+            expect(await businessLogicResolver.getLatestVersion(BUSINESS_LOGIC_KEYS[0].businessLogicKey)).is.equal(
+                LATEST_VERSION
+            )
+            expect(
+                await businessLogicResolver.getVersionStatus(BUSINESS_LOGIC_KEYS[0].businessLogicKey, LATEST_VERSION)
+            ).to.be.equal(VersionStatus.ACTIVATED)
+            expect(await businessLogicResolver.getLatestVersion(BUSINESS_LOGIC_KEYS[1].businessLogicKey)).is.equal(
+                LATEST_VERSION
+            )
+            expect(
+                await businessLogicResolver.getVersionStatus(BUSINESS_LOGIC_KEYS[1].businessLogicKey, LATEST_VERSION)
+            ).to.be.equal(VersionStatus.ACTIVATED)
             expect(
                 await businessLogicResolver.resolveLatestBusinessLogic(BUSINESS_LOGIC_KEYS[0].businessLogicKey)
             ).is.equal(BUSINESS_LOGIC_KEYS[0].businessLogicAddress)
@@ -180,7 +199,8 @@ describe('➡️ BusinessLogicResolver Tests', () => {
                 gasLimit: GAS_LIMIT.businessLogicResolver.registerBusinessLogics,
             })
 
-            const LATEST_VERSION = 2
+            const LATEST_VERSION_2 = 2
+            const LATEST_VERSION_1 = 1
             const BUSINESS_LOGICS_TO_REGISTER = BUSINESS_LOGIC_KEYS.slice(0, 3)
             const tx = await businessLogicResolver.registerBusinessLogics(BUSINESS_LOGICS_TO_REGISTER)
             await delay({ time: 1, unit: 'sec' })
@@ -192,10 +212,28 @@ describe('➡️ BusinessLogicResolver Tests', () => {
                 }
             })
             expect(businessLogicsEventNormalized).to.deep.equal(BUSINESS_LOGICS_TO_REGISTER)
-            expect(event.newLatestVersion).to.be.equal(LATEST_VERSION)
+            expect(event.newLatestVersion[0]).to.be.equal(LATEST_VERSION_2)
+            expect(event.newLatestVersion[1]).to.be.equal(LATEST_VERSION_2)
+            expect(event.newLatestVersion[2]).to.be.equal(LATEST_VERSION_1)
 
-            expect(await businessLogicResolver.getLatestVersion()).is.equal(LATEST_VERSION)
-            expect(await businessLogicResolver.getVersionStatus(LATEST_VERSION)).to.be.equal(VersionStatus.ACTIVATED)
+            expect(await businessLogicResolver.getLatestVersion(BUSINESS_LOGIC_KEYS[0].businessLogicKey)).is.equal(
+                LATEST_VERSION_2
+            )
+            expect(
+                await businessLogicResolver.getVersionStatus(BUSINESS_LOGIC_KEYS[0].businessLogicKey, LATEST_VERSION_2)
+            ).to.be.equal(VersionStatus.ACTIVATED)
+            expect(await businessLogicResolver.getLatestVersion(BUSINESS_LOGIC_KEYS[1].businessLogicKey)).is.equal(
+                LATEST_VERSION_2
+            )
+            expect(
+                await businessLogicResolver.getVersionStatus(BUSINESS_LOGIC_KEYS[1].businessLogicKey, LATEST_VERSION_2)
+            ).to.be.equal(VersionStatus.ACTIVATED)
+            expect(await businessLogicResolver.getLatestVersion(BUSINESS_LOGIC_KEYS[2].businessLogicKey)).is.equal(
+                LATEST_VERSION_1
+            )
+            expect(
+                await businessLogicResolver.getVersionStatus(BUSINESS_LOGIC_KEYS[2].businessLogicKey, LATEST_VERSION_1)
+            ).to.be.equal(VersionStatus.ACTIVATED)
             expect(
                 await businessLogicResolver.resolveLatestBusinessLogic(BUSINESS_LOGIC_KEYS[0].businessLogicKey)
             ).is.equal(BUSINESS_LOGIC_KEYS[0].businessLogicAddress)
@@ -208,19 +246,19 @@ describe('➡️ BusinessLogicResolver Tests', () => {
             expect(
                 await businessLogicResolver.resolveBusinessLogicByVersion(
                     BUSINESS_LOGIC_KEYS[0].businessLogicKey,
-                    LATEST_VERSION
+                    LATEST_VERSION_2
                 )
             ).to.be.equal(BUSINESS_LOGIC_KEYS[0].businessLogicAddress)
             expect(
                 await businessLogicResolver.resolveBusinessLogicByVersion(
                     BUSINESS_LOGIC_KEYS[1].businessLogicKey,
-                    LATEST_VERSION
+                    LATEST_VERSION_2
                 )
             ).to.be.equal(BUSINESS_LOGIC_KEYS[1].businessLogicAddress)
             expect(
                 await businessLogicResolver.resolveBusinessLogicByVersion(
                     BUSINESS_LOGIC_KEYS[2].businessLogicKey,
-                    LATEST_VERSION
+                    LATEST_VERSION_1
                 )
             ).to.be.equal(BUSINESS_LOGIC_KEYS[2].businessLogicAddress)
             expect(await businessLogicResolver.getBusinessLogicCount()).is.equal(BUSINESS_LOGICS_TO_REGISTER.length)

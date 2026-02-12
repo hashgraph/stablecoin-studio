@@ -38,3 +38,6 @@ coverage/
 
 # History
 .history/
+
+# Gas report
+gas-report.txt

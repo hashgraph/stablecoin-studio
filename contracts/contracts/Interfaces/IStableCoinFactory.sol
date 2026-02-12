@@ -20,6 +20,7 @@ interface IStableCoinFactory {
         int64 tokenInitialSupply;
         int32 tokenDecimals;
         address reserveAddress;
+        uint256 updatedAtThreshold;
         int256 reserveInitialAmount;
         bool createReserve;
         KeysStruct[] keys;

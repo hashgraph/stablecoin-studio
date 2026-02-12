@@ -2,15 +2,8 @@ import { expect } from 'chai'
 import { SignerWithAddress } from '@nomicfoundation/hardhat-ethers/signers'
 import { ethers } from 'hardhat'
 import { RolesFacet, RolesFacet__factory } from '@contracts'
-import {
-    delay,
-    deployFullInfrastructure,
-    DeployFullInfrastructureCommand,
-    MESSAGES,
-    ROLES,
-    ValidateTxResponseCommand,
-} from '@scripts'
-import { deployStableCoinInTests, GAS_LIMIT } from '@test/shared'
+import { ADDRESS_ZERO, DeployFullInfrastructureCommand, MESSAGES, ROLES, ValidateTxResponseCommand } from '@scripts'
+import { deployStableCoinInTests, deployFullInfrastructureInTests, GAS_LIMIT } from '@test/shared'
 import { ContractTransactionResponse } from 'ethers'
 
 describe('➡️ Roles Tests', function () {
@@ -31,7 +24,7 @@ describe('➡️ Roles Tests', function () {
         console.info(MESSAGES.deploy.info.deployFullInfrastructureInTests)
         ;[operator, nonOperator] = await ethers.getSigners()
 
-        const { ...deployedContracts } = await deployFullInfrastructure(
+        const { ...deployedContracts } = await deployFullInfrastructureInTests(
             await DeployFullInfrastructureCommand.newInstance({
                 signer: operator,
                 useDeployed: false,
@@ -49,92 +42,132 @@ describe('➡️ Roles Tests', function () {
 
     it('Non Admin account can not grant a role to an account', async function () {
         // Non operator has not burn role
-        let hasBurnRole = await rolesFacet.hasRole(ROLES.burn.hash, nonOperator, {
-            gasLimit: GAS_LIMIT.hederaTokenManager.hasRole,
-        })
-        expect(hasBurnRole).to.equals(false)
+        expect(
+            await rolesFacet.hasRole(ROLES.burn.hash, nonOperator, {
+                gasLimit: GAS_LIMIT.hederaTokenManager.hasRole,
+            })
+        ).to.equal(false)
+
         // Non Admin grants burn role : fail
-        const nonOperatorGrantRoleResponse = await rolesFacet
-            .connect(nonOperator)
-            .grantRole(ROLES.burn.hash, operator.address, {
+        rolesFacet = rolesFacet.connect(nonOperator)
+        await expect(
+            rolesFacet.grantRole(ROLES.burn.hash, operator.address, {
                 gasLimit: GAS_LIMIT.hederaTokenManager.grantRole,
             })
-        await expect(
-            new ValidateTxResponseCommand({
-                txResponse: nonOperatorGrantRoleResponse,
-            }).execute()
-        ).to.be.rejectedWith(Error)
+        )
+            .to.be.revertedWithCustomError(rolesFacet, 'AccountHasNoRole')
+            .withArgs(nonOperator, ROLES.defaultAdmin.hash)
+
         // Non operator stil has not burn role
-        hasBurnRole = await rolesFacet.hasRole(ROLES.burn.hash, nonOperator, {
-            gasLimit: GAS_LIMIT.hederaTokenManager.hasRole,
-        })
-        expect(hasBurnRole).to.equals(false)
+        expect(
+            await rolesFacet.hasRole(ROLES.burn.hash, nonOperator, {
+                gasLimit: GAS_LIMIT.hederaTokenManager.hasRole,
+            })
+        ).to.equal(false)
     })
 
     it('Admin account can grant role to an account', async function () {
         // Non operator has not burn role
-        let hasBurnRole = await rolesFacet.hasRole(ROLES.burn.hash, nonOperator, {
-            gasLimit: GAS_LIMIT.hederaTokenManager.hasRole,
-        })
-        expect(hasBurnRole).to.equals(false)
+        rolesFacet = rolesFacet.connect(operator)
+        expect(
+            await rolesFacet.hasRole(ROLES.burn.hash, nonOperator, {
+                gasLimit: GAS_LIMIT.hederaTokenManager.hasRole,
+            })
+        ).to.equal(false)
+
         // Admin grants burn role : success
-        const grantRoleResponse = await rolesFacet.grantRole(ROLES.burn.hash, nonOperator, {
-            gasLimit: GAS_LIMIT.hederaTokenManager.grantRole,
-        })
-        await new ValidateTxResponseCommand({
-            txResponse: grantRoleResponse,
-            confirmationEvent: 'RoleGranted',
-        }).execute()
+        await expect(
+            rolesFacet.grantRole(ROLES.burn.hash, nonOperator.address, {
+                gasLimit: GAS_LIMIT.hederaTokenManager.grantRole,
+            })
+        )
+            .to.emit(rolesFacet, 'RoleGranted')
+            .withArgs(ROLES.burn.hash, nonOperator.address, operator.address)
+
         // Non operator has burn role
-        hasBurnRole = await rolesFacet.hasRole(ROLES.burn.hash, nonOperator, {
-            gasLimit: GAS_LIMIT.hederaTokenManager.hasRole,
-        })
-        expect(hasBurnRole).to.equals(true)
+        expect(
+            await rolesFacet.hasRole(ROLES.burn.hash, nonOperator, {
+                gasLimit: GAS_LIMIT.hederaTokenManager.hasRole,
+            })
+        ).to.equal(true)
+    })
+
+    it('Granting role to account 0 fails', async function () {
+        await expect(rolesFacet.grantRole(ROLES.burn.hash, ADDRESS_ZERO)).to.be.revertedWithCustomError(
+            rolesFacet,
+            'AddressZero'
+        )
     })
 
     it('Non Admin account can not revoke role from an account', async function () {
         // Non operator has burn role
-        let hasBurnRole = await rolesFacet.hasRole(ROLES.burn.hash, nonOperator, {
-            gasLimit: GAS_LIMIT.hederaTokenManager.hasRole,
-        })
-        expect(hasBurnRole).to.equals(true)
+        expect(
+            await rolesFacet.hasRole(ROLES.burn.hash, nonOperator, {
+                gasLimit: GAS_LIMIT.hederaTokenManager.hasRole,
+            })
+        ).to.equal(true)
+
         // Non Admin revokes burn role : fail
-        const revokeRoleResponse = await rolesFacet.connect(nonOperator).revokeRole(ROLES.burn.hash, nonOperator, {
-            gasLimit: GAS_LIMIT.hederaTokenManager.revokeRole,
-        })
+        rolesFacet = rolesFacet.connect(nonOperator)
         await expect(
-            new ValidateTxResponseCommand({
-                txResponse: revokeRoleResponse,
-            }).execute()
-        ).to.be.rejectedWith(Error)
+            rolesFacet.revokeRole(ROLES.burn.hash, nonOperator.address, {
+                gasLimit: GAS_LIMIT.hederaTokenManager.revokeRole,
+            })
+        )
+            .to.be.revertedWithCustomError(rolesFacet, 'AccountHasNoRole')
+            .withArgs(nonOperator, ROLES.defaultAdmin.hash)
+
         // Non operator stil has burn role
-        hasBurnRole = await rolesFacet.hasRole(ROLES.burn.hash, nonOperator, {
-            gasLimit: GAS_LIMIT.hederaTokenManager.hasRole,
-        })
-        expect(hasBurnRole).to.equals(true)
+        expect(
+            await rolesFacet.hasRole(ROLES.burn.hash, nonOperator, {
+                gasLimit: GAS_LIMIT.hederaTokenManager.hasRole,
+            })
+        ).to.equal(true)
     })
 
     it('Admin account can revoke role from an account', async function () {
         // Non operator has burn role
-        let hasBurnRole = await rolesFacet.hasRole(ROLES.burn.hash, nonOperator, {
-            gasLimit: GAS_LIMIT.hederaTokenManager.hasRole,
-        })
-        expect(hasBurnRole).to.equals(true)
+        expect(
+            await rolesFacet.hasRole(ROLES.burn.hash, nonOperator, {
+                gasLimit: GAS_LIMIT.hederaTokenManager.hasRole,
+            })
+        ).to.equal(true)
+
         // Admin revokes burn role : success
-        const revokeRoleResponse = await rolesFacet.revokeRole(ROLES.burn.hash, nonOperator, {
-            gasLimit: GAS_LIMIT.hederaTokenManager.revokeRole,
-        })
-        await new ValidateTxResponseCommand({
-            txResponse: revokeRoleResponse,
-            confirmationEvent: 'RoleRevoked',
-        }).execute()
+        rolesFacet = rolesFacet.connect(operator)
+        await expect(
+            rolesFacet.revokeRole(ROLES.burn.hash, nonOperator.address, {
+                gasLimit: GAS_LIMIT.hederaTokenManager.revokeRole,
+            })
+        )
+            .to.emit(rolesFacet, 'RoleRevoked')
+            .withArgs(ROLES.burn.hash, nonOperator.address, operator.address)
 
         // Non operator has not burn role
-        await delay({ time: 1, unit: 'sec' })
-        hasBurnRole = await rolesFacet.hasRole(ROLES.burn.hash, nonOperator, {
-            gasLimit: GAS_LIMIT.hederaTokenManager.hasRole,
+        expect(
+            await rolesFacet.hasRole(ROLES.burn.hash, nonOperator, {
+                gasLimit: GAS_LIMIT.hederaTokenManager.hasRole,
+            })
+        ).to.equal(false)
+    })
+
+    it('Can not revoke all admin role from a token', async function () {
+        const Admins = await rolesFacet.getAccountsWithRole(ROLES.defaultAdmin.hash, {
+            gasLimit: GAS_LIMIT.hederaTokenManager.getAccountsWithRole,
         })
-        expect(hasBurnRole).to.equals(false)
+
+        const Length = Admins.length
+        for (let i = 0; i < Length - 1; i++) {
+            await rolesFacet.revokeRole(ROLES.defaultAdmin.hash, Admins[i], {
+                gasLimit: GAS_LIMIT.hederaTokenManager.revokeRole,
+            })
+        }
+
+        await expect(
+            rolesFacet.revokeRole(ROLES.defaultAdmin.hash, Admins[Length - 1], {
+                gasLimit: GAS_LIMIT.hederaTokenManager.revokeRole,
+            })
+        ).to.be.revertedWithCustomError(rolesFacet, 'NoAdminsLeft')
     })
     // * Initial State again
 
@@ -316,49 +349,21 @@ describe('➡️ Roles Tests', function () {
         }
     })
 
-    it('Getting roles Id', async function () {
-        // Retreive role Ids
-        const roleAdmin = rolesFacet.getRoleId(ROLES.defaultAdmin.id, {
-            gasLimit: GAS_LIMIT.hederaTokenManager.getRoles,
-        })
-        const roleCashin = rolesFacet.getRoleId(ROLES.cashin.id, {
-            gasLimit: GAS_LIMIT.hederaTokenManager.getRoles,
-        })
-        const roleBurn = rolesFacet.getRoleId(ROLES.burn.id, {
-            gasLimit: GAS_LIMIT.hederaTokenManager.getRoles,
-        })
-        const rolePause = rolesFacet.getRoleId(ROLES.pause.id, {
-            gasLimit: GAS_LIMIT.hederaTokenManager.getRoles,
-        })
-        const roleWipe = rolesFacet.getRoleId(ROLES.wipe.id, {
-            gasLimit: GAS_LIMIT.hederaTokenManager.getRoles,
-        })
-        const roleRescue = rolesFacet.getRoleId(ROLES.rescue.id, {
-            gasLimit: GAS_LIMIT.hederaTokenManager.getRoles,
-        })
-        const roleFreeze = rolesFacet.getRoleId(ROLES.freeze.id, {
-            gasLimit: GAS_LIMIT.hederaTokenManager.getRoles,
-        })
-        const roleDelete = rolesFacet.getRoleId(ROLES.delete.id, {
-            gasLimit: GAS_LIMIT.hederaTokenManager.getRoles,
-        })
-        const roleKyc = rolesFacet.getRoleId(ROLES.kyc.id, {
-            gasLimit: GAS_LIMIT.hederaTokenManager.getRoles,
-        })
-        const roleCustomFees = rolesFacet.getRoleId(ROLES.customFees.id, {
-            gasLimit: GAS_LIMIT.hederaTokenManager.getRoles,
-        })
+    it('Retrieve list of existing Roles', async function () {
+        const rolesList = await rolesFacet.getRolesList()
 
-        // Check
-        expect((await roleAdmin).toUpperCase()).to.equals(ROLES.defaultAdmin.hash.toUpperCase())
-        expect((await roleCashin).toUpperCase()).to.equals(ROLES.cashin.hash.toUpperCase())
-        expect((await roleBurn).toUpperCase()).to.equals(ROLES.burn.hash.toUpperCase())
-        expect((await rolePause).toUpperCase()).to.equals(ROLES.pause.hash.toUpperCase())
-        expect((await roleWipe).toUpperCase()).to.equals(ROLES.wipe.hash.toUpperCase())
-        expect((await roleRescue).toUpperCase()).to.equals(ROLES.rescue.hash.toUpperCase())
-        expect((await roleFreeze).toUpperCase()).to.equals(ROLES.freeze.hash.toUpperCase())
-        expect((await roleDelete).toUpperCase()).to.equals(ROLES.delete.hash.toUpperCase())
-        expect((await roleKyc).toUpperCase()).to.equals(ROLES.kyc.hash.toUpperCase())
-        expect((await roleCustomFees).toUpperCase()).to.equals(ROLES.customFees.hash.toUpperCase())
+        expect(rolesList.length).to.be.equal(11)
+
+        expect(rolesList[0].toString().toUpperCase()).to.be.equal(ROLES.defaultAdmin.hash.toUpperCase())
+        expect(rolesList[1].toString().toUpperCase()).to.be.equal(ROLES.cashin.hash.toUpperCase())
+        expect(rolesList[2].toString().toUpperCase()).to.be.equal(ROLES.burn.hash.toUpperCase())
+        expect(rolesList[3].toString().toUpperCase()).to.be.equal(ROLES.wipe.hash.toUpperCase())
+        expect(rolesList[4].toString().toUpperCase()).to.be.equal(ROLES.rescue.hash.toUpperCase())
+        expect(rolesList[5].toString().toUpperCase()).to.be.equal(ROLES.pause.hash.toUpperCase())
+        expect(rolesList[6].toString().toUpperCase()).to.be.equal(ROLES.freeze.hash.toUpperCase())
+        expect(rolesList[7].toString().toUpperCase()).to.be.equal(ROLES.delete.hash.toUpperCase())
+        expect(rolesList[8].toString().toUpperCase()).to.be.equal(ROLES.kyc.hash.toUpperCase())
+        expect(rolesList[9].toString().toUpperCase()).to.be.equal(ROLES.customFees.hash.toUpperCase())
+        expect(rolesList[10].toString().toUpperCase()).to.be.equal(ROLES.hold.hash.toUpperCase())
     })
 })

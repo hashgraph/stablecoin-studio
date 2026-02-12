@@ -23,7 +23,7 @@ import {
 	Client,
 	Transaction,
 	TransactionResponse as HTransactionResponse,
-} from '@hashgraph/sdk';
+} from '@hiero-ledger/sdk';
 import { ethers } from 'ethers';
 import {
 	CustodialWalletService,

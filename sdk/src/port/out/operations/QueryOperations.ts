@@ -33,16 +33,6 @@ import { TransactionType } from '../TransactionResponseEnums';
 export class QueryOperations {
 	constructor(private adapter: BaseHederaTransactionAdapter) {}
 
-	private getRpcUrl(): string {
-		const networkService = this.adapter.getNetworkService();
-		return (
-			networkService.rpcNode?.baseUrl ??
-			(networkService.environment === 'testnet'
-				? 'https://testnet.hashio.io/api'
-				: 'https://mainnet.hashio.io/api')
-		);
-	}
-
 	async hasRole(
 		coin: StableCoinCapabilities,
 		targetId: HederaId,

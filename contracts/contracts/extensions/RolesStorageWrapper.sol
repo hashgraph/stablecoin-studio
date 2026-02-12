@@ -3,8 +3,9 @@ pragma solidity 0.8.18;
 
 import {IRoles} from './Interfaces/IRoles.sol';
 // solhint-disable-next-line max-line-length
-import {ADMIN_ROLE, _CASHIN_ROLE, _BURN_ROLE, _WIPE_ROLE, _RESCUE_ROLE, _PAUSE_ROLE, _FREEZE_ROLE, _DELETE_ROLE, _WITHOUT_ROLE, _KYC_ROLE, _CUSTOM_FEES_ROLE, _HOLD_CREATOR_ROLE} from '../constants/roles.sol';
+import {ADMIN_ROLE, _CASHIN_ROLE, _BURN_ROLE, _WIPE_ROLE, _RESCUE_ROLE, _PAUSE_ROLE, _FREEZE_ROLE, _DELETE_ROLE, _WITHOUT_ROLE, _KYC_ROLE, _CUSTOM_FEES_ROLE, _HOLD_CREATOR_ROLE, _NUMBER_OF_ROLES} from '../constants/roles.sol';
 import {_ROLES_STORAGE_POSITION} from '../constants/storagePositions.sol';
+import {IRoleManagement} from './Interfaces/IRoleManagement.sol';
 
 abstract contract RolesStorageWrapper {
     struct MemberData {
@@ -13,20 +14,19 @@ abstract contract RolesStorageWrapper {
     }
 
     struct RoleData {
-        mapping(address => MemberData) members;
+        mapping(address account => MemberData data) members;
         address[] accounts;
     }
 
     struct RolesStorage {
-        mapping(bytes32 => RoleData) roles;
+        mapping(bytes32 role => RoleData data) roles;
         /**
          * @dev Array containing all roles
          *
          */
-        bytes32[] listOfRoles;
+        bytes32[] deprecatedlistOfRoles; // not used anymore but left for retrocompatibility
     }
 
-    // TODO: Better at interface
     /**
      * @dev Emitted when a role is granted to an account
      *
@@ -46,6 +46,22 @@ abstract contract RolesStorageWrapper {
     event RoleRevoked(bytes32 indexed role, address indexed account, address indexed sender);
 
     /**
+     * @dev Emitted when a role is added to the role list
+     *
+     * @param role The role to be added
+     * @param sender The caller of the function that emitted the event
+     */
+    event RoleAdded(bytes32 indexed role, address indexed sender);
+
+    /**
+     * @dev Emitted when the role at position pos is removed from the role list
+     *
+     * @param pos The pos where the role to be removed is
+     * @param sender The caller of the function that emitted the event
+     */
+    event RoleRemoved(uint256 indexed pos, address indexed sender);
+
+    /**
      * @dev Checks if a roles is granted for the calling account
      *
      * @param role The role to check if is granted for the calling account
@@ -53,35 +69,6 @@ abstract contract RolesStorageWrapper {
     modifier onlyRole(bytes32 role) {
         _checkRole(role);
         _;
-    }
-
-    /**
-     * @dev Populates the array of existing roles
-     *
-     */
-    function __rolesInit() internal {
-        bytes32[] storage listOfRoles = _rolesStorage().listOfRoles;
-        listOfRoles.push(ADMIN_ROLE);
-        listOfRoles.push(_CASHIN_ROLE);
-        listOfRoles.push(_BURN_ROLE);
-        listOfRoles.push(_WIPE_ROLE);
-        listOfRoles.push(_RESCUE_ROLE);
-        listOfRoles.push(_PAUSE_ROLE);
-        listOfRoles.push(_FREEZE_ROLE);
-        listOfRoles.push(_DELETE_ROLE);
-        listOfRoles.push(_KYC_ROLE);
-        listOfRoles.push(_CUSTOM_FEES_ROLE);
-        listOfRoles.push(_HOLD_CREATOR_ROLE);
-    }
-
-    /**
-     * @dev Checks if a role is granted to an account
-     *
-     * @param role The role to check if is granted
-     * @param account The account for which the role is checked for
-     */
-    function _hasRole(bytes32 role, address account) internal view returns (bool) {
-        return _rolesStorage().roles[role].members[account].active;
     }
 
     /**
@@ -123,6 +110,17 @@ abstract contract RolesStorageWrapper {
         rolesStorage.roles[role].accounts.pop();
         delete (rolesStorage.roles[role].members[account]);
         emit RoleRevoked(role, account, msg.sender);
+        if (_getNumberOfAccountsWithRole(ADMIN_ROLE) == 0) revert IRoleManagement.NoAdminsLeft();
+    }
+
+    /**
+     * @dev Checks if a role is granted to an account
+     *
+     * @param role The role to check if is granted
+     * @param account The account for which the role is checked for
+     */
+    function _hasRole(bytes32 role, address account) internal view returns (bool) {
+        return _rolesStorage().roles[role].members[account].active;
     }
 
     function _getAccountsWithRole(bytes32 role) internal view returns (address[] memory) {
@@ -133,26 +131,34 @@ abstract contract RolesStorageWrapper {
         return _rolesStorage().roles[role].accounts.length;
     }
 
-    /**
-     * @dev Returns a role bytes32 representation
-     *
-     * @param role The role we want to retrieve the bytes32 for
-     */
-    function _getRoleId(IRoles.RoleName role) internal view returns (bytes32) {
-        return _rolesStorage().listOfRoles[uint256(role)];
-    }
-
     function _getRoles(address account) internal view returns (bytes32[] memory rolesToReturn_) {
-        bytes32[] storage listOfRoles = _rolesStorage().listOfRoles;
-        uint256 rolesLength = listOfRoles.length;
+        bytes32[_NUMBER_OF_ROLES] memory listOfRoles = _getRolesList();
 
-        rolesToReturn_ = new bytes32[](rolesLength);
+        rolesToReturn_ = new bytes32[](_NUMBER_OF_ROLES);
 
-        for (uint256 index; index < rolesLength; index++) {
+        for (uint256 index; index < _NUMBER_OF_ROLES; index++) {
             bytes32 role = listOfRoles[index];
 
             rolesToReturn_[index] = _hasRole(role, account) ? role : _WITHOUT_ROLE;
         }
+    }
+
+    /**
+     * @dev Populates the array of existing roles
+     *
+     */
+    function _getRolesList() internal pure returns (bytes32[_NUMBER_OF_ROLES] memory listOfRoles_) {
+        listOfRoles_[0] = ADMIN_ROLE;
+        listOfRoles_[1] = _CASHIN_ROLE;
+        listOfRoles_[2] = _BURN_ROLE;
+        listOfRoles_[3] = _WIPE_ROLE;
+        listOfRoles_[4] = _RESCUE_ROLE;
+        listOfRoles_[5] = _PAUSE_ROLE;
+        listOfRoles_[6] = _FREEZE_ROLE;
+        listOfRoles_[7] = _DELETE_ROLE;
+        listOfRoles_[8] = _KYC_ROLE;
+        listOfRoles_[9] = _CUSTOM_FEES_ROLE;
+        listOfRoles_[10] = _HOLD_CREATOR_ROLE;
     }
 
     /**

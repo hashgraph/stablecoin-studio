@@ -7,8 +7,7 @@ interface EditHederaTokenManagerAddressBaseParams {
 }
 
 interface EditHederaTokenManagerAddressCommandParams
-    extends WithSignerCommandParams,
-        EditHederaTokenManagerAddressBaseParams {}
+    extends WithSignerCommandParams, EditHederaTokenManagerAddressBaseParams {}
 
 interface ConstructurParams extends WithSignerConstructorParams, EditHederaTokenManagerAddressBaseParams {}
 

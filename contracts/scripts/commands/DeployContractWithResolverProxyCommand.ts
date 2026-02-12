@@ -11,16 +11,18 @@ import { RolesStructStruct as RolesStruct } from '../../typechain-types/contract
 import { ContractFactory } from 'ethers'
 
 // Constrictor parameters
-export interface DeployContractWithResolverProxyCommandParams<F extends ContractFactory>
-    extends DeployContractDirectCommandParams<F> {
+export interface DeployContractWithResolverProxyCommandParams<
+    F extends ContractFactory,
+> extends DeployContractDirectCommandParams<F> {
     businessLogicResolverAddress: string
     configurationId: string
     configurationVersion: number
     rolesStruct: RolesStruct[]
 }
 // New instance parameters
-export interface DeployContractWithResolverProxyCommandNewParams<F extends ContractFactory>
-    extends DeployContractDirectCommandNewParams<F> {
+export interface DeployContractWithResolverProxyCommandNewParams<
+    F extends ContractFactory,
+> extends DeployContractDirectCommandNewParams<F> {
     businessLogicResolverAddress?: string
     configurationId?: string
     configurationVersion?: number

@@ -2,7 +2,7 @@ import {
 	DelegateContractId,
 	ContractId as HContractId,
 	Long,
-} from '@hashgraph/sdk';
+} from '@hiero-ledger/sdk';
 import { proto } from '@hashgraph/proto';
 import InvalidKeyForContract from './error/InvalidKeyForContract.js';
 import BaseError from '../../../core/error/BaseError.js';
@@ -11,8 +11,6 @@ import { InvalidContractId } from './error/InvalidContractId.js';
 import { HederaId } from '../shared/HederaId.js';
 
 export default class ContractId extends HederaId {
-	public readonly value: string;
-
 	constructor(value: string) {
 		if (value.length == 42 && value.startsWith('0x')) {
 			throw new InvalidContractId(value);

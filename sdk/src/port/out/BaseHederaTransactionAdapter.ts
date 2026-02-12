@@ -18,7 +18,7 @@
  *
  */
 
-import { Transaction, ContractExecuteTransaction } from '@hashgraph/sdk';
+import { Transaction, ContractExecuteTransaction } from '@hiero-ledger/sdk';
 import TransactionAdapter from './TransactionAdapter';
 import TransactionResponse from '../../domain/context/transaction/TransactionResponse';
 import { TransactionType } from './TransactionResponseEnums';
@@ -84,7 +84,7 @@ import {
 	UPDATE_TOKEN_GAS,
 	WIPE_GAS,
 } from '../../core/Constants';
-import { CustomFee as HCustomFee } from '@hashgraph/sdk/lib/exports';
+import { CustomFee as HCustomFee } from '@hiero-ledger/sdk/lib/exports';
 import {
 	fromHCustomFeeToSCFee,
 	SC_FixedFee,
@@ -264,6 +264,7 @@ export abstract class BaseHederaTransactionAdapter extends TransactionAdapter {
 		configId: string,
 		configVersion: number,
 		proxyOwnerAccount: HederaId,
+		updatedAtThreshold: string,
 		reserveAddress?: ContractId,
 		reserveInitialAmount?: BigDecimal,
 		reserveConfigId?: string,
@@ -277,6 +278,7 @@ export abstract class BaseHederaTransactionAdapter extends TransactionAdapter {
 			configId,
 			configVersion,
 			proxyOwnerAccount,
+			updatedAtThreshold,
 			reserveAddress,
 			reserveInitialAmount,
 			reserveConfigId,

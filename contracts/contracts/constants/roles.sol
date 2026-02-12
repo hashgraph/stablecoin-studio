@@ -1,6 +1,8 @@
 // SPDX-License-Identifier: MIT
 pragma solidity 0.8.18;
 
+uint256 constant _NUMBER_OF_ROLES = 11;
+
 bytes32 constant ADMIN_ROLE = 0x00;
 
 /**

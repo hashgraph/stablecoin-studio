@@ -6,8 +6,7 @@ interface UpdateBusinessLogicKeysCommandBaseParams {
 }
 
 interface UpdateBusinessLogicKeysCommandParams
-    extends WithSignerCommandParams,
-        UpdateBusinessLogicKeysCommandBaseParams {}
+    extends WithSignerCommandParams, UpdateBusinessLogicKeysCommandBaseParams {}
 
 interface ConstructurParams extends WithSignerConstructorParams, UpdateBusinessLogicKeysCommandBaseParams {}
 

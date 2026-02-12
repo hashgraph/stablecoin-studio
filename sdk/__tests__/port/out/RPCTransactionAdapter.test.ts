@@ -61,7 +61,7 @@ import {
 } from '../../config.js';
 import Account from '../../../src/domain/context/account/Account.js';
 import NetworkService from '../../../src/app/service/NetworkService.js';
-import { ContractId as HContractId } from '@hashgraph/sdk';
+import { ContractId as HContractId } from '@hiero-ledger/sdk';
 import StableCoinService from '../../../src/app/service/StableCoinService.js';
 import { RESERVE_DECIMALS } from '../../../src/domain/context/reserve/Reserve.js';
 import RPCTransactionAdapter from '../../../src/port/out/rpc/RPCTransactionAdapter.js';
@@ -109,6 +109,7 @@ describe('🧪 [ADAPTER] RPCTransactionAdapter', () => {
 			configId,
 			configVersion,
 			account.id,
+			'0',
 			undefined,
 			BigDecimal.fromString(reserve.toString(), RESERVE_DECIMALS),
 		);

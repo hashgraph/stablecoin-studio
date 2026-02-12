@@ -44,7 +44,7 @@ import { StableCoinRole } from '../../../domain/context/stablecoin/StableCoinRol
 import ContractId from '../../../domain/context/contract/ContractId.js';
 import EvmAddress from '../../../domain/context/contract/EvmAddress.js';
 import { MirrorNodeAdapter } from '../mirror/MirrorNodeAdapter.js';
-import { ContractId as HContractId } from '@hashgraph/sdk';
+import { ContractId as HContractId } from '@hiero-ledger/sdk';
 import {
 	HoldDetails,
 	HoldIdentifier,
@@ -134,10 +134,12 @@ export class RPCQueryAdapter {
 
 	async getReserveAmount(address: EvmAddress): Promise<bigint> {
 		LogService.logTrace(`Requesting getReserveAmount address: ${address}`);
-		return await this.connect(
-			ReserveFacet,
-			address.toString(),
-		).getReserveAmount();
+		return (
+			await this.connect(
+				ReserveFacet,
+				address.toString(),
+			).getReserveAmount()
+		)[0];
 	}
 
 	async getReserveLatestRoundData(address: EvmAddress): Promise<bigint[]> {

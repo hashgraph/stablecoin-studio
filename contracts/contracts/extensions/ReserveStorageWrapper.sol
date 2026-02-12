@@ -10,6 +10,7 @@ import {_RESERVE_STORAGE_POSITION} from '../constants/storagePositions.sol';
 abstract contract ReserveStorageWrapper is IReserveStorageWrapper, TokenOwnerStorageWrapper, RolesStorageWrapper {
     struct ReserveStorage {
         address reserveAddress;
+        uint256 updatedAtThreshold;
     }
 
     /**
@@ -19,26 +20,32 @@ abstract contract ReserveStorageWrapper is IReserveStorageWrapper, TokenOwnerSto
      * @param amount The amount to check
      */
     modifier checkReserveIncrease(uint256 amount) {
-        if (!_checkReserveAmount(amount, false)) revert AmountBiggerThanReserve(amount);
+        if (!_checkReserveAmount(amount)) revert AmountBiggerThanReserve(amount);
         _;
     }
 
-    function __reserveInit(address dataFeed) internal {
-        _reserveStorage().reserveAddress = dataFeed;
+    function __reserveInit(address _dataFeed, uint256 _updatedAtThreshold) internal {
+        _reserveStorage().reserveAddress = _dataFeed;
+        _reserveStorage().updatedAtThreshold = _updatedAtThreshold;
     }
 
     /**
      * @dev Checks if the current reserve is enough for a certain amount of tokens
      *
      * @param amount The amount to check
-     * @param less Flag that indicates if current reserve is not less than the amount or
-     *             than the sum of amount plus total supply
      */
-    function _checkReserveAmount(uint256 amount, bool less) private view returns (bool) {
+    function _checkReserveAmount(uint256 amount) private view returns (bool) {
         address reserveAddress = _reserveStorage().reserveAddress;
         if (reserveAddress == address(0)) return true;
-        int256 reserveAmount = _getReserveAmount();
+
+        (int256 reserveAmount, uint256 updatedAt) = _getReserveAmount();
+        uint256 updatedAtThreshold = _getUpdatedAtThreshold();
+        assert(updatedAt <= block.timestamp);
+        if (updatedAtThreshold > 0 && (block.timestamp - updatedAt) > updatedAtThreshold) {
+            revert ReserveAmountOutdated(updatedAt, updatedAtThreshold);
+        }
         assert(reserveAmount >= 0);
+
         uint256 currentReserve = uint256(reserveAmount);
         uint8 reserveDecimals = AggregatorV3Interface(reserveAddress).decimals();
         uint8 tokenDecimals = _decimals();
@@ -51,24 +58,24 @@ abstract contract ReserveStorageWrapper is IReserveStorageWrapper, TokenOwnerSto
             totalSupply = totalSupply * (10 ** (reserveDecimals - tokenDecimals));
         }
 
-        if (less) {
-            return currentReserve >= amount;
-        } else {
-            return currentReserve >= totalSupply + amount;
-        }
+        return currentReserve >= totalSupply + amount;
     }
 
     /**
      * @dev Gets the current reserve amount
      *
      */
-    function _getReserveAmount() internal view returns (int256) {
+    function _getReserveAmount() internal view returns (int256, uint256) {
         address reserveAddress = _reserveStorage().reserveAddress;
         if (reserveAddress != address(0)) {
-            (, int256 answer, , , ) = AggregatorV3Interface(reserveAddress).latestRoundData();
-            return answer;
+            (, int256 answer, , uint256 updatedAt, ) = AggregatorV3Interface(reserveAddress).latestRoundData();
+            return (answer, updatedAt);
         }
-        return 0;
+        return (0, 0);
+    }
+
+    function _getUpdatedAtThreshold() internal view returns (uint256) {
+        return _reserveStorage().updatedAtThreshold;
     }
 
     function _reserveStorage() internal pure returns (ReserveStorage storage reserveStorage_) {

@@ -1,5 +1,5 @@
 import axios from 'axios'
-import { ContractId } from '@hashgraph/sdk'
+import { ContractId } from '@hiero-ledger/sdk'
 import { NetworkName } from '@configuration'
 import { configuration } from '@hardhat-configuration'
 import { ADDRESS_ZERO, delay } from '@scripts'

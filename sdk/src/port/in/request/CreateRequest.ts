@@ -50,6 +50,9 @@ export default class CreateRequest extends ValidatedRequest<CreateRequest> {
 	reserveAddress?: string;
 
 	@OptionalField()
+	updatedAtThreshold?: string;
+
+	@OptionalField()
 	reserveConfigId?: string;
 
 	@OptionalField()
