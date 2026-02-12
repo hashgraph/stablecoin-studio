@@ -18,8 +18,7 @@
  *
  */
 
-import {QueryResponse} from "../../../../core/query/QueryResponse";
-
+import { QueryResponse } from '../../../../core/query/QueryResponse';
 
 export default interface AccountDetailViewModel extends QueryResponse {
 	account_id: string;
@@ -55,4 +54,3 @@ export default interface AccountDetailViewModel extends QueryResponse {
 		next?: string;
 	};
 }
-

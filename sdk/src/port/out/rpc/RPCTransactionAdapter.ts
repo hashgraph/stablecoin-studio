@@ -1389,21 +1389,24 @@ export default class RPCTransactionAdapter extends TransactionAdapter {
 		targetId: HederaId,
 	): Promise<TransactionResponse<any, Error>> {
 		try {
-			const HTSTokenEVMAddress = tokenId.toHederaAddress().toSolidityAddress();
+			const HTSTokenEVMAddress = tokenId
+				.toHederaAddress()
+				.toSolidityAddress();
 
-			const tx = await IHRC__factory
-				.connect(
-					CheckEvmAddress.toEvmAddress(HTSTokenEVMAddress),
-					this.signerOrProvider as unknown as Signer,
-				)
-				.associate({ gasLimit: ASSOCIATE_GAS });
+			const tx = await IHRC__factory.connect(
+				CheckEvmAddress.toEvmAddress(HTSTokenEVMAddress),
+				this.signerOrProvider as unknown as Signer,
+			).associate({ gasLimit: ASSOCIATE_GAS });
 
 			const response = await RPCTransactionResponseAdapter.manageResponse(
 				tx as unknown as ContractTransactionResponse,
 				this.networkService.environment,
 			);
 
-			this.logTransaction(response.id ?? '', this.networkService.environment);
+			this.logTransaction(
+				response.id ?? '',
+				this.networkService.environment,
+			);
 			return response;
 		} catch (error) {
 			LogService.logError(error);
@@ -1424,8 +1427,6 @@ export default class RPCTransactionAdapter extends TransactionAdapter {
 			});
 		}
 	}
-
-
 
 	// async contractCall(
 	// 	contractAddress: string,
@@ -1738,7 +1739,7 @@ export default class RPCTransactionAdapter extends TransactionAdapter {
 	): Promise<TransactionResponse> {
 		try {
 			let response;
-				switch (CapabilityDecider.getAccessDecision(coin, operation)) {
+			switch (CapabilityDecider.getAccessDecision(coin, operation)) {
 				case Decision.CONTRACT:
 					if (!coin.coin.evmProxyAddress?.toString())
 						throw new Error(

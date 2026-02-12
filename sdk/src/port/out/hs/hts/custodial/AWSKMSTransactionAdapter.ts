@@ -18,49 +18,13 @@
  *
  */
 
-import {
-	AWSKMSConfig,
-	CustodialWalletService,
-} from '@hashgraph/hedera-custodians-integration';
-import { singleton } from 'tsyringe';
-import LogService from '../../../../../app/service/LogService';
-import { WalletEvents } from '../../../../../app/service/event/WalletEvent';
-import { SupportedWallets } from '../../../../../domain/context/network/Wallet';
-import { CustodialTransactionAdapter } from './CustodialTransactionAdapter';
-import AWSKMSSettings from '../../../../../domain/context/custodialwalletsettings/AWSKMSSettings';
+/**
+ * @deprecated LEGACY FILE - DO NOT USE
+ * This file has been moved to: port/out/custodial/AWSKMSTransactionAdapter.ts
+ * Please update all imports to use the new location.
+ * This legacy file will be removed after regression testing is complete.
+ */
 
-@singleton()
-export class AWSKMSTransactionAdapter extends CustodialTransactionAdapter {
-	init(): Promise<string> {
-		this.eventService.emit(WalletEvents.walletInit, {
-			wallet: SupportedWallets.AWSKMS,
-			initData: {},
-		});
-		LogService.logTrace('AWS KMS Initialized');
-		return Promise.resolve(this.networkService.environment);
-	}
-
-	initCustodialWalletService(settings: AWSKMSSettings): void {
-		this.custodialWalletService = new CustodialWalletService(
-			new AWSKMSConfig(
-				settings.awsAccessKeyId,
-				settings.awsSecretAccessKey,
-				settings.awsRegion,
-				settings.awsKmsKeyId,
-			),
-		);
-	}
-
-	getSupportedWallet(): SupportedWallets {
-		return SupportedWallets.AWSKMS;
-	}
-
-	stop(): Promise<boolean> {
-		this.client?.close();
-		LogService.logTrace('AWS KMS stopped');
-		this.eventService.emit(WalletEvents.walletDisconnect, {
-			wallet: SupportedWallets.AWSKMS,
-		});
-		return Promise.resolve(true);
-	}
-}
+throw new Error(
+	'AWSKMSTransactionAdapter in hs/hts/custodial is deprecated. Use AWSKMSTransactionAdapter from port/out/custodial/AWSKMSTransactionAdapter.ts instead.',
+);

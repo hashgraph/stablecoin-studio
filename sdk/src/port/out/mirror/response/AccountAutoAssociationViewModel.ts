@@ -18,7 +18,7 @@
  *
  */
 
-import {QueryResponse} from "../../../../core/query/QueryResponse";
+import { QueryResponse } from '../../../../core/query/QueryResponse';
 
 export interface AccountAutoAssociationViewModel extends QueryResponse {
 	maxAutoAssociations: number;

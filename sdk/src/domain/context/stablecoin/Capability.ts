@@ -58,7 +58,7 @@ export enum Operation {
 	ASSOCIATE = 'Associate',
 	INCREASE_SUPPLIER_ALLOWANCE = 'increaseSupplierAllowance',
 	DECREASE_SUPPLIER_ALLOWANCE = 'decreaseSupplierAllowance',
-	UPDATE_RESERVE_ADDRESS = 'updateReserveAddress'
+	UPDATE_RESERVE_ADDRESS = 'updateReserveAddress',
 }
 
 export enum Access {

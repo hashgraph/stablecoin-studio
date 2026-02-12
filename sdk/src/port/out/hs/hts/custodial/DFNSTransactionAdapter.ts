@@ -18,53 +18,13 @@
  *
  */
 
-import {
-	CustodialWalletService,
-	DFNSConfig,
-} from '@hashgraph/hedera-custodians-integration';
-import { singleton } from 'tsyringe';
-import LogService from '../../../../../app/service/LogService';
-import { WalletEvents } from '../../../../../app/service/event/WalletEvent';
-import { SupportedWallets } from '../../../../../domain/context/network/Wallet';
-import DfnsSettings from '../../../../../domain/context/custodialwalletsettings/DfnsSettings';
-import { CustodialTransactionAdapter } from './CustodialTransactionAdapter';
+/**
+ * @deprecated LEGACY FILE - DO NOT USE
+ * This file has been moved to: port/out/custodial/DFNSTransactionAdapter.ts
+ * Please update all imports to use the new location.
+ * This legacy file will be removed after regression testing is complete.
+ */
 
-@singleton()
-export class DFNSTransactionAdapter extends CustodialTransactionAdapter {
-	init(): Promise<string> {
-		this.eventService.emit(WalletEvents.walletInit, {
-			wallet: SupportedWallets.DFNS,
-			initData: {},
-		});
-		LogService.logTrace('DFNS Initialized');
-		return Promise.resolve(this.networkService.environment);
-	}
-
-	initCustodialWalletService(settings: DfnsSettings): void {
-		this.custodialWalletService = new CustodialWalletService(
-			new DFNSConfig(
-				settings.serviceAccountSecretKey,
-				settings.serviceAccountCredentialId,
-				settings.serviceAccountAuthToken,
-				settings.appOrigin,
-				settings.appId,
-				settings.baseUrl,
-				settings.walletId,
-				settings.publicKey,
-			),
-		);
-	}
-
-	getSupportedWallet(): SupportedWallets {
-		return SupportedWallets.DFNS;
-	}
-
-	stop(): Promise<boolean> {
-		this.client?.close();
-		LogService.logTrace('DFNS stopped');
-		this.eventService.emit(WalletEvents.walletDisconnect, {
-			wallet: SupportedWallets.DFNS,
-		});
-		return Promise.resolve(true);
-	}
-}
+throw new Error(
+	'DFNSTransactionAdapter in hs/hts/custodial is deprecated. Use DFNSTransactionAdapter from port/out/custodial/DFNSTransactionAdapter.ts instead.',
+);

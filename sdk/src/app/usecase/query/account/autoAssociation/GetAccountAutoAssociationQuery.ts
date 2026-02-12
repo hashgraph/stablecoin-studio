@@ -18,19 +18,17 @@
  *
  */
 
-import { QueryResponse } from "../../../../../core/query/QueryResponse.js";
-import { Query } from "../../../../../core/query/Query.js";
-import { HederaId } from "../../../../../domain/context/shared/HederaId.js";
-import { AccountAutoAssociationViewModel } from "../../../../../port/out/mirror/response/AccountAutoAssociationViewModel.js";
+import { QueryResponse } from '../../../../../core/query/QueryResponse.js';
+import { Query } from '../../../../../core/query/Query.js';
+import { HederaId } from '../../../../../domain/context/shared/HederaId.js';
+import { AccountAutoAssociationViewModel } from '../../../../../port/out/mirror/response/AccountAutoAssociationViewModel.js';
 
 export class GetAccountAutoAssociationQueryResponse implements QueryResponse {
 	constructor(public readonly payload?: AccountAutoAssociationViewModel) {}
 }
 
-export class GetAccountAutoAssociationQuery
-	extends Query<GetAccountAutoAssociationQueryResponse> {
+export class GetAccountAutoAssociationQuery extends Query<GetAccountAutoAssociationQueryResponse> {
 	constructor(public readonly targetId: HederaId) {
 		super();
 	}
 }
-
