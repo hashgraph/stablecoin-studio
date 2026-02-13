@@ -1,14 +1,15 @@
 ---
 id: usage
-title: "🚀 Getting Started & Usagew"
-sidebar_label: "🚀 Getting Started & Usage"
+title: "SDK - Usage"
+sidebar_label: Usage
+sidebar_position: 3
 ---
 
-# 🚀 Getting Started & Usage
+# Getting Started & Usage
 
 This guide covers the fundamental operations you can perform with the Stablecoin Studio SDK.
 
-## 🎬 Initialization
+## Initialization
 
 You need to initialize the client with a connection to the Hedera Network.
 
@@ -24,9 +25,9 @@ hederaClient.setOperator(process.env.MY_ACCOUNT_ID, process.env.MY_PRIVATE_KEY);
 const sdk = new StableCoinClient(hederaClient);
 ```
 
-## ⚙️ Managing a Stablecoin
+## Managing a Stablecoin
 
-### ✨ Creating a Token
+### Creating a Token
 Deploy a new stablecoin with one command. This sets up the Proxy and Factory contracts automatically.
 
 ```typescript
@@ -42,7 +43,7 @@ const token = await sdk.createStableCoin(request);
 console.log("Token created:", token.tokenId);
 ```
 
-### 📈 Cash-In (Minting)
+### Cash-In (Minting)
 Mint new tokens to a specific address. Requires `CASHIN_ROLE`.
 
 ```typescript
@@ -53,7 +54,7 @@ await sdk.mint({
 });
 ```
 
-### 🔥 Cash-Out (Burning)
+### Cash-Out (Burning)
 Burn tokens to reduce supply. Typically done from the treasury. Requires `BURN_ROLE`.
 
 ```typescript
@@ -63,7 +64,7 @@ await sdk.burn({
 });
 ```
 
-### 🛡️ Role Management
+### Role Management
 Grant capabilities to other accounts for security and compliance.
 
 ```typescript

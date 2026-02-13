@@ -5,42 +5,46 @@ import styles from './styles.module.css';
 
 type FeatureItem = {
   title: string;
-  icon: string;
   description: ReactNode;
 };
 
 const FeatureList: FeatureItem[] = [
   {
-    title: 'Stable Coin Studio',
-    icon: "🪙",
+    title: 'Issue and Manage Stablecoins',
     description: (
       <>
-        An institutional-grade framework to issue and manage stablecoins on <b>Hedera</b>.
-        It leverages the <b>Hedera Token Service (HTS)</b> for speed and <b>Smart Contracts</b> for programmable compliance.
+        Deploy fully configured stablecoins on <b>Hedera</b> in a single transaction.
+        Control supply with separated mint and burn roles, enforce KYC and compliance,
+        and link to proof-of-reserve data feeds — all through upgradeable smart contracts.
       </>
     ),
   },
   {
-    title: "Open Source & Docs-as-Code",
-    icon: "📚",
+    title: 'Five Modules, One Stack',
     description: (
       <>
-        Transparent documentation living with the code. Comprehensive guides and API references enable community
-        contribution and seamless integration.
+        Smart contracts define on-chain rules. The TypeScript SDK provides programmatic access.
+        A CLI, a React Web DApp, and a NestJS backend expose those capabilities to operators,
+        administrators, and integrators through the interface they prefer.
+      </>
+    ),
+  },
+  {
+    title: 'Built for Institutions',
+    description: (
+      <>
+        Fine-grained role-based access control, multisignature transaction coordination,
+        Chainlink-compatible reserve verification, and a diamond proxy pattern that lets you
+        upgrade compliance logic across all tokens without redeployment.
       </>
     ),
   },
 ];
 
-function Feature({title, icon, description}: FeatureItem) {
+function Feature({title, description}: FeatureItem) {
   return (
-    <div className={clsx("col col--6")}>
-      <div className="text--center">
-        <span style={{ fontSize: "4rem" }} role="img" aria-label={title}>
-          {icon}
-        </span>
-      </div>
-      <div className="text--center padding-horiz--md">
+    <div className={clsx('col col--4')}>
+      <div className="text--center padding-horiz--md" style={{paddingTop: '2rem'}}>
         <Heading as="h3">{title}</Heading>
         <p>{description}</p>
       </div>

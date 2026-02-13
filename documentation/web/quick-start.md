@@ -1,54 +1,65 @@
 ---
 id: quick-start
-title: "🚀 Introduction"
-sidebar_label: "🚀 Introduction"
+title: "Web - Quick Start"
+sidebar_label: Quick Start
+sidebar_position: 2
 ---
 
-> **Web UI Documentation**
->
-> [🚀 Getting Started](./quick-start.md) • [🏗️ Architecture & Stack](./architecture.md) • [🕹️ Usage & Workflows](./usage.md) • [⚙️ Configuration](./configuration.md) • [🛡️ Security](./security.md)
+# Quick Start
+
+## Prerequisites
+
+* **Node.js** v18 or higher
+* A **Hedera Wallet Extension** (HashPack or Blade) installed in your browser
+* A **Hedera Testnet Account** (if running in dev mode)
+
 ---
 
-# 🚀 Getting Started with the Web DApp
+## Installation
 
-The **Stablecoin Studio Web Interface** is a comprehensive **React-based DApp** that allows issuers and administrators to manage the entire lifecycle of a stablecoin without writing code.
+```bash
+cd stablecoin-studio/web
+npm install
+```
 
-It serves as the visual layer on top of the Stablecoin Studio SDK, providing intuitive dashboards for treasury management, compliance, and role assignment.
+---
 
-## 📦 Prerequisites
+## Configuration (.env)
 
-Before running the project, ensure you have:
+Copy the example file and edit it **before starting the app**:
 
-* **Node.js** (v18 or higher)
-* **A Hedera Wallet Extension** (HashPack or Blade Wallet) installed in your browser.
-* A **Hedera Testnet Account** (if running in dev mode).
+```bash
+cp .env.example .env
+```
 
-## ⚡ Installation & Run
+| Variable | Description | Default / Example |
+| :--- | :--- | :--- |
+| `REACT_APP_NETWORK_TYPE` | Hedera network to connect to | `testnet` or `mainnet` |
+| `REACT_APP_MIRROR_NODE_URL` | Custom Mirror Node URL (optional) | `https://testnet.mirrornode.hedera.com` |
+| `REACT_APP_RPC_URL` | JSON-RPC Relay URL for EVM calls | *(Provider specific)* |
+| `REACT_APP_FACTORY_ADDRESS` | Contract ID of the deployed Factory | `0.0.xxxxx` |
 
-1.  **Install Dependencies**
-    ```bash
-    npm install
-    # or
-    yarn install
-    ```
+### Theme & Branding
 
-2.  **Configure Environment**
-    Copy the example environment file and fill in your network details (see [Configuration](./configuration.md)).
-    ```bash
-    cp .env.example .env
-    ```
+* **Colors**: Defined in `tailwind.config.js` or main CSS variables
+* **Logos**: Replace assets in `public/assets/images` to white-label the application
 
-3.  **Start Development Server**
-    ```bash
-    npm run start
-    ```
-    Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
+---
 
-## 🏗️ Project Overview
+## Run
 
-This project is "mounted" using a standard **React Single Page Application (SPA)** architecture, heavily relying on **Context Providers** to manage the global state of the Wallet Connection and the SDK Instance.
+```bash
+npm run start
+```
 
-* **Framework**: React (Create React App / Vite)
-* **Styling**: CSS Modules / Tailwind (depending on version)
-* **State Management**: React Context & Hooks
-* **Blockchain Interaction**: Stablecoin Studio SDK + HashConnect
+Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
+
+---
+
+## Connect Your Wallet
+
+On first load, select your wallet provider to connect:
+
+![Wallet connection dialog](../img/scs-connection.png)
+
+Supported options: **MetaMask**, **Multisig**, and **Hedera WalletConnect**.

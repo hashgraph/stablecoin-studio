@@ -6,7 +6,7 @@ import type * as Preset from '@docusaurus/preset-classic';
 
 const config: Config = {
   title: "Stable Coin Studio",
-  tagline: "Tools for create Stable Coins on Hedera",
+  tagline: "Issue and manage institutional stablecoins on Hedera",
   favicon: "img/coin.svg",
 
   // Future flags, see https://docusaurus.io/docs/api/docusaurus-config#future
@@ -52,10 +52,20 @@ const config: Config = {
     [
       "@docusaurus/plugin-content-docs",
       {
-        id: "default", // Cambiamos 'scs' por 'default'
+        id: "default",
         path: "../documentation",
-        routeBasePath: "scs", // Mantenemos la URL /scs que querías
+        routeBasePath: "scs",
         sidebarPath: "./sidebars.ts",
+        editUrl: "https://github.com/hashgraph/stablecoin-studio/tree/main/",
+      },
+    ],
+    [
+      "@docusaurus/plugin-content-docs",
+      {
+        id: "references",
+        path: "../documentation-references",
+        routeBasePath: "references",
+        sidebarPath: "./sidebarsReferences.ts",
         editUrl: "https://github.com/hashgraph/stablecoin-studio/tree/main/",
       },
     ],
@@ -102,6 +112,13 @@ const config: Config = {
           label: "SCS",
         },
         {
+          type: "doc",
+          docId: "intro",
+          docsPluginId: "references",
+          position: "left",
+          label: "References",
+        },
+        {
           href: "https://github.com/hashgraph/stablecoin-studio",
           label: "GitHub",
           position: "right",
@@ -116,7 +133,7 @@ const config: Config = {
           items: [
             {
               label: "SCS Getting Started",
-              to: "/scs/gettingStarted/getting-started",
+              to: "/scs/gettingStarted/overview",
             },
           ],
         },
