@@ -21,6 +21,7 @@ import {
 import {
     deployStableCoinInTests,
     deployFullInfrastructureInTests,
+    expectRevert,
     GAS_LIMIT,
     randomAccountAddressList,
 } from '@test/shared'
@@ -80,13 +81,14 @@ describe('➡️ Role Management Tests', function () {
 
         // Granting roles with non Admin should fail
         roleManagementFacet = roleManagementFacet.connect(nonOperator)
-        await expect(
-            roleManagementFacet.grantRoles([ROLES.burn.hash, ROLES.freeze.hash], randomAccountList, [], {
+        await expectRevert({
+            txPromise: roleManagementFacet.grantRoles([ROLES.burn.hash, ROLES.freeze.hash], randomAccountList, [], {
                 gasLimit: GAS_LIMIT.hederaTokenManager.grantRoles,
-            })
-        )
-            .to.be.revertedWithCustomError(roleManagementFacet, 'AccountHasNoRole')
-            .withArgs(nonOperator, ROLES.defaultAdmin.hash)
+            }),
+            contract: roleManagementFacet,
+            customError: 'AccountHasNoRole',
+            args: [nonOperator, ROLES.defaultAdmin.hash],
+        })
 
         // Check roles after failed grant
         for (const account of randomAccountList) {
@@ -172,13 +174,14 @@ describe('➡️ Role Management Tests', function () {
 
         // Granting roles with non Admin should fail
         roleManagementFacet = roleManagementFacet.connect(nonOperator)
-        await expect(
-            roleManagementFacet.revokeRoles([ROLES.burn.hash, ROLES.freeze.hash], randomAccountList, {
+        await expectRevert({
+            txPromise: roleManagementFacet.revokeRoles([ROLES.burn.hash, ROLES.freeze.hash], randomAccountList, {
                 gasLimit: GAS_LIMIT.hederaTokenManager.revokeRoles,
-            })
-        )
-            .to.be.revertedWithCustomError(roleManagementFacet, 'AccountHasNoRole')
-            .withArgs(nonOperator, ROLES.defaultAdmin.hash)
+            }),
+            contract: roleManagementFacet,
+            customError: 'AccountHasNoRole',
+            args: [nonOperator, ROLES.defaultAdmin.hash],
+        })
 
         await delay({ time: 2, unit: 'ms' })
         // Check roles after failed grant
@@ -252,18 +255,19 @@ describe('➡️ Role Management Tests', function () {
         const Roles = [ROLES.cashin.hash]
         const amounts: bigint[] = []
 
-        await expect(
-            roleManagementFacet.grantRoles(
+        await expectRevert({
+            txPromise: roleManagementFacet.grantRoles(
                 Roles,
                 randomAccountList,
                 amounts.map((_, index) => toBigInt(index)),
                 {
                     gasLimit: GAS_LIMIT.hederaTokenManager.grantRoles,
                 }
-            )
-        )
-            .to.be.revertedWithCustomError(roleManagementFacet, 'ArraysLengthNotEqual')
-            .withArgs(3, 0)
+            ),
+            contract: roleManagementFacet,
+            customError: 'ArraysLengthNotEqual',
+            args: [3, 0],
+        })
     })
 
     it('Can not revoke all admin role from a token', async function () {
@@ -278,11 +282,13 @@ describe('➡️ Role Management Tests', function () {
             adminAccounts.push(Admins[i])
         }
 
-        await expect(
-            roleManagementFacet.revokeRoles([ROLES.defaultAdmin.hash], adminAccounts, {
+        await expectRevert({
+            txPromise: roleManagementFacet.revokeRoles([ROLES.defaultAdmin.hash], adminAccounts, {
                 gasLimit: GAS_LIMIT.hederaTokenManager.revokeRoles,
-            })
-        ).to.be.revertedWithCustomError(roleManagementFacet, 'NoAdminsLeft')
+            }),
+            contract: roleManagementFacet,
+            customError: 'NoAdminsLeft',
+        })
     })
 
     it('An account can get all roles of any account', async function () {
@@ -327,19 +333,26 @@ describe('➡️ Role Management Tests', function () {
 
         listOfAccounts.push(ADDRESS_ZERO)
 
-        await expect(
-            roleManagementFacet.grantRoles([ROLES.burn.hash], listOfAccounts, [])
-        ).to.be.revertedWithCustomError(roleManagementFacet, 'AddressZero')
+        await expectRevert({
+            txPromise: roleManagementFacet.grantRoles([ROLES.burn.hash], listOfAccounts, [], {
+                gasLimit: GAS_LIMIT.hederaTokenManager.grantRoles,
+            }),
+            contract: roleManagementFacet,
+            customError: 'AddressZero',
+        })
     })
 
     it('Granting CashInRole with 0 amount fails', async function () {
-        await expect(
-            roleManagementFacet.grantRoles(
+        await expectRevert({
+            txPromise: roleManagementFacet.grantRoles(
                 [ROLES.cashin.hash],
                 randomAccountList,
-                randomAccountList.map(() => 0)
-            )
-        ).to.be.revertedWithCustomError(roleManagementFacet, 'AmountIsZero')
+                randomAccountList.map(() => 0), {
+                    gasLimit: GAS_LIMIT.hederaTokenManager.grantRoles,
+            }),
+            contract: roleManagementFacet,
+            customError: 'AmountIsZero',
+        })
     })
 
     it('Granting CashInRole with max uint256 amount grants unlimited rights', async function () {

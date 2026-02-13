@@ -113,6 +113,7 @@ export const GAS_LIMIT = {
         decreaseSupplierAllowance: 100_000n,
         resetSupplierAllowance: 80_000n,
         updateReserveAddress: 80_000n,
+        updateUpdatedAtThreshold: 80_000n,
         // Read
         getMetadata: 80_000n,
         getRoles: 150_000n,
@@ -184,6 +185,7 @@ export const GAS_LIMIT = {
     },
     hold: {
         facetDeploy: 6_000_000n,
+        createHold: 150_000n,
         createHoldByController: 150_000n,
         executeHold: 1_000_000n,
         releaseHold: 500_000n,

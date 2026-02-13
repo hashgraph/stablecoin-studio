@@ -9,7 +9,11 @@ import {
     DeployStableCoinCommand,
     MESSAGES,
 } from '@scripts'
-import { deployFullInfrastructureInTests, GAS_LIMIT } from '@test/shared'
+import {
+  deployFullInfrastructureInTests,
+  expectRevert,
+  GAS_LIMIT
+} from '@test/shared'
 import { HederaReserveFacet__factory, ReserveFacet, ReserveFacet__factory } from '@contracts'
 
 const toReserve = (amount: bigint) => {

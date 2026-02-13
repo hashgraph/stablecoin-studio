@@ -1,6 +1,10 @@
 import { SignerWithAddress } from '@nomicfoundation/hardhat-ethers/signers'
 import { expect } from 'chai'
-import { deployFullInfrastructureInTests, deployStableCoinInTests } from '@test/shared'
+import {
+  deployFullInfrastructureInTests,
+  deployStableCoinInTests,
+  expectRevert
+} from '@test/shared'
 import { HederaReserveFacet, HederaReserveFacet__factory } from '@contracts'
 import { DEFAULT_TOKEN, delay, DeployFullInfrastructureCommand, GAS_LIMIT, MESSAGES } from '@scripts'
 import { ethers } from 'hardhat'
@@ -42,11 +46,13 @@ describe('HederaReserve Tests', function () {
     })
 
     it('Check initialize can only be run once', async function () {
-        await expect(
-            hederaReserveFacet.initialize(reserveProxyAddress, operator.address, {
+        await expectRevert({
+            txPromise: hederaReserveFacet.initialize(reserveProxyAddress, operator.address, {
                 gasLimit: GAS_LIMIT.hederaReserve.initialize,
-            })
-        ).to.be.revertedWithCustomError(hederaReserveFacet, 'ContractIsAlreadyInitialized')
+            }),
+            contract: hederaReserveFacet,
+            customError: 'ContractIsAlreadyInitialized'
+        })
     })
 
     it('Update admin address', async function () {
@@ -103,23 +109,25 @@ describe('HederaReserve Tests', function () {
 
     it('Update admin address throw error client no isAdmin', async function () {
         hederaReserveFacet = hederaReserveFacet.connect(nonOperator)
-        await expect(
-            hederaReserveFacet.setAdmin(nonOperator.address, {
+        await expectRevert({
+            txPromise: hederaReserveFacet.setAdmin(nonOperator.address, {
                 gasLimit: GAS_LIMIT.hederaReserve.setAdmin,
-            })
-        )
-            .to.be.revertedWithCustomError(hederaReserveFacet, 'OnlyAdmin')
-            .withArgs(nonOperator)
+            }),
+            contract: hederaReserveFacet,
+            customError: 'OnlyAdmin',
+            args: [nonOperator],
+        })
     })
 
     it('Update reserve throw error client no isAdmin', async function () {
-        await expect(
-            hederaReserveFacet.setAmount(1, {
+        await expectRevert({
+            txPromise: hederaReserveFacet.setAmount(1, {
                 gasLimit: GAS_LIMIT.hederaReserve.setAmount,
-            })
-        )
-            .to.be.revertedWithCustomError(hederaReserveFacet, 'OnlyAdmin')
-            .withArgs(nonOperator)
+            }),
+            contract: hederaReserveFacet,
+            customError: 'OnlyAdmin',
+            args: [nonOperator],
+        })
     })
 
     it('Update reserve', async function () {

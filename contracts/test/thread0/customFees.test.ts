@@ -15,7 +15,12 @@ import {
   DeployFullInfrastructureCommand,
   ValidateTxResponseCommand
 } from '@scripts'
-import { deployStableCoinInTests, deployFullInfrastructureInTests, GAS_LIMIT } from '@test/shared'
+import {
+  deployStableCoinInTests,
+  deployFullInfrastructureInTests,
+  expectRevert,
+  GAS_LIMIT
+} from '@test/shared'
 
 describe('➡️ Custom Fees Tests', function () {
     // Contracts
@@ -84,13 +89,14 @@ describe('➡️ Custom Fees Tests', function () {
     it("An account without CUSTOM_FEES role can't update custom fees for a token", async function () {
         customFeesFacet = customFeesFacet.connect(nonOperator)
 
-        await expect(
-            customFeesFacet.updateTokenCustomFees(fixedFees, fractionalFees, {
+        await expectRevert({
+            txPromise: customFeesFacet.updateTokenCustomFees(fixedFees, fractionalFees, {
                 gasLimit: GAS_LIMIT.hederaTokenManager.updateCustomFees,
-            })
-        )
-            .to.be.revertedWithCustomError(customFeesFacet, 'AccountHasNoRole')
-            .withArgs(nonOperator, ROLES.customFees.hash)
+            }),
+            contract: customFeesFacet,
+            customError: 'AccountHasNoRole',
+            args: [nonOperator.address, ROLES.customFees.hash],
+        })
     })
 
     it('An account with CUSTOM_FEES role can update custom fees for a token and fees should be updated correctly', async function () {
@@ -116,13 +122,5 @@ describe('➡️ Custom Fees Tests', function () {
         )
             .to.emit(customFeesFacet, 'TokenCustomFeesUpdated')
             .withArgs(operator.address, tokenAddress)
-
-        /*const response = await customFeesFacet.updateTokenCustomFees(fixedFees, fractionalFees, {
-            gasLimit: GAS_LIMIT.hederaTokenManager.updateCustomFees,
-        })
-
-        await validateTxResponse(
-            new ValidateTxResponseCommand({ txResponse: response, confirmationEvent: 'TokenCustomFeesUpdated' })
-        )*/
     })
 })

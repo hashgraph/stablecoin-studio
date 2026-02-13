@@ -9,6 +9,18 @@ on:
     branches:
       - main
 
+env:
+  LOCAL_PRIVATE_KEY_0: "0x105d050185ccb907fba04dd92d8de9e32c18305e097ab41dadda21489a211524"
+  LOCAL_PRIVATE_KEY_1: "0x2e1d968b041d84dd120a5860cee60cd83f9374ef527ca86996317ada3d0d03e7"
+  LOCAL_PRIVATE_KEY_2: "0x45a5a7108a18dd5013cf2d5857a28144beadc9c70b3bdbd914e38df4e804b8d8"
+  LOCAL_PRIVATE_KEY_3: "0x6e9d61a325be3f6675cf8b7676c70e4a004d2308e3e182370a41f5653d52c6bd"
+  LOCAL_PRIVATE_KEY_4: "0x0b58b1bd44469ac9f813b5aeaf6213ddaea26720f0b2f133d08b6f234130a64f"
+  LOCAL_JSON_RPC_ENDPOINT: "http://localhost:7546"
+  LOCAL_MIRROR_NODE_ENDPOINT: "http://localhost:5551"
+
+permissions:
+  contents: read
+
 jobs:
   # ==========================================================================
   # Job 0: Build contracts (shared by test and coverage jobs)
@@ -19,7 +31,7 @@ jobs:
   # in downstream jobs to avoid redundant npm ci + Solidity compilation.
   # ==========================================================================
   build:
-    name: Test Stablecoin Studio Contracts
+    name: Build Stablecoin Studio Contracts
     runs-on: token-studio-linux-medium
     timeout-minutes: 10
     steps:
@@ -62,12 +74,12 @@ jobs:
           key: ${{ runner.os }}-contracts-build-${{ github.sha }}
 
   # ==========================================================================
-  # Job 1: Execute coverage tests (depends on build job)
+  # Job 1: Execute smart contracts tests (depends on build job)
   # ==========================================================================
   # Runs the smart contracts coverage.
   # ==========================================================================
-  coverage:
-    name: Coverage of Stablecoin Studio Contracts
+  tests:
+    name: Test Stablecoin Studio Contracts
     needs: [build]
     runs-on: token-studio-linux-medium
     timeout-minutes: 15
@@ -106,6 +118,65 @@ jobs:
           key: ${{ runner.os }}-contracts-build-${{ github.sha }}
           fail-on-cache-miss: true
 
-      - name: Run tests with coverage
+      - name: Install and run Hedera Local Network
+        run: |
+          npm install @hashgraph/hedera-local -g
+          hedera start --detached
+
+      - name: Run tests coverage
+        run: |
+          npm run test --workspace=contracts -- --network local
+
+      - name: Stop Hedera Local Network
+        if: always()
+        run: hedera stop
+
+
+  # ==========================================================================
+  # Job 2: Execute smart contracts coverage (depends on test job)
+  # ==========================================================================
+  # Runs the smart contracts coverage.
+  # ==========================================================================
+  coverage:
+    name: Coverage of Stablecoin Studio Contracts
+    needs: [tests]
+    runs-on: token-studio-linux-medium
+    timeout-minutes: 15
+
+    steps:
+      - name: Harden Runner
+        uses: step-security/harden-runner@v2
+        with:
+          egress-policy: audit
+
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+
+      - name: Restore dependencies from cache
+        uses: actions/cache/restore@v4
+        with:
+          path: |
+            node_modules
+            */node_modules
+            ~/.npm
+          key: ${{ runner.os }}-deps-${{ hashFiles('package-lock.json') }}
+          fail-on-cache-miss: true
+
+      - name: Restore build artifacts from cache
+        uses: actions/cache/restore@v4
+        with:
+          path: |
+            contracts/artifacts
+            contracts/typechain-types
+            contracts/cache
+          key: ${{ runner.os }}-contracts-build-${{ github.sha }}
+          fail-on-cache-miss: true
+
+      - name: Run coverage
         run: |
           npm run coverage:contracts

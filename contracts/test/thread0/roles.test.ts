@@ -3,7 +3,12 @@ import { SignerWithAddress } from '@nomicfoundation/hardhat-ethers/signers'
 import { ethers } from 'hardhat'
 import { RolesFacet, RolesFacet__factory } from '@contracts'
 import { ADDRESS_ZERO, DeployFullInfrastructureCommand, MESSAGES, ROLES, ValidateTxResponseCommand } from '@scripts'
-import { deployStableCoinInTests, deployFullInfrastructureInTests, GAS_LIMIT } from '@test/shared'
+import {
+  deployStableCoinInTests,
+  deployFullInfrastructureInTests,
+  GAS_LIMIT,
+  expectRevert,
+} from '@test/shared'
 import { ContractTransactionResponse } from 'ethers'
 
 describe('➡️ Roles Tests', function () {
@@ -50,13 +55,14 @@ describe('➡️ Roles Tests', function () {
 
         // Non Admin grants burn role : fail
         rolesFacet = rolesFacet.connect(nonOperator)
-        await expect(
-            rolesFacet.grantRole(ROLES.burn.hash, operator.address, {
+        await expectRevert({
+            txPromise: rolesFacet.grantRole(ROLES.burn.hash, operator.address, {
                 gasLimit: GAS_LIMIT.hederaTokenManager.grantRole,
-            })
-        )
-            .to.be.revertedWithCustomError(rolesFacet, 'AccountHasNoRole')
-            .withArgs(nonOperator, ROLES.defaultAdmin.hash)
+            }),
+            contract: rolesFacet,
+            customError: 'AccountHasNoRole',
+            args: [nonOperator, ROLES.defaultAdmin.hash],
+        })
 
         // Non operator stil has not burn role
         expect(
@@ -109,13 +115,14 @@ describe('➡️ Roles Tests', function () {
 
         // Non Admin revokes burn role : fail
         rolesFacet = rolesFacet.connect(nonOperator)
-        await expect(
-            rolesFacet.revokeRole(ROLES.burn.hash, nonOperator.address, {
+        await expectRevert({
+            txPromise: rolesFacet.revokeRole(ROLES.burn.hash, nonOperator.address, {
                 gasLimit: GAS_LIMIT.hederaTokenManager.revokeRole,
-            })
-        )
-            .to.be.revertedWithCustomError(rolesFacet, 'AccountHasNoRole')
-            .withArgs(nonOperator, ROLES.defaultAdmin.hash)
+            }),
+            contract: rolesFacet,
+            customError: 'AccountHasNoRole',
+            args: [nonOperator, ROLES.defaultAdmin.hash],
+        })
 
         // Non operator stil has burn role
         expect(
@@ -163,11 +170,13 @@ describe('➡️ Roles Tests', function () {
             })
         }
 
-        await expect(
-            rolesFacet.revokeRole(ROLES.defaultAdmin.hash, Admins[Length - 1], {
+        await expectRevert({
+            txPromise: rolesFacet.revokeRole(ROLES.defaultAdmin.hash, Admins[Length - 1], {
                 gasLimit: GAS_LIMIT.hederaTokenManager.revokeRole,
-            })
-        ).to.be.revertedWithCustomError(rolesFacet, 'NoAdminsLeft')
+            }),
+            contract: rolesFacet,
+            customError: 'NoAdminsLeft'
+        })
     })
     // * Initial State again
 

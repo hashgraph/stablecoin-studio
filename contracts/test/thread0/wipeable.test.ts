@@ -11,7 +11,12 @@ import {
     StableCoinTokenMock__factory,
 } from '@contracts'
 import { delay, DeployFullInfrastructureCommand, MESSAGES, ONE_TOKEN, ROLES } from '@scripts'
-import { deployStableCoinInTests, deployFullInfrastructureInTests, GAS_LIMIT } from '@test/shared'
+import {
+  deployStableCoinInTests,
+  deployFullInfrastructureInTests,
+  expectRevert,
+  GAS_LIMIT
+} from '@test/shared'
 
 describe('➡️ Wipe Tests', function () {
     // Contracts
@@ -68,25 +73,27 @@ describe('➡️ Wipe Tests', function () {
             .withArgs(operator.address, tokenAddress, tokensToMint, operator.address)
 
         wipeFacet = wipeFacet.connect(nonOperator)
-        await expect(
-            wipeFacet.wipe(operator.address, 1n, {
+        await expectRevert({
+            txPromise: wipeFacet.wipe(operator.address, 1n, {
                 gasLimit: GAS_LIMIT.hederaTokenManager.wipe,
-            })
-        )
-            .to.be.revertedWithCustomError(wipeFacet, 'AccountHasNoRole')
-            .withArgs(nonOperator, ROLES.wipe.hash)
+            }),
+            contract: wipeFacet,
+            customError: 'AccountHasNoRole',
+            args: [nonOperator, ROLES.wipe.hash],
+        })
     })
 
     it('Account with WIPE role cannot wipe a negative amount', async function () {
         // Wipe a negative amount of tokens : fail
         wipeFacet = wipeFacet.connect(operator)
-        await expect(
-            wipeFacet.wipe(operator.address, -1n, {
+        await expectRevert({
+            txPromise: wipeFacet.wipe(operator.address, -1n, {
                 gasLimit: GAS_LIMIT.hederaTokenManager.wipe,
-            })
-        )
-            .to.be.revertedWithCustomError(wipeFacet, 'NegativeAmount')
-            .withArgs(-1n)
+            }),
+            contract: wipeFacet,
+            customError: 'NegativeAmount',
+            args: [-1n],
+        })
     })
 
     it('Account with WIPE role can wipe 10 tokens from an account with 20 tokens', async function () {
@@ -145,12 +152,13 @@ describe('➡️ Wipe Tests', function () {
         const currentBalance = await hederaTokenManagerFacet.balanceOf(operator.address)
 
         // Wipe more than account's balance : fail
-        await expect(
-            wipeFacet.wipe(operator.address, currentBalance + 1n, {
+        await expectRevert({
+            txPromise: wipeFacet.wipe(operator.address, currentBalance + 1n, {
                 gasLimit: GAS_LIMIT.hederaTokenManager.wipe,
-            })
-        )
-            .to.be.revertedWithCustomError(wipeFacet, 'GreaterThan')
-            .withArgs(currentBalance + 1n, currentBalance)
+            }),
+            contract: wipeFacet,
+            customError: 'GreaterThan',
+            args: [currentBalance + 1n, currentBalance],
+        })
     })
 })
