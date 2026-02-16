@@ -1,27 +1,28 @@
 ---
 id: architecture
-title: "🏗️ Architecture & Internals"
-sidebar_label: "🏗️ Architecture"
+title: "Backend - Architecture"
+sidebar_label: Architecture
+sidebar_position: 4
 ---
 
-# 🏗️ Architecture & Internals
+# Architecture & Internals
 
 This section details the internal design of the Backend, intended for developers who need to extend the functionality or understand the data flow.
 
-## 🛠 Tech Stack
+## Tech Stack
 
 * **Runtime**: Node.js (v18+)
 * **Framework**: [NestJS](https://nestjs.com/) (TypeScript)
 * **Database**: [PostgreSQL](https://www.postgresql.org/) 14+
 * **ORM**: [TypeORM](https://typeorm.io/)
-* **Hedera Integration**: [@hashgraph/sdk](https://github.com/hashgraph/hedera-sdk-js) 
+* **Hedera Integration**: [@hashgraph/sdk](https://github.com/hashgraph/hedera-sdk-js)
 * **Documentation**: [Swagger](https://swagger.io/) (OpenAPI 3.0)
 * **Logging**: [Winston](https://github.com/winstonjs/winston)
 * **Testing**: [Jest](https://jestjs.io/)
 
 ---
 
-## 🧩 Modular Design
+## Modular Design
 
 The application follows a Domain-Driven Design (DDD) approach via NestJS Modules:
 
@@ -34,7 +35,7 @@ The application follows a Domain-Driven Design (DDD) approach via NestJS Modules
 
 ---
 
-## 🔄 The Multi-Signature Flow
+## The Multi-Signature Flow
 
 The most critical function of the backend is coordinating asynchronous signatures.
 
@@ -61,14 +62,14 @@ sequenceDiagram
     J->>DB: Update Status: EXECUTED
 ```
 
-## 🕰️ The Auto-Submit Job (Scheduled Job)
+## The Auto-Submit Job (Scheduled Job)
 The background worker (`AUTO_SUBMIT_JOB_FREQUENCY`) performs:
 1.  **Auto-Submit**: Sends `SIGNED` transactions to Hedera.
 2.  **Auto-Expire**: Marks transactions as `EXPIRED` if they aren't executed within **3 minutes** of `startDate`.
 
 ---
 
-## 🗄️ Database Schema
+## Database Schema
 
 The persistence layer uses a relational model to track the state of operations.
 
@@ -96,7 +97,7 @@ erDiagram
 
 ---
 
-## 📡 Event Listener System
+## Event Listener System
 
 The backend includes a polling mechanism to catch events:
 1.  **FactoryObserver**: Watches for new Stablecoins deployed.
