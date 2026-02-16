@@ -1,75 +1,75 @@
 ---
 id: usage
-title: "🧭 Interactive Menu Flow"
-sidebar_label: "🧭 Interactive Menu Flow"
+title: "CLI - Usage"
+sidebar_label: Usage
+sidebar_position: 3
 ---
 
-# 🧭 Interactive Menu Flow
+# Usage
 
-The CLI operates through a rich interactive menu system. Once you execute `npm start` or `accelerator wizard`, you will navigate through these core sections.
-
-## 1. Create a New Stablecoin
-This wizard guides you through the deployment of a generic stablecoin contract.
-
-* **Token Details**: Defines the immutable metadata (Name, Symbol, Decimals).
-* **Supply Management**:
-    * *Initial Supply*: Tokens minted immediately to the treasury.
-    * *Max Supply*: Hard cap on the total tokens (optional).
-* **Key Management (Critical)**:
-    * You must decide who holds the keys for specific roles (`Admin`, `KYC`, `Freeze`, `Wipe`, `Supply`, `Fee`).
-    * **Smart Contract**: The key is owned by the contract (trustless).
-    * **Current Account**: You hold the key (centralized control).
-    * **Other Account**: Assign control to a different specific ID (e.g., a cold wallet).
-* **Advanced Features**:
-    * **Proof of Reserve**: Link your token minting capability to an on-chain Oracle feed.
-    * **Grant KYC**: If enabled, accounts must be explicitly approved before holding tokens.
-
-## 2. Manage Imported Tokens
-Allows you to manage a stablecoin created on a different machine or by another user.
-* **Requirement**: You must know the `Token ID` and possess the private keys for the roles you want to exercise.
-
-## 3. Operate with Stablecoin
-The operational hub for day-to-day management.
-
-### 💰 Treasury Operations
-* **Cash in (Mint)**: Create new tokens. If PoR is enabled, this checks the oracle feed first.
-* **Burn**: Remove tokens from the treasury balance.
-* **Wipe**: Forcefully remove tokens from a *user's* account (requires Wipe Key). Used for legal compliance/law enforcement.
-* **Rescue**: Recover HBAR or other HTS tokens accidentally sent to the stablecoin contract address.
-
-### 🛡️ Access Control & Risk
-* **Grant/Revoke KYC**: Whitelist or Blacklist accounts (if KYC was enabled at creation).
-* **Freeze/Unfreeze**: Stop a specific account from transferring tokens.
-* **Update Roles**: Rotate keys (e.g., transfer Admin rights to a Multi-sig).
-
-### ☢️ Danger Zone
-* **Pause Token**: Halts ALL transfers globally.
-* **Delete Token**: Permanently removes the token from the ledger (Irreversible).
-
-## 4. Configuration (Settings)
-Modify your environment on the fly without editing files manually.
-* **Mirrors/RPCs**: Switch providers or add custom URLs.
-    > ⚠️ **Note**: You can remove custom nodes, but you cannot delete the node currently in use. Switch to another node first.
-* **Factories**: Update the pointer to the smart contract logic.
-* **Backend**: Connect or disconnect the Multi-sig coordination server.
+The CLI supports both direct commands and an interactive menu system.
 
 ---
 
-# ⚡ Advanced Scenarios
+## Commands
 
-### Scenario A: Disaster Recovery (Lost Config)
-**Problem**: Your computer crashed, and you lost your `hsca-config.yaml`, but you have your Private Key and the Token ID.
-**Solution**:
-1. Re-install the CLI and run the Wizard to set up your account (using your Private Key).
-2. Go to **"Manage Imported Tokens"**.
-3. Enter the Token ID (e.g., `0.0.12345`).
-4. The CLI will query Hedera, verify you have admin permissions with your key, and restore full control.
+The CLI uses a hierarchical structure: `scs <category> <action> [options]`.
 
-### Scenario B: Key Rotation (Security Upgrade)
-**Problem**: You deployed a token using a single developer key, but now you want to move to a Multi-sig governance.
-**Solution**:
-1. Ensure the Multi-sig account is created on Hedera.
+### Stablecoin Management
+
+```bash
+scs stablecoin create --name "MyToken" --symbol "MTK" --decimals 6
+scs stablecoin mint --amount 100 --target 0.0.XXXX --token 0.0.YYYY
+```
+
+### Global Options
+
+| Flag | Shortcut | Description |
+| :--- | :--- | :--- |
+| `--help` | `-h` | Show help for any command |
+| `--version` | `-v` | Display CLI version |
+| `--network` | `-n` | Override configured network |
+
+---
+
+## Interactive Menu
+
+Running `npm start` or the wizard launches the interactive menu with these sections:
+
+### 1. Create a New Stablecoin
+
+The wizard walks through token details (name, symbol, decimals), supply management (initial/max supply), key management (admin, KYC, freeze, wipe, supply, fee), and advanced features (proof of reserve, KYC gating).
+
+### 2. Manage Imported Tokens
+
+Manage a stablecoin created elsewhere. You need the Token ID and private keys for the roles you want to exercise.
+
+### 3. Operate with Stablecoin
+
+- **Treasury**: Cash in (mint), burn, wipe, rescue
+- **Access Control**: Grant/revoke KYC, freeze/unfreeze, update roles
+- **Danger Zone**: Pause token, delete token (irreversible)
+
+### 4. Configuration
+
+Modify mirrors, RPCs, factories, and backend settings without editing files manually.
+
+---
+
+## Advanced Scenarios
+
+### Disaster Recovery
+
+If you lose your `hsca-config.yaml` but have your private key and token ID:
+
+1. Re-install the CLI and run the wizard with your private key.
+2. Go to **"Manage Imported Tokens"** and enter the Token ID.
+3. The CLI queries Hedera and restores control.
+
+### Key Rotation
+
+To move from a single developer key to multi-sig governance:
+
+1. Create the multi-sig account on Hedera.
 2. Go to **"Operate with Stablecoin"** > **"Management"** > **"Update Roles"**.
-3. Select the `Admin` role (and others if needed).
-4. Input the Account ID of the Multi-sig wallet.
-5. Confirm. The developer key no longer controls the token; the Multi-sig now rules.
+3. Select the `Admin` role and input the multi-sig account ID.

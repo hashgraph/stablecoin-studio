@@ -664,7 +664,7 @@ export default class OperationStableCoinService extends Service {
   public hasHTSAccess = (
     operation: Operation,
     stableCoinCapabilities: StableCoinCapabilities,
-  ) =>
+  ): boolean =>
     stableCoinCapabilities?.capabilities.find(
       (cap) => cap.operation === operation,
     )?.access === Access.HTS;
@@ -674,7 +674,7 @@ export default class OperationStableCoinService extends Service {
     role: StableCoinRole,
     stableCoinCapabilities: StableCoinCapabilities,
     roles: string[],
-  ) => {
+  ): boolean => {
     if (
       stableCoinCapabilities?.capabilities.find(
         (cap) => cap.operation === operation,
