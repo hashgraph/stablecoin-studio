@@ -30,7 +30,7 @@ import { HederaWalletConnectTransactionAdapter } from '../../../../../../port/ou
 import AccountService from '../../../../../service/AccountService.js';
 import TransactionService from '../../../../../service/TransactionService.js';
 import { SignCommand, SignCommandResponse } from './SignCommand.js';
-import { Client, Transaction } from '@hashgraph/sdk';
+import { Client, Transaction } from '@hiero-ledger/sdk';
 
 @CommandHandler(SignCommand)
 export class SignCommandHandler implements ICommandHandler<SignCommand> {

@@ -21,7 +21,7 @@
 import * as nacl from 'tweetnacl';
 import * as elliptic from 'elliptic';
 import { keccak256 } from 'ethereum-cryptography/keccak';
-import { Transaction } from '@hashgraph/sdk';
+import { Transaction } from '@hiero-ledger/sdk';
 
 export function verifySignature(
   publicKeyHex: string,

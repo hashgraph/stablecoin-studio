@@ -21,7 +21,7 @@
 /*import {
 	TransactionReceipt,
 	TransactionId
-} from '@hashgraph/sdk';*/
+} from '@hiero-ledger/sdk';*/
 
 export enum TransactionType {
 	RECORD,

@@ -1,0 +1,109 @@
+---
+id: quick-start
+title: "🚀 Introduction"
+sidebar_label: "🚀 Introduction"
+slug: /client
+---
+
+<div align="center">
+
+[![License](https://img.shields.io/badge/license-apache2-blue.svg)](../LICENSE.md)
+
+</div>
+
+# Table of contents
+
+- [Introduction](#introduction)
+- [Quick Start](#quick-start)
+    - [Pre-requirements](#pre-requirements)
+    - [Installation](#installation)
+- [Starting the CLI](#starting-the-cli)
+- [First Run & Configuration](#first-run-configuration)
+- [Environment Warning](#environment-warning)
+- [Authenticating an Account](#authenticating-an-account)
+
+<br/><br/>
+
+
+# 🚀 Introduction{#introduction}
+---
+
+The **Stable Coin Studio Command Line Interface (CLI)** provides a streamlined workflow to create, configure, and operate stablecoins.
+
+It uses the API exposed by the SDK and it is meant as a "demo tool" to showcase the project's functionalities.
+<br/><br/>
+
+# 🚀 Quick Start{#quick-start}
+---
+
+## Pre-requirements
+
+You must have installed
+
+- [Node.js](https://nodejs.org/) `>= v16.13`
+- [npm](https://www.npmjs.com/)
+
+Then you must install and build the following projects :
+
+1. [Contract installation](https://github.com/hashgraph/stablecoin-studio/blob/main/contracts/README.md#installation)
+2. [SDK installation](https://github.com/hashgraph/stablecoin-studio/blob/main/sdk/README.md#installation)
+
+## Installation
+
+Clone the repository:
+```bash
+git clone [https://github.com/hashgraph/stablecoin-studio.git](https://github.com/hashgraph/stablecoin-studio.git)
+cd stablecoin-studio/cli
+```
+
+Install in two ways:
+1. **From NPM (Official Release):**
+```bash
+npm install -g @hashgraph/stablecoin-npm-cli
+```
+Once installed globally, you can use the `accelerator wizard` command.
+
+2. **From Source (Local Build):**
+    
+    If you are working on the repository:
+    1. Ensure you have built the contracts and the [SDK](../sdk/api-overview.md).
+    2. Inside the `/cli` folder:
+```bash
+npm install
+```
+<br/><br/>
+
+# 🏁 Starting the CLI{#starting-the-cli}
+---
+
+Once you run install command, you can interact with the tool in two ways:
+
+1. **Direct Command Line**: Show all available options and categories.
+```bash
+npm start
+```
+
+2. **Accelerator Wizard**: An interactive guide to help you configure your account and stablecoins step-by-step.
+```bash
+npm run start:wizard
+```
+<br/><br/>
+
+# First Run & Configuration{#first-run-configuration}
+---
+The first time you execute the accelerator wizard command in your terminal, if you haven't added your default configuration path the interface will ask you whether you want to create a new configuration file in the default path. When the configuration file is created you must configure the default network, operating accounts and the factory contract id.
+<br/><br/>
+
+# Environment Warning{#environment-warning}
+---
+> ⚠️ **Important**: For testing purposes, you should create a **Testnet** account. Everything executed on Mainnet will incur real HBAR costs.
+<br/><br/>
+
+# 🔐 Authenticating an Account{#authenticating-an-account}
+---
+The CLI supports three modes to configure your operating account:
+
+1. **Self-Custodial (Private Key)**: Support for **ED25519** or **ECDSA** keys. Recommended for use with the Hedera Developer Portal, HashPack, or Blade.
+2. **Custodial Wallets**: Native support for **Dfns** and **Fireblocks**.
+3. **Multi-signature Account**: Allows creating transactions that require multiple signatures. A [backend](../backend/index.md) is required to manage the signature collection.
+<br/><br/>
