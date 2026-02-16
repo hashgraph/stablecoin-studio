@@ -172,6 +172,34 @@ describe('➡️ Hold Management Tests', () => {
         })
     })
 
+    describe('Get held amount', () => {
+        before(async () => {
+            await setInitialData({})
+        })
+        it('GIVEN an account without HOLD_CREATOR_ROLE role WHEN createHoldByController THEN transaction fails with AccountHasNoRole', async () => {
+            expect(await holdManagementFacet.getHeldAmount()).to.eq('0')
+        })
+    })
+
+    describe('Get hold for', () => {
+        before(async () => {
+            await setInitialData({})
+        })
+        it('GIVEN an account without HOLD_CREATOR_ROLE role WHEN getHoldFor THEN transaction fails with AccountHasNoRole', async () => {
+            const holdIdentifier_nonExistent = {
+                tokenHolder: account_Operator,
+                holdId: 999,
+            }
+            await expect (holdManagementFacet.getHoldFor(holdIdentifier_nonExistent))
+              .to.be.revertedWithCustomError(holdManagementFacet, 'HoldNotFound')
+              .withArgs(holdIdentifier_nonExistent.tokenHolder, holdIdentifier_nonExistent.holdId)
+        })
+        it('GIVEN an account with HOLD_CREATOR_ROLE role WHEN getHoldFor from page index 0 and page length 0 THEN it returns an empty array', async () => {
+            expect(await holdManagementFacet.getHoldsIdFor(account_Operator, 0, 0))
+              .to.deep.equal([])
+        })
+    })
+
     describe('Create with wrong input arguments', () => {
         before(async () => {
             await setInitialData({})
@@ -363,6 +391,25 @@ describe('➡️ Hold Management Tests', () => {
                 holdManagementFacet.executeHold(holdIdentifier, account_nonOperator, 1)
             ).to.be.revertedWithCustomError(holdManagementFacet, 'HoldExpired')
         })
+        it('GIVEN a invalid hold to WHEN executeHold THEN transaction fails with InvalidDestination', async () => {
+            const hold_wrong = {
+                amount: _AMOUNT,
+                expirationTimestamp: expirationTimestamp,
+                escrow: account_Operator,
+                to: account_Operator,
+                data: _DATA,
+            }
+            const holdIdentifier = {
+                tokenHolder: account_Operator,
+                holdId: 1,
+            }
+            await expect(holdManagementFacet.createHold(hold_wrong)).to.emit(holdManagementFacet, 'HoldCreated')
+            await delay({ time: 1, unit: 'sec' })
+            await expect(
+                holdManagementFacet.executeHold(holdIdentifier, account_nonOperator, _AMOUNT)
+            ).to.be.revertedWithCustomError(holdManagementFacet, 'InvalidDestination')
+             .withArgs(account_Operator, account_nonOperator)
+        })
     })
     describe('Release with wrong input arguments', () => {
         beforeEach(async () => {
@@ -505,6 +552,38 @@ describe('➡️ Hold Management Tests', () => {
             )
         })
     })
+
+    describe('Release OK with all held amount', () => {
+        before(async () => {
+            await setInitialData({})
+        })
+
+        it('GIVEN hold with no destination WHEN releaseHold matches hold amount THEN transaction succeeds', async () => {
+            await expect(holdManagementFacet.createHold(hold)).to.emit(holdManagementFacet, 'HoldCreated')
+            await delay({ time: 1, unit: 'sec' })
+            holdManagementFacet = holdManagementFacet.connect(nonOperator)
+            const amount = 1n
+            await expect(
+                holdManagementFacet.releaseHold(holdIdentifier, amount, { gasLimit: GAS_LIMIT.hold.releaseHold })
+            )
+                .to.emit(holdManagementFacet, 'HoldReleased')
+                .withArgs(account_Operator, 1, amount)
+
+            await checkCreatedHold_expected(
+                9999991n,
+                9n,
+                1n,
+                9n,
+                account_nonOperator,
+                _DATA,
+                EMPTY_HEX_BYTES,
+                ADDRESS_ZERO,
+                expirationTimestamp.toString(),
+                1n,
+                1n
+            )
+        })
+    })
     describe('Reclaim OK', () => {
         before(async () => {
             await setInitialData({})
@@ -579,6 +658,38 @@ describe('➡️ Hold Management Tests', () => {
             )
             await delay({ time: 1, unit: 'sec' })
             await expect(holdManagementFacet.createHold(hold)).to.be.revertedWithCustomError(
+                holdManagementFacet,
+                'ResponseCodeInvalid'
+            )
+        })
+        it('GIVEN a token without the supply key THEN calling the create hold by controller AND fail with ResponseCodeInvalid', async () => {
+            await setInitialData({ addSupply: false })
+            await expect(holdManagementFacet.createHoldByController(
+              account_nonOperator, hold, EMPTY_HEX_BYTES
+            )).to.be.revertedWithCustomError(
+                holdManagementFacet,
+                'ResponseCodeInvalid'
+            )
+            holdManagementFacet = holdManagementFacet.connect(operator)
+            await expect(holdManagementFacet.createHoldByController(
+              account_nonOperator, hold, EMPTY_HEX_BYTES
+            )).to.be.revertedWithCustomError(
+                holdManagementFacet,
+                'ResponseCodeInvalid'
+            )
+        })
+        it('GIVEN a token without the wipe key THEN calling the create hold by controller AND fail with ResponseCodeInvalid', async () => {
+            await setInitialData({ addWipe: false })
+            await expect(holdManagementFacet.createHoldByController(
+              account_nonOperator, hold, EMPTY_HEX_BYTES
+            )).to.be.revertedWithCustomError(
+                holdManagementFacet,
+                'ResponseCodeInvalid'
+            )
+            holdManagementFacet = holdManagementFacet.connect(operator)
+            await expect(holdManagementFacet.createHoldByController(
+              account_nonOperator, hold, EMPTY_HEX_BYTES
+            )).to.be.revertedWithCustomError(
                 holdManagementFacet,
                 'ResponseCodeInvalid'
             )

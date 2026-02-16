@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: MIT
-pragma solidity 0.8.18;
+pragma solidity 0.8.24;
 
 import {ISupplierAdmin} from './Interfaces/ISupplierAdmin.sol';
 import {SupplierAdminStorageWrapper} from './SupplierAdminStorageWrapper.sol';
@@ -47,7 +47,7 @@ contract SupplierAdminFacet is ISupplierAdmin, IStaticFunctionSelectors, Supplie
         override(ISupplierAdmin)
         onlyRole(ADMIN_ROLE)
         addressIsNotZero(supplier)
-        valueIsNotLessThan(amount, 0, false)
+        greaterThan(amount, 0)
     {
         _grantSupplierRole(supplier, amount);
     }
@@ -112,7 +112,7 @@ contract SupplierAdminFacet is ISupplierAdmin, IStaticFunctionSelectors, Supplie
         override(ISupplierAdmin)
         onlyRole(ADMIN_ROLE)
         addressIsNotZero(supplier)
-        valueIsNotLessThan(amount, 0, false)
+        greaterThan(amount, 0)
     {
         if (_supplierAdminStorage().unlimitedSupplierAllowances[supplier])
             revert AccountHasUnlimitedSupplierAllowance(supplier);
@@ -140,7 +140,7 @@ contract SupplierAdminFacet is ISupplierAdmin, IStaticFunctionSelectors, Supplie
         override(ISupplierAdmin)
         onlyRole(ADMIN_ROLE)
         addressIsNotZero(supplier)
-        valueIsNotLessThan(amount, 0, false)
+        greaterThan(amount, 0)
     {
         if (_supplierAdminStorage().unlimitedSupplierAllowances[supplier])
             revert AccountHasUnlimitedSupplierAllowance(supplier);
