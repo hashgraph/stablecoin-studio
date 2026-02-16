@@ -2,7 +2,14 @@ import { expect } from 'chai'
 import { SignerWithAddress } from '@nomicfoundation/hardhat-ethers/signers'
 import { ethers } from 'hardhat'
 import { RolesFacet, RolesFacet__factory } from '@contracts'
-import { ADDRESS_ZERO, DeployFullInfrastructureCommand, MESSAGES, ROLES, ValidateTxResponseCommand } from '@scripts'
+import {
+  ADDRESS_ZERO,
+  DeployFullInfrastructureCommand,
+  MESSAGES,
+  ROLES,
+  delay,
+  ValidateTxResponseCommand
+} from '@scripts'
 import {
   deployStableCoinInTests,
   deployFullInfrastructureInTests,
@@ -99,10 +106,13 @@ describe('➡️ Roles Tests', function () {
     })
 
     it('Granting role to account 0 fails', async function () {
-        await expect(rolesFacet.grantRole(ROLES.burn.hash, ADDRESS_ZERO)).to.be.revertedWithCustomError(
-            rolesFacet,
-            'AddressZero'
-        )
+        await expectRevert({
+            txPromise: rolesFacet.grantRole(ROLES.burn.hash, ADDRESS_ZERO, {
+                gasLimit: GAS_LIMIT.hederaTokenManager.grantRole,
+            }),
+            contract: rolesFacet,
+            customError: 'AddressZero'
+        })
     })
 
     it('Non Admin account can not revoke role from an account', async function () {
@@ -124,7 +134,7 @@ describe('➡️ Roles Tests', function () {
             args: [nonOperator, ROLES.defaultAdmin.hash],
         })
 
-        // Non operator stil has burn role
+        // Non operator still has burn role
         expect(
             await rolesFacet.hasRole(ROLES.burn.hash, nonOperator, {
                 gasLimit: GAS_LIMIT.hederaTokenManager.hasRole,
@@ -149,6 +159,8 @@ describe('➡️ Roles Tests', function () {
         )
             .to.emit(rolesFacet, 'RoleRevoked')
             .withArgs(ROLES.burn.hash, nonOperator.address, operator.address)
+
+        await delay({ time: 1000, unit: 'ms' })
 
         // Non operator has not burn role
         expect(

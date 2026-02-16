@@ -157,7 +157,9 @@ describe('➡️ Rescue Tests', function () {
 
         // check new balances : success
         const finalTokenOwnerBalance = await ethers.provider.getBalance(stableCoinProxyAddress)
-        const expectedTokenOwnerBalance = initialTokenOwnerBalance - amountToRescueInEvm
+        const expectedTokenOwnerBalance = network.name === 'hardhat' ?
+            initialTokenOwnerBalance - amountToRescueInEvm :
+            initialTokenOwnerBalance - amountToRescue
         expect(finalTokenOwnerBalance.toString()).to.equals(expectedTokenOwnerBalance.toString())
     })
 

@@ -1,5 +1,5 @@
 import { expect } from 'chai'
-import { ethers } from 'hardhat'
+import { ethers, network } from 'hardhat'
 import { SignerWithAddress } from '@nomicfoundation/hardhat-ethers/signers'
 import {
     CONFIG_ID,
@@ -55,6 +55,9 @@ describe('➡️ DiamondCutManager Tests', () => {
 
     async function validateConfiguration(configId: string) {
         for (let configVersion = 1; configVersion <= 1; configVersion++) {
+            if (network.name != 'hardhat') {
+                await delay({ time: 700, unit: 'ms' })
+            }
             await validateFacets(configId, configVersion)
         }
     }
@@ -73,6 +76,9 @@ describe('➡️ DiamondCutManager Tests', () => {
         const facetAddresses: string[] = []
 
         for (const facet of facets) {
+            if (network.name != 'hardhat') {
+                await delay({ time: 700, unit: 'ms' })
+            }
             facetIds.push(facet.id)
             facetAddresses.push(facet.addr)
             await validateFacetDetails(configId, configVersion, facet)
@@ -134,6 +140,9 @@ describe('➡️ DiamondCutManager Tests', () => {
         selectorsLength: bigint
     ) {
         for (let selectorIndex = 0; selectorIndex < selectorsLength; selectorIndex++) {
+            if (network.name != 'hardhat') {
+                await delay({ time: 700, unit: 'ms' })
+            }
             const selectorId = facet.selectors[selectorIndex]
 
             const id = await diamondCutManager.getFacetIdByConfigurationIdVersionAndSelector(
@@ -155,6 +164,9 @@ describe('➡️ DiamondCutManager Tests', () => {
 
     async function validateInterfaces(configId: string, configVersion: number, facet: IDiamondLoupe.FacetStructOutput) {
         for (const interfaceId of facet.interfaceIds) {
+            if (network.name != 'hardhat') {
+                await delay({ time: 700, unit: 'ms' })
+            }
             const interfaceExists = await diamondCutManager.resolveSupportsInterface(
                 configId,
                 configVersion,
@@ -214,7 +226,6 @@ describe('➡️ DiamondCutManager Tests', () => {
             CONFIG_ID.reserve,
             CONFIG_ID.stableCoinFactory,
         ])
-
         for (const configId of configIds) {
             const configLatestVersion = await diamondCutManager.getLatestVersionByConfiguration(configId)
             expect(configLatestVersion).to.equal(1n)
@@ -342,7 +353,9 @@ describe('➡️ DiamondCutManager Tests', () => {
         })
 
         await expectRevert({
-            txPromise: diamondCutManager.createConfiguration(CONFIG_ID.stableCoin, facetConfigurations),
+            txPromise: diamondCutManager.createConfiguration(CONFIG_ID.stableCoin, facetConfigurations, {
+              gasLimit: GAS_LIMIT.diamondCutManager.createConfiguration
+            }),
             contract: diamondCutManager,
             customError: 'DuplicatedFacetInConfiguration'
         })
@@ -458,7 +471,9 @@ describe('➡️ DiamondCutManager Tests', () => {
             })
         })
         await expectRevert({
-            txPromise: diamondCutManager.createBatchConfiguration(CONFIG_ID.stableCoin, facetConfigurations, false),
+            txPromise: diamondCutManager.createBatchConfiguration(CONFIG_ID.stableCoin, facetConfigurations, false, {
+              gasLimit: GAS_LIMIT.diamondCutManager.createBatchConfiguration,
+            }),
             contract: diamondCutManager,
             customError: 'DuplicatedFacetInConfiguration'
         })

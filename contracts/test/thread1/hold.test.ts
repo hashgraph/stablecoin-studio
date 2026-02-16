@@ -11,6 +11,7 @@ import {
     CashInFacet,
     CashInFacet__factory,
     StableCoinTokenMock__factory,
+    IHRC__factory,
 } from '@contracts'
 import {
     DEFAULT_TOKEN,
@@ -531,17 +532,27 @@ describe('➡️ Hold Management Tests', () => {
             await setInitialData({})
         })
         it('GIVEN hold with no destination WHEN executeHold THEN transaction succeeds', async () => {
+            const associateResponse = await IHRC__factory.connect(tokenAddress, nonOperator).associate({
+                gasLimit: GAS_LIMIT.hederaTokenManager.associate,
+            })
+            await validateTxResponse(new ValidateTxResponseCommand({ txResponse: associateResponse }))
+
             const balance_before = await hederaTokenManagerFacet.balanceOf(account_nonOperator)
-            await expect(holdManagementFacet.createHold(hold)).to.emit(holdManagementFacet, 'HoldCreated')
-            await delay({ time: 1, unit: 'sec' })
+            await expect(
+                holdManagementFacet.createHold(hold, {
+                  gasLimit: GAS_LIMIT.hold.createHold,
+                }
+            )).to.emit(holdManagementFacet, 'HoldCreated')
+            await delay({ time: 2, unit: 'sec' })
             holdManagementFacet = holdManagementFacet.connect(nonOperator)
+
             await expect(
                 holdManagementFacet.executeHold(holdIdentifier, account_nonOperator, _AMOUNT, {
                     gasLimit: GAS_LIMIT.hold.executeHold,
                 })
-            )
-                .to.emit(holdManagementFacet, 'HoldExecuted')
-                .withArgs(account_Operator, 1, _AMOUNT, account_nonOperator)
+            ).to.emit(holdManagementFacet, 'HoldExecuted')
+             .withArgs(account_Operator, 1, _AMOUNT, account_nonOperator)
+
             await checkCreatedHold_expected(
                 tokensToMint - _AMOUNT,
                 0n,

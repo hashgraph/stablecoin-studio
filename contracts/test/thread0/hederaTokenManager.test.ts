@@ -66,7 +66,7 @@ describe('➡️ HederaTokenManager Tests', function () {
 
     before(async () => {
         // mute | mock console.log
-        //console.log = () => {} // eslint-disable-line
+        console.log = () => {} // eslint-disable-line
         console.info(MESSAGES.deploy.info.deployFullInfrastructureInTests)
         const [operatorSigner, nonOperatorSigner] = await ethers.getSigners()
         operator = await getFullWalletFromSigner(operatorSigner)
@@ -140,7 +140,8 @@ describe('➡️ HederaTokenManager Tests', function () {
         })
     })
 
-    it.only('Admin can update token', async function () {
+    it('Admin can update token', async function () {
+        hederaTokenManagerFacet = hederaTokenManagerFacet.connect(operator)
         const operatorPublicKey = await getAccountPublicKey(operator)
         const keys = tokenKeysToKey(new TokenKeysToKeyCommand({ publicKey: operatorPublicKey, addKyc: false }))
         const updateTokenStruct = {
@@ -152,12 +153,12 @@ describe('➡️ HederaTokenManager Tests', function () {
             tokenMetadataURI: 'newMemo',
         } as IHederaTokenManager.UpdateTokenStructStructOutput
 
-        hederaTokenManagerFacet = hederaTokenManagerFacet.connect(operator)
-        await expect(
-            hederaTokenManagerFacet.updateToken(updateTokenStruct, {
-                gasLimit: GAS_LIMIT.hederaTokenManager.updateToken,
-            })
-        ).to.emit(hederaTokenManagerFacet, 'TokenUpdated')
+        const response = await hederaTokenManagerFacet.updateToken(updateTokenStruct, {
+            gasLimit: GAS_LIMIT.hederaTokenManager.updateToken,
+        })
+        await validateTxResponse(
+            new ValidateTxResponseCommand({ txResponse: response, confirmationEvent: 'TokenUpdated' })
+        )
 
         const newMetadata = await hederaTokenManagerFacet.getMetadata({
             gasLimit: GAS_LIMIT.hederaTokenManager.getMetadata,
@@ -165,11 +166,12 @@ describe('➡️ HederaTokenManager Tests', function () {
         expect(newMetadata).to.equal('newMemo')
 
         // Update back to initial values
-        await expect(
-            hederaTokenManagerFacet.updateToken(DEFAULT_UPDATE_TOKEN_STRUCT, {
-                gasLimit: GAS_LIMIT.hederaTokenManager.updateToken,
-            })
-        ).to.emit(hederaTokenManagerFacet, 'TokenUpdated')
+        const defaultResponse = await hederaTokenManagerFacet.updateToken(DEFAULT_UPDATE_TOKEN_STRUCT, {
+            gasLimit: GAS_LIMIT.hederaTokenManager.updateToken,
+        })
+        await validateTxResponse(
+            new ValidateTxResponseCommand({ txResponse: defaultResponse, confirmationEvent: 'TokenUpdated' })
+        )
     })
 
     it('Admin and supply token keys cannot be updated', async function () {
@@ -211,13 +213,12 @@ describe('➡️ HederaTokenManager Tests', function () {
         })
         expect(initialTotalSupply).to.equal(afterErrorTotalSupply)
 
-        await expect(
-            cashInFacet.mint(operator.address, ONE_TOKEN, {
-                gasLimit: GAS_LIMIT.hederaTokenManager.mint,
-            })
+        const goodMintResponse = await cashInFacet.mint(operator.address, ONE_TOKEN, {
+            gasLimit: GAS_LIMIT.hederaTokenManager.mint,
+        })
+        await validateTxResponse(
+            new ValidateTxResponseCommand({ txResponse: goodMintResponse, confirmationEvent: 'TokensMinted' })
         )
-            .to.emit(cashInFacet, 'TokensMinted')
-            .withArgs(operator.address, tokenAddress, ONE_TOKEN, operator.address)
 
         await delay({ time: 500, unit: 'ms' })
         expect(
@@ -226,13 +227,12 @@ describe('➡️ HederaTokenManager Tests', function () {
             })
         ).to.equal(initialTotalSupply + ONE_TOKEN)
 
-        await expect(
-            wipeFacet.wipe(operator.address, ONE_TOKEN, {
-                gasLimit: GAS_LIMIT.hederaTokenManager.wipe,
-            })
+        const goodWipeResponse = await wipeFacet.wipe(operator.address, ONE_TOKEN, {
+            gasLimit: GAS_LIMIT.hederaTokenManager.wipe,
+        })
+        await validateTxResponse(
+            new ValidateTxResponseCommand({ txResponse: goodWipeResponse, confirmationEvent: 'TokensWiped' })
         )
-            .to.emit(wipeFacet, 'TokensWiped')
-            .withArgs(operator.address, tokenAddress, operator.address, ONE_TOKEN)
 
         await delay({ time: 500, unit: 'ms' })
         expect(

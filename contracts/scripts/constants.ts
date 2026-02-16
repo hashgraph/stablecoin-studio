@@ -176,6 +176,7 @@ export const GAS_LIMIT = {
     },
     diamondCutManager: {
         createConfiguration: 140_000n,
+        createBatchConfiguration: 140_000n,
     },
     diamondFacet: {
         deploy: 3_500_000n,
@@ -185,9 +186,9 @@ export const GAS_LIMIT = {
     },
     hold: {
         facetDeploy: 6_000_000n,
-        createHold: 150_000n,
-        createHoldByController: 150_000n,
-        executeHold: 1_000_000n,
+        createHold: 650_000n,
+        createHoldByController: 350_000n,
+        executeHold: 1_500_000n,
         releaseHold: 500_000n,
         reclaimHold: 400_000n,
     },

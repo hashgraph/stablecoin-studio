@@ -26,7 +26,7 @@ const hardhatConfig: HardhatUserConfig = {
         [NETWORK_LIST.name[0]]: {
             chainId: NETWORK_LIST.chainId[0],
             hardfork: DEFAULT_EVM_VERSION,
-            blockGasLimit: GAS_LIMIT.max,
+            blockGasLimit: GAS_LIMIT.max
             // * Forking (not working when precompiled contracts are used)
             // accounts: configuration.privateKeys.testnet.map((key) => ({
             //     privateKey: key,
@@ -87,7 +87,7 @@ const hardhatConfig: HardhatUserConfig = {
         target: 'ethers-v6',
     },
     mocha: {
-        timeout: 600000,
+        timeout: 800000,
     },
 }
 
