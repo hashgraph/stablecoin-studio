@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: BSD-3-Clause-Attribution
 
-pragma solidity 0.8.18;
+pragma solidity 0.8.24;
 
 // solhint-disable no-unused-import
 // solhint-disable no-empty-blocks

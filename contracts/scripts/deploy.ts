@@ -171,6 +171,7 @@ export async function deployFullInfrastructure({
         signer,
         useDeployed,
     })
+
     const { deployer, ...deployedContractList } = await deployScsContractList(deployCommand)
 
     // * Check if BusinessLogicResolver is deployed correctly
@@ -438,7 +439,6 @@ export async function deployScsContractList({
     }
 
     // Deploy contracts sequentially
-
     const deployedContracts: DeployScsContractListResult = new DeployScsContractListResult({
         businessLogicResolver: await deployContract(deployCommands.businessLogicResolver).then((result) => {
             console.log('✓ BusinessLogicResolver has been deployed successfully', result.address)
@@ -644,7 +644,7 @@ async function _deployContractWithTup<
         name: 'ProxyAdmin',
         factory: new ProxyAdmin__factory(),
         signer,
-        args: undefined,
+        args: [await signer.getAddress()],
         overrides: {
             gasLimit: GAS_LIMIT.proxyAdmin.deploy,
         },

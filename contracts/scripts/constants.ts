@@ -80,9 +80,9 @@ export const GAS_LIMIT = {
         businessLogicResolver: 8_000_000,
     },
     hederaTokenManager: {
-        deploy: 5_000_000n,
+        deploy: 6_000_000n,
         facetDeploy: 5_500_000n,
-        initialize: 60_000n,
+        initialize: 2_000_000n,
         associate: 800_000n,
         dissociate: 800_000n,
         grantKyc: 90_000n,
@@ -103,7 +103,7 @@ export const GAS_LIMIT = {
         mint: 200_000n,
         freeze: 90_000n,
         unfreeze: 80_000n,
-        updateToken: 170_000n,
+        updateToken: 250_000n,
         pause: 80_000n,
         unpause: 80_000n,
         rescue: 120_000n,
@@ -146,7 +146,7 @@ export const GAS_LIMIT = {
         upgrade: 200_000n,
     },
     tup: {
-        deploy: 2_000_000n,
+        deploy: 1_500_000n,
         upgrade: 200_000n,
     },
     resolverProxy: {
@@ -170,7 +170,8 @@ export const GAS_LIMIT = {
         createConfiguration: 15_000_000,
     },
     migrationProxy: {
-        deploy: 2_000_000n,
+        deploy: 1_500_000n,
+        initialize: 400_000n,
         upgrade: 200_000n,
     },
     diamondCutManager: {

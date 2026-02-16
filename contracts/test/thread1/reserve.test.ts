@@ -11,6 +11,7 @@ import {
 } from '@contracts'
 import {
     DEFAULT_TOKEN,
+    ROLES,
     delay,
     DeployFullInfrastructureCommand,
     deployStableCoin,
@@ -114,20 +115,37 @@ describe('➡️ Reserve Tests', function () {
     })
 
     it('Set updatedAt threshold fails if set by non Admin', async () => {
-        await expect(reserveFacet.connect(nonOperator).updateUpdatedAtThreshold('1')).to.be.revertedWithCustomError(
+        reserveFacet = reserveFacet.connect(nonOperator)
+        await expect(reserveFacet.updateUpdatedAtThreshold('1')).to.be.revertedWithCustomError(
             reserveFacet,
             'AccountHasNoRole'
         )
     })
 
     it('Get datafeed', async () => {
+        reserveFacet = reserveFacet.connect(operator)
         const datafeed = await reserveFacet.getReserveAddress({
             gasLimit: GAS_LIMIT.hederaTokenManager.getReserveAddress,
         })
         expect(datafeed.toUpperCase()).to.equals(reserveProxyAddress.toUpperCase())
     })
 
+    it('Cannot update datafeed without admin role', async () => {
+        const hederaReserveFacet = await new HederaReserveFacet__factory(operator).deploy({
+            gasLimit: GAS_LIMIT.hederaTokenManager.facetDeploy,
+        })
+        await hederaReserveFacet.waitForDeployment()
+
+        reserveFacet = reserveFacet.connect(nonOperator)
+        await expect (reserveFacet.updateReserveAddress(hederaReserveFacet, {
+            gasLimit: GAS_LIMIT.hederaTokenManager.updateReserveAddress,
+        }))
+            .to.be.revertedWithCustomError(reserveFacet, 'AccountHasNoRole')
+            .withArgs(nonOperator, ROLES.defaultAdmin.hash)
+    })
+
     it('Update datafeed', async () => {
+        reserveFacet = reserveFacet.connect(operator)
         const beforeResult = await reserveFacet.getReserveAmount({
             gasLimit: GAS_LIMIT.hederaTokenManager.getReserveAmount,
         })
