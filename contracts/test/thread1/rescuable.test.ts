@@ -8,6 +8,8 @@ import {
     RescuableFacet,
     RescuableFacet__factory,
     StableCoinTokenMock__factory,
+    RolesFacet,
+    RolesFacet__factory
 } from '@contracts'
 import {
     delay,
@@ -34,6 +36,7 @@ describe('➡️ Rescue Tests', function () {
     let tokenAddress: string
     let hederaTokenManagerFacet: HederaTokenManagerFacet
     let rescuableFacet: RescuableFacet
+    let rolesFacet: RolesFacet
     // Accounts
     let operator: SignerWithAddress
     let nonOperator: SignerWithAddress
@@ -41,6 +44,7 @@ describe('➡️ Rescue Tests', function () {
     async function setFacets(address: string) {
         hederaTokenManagerFacet = HederaTokenManagerFacet__factory.connect(address, operator)
         rescuableFacet = RescuableFacet__factory.connect(address, operator)
+        rolesFacet = RolesFacet__factory.connect(address, operator)
     }
 
     before(async () => {
@@ -77,6 +81,29 @@ describe('➡️ Rescue Tests', function () {
         await new ValidateTxResponseCommand({ txResponse: response }).execute()
     })
 
+    it("Account trying to reentrant rescue reverts", async () => {
+        const amountToRescue = ONE_HBAR
+        // By https://docs.hedera.com/hedera/tutorials/smart-contracts/hscs-workshop/hardhat#tinybars-vs-weibars
+        const amountToRescueInEvm = amountToRescue / WEIBARS_PER_TINYBAR
+
+        const Attacker = await ethers.getContractFactory("ReentrancyAttacker");
+        const attacker = await Attacker.deploy(await rescuableFacet.getAddress(), amountToRescue);
+        await attacker.waitForDeployment();
+
+        await expect(
+            rolesFacet.grantRole(ROLES.rescue.hash, attacker.getAddress(), {
+                gasLimit: GAS_LIMIT.hederaTokenManager.grantRole,
+            })
+        )
+            .to.emit(rolesFacet, 'RoleGranted')
+            .withArgs(ROLES.rescue.hash, attacker.getAddress(), operator.address)
+
+        await expect(
+          attacker.attack()
+        ).to.be.revertedWithCustomError(rescuableFacet, 'HBARRescueError')
+         .withArgs(ONE_HBAR)
+    });
+
     it('Account with RESCUE role can rescue 10 tokens', async function () {
         // Get the initial balance of the token owner and client
         const initialTokenOwnerBalance = await hederaTokenManagerFacet.balanceOf(stableCoinProxyAddress, {
@@ -106,6 +133,16 @@ describe('➡️ Rescue Tests', function () {
 
         expect(finalTokenOwnerBalance.toString()).to.equals(expectedTokenOwnerBalance.toString())
         expect(finalClientBalance.toString()).to.equals(expectedClientBalance.toString())
+    })
+
+    it('Account with RESCUE role cannot rescue zero or less tokens', async function () {
+        await expect(
+            rescuableFacet.rescue(0, {
+                gasLimit: GAS_LIMIT.hederaTokenManager.rescue,
+            })
+        )
+            .to.be.revertedWithCustomError(rescuableFacet, 'NegativeAmount')
+            .withArgs(0)
     })
 
     it('Account with RESCUE role cannot rescue more tokens than the token owner balance', async function () {

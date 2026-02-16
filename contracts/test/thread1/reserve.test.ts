@@ -11,6 +11,7 @@ import {
 } from '@contracts'
 import {
     DEFAULT_TOKEN,
+    ROLES,
     delay,
     DeployFullInfrastructureCommand,
     deployStableCoin,
@@ -136,7 +137,22 @@ describe('➡️ Reserve Tests', function () {
         expect(datafeed.toUpperCase()).to.equals(reserveProxyAddress.toUpperCase())
     })
 
+    it('Cannot update datafeed without admin role', async () => {
+        const hederaReserveFacet = await new HederaReserveFacet__factory(operator).deploy({
+            gasLimit: GAS_LIMIT.hederaTokenManager.facetDeploy,
+        })
+        await hederaReserveFacet.waitForDeployment()
+
+        reserveFacet = reserveFacet.connect(nonOperator)
+        await expect (reserveFacet.updateReserveAddress(hederaReserveFacet, {
+            gasLimit: GAS_LIMIT.hederaTokenManager.updateReserveAddress,
+        }))
+            .to.be.revertedWithCustomError(reserveFacet, 'AccountHasNoRole')
+            .withArgs(nonOperator, ROLES.defaultAdmin.hash)
+    })
+
     it('Update datafeed', async () => {
+        reserveFacet = reserveFacet.connect(operator)
         const beforeResult = await reserveFacet.getReserveAmount({
             gasLimit: GAS_LIMIT.hederaTokenManager.getReserveAmount,
         })

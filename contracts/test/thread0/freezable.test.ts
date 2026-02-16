@@ -8,13 +8,8 @@ import {
     FreezableFacet__factory,
     StableCoinTokenMock__factory,
 } from '@contracts'
-import { DeployFullInfrastructureCommand, MESSAGES, ROLES, ONE_TOKEN } from '@scripts'
-import {
-  deployStableCoinInTests,
-  deployFullInfrastructureInTests,
-  expectRevert,
-  GAS_LIMIT
-} from '@test/shared'
+import { DeployFullInfrastructureCommand, MESSAGES, ROLES, ONE_TOKEN, ADDRESS_ZERO } from '@scripts'
+import { deployStableCoinInTests, deployFullInfrastructureInTests, expectRevert, GAS_LIMIT } from '@test/shared'
 
 describe('➡️ Freeze Tests', function () {
     const ACCOUNT_FROZEN_FOR_TOKEN = 165
@@ -70,6 +65,28 @@ describe('➡️ Freeze Tests', function () {
         })
     })
 
+    it("Account with FREEZE role can't freeze address zero account", async function () {
+        freezableFacet = freezableFacet.connect(operator)
+        await expect(
+            freezableFacet.freeze(ADDRESS_ZERO, {
+                gasLimit: GAS_LIMIT.hederaTokenManager.freeze,
+            })
+        )
+            .to.be.revertedWithCustomError(freezableFacet, 'AddressZero')
+            .withArgs(ADDRESS_ZERO)
+    })
+
+    it("Account with FREEZE role can't unfreeze address zero account", async function () {
+        freezableFacet = freezableFacet.connect(operator)
+        await expect(
+            freezableFacet.unfreeze(ADDRESS_ZERO, {
+                gasLimit: GAS_LIMIT.hederaTokenManager.unfreeze,
+            })
+        )
+            .to.be.revertedWithCustomError(freezableFacet, 'AddressZero')
+            .withArgs(ADDRESS_ZERO)
+    })
+
     it("Account with FREEZE role can freeze and unfreeze transfers of the token for the account + Account without FREEZE role can't unfreeze transfers of the token for the account", async function () {
         // Should be able to mint tokens before freezing
         await expect(
@@ -81,7 +98,6 @@ describe('➡️ Freeze Tests', function () {
             .withArgs(operator.address, tokenAddress, ONE_TOKEN, operator.address)
 
         // Freeze transfers
-        freezableFacet = freezableFacet.connect(operator)
         await expect(
             freezableFacet.freeze(operator.address, {
                 gasLimit: GAS_LIMIT.hederaTokenManager.freeze,
