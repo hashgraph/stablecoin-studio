@@ -57,34 +57,12 @@ When configuring the SDK, CLI, or Web DApp, use the addresses corresponding to y
 
 ---
 
-## Where to Configure These Addresses
+## Configuration
 
-### SDK
+Each module needs the factory and resolver addresses. See the corresponding quick start guide for full setup details:
 
-Set in `sdk/.env`:
-
-```env
-FACTORY_ADDRESS=0.0.XXXX
-```
-
-### CLI
-
-Set in `cli/hsca-config.yaml`:
-
-```yaml
-factories:
-  - id: 0.0.XXXX
-    network: testnet
-resolvers:
-  - id: 0.0.XXXX
-    network: testnet
-```
-
-### Web DApp
-
-Set in `web/.env`:
-
-```env
-REACT_APP_FACTORIES='[{"Environment":"testnet","STABLE_COIN_FACTORY_ADDRESS":"0.0.XXXX"}]'
-REACT_APP_RESOLVERS='[{"Environment":"testnet","STABLE_COIN_RESOLVER_ADDRESS":"0.0.XXXX"}]'
-```
+| Module | Config file | Guide |
+| :--- | :--- | :--- |
+| **Web DApp** | `web/.env` | [Web Quick Start](/scs/web/quick-start) |
+| **CLI** | `cli/hsca-config.yaml` | [CLI Quick Start](/scs/client/quick-start) |
+| **SDK** | `sdk/.env` | [SDK Quick Start](/scs/sdk/quick-start) |
