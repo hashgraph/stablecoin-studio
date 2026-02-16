@@ -97,22 +97,40 @@ describe('➡️ BusinessLogicResolver Tests', () => {
 
         it('GIVEN an empty registry WHEN getting data THEN responds empty values or BusinessLogicVersionDoesNotExist', async () => {
             expect(await businessLogicResolver.getLatestVersion(BUSINESS_LOGIC_KEYS[0].businessLogicKey)).is.equal(0)
-            await expect(
-                businessLogicResolver.getVersionStatus(BUSINESS_LOGIC_KEYS[0].businessLogicKey, 0)
-            ).to.be.revertedWithCustomError(businessLogicResolver, 'BusinessLogicVersionDoesNotExist')
+            // ProviderError: [Request ID: 6fa86a8d-2014-4a25-9b8c-a97fea97bceb] execution reverted: CONTRACT_REVERT_EXECUTED
+            await expectRevert({
+                txPromise: businessLogicResolver.getVersionStatus(BUSINESS_LOGIC_KEYS[0].businessLogicKey, 0, {
+                    gasLimit: GAS_LIMIT.businessLogicResolver.getVersionStatus,
+                }),
+                contract: businessLogicResolver,
+                customError: 'BusinessLogicVersionDoesNotExist'
+            })
+            // -----------------------------------------
             expect(await businessLogicResolver.getLatestVersion(BUSINESS_LOGIC_KEYS[1].businessLogicKey)).is.equal(0)
-            await expect(
-                businessLogicResolver.getVersionStatus(BUSINESS_LOGIC_KEYS[1].businessLogicKey, 0)
-            ).to.be.revertedWithCustomError(businessLogicResolver, 'BusinessLogicVersionDoesNotExist')
+            await expectRevert({
+                txPromise: businessLogicResolver.getVersionStatus(BUSINESS_LOGIC_KEYS[1].businessLogicKey, 0, {
+                    gasLimit: GAS_LIMIT.businessLogicResolver.getVersionStatus,
+                }),
+                contract: businessLogicResolver,
+                customError: 'BusinessLogicVersionDoesNotExist'
+            })
             expect(
                 await businessLogicResolver.resolveLatestBusinessLogic(BUSINESS_LOGIC_KEYS[0].businessLogicKey)
             ).is.equal(ADDRESS_ZERO)
-            await expect(
-                businessLogicResolver.resolveBusinessLogicByVersion(BUSINESS_LOGIC_KEYS[0].businessLogicKey, 0)
-            ).to.be.revertedWithCustomError(businessLogicResolver, 'BusinessLogicVersionDoesNotExist')
-            await expect(
-                businessLogicResolver.resolveBusinessLogicByVersion(BUSINESS_LOGIC_KEYS[0].businessLogicKey, 1)
-            ).to.be.revertedWithCustomError(businessLogicResolver, 'BusinessLogicVersionDoesNotExist')
+            await expectRevert({
+                txPromise: businessLogicResolver.getVersionStatus(BUSINESS_LOGIC_KEYS[0].businessLogicKey, 0, {
+                    gasLimit: GAS_LIMIT.businessLogicResolver.getVersionStatus,
+                }),
+                contract: businessLogicResolver,
+                customError: 'BusinessLogicVersionDoesNotExist'
+            })
+            await expectRevert({
+                txPromise: businessLogicResolver.getVersionStatus(BUSINESS_LOGIC_KEYS[0].businessLogicKey, 1, {
+                    gasLimit: GAS_LIMIT.businessLogicResolver.getVersionStatus,
+                }),
+                contract: businessLogicResolver,
+                customError: 'BusinessLogicVersionDoesNotExist'
+            })
             expect(await businessLogicResolver.getBusinessLogicCount()).is.equal(0)
             expect(await businessLogicResolver.getBusinessLogicKeys(1, 10)).is.deep.equal([])
         })
@@ -135,11 +153,13 @@ describe('➡️ BusinessLogicResolver Tests', () => {
         })
 
         it('GIVEN an empty key WHEN registerBusinessLogics without business logics THEN Fails with EmptyBusinessLogicList', async () => {
-            await expect(
-                businessLogicResolver.registerBusinessLogics([], {
+            await expectRevert({
+                txPromise: businessLogicResolver.registerBusinessLogics([], {
                     gasLimit: GAS_LIMIT.businessLogicResolver.registerBusinessLogics,
-                })
-            ).to.be.revertedWithCustomError(businessLogicResolver, 'EmptyBusinessLogicList')
+                }),
+                contract: businessLogicResolver,
+                customError: 'EmptyBusinessLogicList'
+            })
         })
 
         it('GIVEN an duplicated key WHEN registerBusinessLogics THEN Fails with BusinessLogicKeyDuplicated', async () => {
@@ -167,11 +187,13 @@ describe('➡️ BusinessLogicResolver Tests', () => {
         })
 
         it('GIVEN a list of logics WHEN registerBusinessLogics with zero address THEN Fails with ZeroAddressNotValidForBusinessLogic', async () => {
-            await expect(
-                businessLogicResolver.registerBusinessLogics([BUSINESS_LOGIC_KEYS[4]], {
-                  gasLimit: GAS_LIMIT.businessLogicResolver.registerBusinessLogics,
-                })
-            ).to.be.revertedWithCustomError(businessLogicResolver, 'ZeroAddressNotValidForBusinessLogic')
+            await expectRevert({
+                txPromise: businessLogicResolver.registerBusinessLogics([BUSINESS_LOGIC_KEYS[4]], {
+                    gasLimit: GAS_LIMIT.businessLogicResolver.registerBusinessLogics,
+                }),
+                contract: businessLogicResolver,
+                customError: 'ZeroAddressNotValidForBusinessLogic'
+            })
         })
 
         it('GIVEN an empty registry WHEN registerBusinessLogics THEN queries responds with correct values', async () => {
@@ -306,10 +328,16 @@ describe('➡️ BusinessLogicResolver Tests', () => {
 
             // Using nonOperator (non role)
             businessLogicResolver = businessLogicResolver.connect(nonOperator)
-            await expect (businessLogicResolver.addSelectorsToBlacklist(
-              CONFIG_ID.stableCoin, blackListedSelectors
-            )).to.be.revertedWithCustomError(businessLogicResolver, 'AccountHasNoRole')
-              .withArgs(nonOperator.address, ROLES.defaultAdmin.hash)
+            await expectRevert({
+                txPromise: businessLogicResolver.addSelectorsToBlacklist(
+                    CONFIG_ID.stableCoin, blackListedSelectors, {
+                      gasLimit: GAS_LIMIT.businessLogicResolver.registerBusinessLogics,
+                    }
+                ),
+                contract: businessLogicResolver,
+                customError: 'AccountHasNoRole',
+                args: [nonOperator.address, ROLES.defaultAdmin.hash]
+            })
         })
         it('GIVEN a configuration WHEN an account without admin role tries to remove a selector to the blacklist THEN Fails with AccountHasNoRole', async () => {
             const blackListedSelectors = ['0x8456cb59'] // pause() selector
@@ -321,10 +349,16 @@ describe('➡️ BusinessLogicResolver Tests', () => {
             // Using nonOperator (non role)
             businessLogicResolver = businessLogicResolver.connect(nonOperator)
 
-            await expect (businessLogicResolver.removeSelectorsFromBlacklist(
-              CONFIG_ID.stableCoin, blackListedSelectors
-            )).to.be.revertedWithCustomError(businessLogicResolver, 'AccountHasNoRole')
-              .withArgs(nonOperator.address, ROLES.defaultAdmin.hash)
+            await expectRevert({
+                txPromise: businessLogicResolver.removeSelectorsFromBlacklist(
+                    CONFIG_ID.stableCoin, blackListedSelectors, {
+                      gasLimit: GAS_LIMIT.businessLogicResolver.registerBusinessLogics,
+                    }
+                ),
+                contract: businessLogicResolver,
+                customError: 'AccountHasNoRole',
+                args: [nonOperator.address, ROLES.defaultAdmin.hash]
+            })
         })
         it('GIVEN a configuration WHEN adding a selector to the blacklist THEN queries respond with correct values', async () => {
             const blackListedSelectors = ['0x8456cb59'] // pause() selector

@@ -159,6 +159,7 @@ export const GAS_LIMIT = {
         setAdmin: 1_800_000n,
         setAmount: 60_000n,
         // Read
+        roundData: 60_000n,
         latestRoundData: 60_000n,
         decimals: 60_000n,
         description: 60_000n,
@@ -166,9 +167,12 @@ export const GAS_LIMIT = {
     },
     businessLogicResolver: {
         deploy: 9_000_000n,
-        getStaticResolverKey: 60_000,
-        registerBusinessLogics: 7_800_000,
-        createConfiguration: 15_000_000,
+        getVersionStatus: 60_000n,
+        getStaticResolverKey: 60_000n,
+        registerBusinessLogics: 7_800_000n,
+        createConfiguration: 15_000_000n,
+        addSelectorsToBlacklist: 150_000n,
+        removeSelectorsFromBlacklist: 150_000n,
     },
     migrationProxy: {
         deploy: 1_500_000n,
@@ -178,6 +182,8 @@ export const GAS_LIMIT = {
     diamondCutManager: {
         createConfiguration: 140_000n,
         createBatchConfiguration: 140_000n,
+        cancelBatchConfiguration: 140_000n,
+        checkResolverProxyConfigurationRegistered: 150_000n
     },
     diamondFacet: {
         deploy: 3_500_000n,
@@ -192,6 +198,7 @@ export const GAS_LIMIT = {
         executeHold: 1_500_000n,
         releaseHold: 500_000n,
         reclaimHold: 400_000n,
+        getHoldFor: 150_000n
     },
 }
 

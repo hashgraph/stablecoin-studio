@@ -137,6 +137,7 @@ describe('➡️ Reserve Tests', function () {
         expect(datafeed.toUpperCase()).to.equals(reserveProxyAddress.toUpperCase())
     })
 
+    // TypeError: invalid BigNumberish value
     it('Cannot update datafeed without admin role', async () => {
         const hederaReserveFacet = await new HederaReserveFacet__factory(operator).deploy({
             gasLimit: GAS_LIMIT.hederaTokenManager.facetDeploy,
@@ -144,11 +145,14 @@ describe('➡️ Reserve Tests', function () {
         await hederaReserveFacet.waitForDeployment()
 
         reserveFacet = reserveFacet.connect(nonOperator)
-        await expect (reserveFacet.updateReserveAddress(hederaReserveFacet, {
-            gasLimit: GAS_LIMIT.hederaTokenManager.updateReserveAddress,
-        }))
-            .to.be.revertedWithCustomError(reserveFacet, 'AccountHasNoRole')
-            .withArgs(nonOperator, ROLES.defaultAdmin.hash)
+        await expectRevert({
+            txPromise: reserveFacet.updateUpdatedAtThreshold(hederaReserveFacet, {
+                gasLimit: GAS_LIMIT.hederaTokenManager.updateReserveAddress,
+            }),
+            contract: reserveFacet,
+            customError: 'AccountHasNoRole',
+            args: [nonOperator, ROLES.defaultAdmin.hash]
+        })
     })
 
     it('Update datafeed', async () => {

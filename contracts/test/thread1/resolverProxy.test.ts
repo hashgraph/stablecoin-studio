@@ -239,18 +239,24 @@ describe('➡️ ResolverProxy Tests', () => {
 
     it('GIVEN deployed facets WHEN deploy a new resolverProxy with an address zero BLR THEN fails with ResolverAddressIsZero', async () => {
         const ResolverProxyFactory = await ethers.getContractFactory('ResolverProxy')
-        await expect (ResolverProxyFactory.deploy(
-          ADDRESS_ZERO, CONFIG_ID, 1, [],
-          { gasLimit: GAS_LIMIT.resolverProxy.deploy }
-        )).to.be.revertedWithCustomError(ResolverProxyFactory, 'ResolverAddressIsZero')
+        await expectRevert({
+            txPromise: ResolverProxyFactory.deploy(ADDRESS_ZERO, CONFIG_ID, 1, [], {
+                gasLimit: GAS_LIMIT.resolverProxy.deploy
+            }),
+            contract: ResolverProxyFactory,
+            customError: 'ResolverAddressIsZero'
+        })
     })
 
     it('GIVEN deployed facets WHEN deploy a new resolverProxy with resolver proxy configuration id is 0 THEN fails with ConfigurationIdIsZero', async () => {
         const ResolverProxyFactory = await ethers.getContractFactory('ResolverProxy')
-        await expect (ResolverProxyFactory.deploy(
-          await resolver.getAddress(), NO_CONFIG_ID, 1, [],
-          { gasLimit: GAS_LIMIT.resolverProxy.deploy }
-        )).to.be.revertedWithCustomError(ResolverProxyFactory, 'ConfigurationIdIsZero')
+        await expectRevert({
+            txPromise: ResolverProxyFactory.deploy(await resolver.getAddress(), NO_CONFIG_ID, 1, [], {
+                gasLimit: GAS_LIMIT.resolverProxy.deploy
+            }),
+            contract: ResolverProxyFactory,
+            customError: 'ConfigurationIdIsZero'
+        })
     })
 
     it('GIVEN a diamond loupe facet deployed WHEN calling to external get functions THEN properly information is obtained', async () => {

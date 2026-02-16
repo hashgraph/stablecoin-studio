@@ -112,13 +112,14 @@ describe('HederaTokenManager Tests Before Deploying Full Infrastructure', functi
           hederaTokenManagerContract.proxyAddress!, operator
         )
 
-        await expect(
-            hederaTokenManager.initialize({...init, originalSender: ADDRESS_ZERO}, {
+        await expectRevert({
+            txPromise: hederaTokenManager.initialize({...init, originalSender: ADDRESS_ZERO}, {
                 gasLimit: GAS_LIMIT.hederaTokenManager.initialize,
-            })
-        )
-            .to.be.revertedWithCustomError(hederaTokenManager, 'AddressZero')
-            .withArgs(ADDRESS_ZERO)
+            }),
+            contract: hederaTokenManager,
+            customError: 'AddressZero',
+            args: [ADDRESS_ZERO],
+        })
     })
 
     it('Cannot initialize with a token metadata uri longer than 100 characters', async function () {
@@ -137,16 +138,14 @@ describe('HederaTokenManager Tests Before Deploying Full Infrastructure', functi
         )
 
         const longMetadata = 'X'.repeat(101)
-        await expect(
-            hederaTokenManager.initialize({
-              ...init,
-              tokenMetadataURI: longMetadata
-            }, {
+        await expectRevert({
+            txPromise: hederaTokenManager.initialize({...init, tokenMetadataURI: longMetadata}, {
                 gasLimit: GAS_LIMIT.hederaTokenManager.initialize,
-            })
-        )
-            .to.be.revertedWithCustomError(hederaTokenManager, 'MoreThan100Error')
-            .withArgs(longMetadata)
+            }),
+            contract: hederaTokenManager,
+            customError: 'MoreThan100Error',
+            args: [longMetadata],
+        })
     })
 
     it('Cannot initialize when cash in role allowance is 0', async function () {
@@ -164,18 +163,18 @@ describe('HederaTokenManager Tests Before Deploying Full Infrastructure', functi
           hederaTokenManagerContract.proxyAddress!, operator
         )
 
-        await expect(
-            hederaTokenManager.initialize({
+        await expectRevert({
+            txPromise: hederaTokenManager.initialize({
               ...init,
               cashinRole: {
-                account: '0x7777777777777777777777777777777777777777',
-                allowance: 0,
-              }
-            }, {
+              account: '0x7777777777777777777777777777777777777777',
+              allowance: 0,
+            }}, {
                 gasLimit: GAS_LIMIT.hederaTokenManager.initialize,
-            })
-        )
-            .to.be.revertedWithCustomError(hederaTokenManager, 'AmountIsZero')
+            }),
+            contract: hederaTokenManager,
+            customError: 'AmountIsZero'
+        })
     });
 
     it('Can initialize granting limited supplier role', async function () {
@@ -255,16 +254,17 @@ describe('HederaTokenManager Tests Before Deploying Full Infrastructure', functi
             })
         )
 
-        await expect(
-            hederaTokenManager.initialize({
+        await expectRevert({
+            txPromise: hederaTokenManager.initialize({
               ...init,
               originalSender: revertingReceiverContract.address
             }, {
                 gasLimit: GAS_LIMIT.hederaTokenManager.initialize,
-            })
-        )
-            .to.be.revertedWithCustomError(hederaTokenManager, 'RefundingError')
-            .withArgs(balance)
+            }),
+            contract: hederaTokenManager,
+            customError: 'RefundingError',
+            args: [balance],
+        })
     });
 
     it('Can initialize granting unlimited supplier role', async function () {
@@ -519,11 +519,13 @@ describe('➡️ HederaTokenManager Tests', function () {
             tokenMetadataURI: DEFAULT_TOKEN.memo,
         } as IHederaTokenManager.UpdateTokenStructStructOutput
 
-        await expect(
-            hederaTokenManagerFacet.updateToken(updateTokenStruct, {
+        await expectRevert({
+            txPromise: hederaTokenManagerFacet.updateToken(updateTokenStruct, {
                 gasLimit: GAS_LIMIT.hederaTokenManager.updateToken,
-            })
-        ).to.be.revertedWithCustomError(hederaTokenManagerFacet, 'SupplyKeyUpdateError')
+            }),
+            contract: hederaTokenManagerFacet,
+            customError: 'SupplyKeyUpdateError'
+        })
     })
 
     it('Admin can update token with new expiry', async function () {

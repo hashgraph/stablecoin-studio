@@ -98,10 +98,12 @@ describe('➡️ Rescue Tests', function () {
             .to.emit(rolesFacet, 'RoleGranted')
             .withArgs(ROLES.rescue.hash, attacker.getAddress(), operator.address)
 
-        await expect(
-          attacker.attack()
-        ).to.be.revertedWithCustomError(rescuableFacet, 'HBARRescueError')
-         .withArgs(ONE_HBAR)
+        await expectRevert({
+            txPromise: attacker.attack({gasLimit: GAS_LIMIT.high}),
+            contract: rescuableFacet,
+            customError: 'HBARRescueError',
+            args: [ONE_HBAR]
+        })
     });
 
     it('Account with RESCUE role can rescue 10 tokens', async function () {
@@ -136,13 +138,14 @@ describe('➡️ Rescue Tests', function () {
     })
 
     it('Account with RESCUE role cannot rescue zero or less tokens', async function () {
-        await expect(
-            rescuableFacet.rescue(0, {
+        await expectRevert({
+            txPromise: rescuableFacet.rescue(0, {
                 gasLimit: GAS_LIMIT.hederaTokenManager.rescue,
-            })
-        )
-            .to.be.revertedWithCustomError(rescuableFacet, 'NegativeAmount')
-            .withArgs(0)
+            }),
+            contract: rescuableFacet,
+            customError: 'NegativeAmount',
+            args: [0]
+        })
     })
 
     it('Account with RESCUE role cannot rescue more tokens than the token owner balance', async function () {

@@ -67,24 +67,26 @@ describe('➡️ Freeze Tests', function () {
 
     it("Account with FREEZE role can't freeze address zero account", async function () {
         freezableFacet = freezableFacet.connect(operator)
-        await expect(
-            freezableFacet.freeze(ADDRESS_ZERO, {
+        await expectRevert({
+            txPromise: freezableFacet.freeze(ADDRESS_ZERO, {
                 gasLimit: GAS_LIMIT.hederaTokenManager.freeze,
-            })
-        )
-            .to.be.revertedWithCustomError(freezableFacet, 'AddressZero')
-            .withArgs(ADDRESS_ZERO)
+            }),
+            contract: freezableFacet,
+            customError: 'AddressZero',
+            args: [ADDRESS_ZERO]
+        })
     })
 
     it("Account with FREEZE role can't unfreeze address zero account", async function () {
         freezableFacet = freezableFacet.connect(operator)
-        await expect(
-            freezableFacet.unfreeze(ADDRESS_ZERO, {
-                gasLimit: GAS_LIMIT.hederaTokenManager.unfreeze,
-            })
-        )
-            .to.be.revertedWithCustomError(freezableFacet, 'AddressZero')
-            .withArgs(ADDRESS_ZERO)
+        await expectRevert({
+            txPromise: freezableFacet.unfreeze(ADDRESS_ZERO, {
+                gasLimit: GAS_LIMIT.hederaTokenManager.freeze,
+            }),
+            contract: freezableFacet,
+            customError: 'AddressZero',
+            args: [ADDRESS_ZERO]
+        })
     })
 
     it("Account with FREEZE role can freeze and unfreeze transfers of the token for the account + Account without FREEZE role can't unfreeze transfers of the token for the account", async function () {

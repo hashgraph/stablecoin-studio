@@ -46,13 +46,14 @@ describe('HederaReserve Tests Before Deploying Full Infrastructure', function ()
           hederaReserveContract.proxyAddress!, operator
         )
 
-        await expect(
-            hederaReserve.initialize(reserve, ADDRESS_ZERO, {
+        await expectRevert({
+            txPromise: hederaReserve.initialize(reserve, ADDRESS_ZERO, {
                 gasLimit: GAS_LIMIT.hederaReserve.initialize,
-            })
-        )
-            .to.be.revertedWithCustomError(hederaReserve, 'AddressZero')
-            .withArgs(ADDRESS_ZERO)
+            }),
+            contract: hederaReserve,
+            customError: 'AddressZero',
+            args: [ADDRESS_ZERO]
+        })
     })
 })
 
@@ -105,13 +106,14 @@ describe('HederaReserve Tests', function () {
     it('Cannot update admin with zero address', async function () {
         const ONE = 1
 
-        await expect(
-            hederaReserveFacet.setAdmin(ADDRESS_ZERO, {
+        await expectRevert({
+            txPromise: hederaReserveFacet.setAdmin(ADDRESS_ZERO, {
                 gasLimit: GAS_LIMIT.hederaReserve.setAdmin,
-            })
-        )
-            .to.be.revertedWithCustomError(hederaReserveFacet, 'AddressZero')
-            .withArgs(ADDRESS_ZERO)
+            }),
+            contract: hederaReserveFacet,
+            customError: 'AddressZero',
+            args: [ADDRESS_ZERO]
+        })
     })
 
     it('Update admin address', async function () {
@@ -258,7 +260,12 @@ describe('HederaReserve Tests', function () {
     })
 
     it('Get round data is not implemented', async function () {
-        await expect(hederaReserveFacet.getRoundData(1))
-          .to.be.revertedWithCustomError(hederaReserveFacet, 'NotImplemented')
+        await expectRevert({
+            txPromise: hederaReserveFacet.getRoundData(1, {
+                gasLimit: GAS_LIMIT.hederaReserve.roundData,
+            }),
+            contract: hederaReserveFacet,
+            customError: 'NotImplemented'
+        })
     })
 })
