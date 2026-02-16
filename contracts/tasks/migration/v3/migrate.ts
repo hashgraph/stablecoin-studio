@@ -50,17 +50,13 @@ task('migrateBLRToV3', 'Migrate a v2 business logic resolver to v3')
             )
         }
 
-        const previous_impl = await BLRProxyAdmin.getProxyImplementation(blrproxyaddress)
-
         console.log(`Upgrade BLR proxy implementation on ${network} ...`)
 
-        const upgradeTx = await BLRProxyAdmin.upgrade(blrproxyaddress, businessLogicResolverAddress, {
+        const upgradeTx = await BLRProxyAdmin.upgradeAndCall(blrproxyaddress, businessLogicResolverAddress, "0x", {
             gasLimit: GAS_LIMIT.tup.upgrade,
         })
 
         const receipt = await upgradeTx.wait()
-
-        const new_impl = await BLRProxyAdmin.getProxyImplementation(blrproxyaddress)
 
         if (!receipt) {
             throw new TransactionReceiptError({
@@ -100,9 +96,6 @@ task('migrateBLRToV3', 'Migrate a v2 business logic resolver to v3')
         console.log('Creating configurations for deployed contract business logics in BLR...')
 
         await createConfigurationsForDeployedContracts(false, createCommand)
-
-        console.log(`\n BLR Previous implementation : ${previous_impl}`)
-        console.log(`\n BLR New implementation : ${new_impl}`)
     })
 
 /**

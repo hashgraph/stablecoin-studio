@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: MIT
-pragma solidity 0.8.18;
+pragma solidity 0.8.24;
 
 import {IDiamondLoupe} from '../resolverProxy/IDiamondLoupe.sol';
 
@@ -55,9 +55,6 @@ interface IDiamondCutManager {
 
     /// @notice error that occurs when try to add a selector and the selector is blacklisted
     error SelectorBlacklisted(bytes4 selector);
-
-    /// @notice error that occurs when trying to assign an already assigned selector to a new facet address
-    error SelectorAlreadyRegistered(address firstAddress, address secondAddress);
 
     /// @notice error that occurs when defining a configuration with an empty facet array list
     error EmptyConfiguration();

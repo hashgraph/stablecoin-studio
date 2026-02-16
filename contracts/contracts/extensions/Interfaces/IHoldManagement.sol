@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: MIT
-pragma solidity 0.8.18;
+pragma solidity 0.8.24;
 
 interface IHoldManagement {
     /// @notice Thrown when provided expiration time is invalid
@@ -34,16 +34,6 @@ interface IHoldManagement {
     /// @param expected The expected destination address
     /// @param provided The provided destination address
     error InvalidDestination(address expected, address provided);
-
-    /// @notice Thrown when unable to add a hold to the list
-    /// @param tokenHolder The address of the token holder
-    /// @param holdId The id of the hold
-    error ErrorAddingHold(address tokenHolder, uint256 holdId);
-
-    /// @notice Thrown when unable to remove a hold from the list
-    /// @param tokenHolder The address of the token holder
-    /// @param holdId The id of the hold
-    error ErrorRemovingHold(address tokenHolder, uint256 holdId);
 
     // ----- Structs -----
 

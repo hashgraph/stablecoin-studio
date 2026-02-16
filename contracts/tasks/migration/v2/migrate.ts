@@ -19,6 +19,7 @@ task('migrateStableCoinToV2', 'Migrate a v1 stable coin to v2')
     .addParam('stablecoinaddress', 'The address of current stablecoin proxy', undefined, types.string)
     .addParam('stablecoinproxyadminaddress', 'The address of current stablecoin proxy admin', undefined, types.string)
     .setAction(async (args, hre) => {
+        const ERC1967_IMPLEMENTATION_SLOT = "0x360894a13ba1a3210667c828492db98dca3e2076cc3735a920a3ca505d382bbc"
         // Inlined to avoid circular dependency
         const { MigrationProxy__factory, ProxyAdmin__factory } = await import('@contracts/index')
         const { deployContract, DeployContractCommand, GAS_LIMIT, TransactionReceiptError } = await import('@scripts')
@@ -72,15 +73,12 @@ task('migrateStableCoinToV2', 'Migrate a v1 stable coin to v2')
             [],
         ])
 
-        const previous_impl = await proxyAdmin.getProxyImplementation(stablecoinaddress)
-
         const upgradeTx = await proxyAdmin.upgradeAndCall(stablecoinaddress, migrationProxy.address, inputData, {
             gasLimit: GAS_LIMIT.migrationProxy.upgrade,
         })
 
         const receipt = await upgradeTx.wait()
 
-        const new_impl = await proxyAdmin.getProxyImplementation(stablecoinaddress)
         if (!receipt) {
             throw new TransactionReceiptError({
                 errorMessage: `Transaction ${upgradeTx.hash} was not mined`,
@@ -97,6 +95,4 @@ task('migrateStableCoinToV2', 'Migrate a v1 stable coin to v2')
 
         // Display migration results
         console.log('\n 🟢 Stable Coin migrated successfully')
-        console.log(`\n Previous implementation : ${previous_impl}`)
-        console.log(`\n New implementation : ${new_impl}`)
     })

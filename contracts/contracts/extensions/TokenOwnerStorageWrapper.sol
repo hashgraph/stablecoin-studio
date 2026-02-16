@@ -1,10 +1,10 @@
 // SPDX-License-Identifier: MIT
-pragma solidity 0.8.18;
+pragma solidity 0.8.24;
 
 import {Common} from '../core/Common.sol';
 // solhint-disable-next-line max-line-length
-import {IERC20MetadataUpgradeable} from '@openzeppelin/contracts-upgradeable/token/ERC20/extensions/IERC20MetadataUpgradeable.sol';
-import {IERC20Upgradeable} from '@openzeppelin/contracts-upgradeable/token/ERC20/IERC20Upgradeable.sol';
+import {IERC20Metadata} from '@openzeppelin/contracts/token/ERC20/extensions/IERC20Metadata.sol';
+import {IERC20} from '@openzeppelin/contracts/token/ERC20/IERC20.sol';
 // solhint-disable-next-line max-line-length
 import {IHederaTokenService} from '@hashgraph/smart-contracts/contracts/system-contracts/hedera-token-service/IHederaTokenService.sol';
 import {SafeCast} from '@openzeppelin/contracts/utils/math/SafeCast.sol';
@@ -52,7 +52,7 @@ abstract contract TokenOwnerStorageWrapper is Common {
      *
      */
     function _totalSupply() internal view returns (uint256) {
-        return IERC20Upgradeable(_tokenOwnerStorage().tokenAddress).totalSupply();
+        return IERC20(_tokenOwnerStorage().tokenAddress).totalSupply();
     }
 
     /**
@@ -60,7 +60,7 @@ abstract contract TokenOwnerStorageWrapper is Common {
      *
      */
     function _decimals() internal view returns (uint8) {
-        return IERC20MetadataUpgradeable(_tokenOwnerStorage().tokenAddress).decimals();
+        return IERC20Metadata(_tokenOwnerStorage().tokenAddress).decimals();
     }
 
     /**
@@ -69,7 +69,7 @@ abstract contract TokenOwnerStorageWrapper is Common {
      * @param account The address of the account to be consulted
      */
     function _balanceOf(address account) internal view returns (uint256) {
-        return IERC20Upgradeable(_getTokenAddress()).balanceOf(account);
+        return IERC20(_getTokenAddress()).balanceOf(account);
     }
 
     /**
@@ -81,7 +81,7 @@ abstract contract TokenOwnerStorageWrapper is Common {
     function _transfer(
         address to,
         int64 amount
-    ) internal valueIsNotGreaterThan(uint256(SafeCast.toUint256(amount)), _balanceOf(address(this)), true) {
+    ) internal {
         if (to != address(this)) {
             address currentTokenAddress = _getTokenAddress();
 

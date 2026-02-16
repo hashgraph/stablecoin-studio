@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: Apache-2.0
 // solhint-disable one-contract-per-file
-pragma solidity 0.8.18;
+pragma solidity 0.8.24;
 
 import {HederaResponseCodes} from '@hashgraph/smart-contracts/contracts/system-contracts/hedera-token-service/HederaTokenService.sol';
 import {IHederaTokenService} from '@hashgraph/smart-contracts/contracts/system-contracts/hedera-token-service/IHederaTokenService.sol';
@@ -76,6 +76,7 @@ contract PrecompiledMockStorageWrapper {
     bool private tokenKyc;
     mapping(address account => bool kyc) private kyc;
     mapping(address account => bool frozen) private frozen;
+    uint256 internal anyAccountBalance;
 
     function _createFungibleToken(
         IHederaTokenService.HederaToken memory token,
@@ -83,7 +84,14 @@ contract PrecompiledMockStorageWrapper {
         int32 decimals
     ) internal returns (int64 responseCode, address tokenAddress) {
         tokenKyc = _hasKycKey(token);
-        tokenAddress = address(new StableCoinTokenMock(token, initialTotalSupply, decimals));
+        tokenAddress = address(
+            new StableCoinTokenMock(
+                token,
+                initialTotalSupply,
+                decimals,
+                anyAccountBalance
+            )
+        );
         hederaToken = tokenAddress;
         deleted = false;
         return (HederaResponseCodes.SUCCESS, tokenAddress);
@@ -227,6 +235,11 @@ contract PrecompiledMockStorageWrapper {
 }
 
 contract PrecompiledMock is IPrecompiledMock, PrecompiledMockStorageWrapper {
+
+    constructor(uint256 _anyAccountBalance) {
+        anyAccountBalance = _anyAccountBalance;
+    }
+
     function createFungibleToken(
         IHederaTokenService.HederaToken memory token,
         int64 initialTotalSupply,

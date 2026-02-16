@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: MIT
-pragma solidity 0.8.18;
+pragma solidity 0.8.24;
 
 // solhint-disable max-line-length
 import {IHoldManagement} from './Interfaces/IHoldManagement.sol';
@@ -130,7 +130,7 @@ contract HoldManagementFacet is
         hasContractWipeKey
         validExpiration(_hold.expirationTimestamp)
         addressIsNotZero(_hold.escrow)
-        amountIsNotNegative(_hold.amount, false)
+        greaterThanZero(_hold.amount)
         returns (bool success_, uint256 holdId_)
     {
         (success_, holdId_) = _createHoldInternal(msg.sender, _hold, '');
@@ -157,7 +157,7 @@ contract HoldManagementFacet is
         addressIsNotZero(_hold.escrow)
         addressIsNotZero(_from)
         onlyRole(_HOLD_CREATOR_ROLE)
-        amountIsNotNegative(_hold.amount, false)
+        greaterThanZero(_hold.amount)
         returns (bool success_, uint256 holdId_)
     {
         (success_, holdId_) = _createHoldInternal(_from, _hold, _operatorData);
@@ -203,7 +203,7 @@ contract HoldManagementFacet is
     )
         external
         validHold(_holdIdentifier)
-        amountIsNotNegative(int256(_amount), false)
+        greaterThanZero(int256(_amount))
         validAmount(
             _holdDataStorage().holdsByAccountAndId[_holdIdentifier.tokenHolder][_holdIdentifier.holdId].amount,
             _amount
@@ -359,9 +359,9 @@ contract HoldManagementFacet is
             data: hold.data,
             operatorData: operatorData
         });
-        if (!holdDataStorage.holdIdsByAccount[tokenHolder].add(holdId)) {
-            revert ErrorAddingHold(tokenHolder, holdId);
-        }
+        bool added = holdDataStorage.holdIdsByAccount[tokenHolder].add(holdId);
+        assert (added == true);
+
         holdDataStorage.totalHeldAmount += hold.amount;
         holdDataStorage.totalHeldAmountByAccount[tokenHolder] += hold.amount;
     }
@@ -381,9 +381,8 @@ contract HoldManagementFacet is
         holdDataStorage.totalHeldAmountByAccount[tokenHolder] -= amount;
 
         if (hold.amount == 0) {
-            if (!holdDataStorage.holdIdsByAccount[tokenHolder].remove(holdId)) {
-                revert ErrorRemovingHold(tokenHolder, holdId);
-            }
+            bool removed = holdDataStorage.holdIdsByAccount[tokenHolder].remove(holdId);
+            assert (removed == true);
             delete holdDataStorage.holdsByAccountAndId[tokenHolder][holdId];
         }
     }
