@@ -141,7 +141,8 @@
 			"axios": "<rootDir>/../node_modules/axios/dist/node/axios.cjs",
 			"blade": "<rootDir>/src/mocks/blade-sdk-mock.js",
 			"hedera-wallet-connect": "<rootDir>/src/mocks/hedera-wallet-connect-sdk-mock.js",
-			"fireblocks-sdk": "<rootDir>/src/mocks/fireblocks-sdk-mock.js"
+			"fireblocks-sdk": "<rootDir>/src/mocks/fireblocks-sdk-mock.js",
+			"@reown/appkit": "<rootDir>/src/mocks/appkit-mock.js"
 		},
 		"transform": {
 			"^.+\\.ts?$": "ts-jest",
