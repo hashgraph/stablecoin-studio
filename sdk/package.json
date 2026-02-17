@@ -75,6 +75,7 @@
 		"@hashgraph/cryptography": "1.4.3",
 		"@hashgraph/hedera-custodians-integration": "^1.4.1",
 		"@hashgraph/hedera-wallet-connect": "2.0.3",
+		"@hashgraph/proto": "2.25.0",
 		"@reown/appkit": "1.8.9",
 		"@reown/appkit-adapter-ethers": "1.8.4",
 		"@reown/appkit-core": "1.8.4",
