@@ -18,14 +18,27 @@
  *
  */
 
-import TransactionResponse from '../../../domain/context/transaction/TransactionResponse';
-import StableCoinCapabilities from '../../../domain/context/stablecoin/StableCoinCapabilities';
-import { HederaId } from '../../../domain/context/shared/HederaId';
-import LogService from '../../../app/service/LogService';
-import { SigningError } from '../hs/error/SigningError';
-import { TransactionHelpers } from './TransactionHelpers';
-import type { BaseHederaTransactionAdapter } from '../BaseHederaTransactionAdapter';
-import { TransactionType } from '../TransactionResponseEnums';
+import TransactionResponse from '../../../../domain/context/transaction/TransactionResponse';
+import StableCoinCapabilities from '../../../../domain/context/stablecoin/StableCoinCapabilities';
+import { HederaId } from '../../../../domain/context/shared/HederaId';
+import LogService from '../../../../app/service/LogService';
+import { SigningError } from '../../hs/error/SigningError';
+import { ethers } from 'ethers';
+import {
+	RolesFacet__factory,
+	HederaTokenManagerFacet__factory,
+	SupplierAdminFacet__factory,
+} from '@hashgraph/stablecoin-npm-contracts';
+import {
+	HAS_ROLE_GAS,
+	GET_ROLES_GAS,
+	BALANCE_OF_GAS,
+	IS_UNLIMITED_ALLOWANCE_GAS,
+	GET_SUPPLY_ALLOWANCE_GAS,
+} from '../../../../core/Constants';
+import type { BaseHederaTransactionAdapter } from '../../hs/BaseHederaTransactionAdapter';
+import { StableCoinRole } from '../../../../domain/context/stablecoin/StableCoinRole';
+import { TransactionType } from '../../TransactionResponseEnums';
 
 /**
  * Query operations: hasRole, getRoles, balanceOf, supplierAllowance, isUnlimitedSupplierAllowance
@@ -36,7 +49,7 @@ export class QueryOperations {
 	async hasRole(
 		coin: StableCoinCapabilities,
 		targetId: HederaId,
-		role: any,
+		role: StableCoinRole,
 	): Promise<TransactionResponse> {
 		try {
 			const targetEvm = await this.adapter.getEVMAddress(targetId);
@@ -47,12 +60,13 @@ export class QueryOperations {
 				);
 			}
 
-			return await (this.adapter as any).executeContractCall(
+			const iface = new ethers.Interface(RolesFacet__factory.abi);
+			return await this.adapter.executeContractCall(
 				contractId,
-				TransactionHelpers.getFacetInterface('RolesFacet'),
+				iface,
 				'hasRole',
 				[role, targetEvm],
-				TransactionHelpers.getGasLimit('HAS_ROLE'),
+				HAS_ROLE_GAS,
 				TransactionType.RECORD,
 				undefined,
 				undefined,
@@ -77,12 +91,13 @@ export class QueryOperations {
 				);
 			}
 
-			return await (this.adapter as any).executeContractCall(
+			const iface = new ethers.Interface(RolesFacet__factory.abi);
+			return await this.adapter.executeContractCall(
 				contractId,
-				TransactionHelpers.getFacetInterface('RolesFacet'),
+				iface,
 				'getRoles',
 				[targetEvm],
-				TransactionHelpers.getGasLimit('GET_ROLES'),
+				GET_ROLES_GAS,
 				TransactionType.RECORD,
 				undefined,
 				undefined,
@@ -107,12 +122,15 @@ export class QueryOperations {
 				);
 			}
 
-			return await (this.adapter as any).executeContractCall(
+			const iface = new ethers.Interface(
+				HederaTokenManagerFacet__factory.abi,
+			);
+			return await this.adapter.executeContractCall(
 				contractId,
-				TransactionHelpers.getFacetInterface('HederaTokenManagerFacet'),
+				iface,
 				'balanceOf',
 				[targetEvm],
-				TransactionHelpers.getGasLimit('BALANCE_OF'),
+				BALANCE_OF_GAS,
 				TransactionType.RECORD,
 				undefined,
 				undefined,
@@ -137,12 +155,13 @@ export class QueryOperations {
 				);
 			}
 
-			return await (this.adapter as any).executeContractCall(
+			const iface = new ethers.Interface(SupplierAdminFacet__factory.abi);
+			return await this.adapter.executeContractCall(
 				contractId,
-				TransactionHelpers.getFacetInterface('SupplierAdminFacet'),
+				iface,
 				'isUnlimitedSupplierAllowance',
 				[targetEvm],
-				TransactionHelpers.getGasLimit('IS_UNLIMITED_ALLOWANCE'),
+				IS_UNLIMITED_ALLOWANCE_GAS,
 				TransactionType.RECORD,
 				undefined,
 				undefined,
@@ -169,12 +188,13 @@ export class QueryOperations {
 				);
 			}
 
-			return await (this.adapter as any).executeContractCall(
+			const iface = new ethers.Interface(SupplierAdminFacet__factory.abi);
+			return await this.adapter.executeContractCall(
 				contractId,
-				TransactionHelpers.getFacetInterface('SupplierAdminFacet'),
+				iface,
 				'getSupplierAllowance',
 				[targetEvm],
-				TransactionHelpers.getGasLimit('GET_SUPPLY_ALLOWANCE'),
+				GET_SUPPLY_ALLOWANCE_GAS,
 				TransactionType.RECORD,
 				undefined,
 				undefined,

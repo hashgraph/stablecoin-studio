@@ -26,9 +26,9 @@ import { SupportedWallets } from '../../domain/context/network/Wallet.js';
 import RPCTransactionAdapter from '../../port/out/rpc/RPCTransactionAdapter.js';
 import TransactionAdapter from '../../port/out/TransactionAdapter.js';
 import Service from './Service.js';
-import { FireblocksTransactionAdapter } from '../../port/out/custodial/FireblocksTransactionAdapter';
-import { DFNSTransactionAdapter } from '../../port/out/custodial/DFNSTransactionAdapter';
-import { MultiSigTransactionAdapter } from '../../port/out/multisig/MultiSigTransactionAdapter.js';
+import { FireblocksTransactionAdapter } from '../../port/out/hs/custodial/FireblocksTransactionAdapter';
+import { DFNSTransactionAdapter } from '../../port/out/hs/custodial/DFNSTransactionAdapter';
+import { MultiSigTransactionAdapter } from '../../port/out/hs/multiSig/MultiSigTransactionAdapter.js';
 import {
 	ContractExecuteTransaction,
 	CustomFixedFee,
@@ -53,13 +53,13 @@ import { MirrorNodeAdapter } from '../../port/out/mirror/MirrorNodeAdapter.js';
 import { HederaTokenManagerFacet__factory } from '@hashgraph/stablecoin-npm-contracts';
 import { ethers } from 'ethers';
 import Hex from '../../core/Hex.js';
-import { AWSKMSTransactionAdapter } from '../../port/out/custodial/AWSKMSTransactionAdapter';
-import { HederaWalletConnectTransactionAdapter } from '../../port/out/walletconnect/HederaWalletConnectTransactionAdapter.js';
+import { AWSKMSTransactionAdapter } from '../../port/out/hs/custodial/AWSKMSTransactionAdapter';
+import { HederaWalletConnectTransactionAdapter } from '../../port/out/hs/walletconnect/HederaWalletConnectTransactionAdapter.js';
 import TransactionResponse from '../../domain/context/transaction/TransactionResponse';
 import { Response } from '../../domain/context/transaction/Response';
 import { EmptyResponse } from './error/EmptyResponse.js';
 import { InvalidResponse } from '../../port/out/mirror/error/InvalidResponse.js';
-import { ClientTransactionAdapter } from '../../port/out/client/ClientTransactionAdapter.js';
+import { ClientTransactionAdapter } from '../../port/out/hs/client/ClientTransactionAdapter.js';
 
 export const EVM_ADDRESS_REGEX = /0x[a-fA-F0-9]{40}$/;
 

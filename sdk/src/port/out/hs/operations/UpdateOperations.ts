@@ -18,14 +18,34 @@
  *
  */
 
-import TransactionResponse from '../../../domain/context/transaction/TransactionResponse';
-import StableCoinCapabilities from '../../../domain/context/stablecoin/StableCoinCapabilities';
-import { CapabilityDecider } from '../CapabilityDecider';
-import { Operation } from '../../../domain/context/stablecoin/Capability';
-import LogService from '../../../app/service/LogService';
-import { SigningError } from '../hs/error/SigningError';
-import { TransactionHelpers } from './TransactionHelpers';
-import type { BaseHederaTransactionAdapter } from '../BaseHederaTransactionAdapter';
+import TransactionResponse from '../../../../domain/context/transaction/TransactionResponse';
+import StableCoinCapabilities from '../../../../domain/context/stablecoin/StableCoinCapabilities';
+import LogService from '../../../../app/service/LogService';
+import { SigningError } from '../../hs/error/SigningError';
+import { ethers } from 'ethers';
+import {
+	HederaTokenManagerFacet__factory,
+	CustomFeesFacet__factory,
+	DiamondFacet__factory,
+} from '@hashgraph/stablecoin-npm-contracts';
+import {
+	UPDATE_TOKEN_GAS,
+	UPDATE_CUSTOM_FEES_GAS,
+	UPDATE_CONFIG_VERSION_GAS,
+	UPDATE_CONFIG_GAS,
+	UPDATE_RESOLVER_GAS,
+	EVM_ZERO_ADDRESS,
+} from '../../../../core/Constants';
+import { CustomFee as HCustomFee } from '@hiero-ledger/sdk/lib/exports';
+import {
+	fromHCustomFeeToSCFee,
+	SC_FixedFee,
+	SC_FractionalFee,
+} from '../../../../domain/context/fee/CustomFee';
+import type { BaseHederaTransactionAdapter } from '../../hs/BaseHederaTransactionAdapter';
+import PublicKey from '../../../../domain/context/account/PublicKey';
+import ContractId from '../../../../domain/context/contract/ContractId';
+import { MirrorNodeAdapter } from '../../mirror/MirrorNodeAdapter';
 
 /**
  * Update operations: update, updateCustomFees, updateConfigVersion, updateConfig, updateResolver
@@ -39,17 +59,15 @@ export class UpdateOperations {
 		symbol?: string,
 		autoRenewPeriod?: number,
 		expirationTime?: number,
-		kycKey?: any,
-		freezeKey?: any,
-		feeScheduleKey?: any,
-		pauseKey?: any,
-		wipeKey?: any,
+		kycKey?: PublicKey,
+		freezeKey?: PublicKey,
+		feeScheduleKey?: PublicKey,
+		pauseKey?: PublicKey,
+		wipeKey?: PublicKey,
 		metadata?: string,
 		startDate?: string,
 	): Promise<TransactionResponse> {
 		try {
-			CapabilityDecider.checkContractOperation(coin, Operation.UPDATE);
-
 			const contractId = coin.coin.proxyAddress?.value;
 			const evmAddress = coin.coin.evmProxyAddress?.value;
 			if (!contractId) {
@@ -81,16 +99,17 @@ export class UpdateOperations {
 				tokenMetadataURI: metadata ?? '',
 			};
 
-			const iface = (this.adapter as any).getFacetInterface(
-				'HederaTokenManagerFacet',
+			const iface = new ethers.Interface(
+				HederaTokenManagerFacet__factory.abi,
 			);
 			const params = [updateTokenStruct];
-			return await (this.adapter as any).executeContractCall(
+			return await this.adapter.executeContractCall(
 				contractId,
 				iface,
 				'updateToken',
 				params,
-				TransactionHelpers.getGasLimit('UPDATE_TOKEN'),
+				UPDATE_TOKEN_GAS,
+				undefined,
 				undefined,
 				startDate,
 				evmAddress,
@@ -103,15 +122,10 @@ export class UpdateOperations {
 
 	async updateCustomFees(
 		coin: StableCoinCapabilities,
-		customFees: any[],
+		customFees: HCustomFee[],
 		startDate?: string,
 	): Promise<TransactionResponse> {
 		try {
-			CapabilityDecider.checkContractOperation(
-				coin,
-				Operation.CREATE_CUSTOM_FEE,
-			);
-
 			const contractId = coin.coin.proxyAddress?.value;
 			const evmAddress = coin.coin.evmProxyAddress?.value;
 			if (!contractId) {
@@ -120,23 +134,21 @@ export class UpdateOperations {
 				);
 			}
 
-			const { fixedFees, fractionalFees } =
-				await TransactionHelpers.prepareCustomFees(
-					coin,
-					customFees,
-					this.adapter.getMirrorNodeAdapter(),
-				);
-
-			const iface = (this.adapter as any).getFacetInterface(
-				'CustomFeesFacet',
+			const { fixedFees, fractionalFees } = await this.prepareCustomFees(
+				coin,
+				customFees,
+				this.adapter.getMirrorNodeAdapter(),
 			);
+
+			const iface = new ethers.Interface(CustomFeesFacet__factory.abi);
 			const params = [fixedFees, fractionalFees];
-			return await (this.adapter as any).executeContractCall(
+			return await this.adapter.executeContractCall(
 				contractId,
 				iface,
 				'updateTokenCustomFees',
 				params,
-				TransactionHelpers.getGasLimit('UPDATE_CUSTOM_FEES'),
+				UPDATE_CUSTOM_FEES_GAS,
+				undefined,
 				undefined,
 				startDate,
 				evmAddress,
@@ -155,11 +167,6 @@ export class UpdateOperations {
 		startDate?: string,
 	): Promise<TransactionResponse> {
 		try {
-			CapabilityDecider.checkContractOperation(
-				coin,
-				Operation.UPDATE_CONFIG_VERSION,
-			);
-
 			const contractId = coin.coin.proxyAddress?.value;
 			const evmAddress = coin.coin.evmProxyAddress?.value;
 			if (!contractId) {
@@ -168,16 +175,14 @@ export class UpdateOperations {
 				);
 			}
 
-			const iface = (this.adapter as any).getFacetInterface(
-				'DiamondFacet',
-			);
+			const iface = new ethers.Interface(DiamondFacet__factory.abi);
 			const params = [configVersion];
-			return await (this.adapter as any).executeContractCall(
+			return await this.adapter.executeContractCall(
 				contractId,
 				iface,
 				'updateConfigVersion',
 				params,
-				TransactionHelpers.getGasLimit('UPDATE_CONFIG_VERSION'),
+				UPDATE_CONFIG_VERSION_GAS,
 				undefined,
 				startDate,
 				evmAddress,
@@ -197,11 +202,6 @@ export class UpdateOperations {
 		startDate?: string,
 	): Promise<TransactionResponse> {
 		try {
-			CapabilityDecider.checkContractOperation(
-				coin,
-				Operation.UPDATE_CONFIG,
-			);
-
 			const contractId = coin.coin.proxyAddress?.value;
 			const evmAddress = coin.coin.evmProxyAddress?.value;
 			if (!contractId) {
@@ -210,16 +210,15 @@ export class UpdateOperations {
 				);
 			}
 
-			const iface = (this.adapter as any).getFacetInterface(
-				'DiamondFacet',
-			);
+			const iface = new ethers.Interface(DiamondFacet__factory.abi);
 			const params = [configId, configVersion];
-			return await (this.adapter as any).executeContractCall(
+			return await this.adapter.executeContractCall(
 				contractId,
 				iface,
 				'updateConfig',
 				params,
-				TransactionHelpers.getGasLimit('UPDATE_CONFIG'),
+				UPDATE_CONFIG_GAS,
+				undefined,
 				undefined,
 				startDate,
 				evmAddress,
@@ -234,17 +233,12 @@ export class UpdateOperations {
 
 	async updateResolver(
 		coin: StableCoinCapabilities,
-		resolver: any,
+		resolver: ContractId,
 		configVersion: number,
 		configId: string,
 		startDate?: string,
 	): Promise<TransactionResponse> {
 		try {
-			CapabilityDecider.checkContractOperation(
-				coin,
-				Operation.UPDATE_RESOLVER,
-			);
-
 			const contractId = coin.coin.proxyAddress?.value;
 			const evmAddress = coin.coin.evmProxyAddress?.value;
 			if (!contractId) {
@@ -255,16 +249,15 @@ export class UpdateOperations {
 
 			const resolverEvm = await this.adapter.getEVMAddress(resolver);
 
-			const iface = (this.adapter as any).getFacetInterface(
-				'DiamondFacet',
-			);
-			const params = [resolverEvm, configVersion, configId];
-			return await (this.adapter as any).executeContractCall(
+			const iface = new ethers.Interface(DiamondFacet__factory.abi);
+			const params = [resolverEvm, configId, configVersion];
+			return await this.adapter.executeContractCall(
 				contractId,
 				iface,
 				'updateResolver',
 				params,
-				TransactionHelpers.getGasLimit('UPDATE_RESOLVER'),
+				UPDATE_RESOLVER_GAS,
+				undefined,
 				undefined,
 				startDate,
 				evmAddress,
@@ -275,5 +268,37 @@ export class UpdateOperations {
 				`Unexpected error in updateResolver(): ${error}`,
 			);
 		}
+	}
+
+	private async prepareCustomFees(
+		coin: StableCoinCapabilities,
+		customFees: HCustomFee[],
+		mirrorNodeAdapter: MirrorNodeAdapter,
+	): Promise<{
+		fixedFees: SC_FixedFee[];
+		fractionalFees: SC_FractionalFee[];
+	}> {
+		const fixedFees: SC_FixedFee[] = [];
+		const fractionalFees: SC_FractionalFee[] = [];
+
+		for (const cf of customFees) {
+			const feeCollector = cf.feeCollectorAccountId
+				? (
+						await mirrorNodeAdapter.getAccountInfo(
+							cf.feeCollectorAccountId.toString(),
+						)
+				  ).accountEvmAddress ?? EVM_ZERO_ADDRESS
+				: EVM_ZERO_ADDRESS;
+
+			const scFee = fromHCustomFeeToSCFee(
+				cf,
+				coin.coin.tokenId?.toString() ?? '',
+				feeCollector,
+			);
+			if (scFee instanceof SC_FixedFee) fixedFees.push(scFee);
+			else fractionalFees.push(scFee as SC_FractionalFee);
+		}
+
+		return { fixedFees, fractionalFees };
 	}
 }

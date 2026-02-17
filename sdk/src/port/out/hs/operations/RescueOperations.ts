@@ -18,15 +18,15 @@
  *
  */
 
-import TransactionResponse from '../../../domain/context/transaction/TransactionResponse';
-import StableCoinCapabilities from '../../../domain/context/stablecoin/StableCoinCapabilities';
-import BigDecimal from '../../../domain/context/shared/BigDecimal';
-import { CapabilityDecider } from '../CapabilityDecider';
-import { Operation } from '../../../domain/context/stablecoin/Capability';
-import LogService from '../../../app/service/LogService';
-import { SigningError } from '../hs/error/SigningError';
-import { TransactionHelpers } from './TransactionHelpers';
-import type { BaseHederaTransactionAdapter } from '../BaseHederaTransactionAdapter';
+import TransactionResponse from '../../../../domain/context/transaction/TransactionResponse';
+import StableCoinCapabilities from '../../../../domain/context/stablecoin/StableCoinCapabilities';
+import BigDecimal from '../../../../domain/context/shared/BigDecimal';
+import LogService from '../../../../app/service/LogService';
+import { SigningError } from '../../hs/error/SigningError';
+import { ethers } from 'ethers';
+import { RescuableFacet__factory } from '@hashgraph/stablecoin-npm-contracts';
+import { RESCUE_GAS, RESCUE_HBAR_GAS } from '../../../../core/Constants';
+import type { BaseHederaTransactionAdapter } from '../../hs/BaseHederaTransactionAdapter';
 
 /**
  * Rescue operations: rescue, rescueHBAR
@@ -40,8 +40,6 @@ export class RescueOperations {
 		startDate?: string,
 	): Promise<TransactionResponse> {
 		try {
-			CapabilityDecider.checkContractOperation(coin, Operation.RESCUE);
-
 			const contractId = coin.coin.proxyAddress?.value;
 			const evmAddress = coin.coin.evmProxyAddress?.value;
 			if (!contractId) {
@@ -50,16 +48,15 @@ export class RescueOperations {
 				);
 			}
 
-			const iface = (this.adapter as any).getFacetInterface(
-				'RescuableFacet',
-			);
+			const iface = new ethers.Interface(RescuableFacet__factory.abi);
 			const params = [amount.toBigInt()];
-			return await (this.adapter as any).executeContractCall(
+			return await this.adapter.executeContractCall(
 				contractId,
 				iface,
 				'rescue',
 				params,
-				TransactionHelpers.getGasLimit('RESCUE'),
+				RESCUE_GAS,
+				undefined,
 				undefined,
 				startDate,
 				evmAddress,
@@ -76,11 +73,6 @@ export class RescueOperations {
 		startDate?: string,
 	): Promise<TransactionResponse> {
 		try {
-			CapabilityDecider.checkContractOperation(
-				coin,
-				Operation.RESCUE_HBAR,
-			);
-
 			const contractId = coin.coin.proxyAddress?.value;
 			const evmAddress = coin.coin.evmProxyAddress?.value;
 			if (!contractId) {
@@ -89,16 +81,15 @@ export class RescueOperations {
 				);
 			}
 
-			const iface = (this.adapter as any).getFacetInterface(
-				'RescuableFacet',
-			);
+			const iface = new ethers.Interface(RescuableFacet__factory.abi);
 			const params = [amount.toBigInt()];
-			return await (this.adapter as any).executeContractCall(
+			return await this.adapter.executeContractCall(
 				contractId,
 				iface,
 				'rescueHBAR',
 				params,
-				TransactionHelpers.getGasLimit('RESCUE_HBAR'),
+				RESCUE_HBAR_GAS,
+				undefined,
 				undefined,
 				startDate,
 				evmAddress,

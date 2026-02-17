@@ -18,7 +18,7 @@
  *
  */
 
-import { ClientTransactionAdapter } from '../../../../../../port/out/client/ClientTransactionAdapter.js';
+import { ClientTransactionAdapter } from '../../../../../../port/out/hs/client/ClientTransactionAdapter.js';
 import LogService from '../../../../../../app/service/LogService.js';
 import Hex from '../../../../../../core/Hex.js';
 import { ICommandHandler } from '../../../../../../core/command/CommandHandler.js';
@@ -26,7 +26,7 @@ import { CommandHandler } from '../../../../../../core/decorator/CommandHandlerD
 import { lazyInject } from '../../../../../../core/decorator/LazyInjectDecorator.js';
 import { BackendAdapter } from '../../../../../../port/out/backend/BackendAdapter.js';
 // import { HashpackTransactionAdapter } from '../../../../../../port/out/hs/hashpack/HashpackTransactionAdapter.js';
-import { HederaWalletConnectTransactionAdapter } from '../../../../../../port/out/walletconnect/HederaWalletConnectTransactionAdapter.js';
+import { HederaWalletConnectTransactionAdapter } from '../../../../../../port/out/hs/walletconnect/HederaWalletConnectTransactionAdapter.js';
 import AccountService from '../../../../../service/AccountService.js';
 import TransactionService from '../../../../../service/TransactionService.js';
 import { SignCommand, SignCommandResponse } from './SignCommand.js';

@@ -173,7 +173,7 @@ const ModalWalletConnect = () => {
 				message: error.message,
 				errorCode: error.errorCode,
 				stack: error.stack,
-				fullError: JSON.stringify(error, null, 2)
+				fullError: JSON.stringify(error, null, 2),
 			});
 
 			if ('errorCode' in error && error.errorCode === '40009') {

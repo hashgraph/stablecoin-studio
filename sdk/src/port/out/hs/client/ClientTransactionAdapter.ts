@@ -24,27 +24,27 @@ import {
 	Client,
 } from '@hiero-ledger/sdk';
 import { singleton } from 'tsyringe';
-import { BaseHederaTransactionAdapter } from '../BaseHederaTransactionAdapter';
-import TransactionResponse from '../../../domain/context/transaction/TransactionResponse.js';
-import { TransactionType } from '../TransactionResponseEnums.js';
-import { HTSTransactionResponseAdapter } from '../response/HTSTransactionResponseAdapter.js';
-import Injectable from '../../../core/Injectable.js';
-import { InitializationData } from '../TransactionAdapter.js';
-import Account from '../../../domain/context/account/Account.js';
-import { Environment } from '../../../domain/context/network/Environment.js';
+import { BaseHederaTransactionAdapter } from '../../hs/BaseHederaTransactionAdapter';
+import TransactionResponse from '../../../../domain/context/transaction/TransactionResponse.js';
+import { TransactionType } from '../../TransactionResponseEnums.js';
+import { HTSTransactionResponseAdapter } from '../../response/HTSTransactionResponseAdapter.js';
+import Injectable from '../../../../core/Injectable.js';
+import { InitializationData } from '../../TransactionAdapter.js';
+import Account from '../../../../domain/context/account/Account.js';
+import { Environment } from '../../../../domain/context/network/Environment.js';
 import {
 	WalletEvents,
 	WalletPairedEvent,
-} from '../../../app/service/event/WalletEvent.js';
-import { SupportedWallets } from '../../in/request/ConnectRequest.js';
-import { lazyInject } from '../../../core/decorator/LazyInjectDecorator.js';
-import { MirrorNodeAdapter } from '../mirror/MirrorNodeAdapter.js';
-import NetworkService from '../../../app/service/NetworkService.js';
-import LogService from '../../../app/service/LogService.js';
-import { WalletConnectError } from '../../../domain/context/network/error/WalletConnectError.js';
-import { SigningError } from '../hs/error/SigningError.js';
-import Hex from '../../../core/Hex.js';
-import EventService from '../../../app/service/event/EventService';
+} from '../../../../app/service/event/WalletEvent.js';
+import { SupportedWallets } from '../../../in/request/ConnectRequest.js';
+import { lazyInject } from '../../../../core/decorator/LazyInjectDecorator.js';
+import { MirrorNodeAdapter } from '../../mirror/MirrorNodeAdapter.js';
+import NetworkService from '../../../../app/service/NetworkService.js';
+import LogService from '../../../../app/service/LogService.js';
+import { WalletConnectError } from '../../../../domain/context/network/error/WalletConnectError.js';
+import { SigningError } from '../../hs/error/SigningError.js';
+import Hex from '../../../../core/Hex.js';
+import EventService from '../../../../app/service/event/EventService';
 
 @singleton()
 export class ClientTransactionAdapter extends BaseHederaTransactionAdapter {
@@ -123,10 +123,11 @@ export class ClientTransactionAdapter extends BaseHederaTransactionAdapter {
 		return Promise.resolve(true);
 	}
 
-	protected async processTransaction(
+	public async processTransaction(
 		tx: Transaction,
 		transactionType: TransactionType,
-		startDate?: string,
+		// eslint-disable-next-line @typescript-eslint/no-unused-vars
+		_startDate?: string,
 	): Promise<TransactionResponse> {
 		console.log('Executing transaction:', tx);
 		const tr: HTransactionResponse = await tx.execute(this.client);
@@ -144,7 +145,7 @@ export class ClientTransactionAdapter extends BaseHederaTransactionAdapter {
 		);
 	}
 
-	protected supportsEvmOperations(): boolean {
+	public supportsEvmOperations(): boolean {
 		return false;
 	}
 
@@ -154,27 +155,6 @@ export class ClientTransactionAdapter extends BaseHederaTransactionAdapter {
 
 	public getMirrorNodeAdapter(): MirrorNodeAdapter {
 		return this.mirrorNodeAdapter;
-	}
-
-	public async signAndSendTransaction(
-		t: Transaction,
-		transactionType: TransactionType,
-		functionName: string,
-		abi: object[],
-	): Promise<TransactionResponse> {
-		const tr: HTransactionResponse = await t.execute(this.client);
-		this.logTransaction(
-			tr.transactionId.toString(),
-			this.networkService.environment,
-		);
-		return HTSTransactionResponseAdapter.manageResponse(
-			this.networkService.environment,
-			tr,
-			transactionType,
-			this.client,
-			functionName,
-			abi,
-		);
 	}
 
 	getAccount(): Account {

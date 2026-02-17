@@ -89,16 +89,16 @@ import { GetAccountTokenRelationshipQueryHandler } from '../app/usecase/query/ac
 import { SDK } from '../port/in/Common.js';
 import { SetConfigurationCommandHandler } from '../app/usecase/command/network/setConfiguration/SetConfigurationCommandHandler.js';
 import { GetAccountsWithRolesQueryHandler } from '../app/usecase/query/stablecoin/roles/getAccountsWithRole/GetAccountsWithRolesQueryHandler.js';
-import { FireblocksTransactionAdapter } from '../port/out/custodial/FireblocksTransactionAdapter.js';
-import { DFNSTransactionAdapter } from '../port/out/custodial/DFNSTransactionAdapter.js';
-import { MultiSigTransactionAdapter } from '../port/out/multisig/MultiSigTransactionAdapter.js';
+import { FireblocksTransactionAdapter } from '../port/out/hs/custodial/FireblocksTransactionAdapter.js';
+import { DFNSTransactionAdapter } from '../port/out/hs/custodial/DFNSTransactionAdapter.js';
+import { MultiSigTransactionAdapter } from '../port/out/hs/multiSig/MultiSigTransactionAdapter.js';
 import { SignCommandHandler } from '../app/usecase/command/stablecoin/backend/sign/SignCommandHandler.js';
 import { SubmitCommandHandler } from '../app/usecase/command/stablecoin/backend/submit/SubmitCommandHandler.js';
 import { RemoveCommandHandler } from '../app/usecase/command/stablecoin/backend/remove/RemoveCommandHandler.js';
 import { SetBackendCommandHandler } from '../app/usecase/command/network/setBackend/SetBackendCommandHandler.js';
 import { GetTransactionsQueryHandler } from '../app/usecase/query/stablecoin/backend/getTransactions/GetTransactionsQueryHandler.js';
-import { AWSKMSTransactionAdapter } from '../port/out/custodial/AWSKMSTransactionAdapter.js';
-import { HederaWalletConnectTransactionAdapter } from '../port/out/walletconnect/HederaWalletConnectTransactionAdapter.js';
+import { AWSKMSTransactionAdapter } from '../port/out/hs/custodial/AWSKMSTransactionAdapter.js';
+import { HederaWalletConnectTransactionAdapter } from '../port/out/hs/walletconnect/HederaWalletConnectTransactionAdapter.js';
 import { GetConfigInfoQueryHandler } from '../app/usecase/query/stablecoin/management/getConfigInfo/GetConfigInfoQueryHandler.js';
 import { UpdateConfigVersionCommandHandler } from '../app/usecase/command/stablecoin/management/updateConfigVersion/updateConfigVersionCommandHandler.js';
 import { UpdateConfigCommandHandler } from '../app/usecase/command/stablecoin/management/updateConfig/updateConfigCommandHandler.js';
@@ -114,7 +114,7 @@ import { GetHeldAmountForQueryHandler } from '../app/usecase/query/stablecoin/ho
 import { GetHoldCountForQueryHandler } from '../app/usecase/query/stablecoin/hold/getHoldCountFor/GetHoldCountForQueryHandler.js';
 import { GetBurnableAmountQueryHandler } from '../app/usecase/query/stablecoin/burn/getBurnableAmount/GetBurnableAmountQueryHandler.js';
 import { GetAccountAutoAssociationQueryHandler } from '../app/usecase/query/account/autoAssociation/GetAccountAutoAssociationQueryHandler';
-import { ClientTransactionAdapter } from '../port/out/client/ClientTransactionAdapter.js';
+import { ClientTransactionAdapter } from '../port/out/hs/client/ClientTransactionAdapter.js';
 
 export const TOKENS = {
 	COMMAND_HANDLER: Symbol('CommandHandler'),

@@ -19,88 +19,32 @@
  */
 
 import { Transaction, ContractExecuteTransaction } from '@hiero-ledger/sdk';
-import TransactionAdapter from './TransactionAdapter';
-import TransactionResponse from '../../domain/context/transaction/TransactionResponse';
-import { TransactionType } from './TransactionResponseEnums';
-import StableCoinCapabilities from '../../domain/context/stablecoin/StableCoinCapabilities';
-import { HederaId } from '../../domain/context/shared/HederaId';
-import { StableCoinProps } from '../../domain/context/stablecoin/StableCoin';
-import ContractId from '../../domain/context/contract/ContractId';
-import Account from '../../domain/context/account/Account';
-import BigDecimal from '../../domain/context/shared/BigDecimal';
-import { Operation } from '../../domain/context/stablecoin/Capability';
-import LogService from '../../app/service/LogService';
-import { SigningError } from './hs/error/SigningError';
-import { ethers } from 'ethers';
-import {
-	BurnableFacet__factory,
-	CashInFacet__factory,
-	CustomFeesFacet__factory,
-	DeletableFacet__factory,
-	DiamondFacet__factory,
-	FreezableFacet__factory,
-	HederaReserveFacet__factory,
-	HederaTokenManagerFacet__factory,
-	HoldManagementFacet__factory,
-	IHRC__factory,
-	KYCFacet__factory,
-	PausableFacet__factory,
-	RescuableFacet__factory,
-	ReserveFacet__factory,
-	RoleManagementFacet__factory,
-	RolesFacet__factory,
-	SupplierAdminFacet__factory,
-	WipeableFacet__factory,
-} from '@hashgraph/stablecoin-npm-contracts';
-import {
-	BURN_GAS,
-	CASHIN_GAS,
-	CREATE_HOLD_GAS,
-	DECREASE_SUPPLY_GAS,
-	DELETE_GAS,
-	EVM_ZERO_ADDRESS,
-	EXECUTE_HOLD_GAS,
-	FREEZE_GAS,
-	GRANT_KYC_GAS,
-	GRANT_ROLES_GAS,
-	INCREASE_SUPPLY_GAS,
-	MAX_ROLES_GAS,
-	PAUSE_GAS,
-	RECLAIM_HOLD_GAS,
-	RELEASE_HOLD_GAS,
-	RESCUE_GAS,
-	RESCUE_HBAR_GAS,
-	RESET_SUPPLY_GAS,
-	REVOKE_KYC_GAS,
-	REVOKE_ROLES_GAS,
-	UNFREEZE_GAS,
-	UNPAUSE_GAS,
-	UPDATE_CONFIG_GAS,
-	UPDATE_CONFIG_VERSION_GAS,
-	UPDATE_CUSTOM_FEES_GAS,
-	UPDATE_RESERVE_ADDRESS_GAS,
-	UPDATE_RESERVE_AMOUNT_GAS,
-	UPDATE_RESOLVER_GAS,
-	UPDATE_TOKEN_GAS,
-	WIPE_GAS,
-} from '../../core/Constants';
 import { CustomFee as HCustomFee } from '@hiero-ledger/sdk/lib/exports';
-import {
-	fromHCustomFeeToSCFee,
-	SC_FixedFee,
-	SC_FractionalFee,
-} from '../../domain/context/fee/CustomFee';
-import PublicKey from '../../domain/context/account/PublicKey';
-import { KeysStruct } from '../../domain/context/factory/FactoryKey';
-import { TokenOperations } from './operations/TokenOperations';
-import { TokenControlOperations } from './operations/TokenControlOperations';
-import { RoleOperations } from './operations/RoleOperations';
-import { SupplierOperations } from './operations/SupplierOperations';
-import { HoldOperations } from './operations/HoldOperations';
-import { ReserveOperations } from './operations/ReserveOperations';
-import { QueryOperations } from './operations/QueryOperations';
-import { UpdateOperations } from './operations/UpdateOperations';
-import { RescueOperations } from './operations/RescueOperations';
+import TransactionAdapter from '../TransactionAdapter';
+import TransactionResponse from '../../../domain/context/transaction/TransactionResponse';
+import { TransactionType } from '../TransactionResponseEnums';
+import StableCoinCapabilities from '../../../domain/context/stablecoin/StableCoinCapabilities';
+import { HederaId } from '../../../domain/context/shared/HederaId';
+import { StableCoinProps } from '../../../domain/context/stablecoin/StableCoin';
+import ContractId from '../../../domain/context/contract/ContractId';
+import Account from '../../../domain/context/account/Account';
+import PublicKey from '../../../domain/context/account/PublicKey';
+import BigDecimal from '../../../domain/context/shared/BigDecimal';
+import { StableCoinRole } from '../../../domain/context/stablecoin/StableCoinRole';
+import LogService from '../../../app/service/LogService';
+import { SigningError } from './error/SigningError';
+import { ethers } from 'ethers';
+import { MirrorNodeAdapter } from '../mirror/MirrorNodeAdapter';
+import NetworkService from '../../../app/service/NetworkService';
+import { TokenOperations } from '../hs/operations/TokenOperations';
+import { TokenControlOperations } from '../hs/operations/TokenControlOperations';
+import { RoleOperations } from '../hs/operations/RoleOperations';
+import { SupplierOperations } from '../hs/operations/SupplierOperations';
+import { HoldOperations } from '../hs/operations/HoldOperations';
+import { ReserveOperations } from '../hs/operations/ReserveOperations';
+import { QueryOperations } from '../hs/operations/QueryOperations';
+import { UpdateOperations } from '../hs/operations/UpdateOperations';
+import { RescueOperations } from '../hs/operations/RescueOperations';
 
 /**
  * Base adapter containing all shared business logic for Hedera transaction operations.
@@ -150,7 +94,7 @@ export abstract class BaseHederaTransactionAdapter extends TransactionAdapter {
 		contractId: string,
 		iface: ethers.Interface,
 		functionName: string,
-		params: any[],
+		params: unknown[],
 		gasLimit: number,
 		payableAmountHbar?: string,
 	): ContractExecuteTransaction {
@@ -187,7 +131,7 @@ export abstract class BaseHederaTransactionAdapter extends TransactionAdapter {
 	 * @param startDate Optional start date for the transaction (ISO string) - used for multi-sig coordination
 	 * @returns Transaction response (with receipt OR serialized transaction data)
 	 */
-	protected abstract processTransaction(
+	public abstract processTransaction(
 		tx: Transaction,
 		transactionType: TransactionType,
 		startDate?: string,
@@ -209,16 +153,17 @@ export abstract class BaseHederaTransactionAdapter extends TransactionAdapter {
 	 * @param evmAddress Optional EVM address (0x...) - avoids Mirror Node call for WalletConnect EVM sessions
 	 * @returns Transaction response
 	 */
-	protected async executeContractCall(
+	public async executeContractCall(
 		contractId: string,
 		iface: ethers.Interface,
 		functionName: string,
-		params: any[],
+		params: unknown[],
 		gasLimit: number,
 		transactionType: TransactionType = TransactionType.RECEIPT,
 		payableAmountHbar?: string,
 		startDate?: string,
-		evmAddress?: string,
+		// eslint-disable-next-line @typescript-eslint/no-unused-vars
+		_evmAddress?: string,
 	): Promise<TransactionResponse> {
 		try {
 			// Build the contract transaction
@@ -252,7 +197,7 @@ export abstract class BaseHederaTransactionAdapter extends TransactionAdapter {
 	 * Check if this adapter supports EVM operations (vs native HTS only).
 	 * Implementations should return true if they can execute EVM/eth_sendTransaction calls.
 	 */
-	protected abstract supportsEvmOperations(): boolean;
+	public abstract supportsEvmOperations(): boolean;
 
 	// ===== Token Operations =====
 
@@ -269,7 +214,7 @@ export abstract class BaseHederaTransactionAdapter extends TransactionAdapter {
 		reserveInitialAmount?: BigDecimal,
 		reserveConfigId?: string,
 		reserveConfigVersion?: number,
-	): Promise<TransactionResponse<any, Error>> {
+	): Promise<TransactionResponse> {
 		return this.tokenOps.create(
 			coin,
 			factory,
@@ -289,7 +234,7 @@ export abstract class BaseHederaTransactionAdapter extends TransactionAdapter {
 	async associateToken(
 		tokenId: HederaId,
 		_targetId: HederaId,
-	): Promise<TransactionResponse<any, Error>> {
+	): Promise<TransactionResponse> {
 		return this.tokenOps.associateToken(tokenId, _targetId);
 	}
 
@@ -392,7 +337,7 @@ export abstract class BaseHederaTransactionAdapter extends TransactionAdapter {
 	async grantRole(
 		coin: StableCoinCapabilities,
 		targetId: HederaId,
-		role: any,
+		role: StableCoinRole,
 	): Promise<TransactionResponse> {
 		return this.roleOps.grantRole(coin, targetId, role);
 	}
@@ -400,7 +345,7 @@ export abstract class BaseHederaTransactionAdapter extends TransactionAdapter {
 	async revokeRole(
 		coin: StableCoinCapabilities,
 		targetId: HederaId,
-		role: any,
+		role: StableCoinRole,
 	): Promise<TransactionResponse> {
 		return this.roleOps.revokeRole(coin, targetId, role);
 	}
@@ -408,7 +353,7 @@ export abstract class BaseHederaTransactionAdapter extends TransactionAdapter {
 	async grantRoles(
 		coin: StableCoinCapabilities,
 		targetsId: HederaId[],
-		roles: any[],
+		roles: StableCoinRole[],
 		amounts: BigDecimal[],
 	): Promise<TransactionResponse> {
 		return this.roleOps.grantRoles(coin, targetsId, roles, amounts);
@@ -417,7 +362,7 @@ export abstract class BaseHederaTransactionAdapter extends TransactionAdapter {
 	async revokeRoles(
 		coin: StableCoinCapabilities,
 		targetsId: HederaId[],
-		roles: any[],
+		roles: StableCoinRole[],
 	): Promise<TransactionResponse> {
 		return this.roleOps.revokeRoles(coin, targetsId, roles);
 	}
@@ -481,7 +426,7 @@ export abstract class BaseHederaTransactionAdapter extends TransactionAdapter {
 
 	async updateCustomFees(
 		coin: StableCoinCapabilities,
-		customFees: any[],
+		customFees: HCustomFee[],
 	): Promise<TransactionResponse> {
 		return this.updateOps.updateCustomFees(coin, customFees);
 	}
@@ -541,7 +486,7 @@ export abstract class BaseHederaTransactionAdapter extends TransactionAdapter {
 
 	async updateReserveAddress(
 		coin: StableCoinCapabilities,
-		reserveAddress: any,
+		reserveAddress: ContractId,
 	): Promise<TransactionResponse> {
 		return this.reserveOps.updateReserveAddress(coin, reserveAddress);
 	}
@@ -553,7 +498,7 @@ export abstract class BaseHederaTransactionAdapter extends TransactionAdapter {
 	}
 
 	async updateReserveAmount(
-		reserveAddress: any,
+		reserveAddress: ContractId,
 		amount: BigDecimal,
 	): Promise<TransactionResponse> {
 		return this.reserveOps.updateReserveAmount(reserveAddress, amount);
@@ -564,7 +509,7 @@ export abstract class BaseHederaTransactionAdapter extends TransactionAdapter {
 	async hasRole(
 		coin: StableCoinCapabilities,
 		targetId: HederaId,
-		role: any,
+		role: StableCoinRole,
 	): Promise<TransactionResponse> {
 		return this.queryOps.hasRole(coin, targetId, role);
 	}
@@ -605,11 +550,11 @@ export abstract class BaseHederaTransactionAdapter extends TransactionAdapter {
 		symbol?: string,
 		autoRenewPeriod?: number,
 		expirationTime?: number,
-		kycKey?: any,
-		freezeKey?: any,
-		feeScheduleKey?: any,
-		pauseKey?: any,
-		wipeKey?: any,
+		kycKey?: PublicKey,
+		freezeKey?: PublicKey,
+		feeScheduleKey?: PublicKey,
+		pauseKey?: PublicKey,
+		wipeKey?: PublicKey,
 		metadata?: string,
 	): Promise<TransactionResponse> {
 		return this.updateOps.update(
@@ -644,7 +589,7 @@ export abstract class BaseHederaTransactionAdapter extends TransactionAdapter {
 
 	async updateResolver(
 		coin: StableCoinCapabilities,
-		resolver: any,
+		resolver: ContractId,
 		configVersion: number,
 		configId: string,
 	): Promise<TransactionResponse> {
@@ -656,174 +601,13 @@ export abstract class BaseHederaTransactionAdapter extends TransactionAdapter {
 		);
 	}
 
-	// ===== Helper Methods =====
-
-	/**
-	 * Get the ethers interface for a facet based on its name.
-	 */
-	protected getFacetInterface(facetName: string): ethers.Interface {
-		const factories: { [key: string]: any } = {
-			WipeableFacet: WipeableFacet__factory,
-			BurnableFacet: BurnableFacet__factory,
-			FreezableFacet: FreezableFacet__factory,
-			PausableFacet: PausableFacet__factory,
-			KYCFacet: KYCFacet__factory,
-			CashInFacet: CashInFacet__factory,
-			DeletableFacet: DeletableFacet__factory,
-			RescuableFacet: RescuableFacet__factory,
-			RolesFacet: RolesFacet__factory,
-			SupplierAdminFacet: SupplierAdminFacet__factory,
-			RoleManagementFacet: RoleManagementFacet__factory,
-			CustomFeesFacet: CustomFeesFacet__factory,
-			HoldManagementFacet: HoldManagementFacet__factory,
-			ReserveFacet: ReserveFacet__factory,
-			HederaReserveFacet: HederaReserveFacet__factory,
-			HederaTokenManagerFacet: HederaTokenManagerFacet__factory,
-			DiamondFacet: DiamondFacet__factory,
-			IHRC: IHRC__factory,
-		};
-
-		const factory = factories[facetName];
-		if (!factory) {
-			throw new Error(`Unknown facet: ${facetName}`);
-		}
-		return new ethers.Interface(factory.abi);
-	}
-
-	/**
-	 * Get the gas limit for an operation.
-	 */
-	protected getGasLimit(operation: string): number {
-		const gasLimits: { [key: string]: number } = {
-			WIPE: WIPE_GAS,
-			BURN: BURN_GAS,
-			FREEZE: FREEZE_GAS,
-			UNFREEZE: UNFREEZE_GAS,
-			PAUSE: PAUSE_GAS,
-			UNPAUSE: UNPAUSE_GAS,
-			GRANT_KYC: GRANT_KYC_GAS,
-			REVOKE_KYC: REVOKE_KYC_GAS,
-			CASHIN: CASHIN_GAS,
-			DELETE: DELETE_GAS,
-			RESCUE: RESCUE_GAS,
-			RESCUE_HBAR: RESCUE_HBAR_GAS,
-			GRANT_ROLES: GRANT_ROLES_GAS,
-			REVOKE_ROLES: REVOKE_ROLES_GAS,
-			MAX_ROLES: MAX_ROLES_GAS,
-			INCREASE_SUPPLY: INCREASE_SUPPLY_GAS,
-			DECREASE_SUPPLY: DECREASE_SUPPLY_GAS,
-			RESET_SUPPLY: RESET_SUPPLY_GAS,
-			UPDATE_CUSTOM_FEES: UPDATE_CUSTOM_FEES_GAS,
-			CREATE_HOLD: CREATE_HOLD_GAS,
-			EXECUTE_HOLD: EXECUTE_HOLD_GAS,
-			RELEASE_HOLD: RELEASE_HOLD_GAS,
-			RECLAIM_HOLD: RECLAIM_HOLD_GAS,
-			UPDATE_RESERVE_ADDRESS: UPDATE_RESERVE_ADDRESS_GAS,
-			UPDATE_RESERVE_AMOUNT: UPDATE_RESERVE_AMOUNT_GAS,
-			UPDATE_TOKEN: UPDATE_TOKEN_GAS,
-			UPDATE_CONFIG_VERSION: UPDATE_CONFIG_VERSION_GAS,
-			UPDATE_CONFIG: UPDATE_CONFIG_GAS,
-			UPDATE_RESOLVER: UPDATE_RESOLVER_GAS,
-		};
-
-		const gas = gasLimits[operation];
-		if (gas === undefined) {
-			throw new Error(`Unknown operation for gas limit: ${operation}`);
-		}
-		return gas;
-	}
-
-	/**
-	 * Query a contract (read-only call).
-	 * Uses the network service's RPC node for queries.
-	 */
-	protected async queryContract(
-		contractAddress: string,
-		iface: ethers.Interface,
-		functionName: string,
-		params: any[],
-	): Promise<TransactionResponse> {
-		try {
-			const networkService = this.getNetworkService();
-			const rpcUrl =
-				networkService.rpcNode?.baseUrl ??
-				(networkService.environment === 'testnet'
-					? 'https://testnet.hashio.io/api'
-					: 'https://mainnet.hashio.io/api');
-			const provider = new ethers.JsonRpcProvider(rpcUrl);
-			const contract = new ethers.Contract(
-				contractAddress,
-				iface,
-				provider,
-			);
-			const res = await contract[functionName](...params);
-			return new TransactionResponse(undefined, res);
-		} catch (error) {
-			LogService.logError(error);
-			throw new SigningError(
-				`Query failed for ${functionName}: ${error}`,
-			);
-		}
-	}
-
-	/**
-	 * Prepare custom fees for the contract.
-	 */
-	protected async prepareCustomFees(
-		coin: StableCoinCapabilities,
-		customFees: HCustomFee[],
-	): Promise<{
-		fixedFees: SC_FixedFee[];
-		fractionalFees: SC_FractionalFee[];
-	}> {
-		const fixedFees: SC_FixedFee[] = [];
-		const fractionalFees: SC_FractionalFee[] = [];
-		const mirrorNodeAdapter = this.getMirrorNodeAdapter();
-
-		for (const cf of customFees) {
-			const feeCollector = cf.feeCollectorAccountId
-				? (
-						await mirrorNodeAdapter.getAccountInfo(
-							cf.feeCollectorAccountId.toString(),
-						)
-				  ).accountEvmAddress!
-				: EVM_ZERO_ADDRESS;
-
-			const scFee = fromHCustomFeeToSCFee(
-				cf,
-				coin.coin.tokenId!.toString(),
-				feeCollector,
-			);
-			if (scFee instanceof SC_FixedFee) fixedFees.push(scFee);
-			else fractionalFees.push(scFee as SC_FractionalFee);
-		}
-
-		return { fixedFees, fractionalFees };
-	}
-
-	/**
-	 * Prepare keys for smart contract.
-	 */
-	protected async prepareKeysForSmartContract(
-		keys: (PublicKey | undefined)[],
-	): Promise<KeysStruct[]> {
-		return this.setKeysForSmartContract(keys);
-	}
-
-	/**
-	 * Get the zero address constant.
-	 */
-	protected getZeroAddress(): string {
-		return EVM_ZERO_ADDRESS;
-	}
-
 	/**
 	 * Get the network service. Subclasses must provide access to the network service.
 	 */
-	public abstract getNetworkService(): any;
+	public abstract getNetworkService(): NetworkService;
 
 	/**
 	 * Get the mirror node adapter. Subclasses must provide access to the mirror node adapter.
 	 */
-	public abstract getMirrorNodeAdapter(): any;
+	public abstract getMirrorNodeAdapter(): MirrorNodeAdapter;
 }

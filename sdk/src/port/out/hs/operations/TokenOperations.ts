@@ -26,36 +26,43 @@ import {
 	TokenId,
 	AccountId,
 } from '@hiero-ledger/sdk';
+import { UINT256_MAX } from '../../../../core/Constants';
 import { ethers } from 'ethers';
-import CheckEvmAddress from '../../../core/checks/evmaddress/CheckEvmAddress';
-import TransactionResponse from '../../../domain/context/transaction/TransactionResponse';
-import StableCoinCapabilities from '../../../domain/context/stablecoin/StableCoinCapabilities';
-import { HederaId } from '../../../domain/context/shared/HederaId';
-import { StableCoinProps } from '../../../domain/context/stablecoin/StableCoin';
-import ContractId from '../../../domain/context/contract/ContractId';
-import { FactoryCashinRole } from '../../../domain/context/factory/FactoryCashinRole';
-import { StableCoinRole } from '../../../domain/context/stablecoin/StableCoinRole';
-import { ResolverProxyConfiguration } from '../../../domain/context/factory/ResolverProxyConfiguration';
-import { FactoryRole } from '../../../domain/context/factory/FactoryRole';
-import { FactoryStableCoin } from '../../../domain/context/factory/FactoryStableCoin';
-import { TokenSupplyType } from '../../../domain/context/stablecoin/TokenSupply';
-import BigDecimal from '../../../domain/context/shared/BigDecimal';
-import { CapabilityDecider, Decision } from '../CapabilityDecider';
-import { Operation } from '../../../domain/context/stablecoin/Capability';
-import LogService from '../../../app/service/LogService';
-import { SigningError } from '../hs/error/SigningError';
+import CheckEvmAddress from '../../../../core/checks/evmaddress/CheckEvmAddress';
+import TransactionResponse from '../../../../domain/context/transaction/TransactionResponse';
+import StableCoinCapabilities from '../../../../domain/context/stablecoin/StableCoinCapabilities';
+import { HederaId } from '../../../../domain/context/shared/HederaId';
+import { StableCoinProps } from '../../../../domain/context/stablecoin/StableCoin';
+import ContractId from '../../../../domain/context/contract/ContractId';
+import { FactoryCashinRole } from '../../../../domain/context/factory/FactoryCashinRole';
+import { StableCoinRole } from '../../../../domain/context/stablecoin/StableCoinRole';
+import { ResolverProxyConfiguration } from '../../../../domain/context/factory/ResolverProxyConfiguration';
+import { FactoryRole } from '../../../../domain/context/factory/FactoryRole';
+import { FactoryStableCoin } from '../../../../domain/context/factory/FactoryStableCoin';
+import { TokenSupplyType } from '../../../../domain/context/stablecoin/TokenSupply';
+import BigDecimal from '../../../../domain/context/shared/BigDecimal';
+import { CapabilityDecider, Decision } from '../../CapabilityDecider';
+import { Operation } from '../../../../domain/context/stablecoin/Capability';
+import LogService from '../../../../app/service/LogService';
+import { SigningError } from '../../hs/error/SigningError';
 import {
 	StableCoinFactoryFacet__factory,
 	IHRC__factory,
+	WipeableFacet__factory,
+	CashInFacet__factory,
+	BurnableFacet__factory,
 } from '@hashgraph/stablecoin-npm-contracts';
 import {
 	ASSOCIATE_GAS,
 	CREATE_SC_GAS,
 	TOKEN_CREATION_COST_HBAR,
-} from '../../../core/Constants';
-import { KeysStruct } from '../../../domain/context/factory/FactoryKey';
-import { TransactionHelpers } from './TransactionHelpers';
-import type { BaseHederaTransactionAdapter } from '../BaseHederaTransactionAdapter';
+	WIPE_GAS,
+	CASHIN_GAS,
+	BURN_GAS,
+} from '../../../../core/Constants';
+import { KeysStruct } from '../../../../domain/context/factory/FactoryKey';
+import type { BaseHederaTransactionAdapter } from '../../hs/BaseHederaTransactionAdapter';
+import { TransactionType } from '../../TransactionResponseEnums';
 
 /**
  * Token operations: create, associate, wipe, burn, cashin
@@ -78,7 +85,7 @@ export class TokenOperations {
 		reserveConfigId?: string,
 		reserveConfigVersion?: number,
 		startDate?: string,
-	): Promise<TransactionResponse<any, Error>> {
+	): Promise<TransactionResponse> {
 		try {
 			// Prepare common data
 			const cashinRole: FactoryCashinRole = {
@@ -90,8 +97,10 @@ export class TokenOperations {
 								coin.cashInRoleAccount,
 						  ),
 				allowance:
-					coin.cashInRoleAllowance?.toFixedNumber() ??
-					BigDecimal.ZERO.toFixedNumber(),
+					!coin.cashInRoleAllowance ||
+					coin.cashInRoleAllowance.toString() === '0'
+						? UINT256_MAX.toString()
+						: coin.cashInRoleAllowance.toFixedNumber(),
 			};
 
 			const keys: KeysStruct[] = this.adapter.setKeysForSmartContract([
@@ -155,7 +164,7 @@ export class TokenOperations {
 						const fr = new FactoryRole();
 						fr.role = r.role;
 						fr.account = await this.adapter.getEVMAddress(
-							r.account!,
+							r.account as HederaId,
 						);
 						return fr;
 					}),
@@ -168,8 +177,8 @@ export class TokenOperations {
 
 			const reserveConfigurationId = ResolverProxyConfiguration.empty();
 			if (createReserve) {
-				reserveConfigurationId.key = reserveConfigId!;
-				reserveConfigurationId.version = reserveConfigVersion!;
+				reserveConfigurationId.key = reserveConfigId ?? '';
+				reserveConfigurationId.version = reserveConfigVersion ?? 0;
 			}
 
 			const mirrorNodeAdapter = this.adapter.getMirrorNodeAdapter();
@@ -209,12 +218,13 @@ export class TokenOperations {
 				reserveConfigurationId,
 			);
 
-			return await (this.adapter as any).executeContractCall(
+			return await this.adapter.executeContractCall(
 				factory.value,
 				new ethers.Interface(StableCoinFactoryFacet__factory.abi),
 				'deployStableCoin',
 				[stableCoinToCreate],
 				CREATE_SC_GAS,
+				undefined,
 				TOKEN_CREATION_COST_HBAR.toString(),
 				startDate,
 				undefined,
@@ -230,26 +240,24 @@ export class TokenOperations {
 		tokenId: HederaId,
 		_targetId: HederaId,
 		startDate?: string,
-	): Promise<TransactionResponse<any, Error>> {
+	): Promise<TransactionResponse> {
 		try {
 			const account = this.adapter.getAccount();
 
 			// Check if EVM operations are supported and account has EVM address
-			if (
-				(this.adapter as any).supportsEvmOperations() &&
-				account.evmAddress
-			) {
+			if (this.adapter.supportsEvmOperations() && account.evmAddress) {
 				// EVM path - use IHRC.associate on the token contract
 				const tokenEvm = CheckEvmAddress.toEvmAddress(
 					tokenId.toHederaAddress().toSolidityAddress(),
 				);
 
-				return await (this.adapter as any).executeContractCall(
+				return await this.adapter.executeContractCall(
 					tokenEvm,
 					new ethers.Interface(IHRC__factory.abi),
 					'associate',
 					[],
 					ASSOCIATE_GAS,
+					undefined,
 					undefined,
 					startDate,
 					undefined,
@@ -260,12 +268,13 @@ export class TokenOperations {
 					.setAccountId(AccountId.fromString(account.id.toString()))
 					.setTokenIds([TokenId.fromString(tokenId.toString())]);
 
-				return await (this.adapter as any).processTransaction(
+				return await this.adapter.processTransaction(
 					associateTx,
+					TransactionType.RECEIPT,
 					startDate,
 				);
 			}
-		} catch (error: any) {
+		} catch (error) {
 			LogService.logError(error);
 			throw new SigningError(
 				`Unexpected error in associateToken(): ${error}`,
@@ -294,19 +303,18 @@ export class TokenOperations {
 					);
 				}
 
-				const iface = (this.adapter as any).getFacetInterface(
-					'WipeableFacet',
-				);
+				const iface = new ethers.Interface(WipeableFacet__factory.abi);
 				const params = [
 					await this.adapter.getEVMAddress(targetId),
 					amount.toBigInt(),
 				];
-				return await (this.adapter as any).executeContractCall(
+				return await this.adapter.executeContractCall(
 					contractId,
 					iface,
 					'wipe',
 					params,
-					TransactionHelpers.getGasLimit('WIPE'),
+					WIPE_GAS,
+					undefined,
 					undefined,
 					startDate,
 					evmAddress,
@@ -323,8 +331,9 @@ export class TokenOperations {
 					.setTokenId(TokenId.fromString(coin.coin.tokenId.value))
 					.setAmount(amount.toLong());
 
-				return await (this.adapter as any).processTransaction(
+				return await this.adapter.processTransaction(
 					wipeTx,
+					TransactionType.RECEIPT,
 					startDate,
 				);
 			}
@@ -356,19 +365,18 @@ export class TokenOperations {
 					);
 				}
 
-				const iface = (this.adapter as any).getFacetInterface(
-					'CashInFacet',
-				);
+				const iface = new ethers.Interface(CashInFacet__factory.abi);
 				const params = [
 					await this.adapter.getEVMAddress(targetId),
 					amount.toBigInt(),
 				];
-				return await (this.adapter as any).executeContractCall(
+				return await this.adapter.executeContractCall(
 					contractId,
 					iface,
 					'mint',
 					params,
-					TransactionHelpers.getGasLimit('CASHIN'),
+					CASHIN_GAS,
+					undefined,
 					undefined,
 					startDate,
 					evmAddress,
@@ -384,8 +392,9 @@ export class TokenOperations {
 					.setTokenId(coin.coin.tokenId.value)
 					.setAmount(amount.toLong());
 
-				return await (this.adapter as any).processTransaction(
+				return await this.adapter.processTransaction(
 					mintTx,
+					TransactionType.RECEIPT,
 					startDate,
 				);
 			}
@@ -416,16 +425,15 @@ export class TokenOperations {
 					);
 				}
 
-				const iface = (this.adapter as any).getFacetInterface(
-					'BurnableFacet',
-				);
+				const iface = new ethers.Interface(BurnableFacet__factory.abi);
 				const params = [amount.toBigInt()];
-				return await (this.adapter as any).executeContractCall(
+				return await this.adapter.executeContractCall(
 					contractId,
 					iface,
 					'burn',
 					params,
-					TransactionHelpers.getGasLimit('BURN'),
+					BURN_GAS,
+					undefined,
 					undefined,
 					startDate,
 					evmAddress,
@@ -441,8 +449,9 @@ export class TokenOperations {
 					.setTokenId(coin.coin.tokenId.value)
 					.setAmount(amount.toLong());
 
-				return await (this.adapter as any).processTransaction(
+				return await this.adapter.processTransaction(
 					burnTx,
+					TransactionType.RECEIPT,
 					startDate,
 				);
 			}

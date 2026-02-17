@@ -29,15 +29,31 @@ import {
 	TokenId,
 	AccountId,
 } from '@hiero-ledger/sdk';
-import TransactionResponse from '../../../domain/context/transaction/TransactionResponse';
-import StableCoinCapabilities from '../../../domain/context/stablecoin/StableCoinCapabilities';
-import { HederaId } from '../../../domain/context/shared/HederaId';
-import { CapabilityDecider, Decision } from '../CapabilityDecider';
-import { Operation } from '../../../domain/context/stablecoin/Capability';
-import LogService from '../../../app/service/LogService';
-import { SigningError } from '../hs/error/SigningError';
-import { TransactionHelpers } from './TransactionHelpers';
-import type { BaseHederaTransactionAdapter } from '../BaseHederaTransactionAdapter';
+import TransactionResponse from '../../../../domain/context/transaction/TransactionResponse';
+import StableCoinCapabilities from '../../../../domain/context/stablecoin/StableCoinCapabilities';
+import { HederaId } from '../../../../domain/context/shared/HederaId';
+import { CapabilityDecider, Decision } from '../../CapabilityDecider';
+import { Operation } from '../../../../domain/context/stablecoin/Capability';
+import LogService from '../../../../app/service/LogService';
+import { SigningError } from '../../hs/error/SigningError';
+import { ethers } from 'ethers';
+import {
+	FreezableFacet__factory,
+	KYCFacet__factory,
+	PausableFacet__factory,
+	DeletableFacet__factory,
+} from '@hashgraph/stablecoin-npm-contracts';
+import {
+	FREEZE_GAS,
+	UNFREEZE_GAS,
+	GRANT_KYC_GAS,
+	REVOKE_KYC_GAS,
+	PAUSE_GAS,
+	UNPAUSE_GAS,
+	DELETE_GAS,
+} from '../../../../core/Constants';
+import type { BaseHederaTransactionAdapter } from '../../hs/BaseHederaTransactionAdapter';
+import { TransactionType } from '../../TransactionResponseEnums';
 
 /**
  * Token control operations: freeze, unfreeze, pause, unpause, delete, KYC
@@ -65,16 +81,15 @@ export class TokenControlOperations {
 					);
 				}
 
-				const iface = (this.adapter as any).getFacetInterface(
-					'FreezableFacet',
-				);
+				const iface = new ethers.Interface(FreezableFacet__factory.abi);
 				const params = [await this.adapter.getEVMAddress(targetId)];
-				return await (this.adapter as any).executeContractCall(
+				return await this.adapter.executeContractCall(
 					contractId,
 					iface,
 					'freeze',
 					params,
-					TransactionHelpers.getGasLimit('FREEZE'),
+					FREEZE_GAS,
+					undefined,
 					undefined,
 					startDate,
 					evmAddress,
@@ -90,8 +105,9 @@ export class TokenControlOperations {
 					.setAccountId(AccountId.fromString(targetId.toString()))
 					.setTokenId(TokenId.fromString(coin.coin.tokenId.value));
 
-				return await (this.adapter as any).processTransaction(
+				return await this.adapter.processTransaction(
 					freezeTx,
+					TransactionType.RECEIPT,
 					startDate,
 				);
 			}
@@ -122,16 +138,15 @@ export class TokenControlOperations {
 					);
 				}
 
-				const iface = (this.adapter as any).getFacetInterface(
-					'FreezableFacet',
-				);
+				const iface = new ethers.Interface(FreezableFacet__factory.abi);
 				const params = [await this.adapter.getEVMAddress(targetId)];
-				return await (this.adapter as any).executeContractCall(
+				return await this.adapter.executeContractCall(
 					contractId,
 					iface,
 					'unfreeze',
 					params,
-					TransactionHelpers.getGasLimit('UNFREEZE'),
+					UNFREEZE_GAS,
+					undefined,
 					undefined,
 					startDate,
 					evmAddress,
@@ -147,8 +162,9 @@ export class TokenControlOperations {
 					.setAccountId(AccountId.fromString(targetId.toString()))
 					.setTokenId(TokenId.fromString(coin.coin.tokenId.value));
 
-				return await (this.adapter as any).processTransaction(
+				return await this.adapter.processTransaction(
 					unfreezeTx,
+					TransactionType.RECEIPT,
 					startDate,
 				);
 			}
@@ -178,16 +194,15 @@ export class TokenControlOperations {
 					);
 				}
 
-				const iface = (this.adapter as any).getFacetInterface(
-					'KYCFacet',
-				);
+				const iface = new ethers.Interface(KYCFacet__factory.abi);
 				const params = [await this.adapter.getEVMAddress(targetId)];
-				return await (this.adapter as any).executeContractCall(
+				return await this.adapter.executeContractCall(
 					contractId,
 					iface,
 					'grantKyc',
 					params,
-					TransactionHelpers.getGasLimit('GRANT_KYC'),
+					GRANT_KYC_GAS,
+					undefined,
 					undefined,
 					undefined,
 					evmAddress,
@@ -203,8 +218,9 @@ export class TokenControlOperations {
 					.setAccountId(AccountId.fromString(targetId.toString()))
 					.setTokenId(TokenId.fromString(coin.coin.tokenId.value));
 
-				return await (this.adapter as any).processTransaction(
+				return await this.adapter.processTransaction(
 					grantKycTx,
+					TransactionType.RECEIPT,
 				);
 			}
 			throw new Error(`Operation not permitted for token`);
@@ -233,16 +249,15 @@ export class TokenControlOperations {
 					);
 				}
 
-				const iface = (this.adapter as any).getFacetInterface(
-					'KYCFacet',
-				);
+				const iface = new ethers.Interface(KYCFacet__factory.abi);
 				const params = [await this.adapter.getEVMAddress(targetId)];
-				return await (this.adapter as any).executeContractCall(
+				return await this.adapter.executeContractCall(
 					contractId,
 					iface,
 					'revokeKyc',
 					params,
-					TransactionHelpers.getGasLimit('REVOKE_KYC'),
+					REVOKE_KYC_GAS,
+					undefined,
 					undefined,
 					undefined,
 					evmAddress,
@@ -258,8 +273,9 @@ export class TokenControlOperations {
 					.setAccountId(AccountId.fromString(targetId.toString()))
 					.setTokenId(TokenId.fromString(coin.coin.tokenId.value));
 
-				return await (this.adapter as any).processTransaction(
+				return await this.adapter.processTransaction(
 					revokeKycTx,
+					TransactionType.RECEIPT,
 				);
 			}
 			throw new Error(`Operation not permitted for token`);
@@ -288,15 +304,14 @@ export class TokenControlOperations {
 					);
 				}
 
-				const iface = (this.adapter as any).getFacetInterface(
-					'PausableFacet',
-				);
-				return await (this.adapter as any).executeContractCall(
+				const iface = new ethers.Interface(PausableFacet__factory.abi);
+				return await this.adapter.executeContractCall(
 					contractId,
 					iface,
 					'pause',
 					[],
-					TransactionHelpers.getGasLimit('PAUSE'),
+					PAUSE_GAS,
+					undefined,
 					undefined,
 					startDate,
 					evmAddress,
@@ -312,8 +327,9 @@ export class TokenControlOperations {
 					TokenId.fromString(coin.coin.tokenId.value),
 				);
 
-				return await (this.adapter as any).processTransaction(
+				return await this.adapter.processTransaction(
 					pauseTx,
+					TransactionType.RECEIPT,
 					startDate,
 				);
 			}
@@ -340,15 +356,14 @@ export class TokenControlOperations {
 					);
 				}
 
-				const iface = (this.adapter as any).getFacetInterface(
-					'PausableFacet',
-				);
-				return await (this.adapter as any).executeContractCall(
+				const iface = new ethers.Interface(PausableFacet__factory.abi);
+				return await this.adapter.executeContractCall(
 					contractId,
 					iface,
 					'unpause',
 					[],
-					TransactionHelpers.getGasLimit('UNPAUSE'),
+					UNPAUSE_GAS,
+					undefined,
 					undefined,
 					undefined,
 					evmAddress,
@@ -364,8 +379,9 @@ export class TokenControlOperations {
 					TokenId.fromString(coin.coin.tokenId.value),
 				);
 
-				return await (this.adapter as any).processTransaction(
+				return await this.adapter.processTransaction(
 					unpauseTx,
+					TransactionType.RECEIPT,
 				);
 			}
 			throw new Error(`Operation not permitted for token`);
@@ -394,15 +410,14 @@ export class TokenControlOperations {
 					);
 				}
 
-				const iface = (this.adapter as any).getFacetInterface(
-					'DeletableFacet',
-				);
-				return await (this.adapter as any).executeContractCall(
+				const iface = new ethers.Interface(DeletableFacet__factory.abi);
+				return await this.adapter.executeContractCall(
 					contractId,
 					iface,
 					'deleteToken',
 					[],
-					TransactionHelpers.getGasLimit('DELETE'),
+					DELETE_GAS,
+					undefined,
 					undefined,
 					startDate,
 					evmAddress,
@@ -418,8 +433,9 @@ export class TokenControlOperations {
 					TokenId.fromString(coin.coin.tokenId.value),
 				);
 
-				return await (this.adapter as any).processTransaction(
+				return await this.adapter.processTransaction(
 					deleteTx,
+					TransactionType.RECEIPT,
 					startDate,
 				);
 			}

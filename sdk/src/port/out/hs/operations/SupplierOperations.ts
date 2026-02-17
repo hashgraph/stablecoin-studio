@@ -18,16 +18,22 @@
  *
  */
 
-import TransactionResponse from '../../../domain/context/transaction/TransactionResponse';
-import StableCoinCapabilities from '../../../domain/context/stablecoin/StableCoinCapabilities';
-import { HederaId } from '../../../domain/context/shared/HederaId';
-import BigDecimal from '../../../domain/context/shared/BigDecimal';
-import { CapabilityDecider } from '../CapabilityDecider';
-import { Operation } from '../../../domain/context/stablecoin/Capability';
-import LogService from '../../../app/service/LogService';
-import { SigningError } from '../hs/error/SigningError';
-import { TransactionHelpers } from './TransactionHelpers';
-import type { BaseHederaTransactionAdapter } from '../BaseHederaTransactionAdapter';
+import TransactionResponse from '../../../../domain/context/transaction/TransactionResponse';
+import StableCoinCapabilities from '../../../../domain/context/stablecoin/StableCoinCapabilities';
+import { HederaId } from '../../../../domain/context/shared/HederaId';
+import BigDecimal from '../../../../domain/context/shared/BigDecimal';
+import LogService from '../../../../app/service/LogService';
+import { SigningError } from '../../hs/error/SigningError';
+import { ethers } from 'ethers';
+import { SupplierAdminFacet__factory } from '@hashgraph/stablecoin-npm-contracts';
+import {
+	GRANT_ROLES_GAS,
+	REVOKE_ROLES_GAS,
+	INCREASE_SUPPLY_GAS,
+	DECREASE_SUPPLY_GAS,
+	RESET_SUPPLY_GAS,
+} from '../../../../core/Constants';
+import type { BaseHederaTransactionAdapter } from '../../hs/BaseHederaTransactionAdapter';
 
 /**
  * Supplier role management operations
@@ -41,11 +47,6 @@ export class SupplierOperations {
 		amount: BigDecimal,
 	): Promise<TransactionResponse> {
 		try {
-			CapabilityDecider.checkContractOperation(
-				coin,
-				Operation.GRANT_SUPPLIER_ROLE,
-			);
-
 			const contractId = coin.coin.proxyAddress?.value;
 			const evmAddress = coin.coin.evmProxyAddress?.value;
 			if (!contractId) {
@@ -54,19 +55,18 @@ export class SupplierOperations {
 				);
 			}
 
-			const iface = (this.adapter as any).getFacetInterface(
-				'SupplierAdminFacet',
-			);
+			const iface = new ethers.Interface(SupplierAdminFacet__factory.abi);
 			const params = [
 				await this.adapter.getEVMAddress(targetId),
 				amount.toBigInt(),
 			];
-			return await (this.adapter as any).executeContractCall(
+			return await this.adapter.executeContractCall(
 				contractId,
 				iface,
 				'grantSupplierRole',
 				params,
-				TransactionHelpers.getGasLimit('GRANT_ROLES'),
+				GRANT_ROLES_GAS,
+				undefined,
 				undefined,
 				undefined,
 				evmAddress,
@@ -84,11 +84,6 @@ export class SupplierOperations {
 		targetId: HederaId,
 	): Promise<TransactionResponse> {
 		try {
-			CapabilityDecider.checkContractOperation(
-				coin,
-				Operation.GRANT_UNLIMITED_SUPPLIER_ROLE,
-			);
-
 			const contractId = coin.coin.proxyAddress?.value;
 			const evmAddress = coin.coin.evmProxyAddress?.value;
 			if (!contractId) {
@@ -97,16 +92,15 @@ export class SupplierOperations {
 				);
 			}
 
-			const iface = (this.adapter as any).getFacetInterface(
-				'SupplierAdminFacet',
-			);
+			const iface = new ethers.Interface(SupplierAdminFacet__factory.abi);
 			const params = [await this.adapter.getEVMAddress(targetId)];
-			return await (this.adapter as any).executeContractCall(
+			return await this.adapter.executeContractCall(
 				contractId,
 				iface,
 				'grantUnlimitedSupplierRole',
 				params,
-				TransactionHelpers.getGasLimit('GRANT_ROLES'),
+				GRANT_ROLES_GAS,
+				undefined,
 				undefined,
 				undefined,
 				evmAddress,
@@ -124,11 +118,6 @@ export class SupplierOperations {
 		targetId: HederaId,
 	): Promise<TransactionResponse> {
 		try {
-			CapabilityDecider.checkContractOperation(
-				coin,
-				Operation.REVOKE_SUPPLIER_ROLE,
-			);
-
 			const contractId = coin.coin.proxyAddress?.value;
 			const evmAddress = coin.coin.evmProxyAddress?.value;
 			if (!contractId) {
@@ -137,16 +126,15 @@ export class SupplierOperations {
 				);
 			}
 
-			const iface = (this.adapter as any).getFacetInterface(
-				'SupplierAdminFacet',
-			);
+			const iface = new ethers.Interface(SupplierAdminFacet__factory.abi);
 			const params = [await this.adapter.getEVMAddress(targetId)];
-			return await (this.adapter as any).executeContractCall(
+			return await this.adapter.executeContractCall(
 				contractId,
 				iface,
 				'revokeSupplierRole',
 				params,
-				TransactionHelpers.getGasLimit('REVOKE_ROLES'),
+				REVOKE_ROLES_GAS,
+				undefined,
 				undefined,
 				undefined,
 				evmAddress,
@@ -165,11 +153,6 @@ export class SupplierOperations {
 		amount: BigDecimal,
 	): Promise<TransactionResponse> {
 		try {
-			CapabilityDecider.checkContractOperation(
-				coin,
-				Operation.INCREASE_SUPPLIER_ALLOWANCE,
-			);
-
 			const contractId = coin.coin.proxyAddress?.value;
 			const evmAddress = coin.coin.evmProxyAddress?.value;
 			if (!contractId) {
@@ -178,19 +161,18 @@ export class SupplierOperations {
 				);
 			}
 
-			const iface = (this.adapter as any).getFacetInterface(
-				'SupplierAdminFacet',
-			);
+			const iface = new ethers.Interface(SupplierAdminFacet__factory.abi);
 			const params = [
 				await this.adapter.getEVMAddress(targetId),
 				amount.toBigInt(),
 			];
-			return await (this.adapter as any).executeContractCall(
+			return await this.adapter.executeContractCall(
 				contractId,
 				iface,
 				'increaseSupplierAllowance',
 				params,
-				TransactionHelpers.getGasLimit('INCREASE_SUPPLY'),
+				INCREASE_SUPPLY_GAS,
+				undefined,
 				undefined,
 				undefined,
 				evmAddress,
@@ -209,11 +191,6 @@ export class SupplierOperations {
 		amount: BigDecimal,
 	): Promise<TransactionResponse> {
 		try {
-			CapabilityDecider.checkContractOperation(
-				coin,
-				Operation.DECREASE_SUPPLIER_ALLOWANCE,
-			);
-
 			const contractId = coin.coin.proxyAddress?.value;
 			const evmAddress = coin.coin.evmProxyAddress?.value;
 			if (!contractId) {
@@ -222,19 +199,18 @@ export class SupplierOperations {
 				);
 			}
 
-			const iface = (this.adapter as any).getFacetInterface(
-				'SupplierAdminFacet',
-			);
+			const iface = new ethers.Interface(SupplierAdminFacet__factory.abi);
 			const params = [
 				await this.adapter.getEVMAddress(targetId),
 				amount.toBigInt(),
 			];
-			return await (this.adapter as any).executeContractCall(
+			return await this.adapter.executeContractCall(
 				contractId,
 				iface,
 				'decreaseSupplierAllowance',
 				params,
-				TransactionHelpers.getGasLimit('DECREASE_SUPPLY'),
+				DECREASE_SUPPLY_GAS,
+				undefined,
 				undefined,
 				undefined,
 				evmAddress,
@@ -252,11 +228,6 @@ export class SupplierOperations {
 		targetId: HederaId,
 	): Promise<TransactionResponse> {
 		try {
-			CapabilityDecider.checkContractOperation(
-				coin,
-				Operation.RESET_SUPPLIER_ALLOWANCE,
-			);
-
 			const contractId = coin.coin.proxyAddress?.value;
 			const evmAddress = coin.coin.evmProxyAddress?.value;
 			if (!contractId) {
@@ -265,16 +236,15 @@ export class SupplierOperations {
 				);
 			}
 
-			const iface = (this.adapter as any).getFacetInterface(
-				'SupplierAdminFacet',
-			);
+			const iface = new ethers.Interface(SupplierAdminFacet__factory.abi);
 			const params = [await this.adapter.getEVMAddress(targetId)];
-			return await (this.adapter as any).executeContractCall(
+			return await this.adapter.executeContractCall(
 				contractId,
 				iface,
 				'resetSupplierAllowance',
 				params,
-				TransactionHelpers.getGasLimit('RESET_SUPPLY'),
+				RESET_SUPPLY_GAS,
+				undefined,
 				undefined,
 				undefined,
 				evmAddress,

@@ -18,16 +18,24 @@
  *
  */
 
-import TransactionResponse from '../../../domain/context/transaction/TransactionResponse';
-import StableCoinCapabilities from '../../../domain/context/stablecoin/StableCoinCapabilities';
-import { HederaId } from '../../../domain/context/shared/HederaId';
-import BigDecimal from '../../../domain/context/shared/BigDecimal';
-import { CapabilityDecider } from '../CapabilityDecider';
-import { Operation } from '../../../domain/context/stablecoin/Capability';
-import LogService from '../../../app/service/LogService';
-import { SigningError } from '../hs/error/SigningError';
-import { TransactionHelpers } from './TransactionHelpers';
-import type { BaseHederaTransactionAdapter } from '../BaseHederaTransactionAdapter';
+import TransactionResponse from '../../../../domain/context/transaction/TransactionResponse';
+import StableCoinCapabilities from '../../../../domain/context/stablecoin/StableCoinCapabilities';
+import { HederaId } from '../../../../domain/context/shared/HederaId';
+import BigDecimal from '../../../../domain/context/shared/BigDecimal';
+import LogService from '../../../../app/service/LogService';
+import { SigningError } from '../../hs/error/SigningError';
+import { ethers } from 'ethers';
+import {
+	RolesFacet__factory,
+	RoleManagementFacet__factory,
+} from '@hashgraph/stablecoin-npm-contracts';
+import {
+	GRANT_ROLES_GAS,
+	REVOKE_ROLES_GAS,
+	MAX_ROLES_GAS,
+} from '../../../../core/Constants';
+import { StableCoinRole } from '../../../../domain/context/stablecoin/StableCoinRole';
+import type { BaseHederaTransactionAdapter } from '../../hs/BaseHederaTransactionAdapter';
 
 /**
  * Role management operations: grantRole, revokeRole, grantRoles, revokeRoles
@@ -38,14 +46,9 @@ export class RoleOperations {
 	async grantRole(
 		coin: StableCoinCapabilities,
 		targetId: HederaId,
-		role: any,
+		role: StableCoinRole,
 	): Promise<TransactionResponse> {
 		try {
-			CapabilityDecider.checkContractOperation(
-				coin,
-				Operation.GRANT_ROLE,
-			);
-
 			const contractId = coin.coin.proxyAddress?.value;
 			const evmAddress = coin.coin.evmProxyAddress?.value;
 			if (!contractId) {
@@ -54,14 +57,15 @@ export class RoleOperations {
 				);
 			}
 
-			const iface = (this.adapter as any).getFacetInterface('RolesFacet');
+			const iface = new ethers.Interface(RolesFacet__factory.abi);
 			const params = [role, await this.adapter.getEVMAddress(targetId)];
-			return await (this.adapter as any).executeContractCall(
+			return await this.adapter.executeContractCall(
 				contractId,
 				iface,
 				'grantRole',
 				params,
-				TransactionHelpers.getGasLimit('GRANT_ROLES'),
+				GRANT_ROLES_GAS,
+				undefined,
 				undefined,
 				undefined,
 				evmAddress,
@@ -75,14 +79,9 @@ export class RoleOperations {
 	async revokeRole(
 		coin: StableCoinCapabilities,
 		targetId: HederaId,
-		role: any,
+		role: StableCoinRole,
 	): Promise<TransactionResponse> {
 		try {
-			CapabilityDecider.checkContractOperation(
-				coin,
-				Operation.REVOKE_ROLE,
-			);
-
 			const contractId = coin.coin.proxyAddress?.value;
 			const evmAddress = coin.coin.evmProxyAddress?.value;
 			if (!contractId) {
@@ -91,14 +90,15 @@ export class RoleOperations {
 				);
 			}
 
-			const iface = (this.adapter as any).getFacetInterface('RolesFacet');
+			const iface = new ethers.Interface(RolesFacet__factory.abi);
 			const params = [role, await this.adapter.getEVMAddress(targetId)];
-			return await (this.adapter as any).executeContractCall(
+			return await this.adapter.executeContractCall(
 				contractId,
 				iface,
 				'revokeRole',
 				params,
-				TransactionHelpers.getGasLimit('REVOKE_ROLES'),
+				REVOKE_ROLES_GAS,
+				undefined,
 				undefined,
 				undefined,
 				evmAddress,
@@ -114,15 +114,10 @@ export class RoleOperations {
 	async grantRoles(
 		coin: StableCoinCapabilities,
 		targetsId: HederaId[],
-		roles: any[],
+		roles: StableCoinRole[],
 		amounts: BigDecimal[],
 	): Promise<TransactionResponse> {
 		try {
-			CapabilityDecider.checkContractOperation(
-				coin,
-				Operation.GRANT_ROLES,
-			);
-
 			const accounts: string[] = [];
 			for (const id of targetsId)
 				accounts.push(await this.adapter.getEVMAddress(id));
@@ -130,20 +125,23 @@ export class RoleOperations {
 
 			const contractId = coin.coin.proxyAddress?.value;
 			const evmAddress = coin.coin.evmProxyAddress?.value;
+			if (!contractId) {
+				throw new Error(
+					`StableCoin ${coin.coin.name} does not have a proxy address`,
+				);
+			}
 
-			let gas =
-				targetsId.length *
-				roles.length *
-				TransactionHelpers.getGasLimit('GRANT_ROLES');
-			const maxRolesGas = TransactionHelpers.getGasLimit('MAX_ROLES');
+			let gas = targetsId.length * roles.length * GRANT_ROLES_GAS;
+			const maxRolesGas = MAX_ROLES_GAS;
 			gas = gas > maxRolesGas ? maxRolesGas : gas;
 
-			return await (this.adapter as any).executeContractCall(
+			return await this.adapter.executeContractCall(
 				contractId,
-				TransactionHelpers.getFacetInterface('RoleManagementFacet'),
+				new ethers.Interface(RoleManagementFacet__factory.abi),
 				'grantRoles',
 				[roles, accounts, amountsFormatted],
 				gas,
+				undefined,
 				undefined,
 				undefined,
 				evmAddress,
@@ -159,34 +157,32 @@ export class RoleOperations {
 	async revokeRoles(
 		coin: StableCoinCapabilities,
 		targetsId: HederaId[],
-		roles: any[],
+		roles: StableCoinRole[],
 	): Promise<TransactionResponse> {
 		try {
-			CapabilityDecider.checkContractOperation(
-				coin,
-				Operation.REVOKE_ROLES,
-			);
-
 			const accounts: string[] = [];
 			for (const id of targetsId)
 				accounts.push(await this.adapter.getEVMAddress(id));
 
 			const contractId = coin.coin.proxyAddress?.value;
 			const evmAddress = coin.coin.evmProxyAddress?.value;
+			if (!contractId) {
+				throw new Error(
+					`StableCoin ${coin.coin.name} does not have a proxy address`,
+				);
+			}
 
-			let gas =
-				targetsId.length *
-				roles.length *
-				TransactionHelpers.getGasLimit('REVOKE_ROLES');
-			const maxRolesGas = TransactionHelpers.getGasLimit('MAX_ROLES');
+			let gas = targetsId.length * roles.length * REVOKE_ROLES_GAS;
+			const maxRolesGas = MAX_ROLES_GAS;
 			gas = gas > maxRolesGas ? maxRolesGas : gas;
 
-			return await (this.adapter as any).executeContractCall(
+			return await this.adapter.executeContractCall(
 				contractId,
-				TransactionHelpers.getFacetInterface('RoleManagementFacet'),
+				new ethers.Interface(RoleManagementFacet__factory.abi),
 				'revokeRoles',
 				[roles, accounts],
 				gas,
+				undefined,
 				undefined,
 				undefined,
 				evmAddress,

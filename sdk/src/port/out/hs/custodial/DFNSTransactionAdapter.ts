@@ -23,10 +23,10 @@ import {
 	DFNSConfig,
 } from '@hashgraph/hedera-custodians-integration';
 import { singleton } from 'tsyringe';
-import LogService from '../../../app/service/LogService';
-import { WalletEvents } from '../../../app/service/event/WalletEvent';
-import { SupportedWallets } from '../../../domain/context/network/Wallet';
-import DfnsSettings from '../../../domain/context/custodialwalletsettings/DfnsSettings';
+import LogService from '../../../../app/service/LogService';
+import { WalletEvents } from '../../../../app/service/event/WalletEvent';
+import { SupportedWallets } from '../../../../domain/context/network/Wallet';
+import DfnsSettings from '../../../../domain/context/custodialwalletsettings/DfnsSettings';
 import { CustodialTransactionAdapter } from './CustodialTransactionAdapter';
 
 @singleton()

@@ -18,16 +18,25 @@
  *
  */
 
-import TransactionResponse from '../../../domain/context/transaction/TransactionResponse';
-import StableCoinCapabilities from '../../../domain/context/stablecoin/StableCoinCapabilities';
-import BigDecimal from '../../../domain/context/shared/BigDecimal';
-import { CapabilityDecider } from '../CapabilityDecider';
-import { Operation } from '../../../domain/context/stablecoin/Capability';
-import LogService from '../../../app/service/LogService';
-import { SigningError } from '../hs/error/SigningError';
-import { TransactionHelpers } from './TransactionHelpers';
-import type { BaseHederaTransactionAdapter } from '../BaseHederaTransactionAdapter';
-import { TransactionType } from '../TransactionResponseEnums';
+import TransactionResponse from '../../../../domain/context/transaction/TransactionResponse';
+import StableCoinCapabilities from '../../../../domain/context/stablecoin/StableCoinCapabilities';
+import BigDecimal from '../../../../domain/context/shared/BigDecimal';
+import LogService from '../../../../app/service/LogService';
+import { SigningError } from '../../hs/error/SigningError';
+import { ethers } from 'ethers';
+import {
+	ReserveFacet__factory,
+	HederaReserveFacet__factory,
+} from '@hashgraph/stablecoin-npm-contracts';
+import {
+	GET_RESERVE_ADDRESS_GAS,
+	UPDATE_RESERVE_ADDRESS_GAS,
+	GET_RESERVE_AMOUNT_GAS,
+	UPDATE_RESERVE_AMOUNT_GAS,
+} from '../../../../core/Constants';
+import type { BaseHederaTransactionAdapter } from '../../hs/BaseHederaTransactionAdapter';
+import { TransactionType } from '../../TransactionResponseEnums';
+import ContractId from '../../../../domain/context/contract/ContractId';
 
 /**
  * Reserve management operations: getReserveAddress, updateReserveAddress, getReserveAmount, updateReserveAmount
@@ -47,13 +56,13 @@ export class ReserveOperations {
 				);
 			}
 
-			const iface = TransactionHelpers.getFacetInterface('ReserveFacet');
-			return await (this.adapter as any).executeContractCall(
+			const iface = new ethers.Interface(ReserveFacet__factory.abi);
+			return await this.adapter.executeContractCall(
 				contractId,
 				iface,
 				'getReserveAddress',
 				[],
-				TransactionHelpers.getGasLimit('GET_RESERVE_ADDRESS'),
+				GET_RESERVE_ADDRESS_GAS,
 				TransactionType.RECORD,
 				undefined,
 				undefined,
@@ -69,15 +78,10 @@ export class ReserveOperations {
 
 	async updateReserveAddress(
 		coin: StableCoinCapabilities,
-		reserveAddress: any,
+		reserveAddress: ContractId,
 		startDate?: string,
 	): Promise<TransactionResponse> {
 		try {
-			CapabilityDecider.checkContractOperation(
-				coin,
-				Operation.UPDATE_RESERVE_ADDRESS,
-			);
-
 			const contractId = coin.coin.proxyAddress?.value;
 			const evmAddress = coin.coin.evmProxyAddress?.value;
 			if (!contractId) {
@@ -88,16 +92,15 @@ export class ReserveOperations {
 
 			const evm = await this.adapter.getEVMAddress(reserveAddress);
 
-			const iface = (this.adapter as any).getFacetInterface(
-				'ReserveFacet',
-			);
+			const iface = new ethers.Interface(ReserveFacet__factory.abi);
 			const params = [evm];
-			return await (this.adapter as any).executeContractCall(
+			return await this.adapter.executeContractCall(
 				contractId,
 				iface,
 				'updateReserveAddress',
 				params,
-				TransactionHelpers.getGasLimit('UPDATE_RESERVE_ADDRESS'),
+				UPDATE_RESERVE_ADDRESS_GAS,
+				undefined,
 				undefined,
 				startDate,
 				evmAddress,
@@ -122,13 +125,13 @@ export class ReserveOperations {
 				);
 			}
 
-			const iface = TransactionHelpers.getFacetInterface('ReserveFacet');
-			return await (this.adapter as any).executeContractCall(
+			const iface = new ethers.Interface(ReserveFacet__factory.abi);
+			return await this.adapter.executeContractCall(
 				contractId,
 				iface,
 				'getReserveAmount',
 				[],
-				TransactionHelpers.getGasLimit('GET_RESERVE_AMOUNT'),
+				GET_RESERVE_AMOUNT_GAS,
 				TransactionType.RECORD,
 				undefined,
 				undefined,
@@ -143,24 +146,24 @@ export class ReserveOperations {
 	}
 
 	async updateReserveAmount(
-		reserveAddress: any,
+		reserveAddress: ContractId,
 		amount: BigDecimal,
 		startDate?: string,
 	): Promise<TransactionResponse> {
 		try {
 			const evm = await this.adapter.getEVMAddress(reserveAddress);
-			const iface =
-				TransactionHelpers.getFacetInterface('HederaReserveFacet');
+			const iface = new ethers.Interface(HederaReserveFacet__factory.abi);
 
-			return await (this.adapter as any).executeContractCall(
-				evm,
+			return await this.adapter.executeContractCall(
+				reserveAddress.toHederaAddress().toString(),
 				iface,
 				'setAmount',
 				[amount.toBigInt()],
-				TransactionHelpers.getGasLimit('UPDATE_RESERVE_AMOUNT'),
+				UPDATE_RESERVE_AMOUNT_GAS,
+				undefined,
 				undefined,
 				startDate,
-				undefined,
+				evm,
 			);
 		} catch (error) {
 			LogService.logError(error);

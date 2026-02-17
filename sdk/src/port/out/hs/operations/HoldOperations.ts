@@ -18,16 +18,22 @@
  *
  */
 
-import TransactionResponse from '../../../domain/context/transaction/TransactionResponse';
-import StableCoinCapabilities from '../../../domain/context/stablecoin/StableCoinCapabilities';
-import { HederaId } from '../../../domain/context/shared/HederaId';
-import BigDecimal from '../../../domain/context/shared/BigDecimal';
-import { CapabilityDecider } from '../CapabilityDecider';
-import { Operation } from '../../../domain/context/stablecoin/Capability';
-import LogService from '../../../app/service/LogService';
-import { SigningError } from '../hs/error/SigningError';
-import { TransactionHelpers } from './TransactionHelpers';
-import type { BaseHederaTransactionAdapter } from '../BaseHederaTransactionAdapter';
+import TransactionResponse from '../../../../domain/context/transaction/TransactionResponse';
+import StableCoinCapabilities from '../../../../domain/context/stablecoin/StableCoinCapabilities';
+import { HederaId } from '../../../../domain/context/shared/HederaId';
+import BigDecimal from '../../../../domain/context/shared/BigDecimal';
+import LogService from '../../../../app/service/LogService';
+import { SigningError } from '../../hs/error/SigningError';
+import { ethers } from 'ethers';
+import { HoldManagementFacet__factory } from '@hashgraph/stablecoin-npm-contracts';
+import {
+	CREATE_HOLD_GAS,
+	EXECUTE_HOLD_GAS,
+	RELEASE_HOLD_GAS,
+	RECLAIM_HOLD_GAS,
+	EVM_ZERO_ADDRESS,
+} from '../../../../core/Constants';
+import type { BaseHederaTransactionAdapter } from '../../hs/BaseHederaTransactionAdapter';
 
 /**
  * Hold management operations: createHold, executeHold, releaseHold, reclaimHold
@@ -44,11 +50,6 @@ export class HoldOperations {
 		startDate?: string,
 	): Promise<TransactionResponse> {
 		try {
-			CapabilityDecider.checkContractOperation(
-				coin,
-				Operation.CREATE_HOLD,
-			);
-
 			const contractId = coin.coin.proxyAddress?.value;
 			const evmAddress = coin.coin.evmProxyAddress?.value;
 			if (!contractId) {
@@ -60,7 +61,7 @@ export class HoldOperations {
 			const evmEscrow = await this.adapter.getEVMAddress(escrow);
 			const evmTo = targetId
 				? await this.adapter.getEVMAddress(targetId)
-				: TransactionHelpers.getZeroAddress();
+				: EVM_ZERO_ADDRESS;
 
 			const hold = {
 				amount: amount.toBigInt(),
@@ -70,16 +71,17 @@ export class HoldOperations {
 				data: '0x',
 			};
 
-			const iface = (this.adapter as any).getFacetInterface(
-				'HoldManagementFacet',
+			const iface = new ethers.Interface(
+				HoldManagementFacet__factory.abi,
 			);
 			const params = [hold];
-			return await (this.adapter as any).executeContractCall(
+			return await this.adapter.executeContractCall(
 				contractId,
 				iface,
 				'createHold',
 				params,
-				TransactionHelpers.getGasLimit('CREATE_HOLD'),
+				CREATE_HOLD_GAS,
+				undefined,
 				undefined,
 				startDate,
 				evmAddress,
@@ -101,11 +103,6 @@ export class HoldOperations {
 		startDate?: string,
 	): Promise<TransactionResponse> {
 		try {
-			CapabilityDecider.checkContractOperation(
-				coin,
-				Operation.EXECUTE_HOLD,
-			);
-
 			const contractId = coin.coin.proxyAddress?.value;
 			const evmAddress = coin.coin.evmProxyAddress?.value;
 			if (!contractId) {
@@ -120,18 +117,19 @@ export class HoldOperations {
 			};
 			const targetId = target
 				? await this.adapter.getEVMAddress(target)
-				: TransactionHelpers.getZeroAddress();
+				: EVM_ZERO_ADDRESS;
 
-			const iface = (this.adapter as any).getFacetInterface(
-				'HoldManagementFacet',
+			const iface = new ethers.Interface(
+				HoldManagementFacet__factory.abi,
 			);
 			const params = [holdIdentifier, targetId, amount.toBigInt()];
-			return await (this.adapter as any).executeContractCall(
+			return await this.adapter.executeContractCall(
 				contractId,
 				iface,
 				'executeHold',
 				params,
-				TransactionHelpers.getGasLimit('EXECUTE_HOLD'),
+				EXECUTE_HOLD_GAS,
+				undefined,
 				undefined,
 				startDate,
 				evmAddress,
@@ -152,11 +150,6 @@ export class HoldOperations {
 		startDate?: string,
 	): Promise<TransactionResponse> {
 		try {
-			CapabilityDecider.checkContractOperation(
-				coin,
-				Operation.RELEASE_HOLD,
-			);
-
 			const contractId = coin.coin.proxyAddress?.value;
 			const evmAddress = coin.coin.evmProxyAddress?.value;
 			if (!contractId) {
@@ -170,16 +163,17 @@ export class HoldOperations {
 				holdId,
 			};
 
-			const iface = (this.adapter as any).getFacetInterface(
-				'HoldManagementFacet',
+			const iface = new ethers.Interface(
+				HoldManagementFacet__factory.abi,
 			);
 			const params = [holdIdentifier, amount.toBigInt()];
-			return await (this.adapter as any).executeContractCall(
+			return await this.adapter.executeContractCall(
 				contractId,
 				iface,
 				'releaseHold',
 				params,
-				TransactionHelpers.getGasLimit('RELEASE_HOLD'),
+				RELEASE_HOLD_GAS,
+				undefined,
 				undefined,
 				startDate,
 				evmAddress,
@@ -199,11 +193,6 @@ export class HoldOperations {
 		startDate?: string,
 	): Promise<TransactionResponse> {
 		try {
-			CapabilityDecider.checkContractOperation(
-				coin,
-				Operation.RECLAIM_HOLD,
-			);
-
 			const contractId = coin.coin.proxyAddress?.value;
 			const evmAddress = coin.coin.evmProxyAddress?.value;
 			if (!contractId) {
@@ -217,16 +206,17 @@ export class HoldOperations {
 				holdId,
 			};
 
-			const iface = (this.adapter as any).getFacetInterface(
-				'HoldManagementFacet',
+			const iface = new ethers.Interface(
+				HoldManagementFacet__factory.abi,
 			);
 			const params = [holdIdentifier];
-			return await (this.adapter as any).executeContractCall(
+			return await this.adapter.executeContractCall(
 				contractId,
 				iface,
 				'reclaimHold',
 				params,
-				TransactionHelpers.getGasLimit('RECLAIM_HOLD'),
+				RECLAIM_HOLD_GAS,
+				undefined,
 				undefined,
 				startDate,
 				evmAddress,
