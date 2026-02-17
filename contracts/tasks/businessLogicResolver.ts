@@ -13,8 +13,9 @@ task('getConfigurationInfo', 'Get all info for a given configuration')
     .setAction(async (args: GetConfigurationInfoQuery, hre) => {
         console.log(`Executing getConfigurationInfo on ${hre.network.name} ...`)
 
-        const { getFacetsByConfigurationIdAndVersion, GetFacetsByConfigurationIdAndVersionQuery } =
-            await import('@scripts')
+        const { getFacetsByConfigurationIdAndVersion, GetFacetsByConfigurationIdAndVersionQuery } = await import(
+            '@scripts'
+        )
 
         const query = new GetFacetsByConfigurationIdAndVersionQuery({
             businessLogicResolverAddress: args.businessLogicResolverProxyAddress,

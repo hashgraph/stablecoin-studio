@@ -3,7 +3,7 @@ import { NetworkName } from '@configuration'
 export const EMPTY_STRING = ''
 export const DEFAULT_CHAR_INDEX = '#'
 
-export const DEFAULT_EVM_VERSION = 'london'
+export const DEFAULT_EVM_VERSION = 'cancun'
 
 export const DEFAULT_MNEMONIC_PATH = "m/44'/60'/0'/0"
 export const DEFAULT_MNEMONIC_LOCALE = 'en'

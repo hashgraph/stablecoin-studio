@@ -1,19 +1,19 @@
 // SPDX-License-Identifier: MIT
-pragma solidity 0.8.18;
+pragma solidity 0.8.24;
 
 import {TokenOwnerStorageWrapper} from './TokenOwnerStorageWrapper.sol';
 import {RolesStorageWrapper} from './RolesStorageWrapper.sol';
 import {IRescuable} from './Interfaces/IRescuable.sol';
 // solhint-disable-next-line max-line-length
 import {IHederaTokenService} from '@hashgraph/smart-contracts/contracts/system-contracts/hedera-token-service/IHederaTokenService.sol';
-import {ReentrancyGuard} from '@openzeppelin/contracts/security/ReentrancyGuard.sol';
+import {ReentrancyGuardTransient} from '@openzeppelin/contracts/utils/ReentrancyGuardTransient.sol';
 import {SafeCast} from '@openzeppelin/contracts/utils/math/SafeCast.sol';
 import {_RESCUABLE_RESOLVER_KEY} from '../constants/resolverKeys.sol';
 import {IStaticFunctionSelectors} from '../resolver/interfaces/resolverProxy/IStaticFunctionSelectors.sol';
 import {_RESCUE_ROLE} from '../constants/roles.sol';
 
 contract RescuableFacet is
-    ReentrancyGuard,
+    ReentrancyGuardTransient,
     IRescuable,
     IStaticFunctionSelectors,
     TokenOwnerStorageWrapper,
@@ -32,8 +32,8 @@ contract RescuableFacet is
         external
         override(IRescuable)
         onlyRole(_RESCUE_ROLE)
-        amountIsNotNegative(amount, false)
-        valueIsNotGreaterThan(SafeCast.toUint256(amount), _balanceOf(address(this)), true)
+        greaterThanZero(amount)
+        notGreaterThan(SafeCast.toUint256(amount), _balanceOf(address(this)))
         returns (bool)
     {
         address currentTokenAddress = _getTokenAddress();
@@ -65,7 +65,7 @@ contract RescuableFacet is
         external
         override(IRescuable)
         onlyRole(_RESCUE_ROLE)
-        valueIsNotGreaterThan(amount, address(this).balance, true)
+        notGreaterThan(amount, address(this).balance)
         nonReentrant
         returns (bool)
     {

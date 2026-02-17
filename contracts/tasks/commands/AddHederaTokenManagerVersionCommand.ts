@@ -6,7 +6,8 @@ interface AddHederaTokenManagerVersionBaseParams {
 }
 
 interface AddHederaTokenManagerVersionCommandParams
-    extends WithSignerCommandParams, AddHederaTokenManagerVersionBaseParams {}
+    extends WithSignerCommandParams,
+        AddHederaTokenManagerVersionBaseParams {}
 
 interface ConstructurParams extends WithSignerConstructorParams, AddHederaTokenManagerVersionBaseParams {}
 

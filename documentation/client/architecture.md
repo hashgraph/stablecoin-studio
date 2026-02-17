@@ -1,12 +1,13 @@
 ---
 id: architecture
-title: "🏗️ Internal Architecture"
-sidebar_label: "🏗️ Internal Architecture"
+title: "CLI - Architecture"
+sidebar_label: Architecture
+sidebar_position: 4
 ---
 
-# 🏗️ Internal Architecture
+# Internal Architecture
 
-## 🌊 Detailed CLI Flow
+## Detailed CLI Flow
 The Stable Coin Studio CLI is not just a wrapper; it manages a complex lifecycle for every transaction to guarantee consensus on Hedera.
 
 ### 1. Initialization & Context
@@ -61,7 +62,7 @@ sequenceDiagram
 
 
 
-## 🧪 Testing
+## Testing
 The CLI includes a robust testing suite:
 - **Unit**: Tests the `StableCoinService` logic with mocked network responses.
 - **Integration**: Real end-to-end flows against the Hedera Testnet.

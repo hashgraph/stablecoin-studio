@@ -6,7 +6,8 @@ interface RemoveHederaTokenManagerAddressBaseParams {
 }
 
 interface RemoveHederaTokenManagerAddressCommandParams
-    extends WithSignerCommandParams, RemoveHederaTokenManagerAddressBaseParams {}
+    extends WithSignerCommandParams,
+        RemoveHederaTokenManagerAddressBaseParams {}
 
 interface ConstructurParams extends WithSignerConstructorParams, RemoveHederaTokenManagerAddressBaseParams {}
 

@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: MIT
-pragma solidity 0.8.18;
+pragma solidity 0.8.24;
 
 import {IDiamondCut} from '../../interfaces/resolverProxy/IDiamondCut.sol';
 import {ResolverProxyUnstructured} from '../unstructured/ResolverProxyUnstructured.sol';

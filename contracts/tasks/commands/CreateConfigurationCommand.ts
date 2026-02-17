@@ -8,7 +8,8 @@ export interface CreateConfigurationCommandBaseParams {
 }
 
 export interface CreateConfigurationCommandParams
-    extends WithSignerCommandParams, CreateConfigurationCommandBaseParams {}
+    extends WithSignerCommandParams,
+        CreateConfigurationCommandBaseParams {}
 
 interface ConstructorParams extends WithSignerConstructorParams, CreateConfigurationCommandBaseParams {}
 

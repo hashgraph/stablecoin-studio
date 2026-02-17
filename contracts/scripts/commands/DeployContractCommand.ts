@@ -21,9 +21,8 @@ interface DeployContractCommandParams<F extends ContractFactory> extends DeployC
     rolesStruct?: RolesStruct[]
 }
 
-interface DeployContractCommandNewParams<
-    F extends ContractFactory,
-> extends DeployContractWithResolverProxyCommandNewParams<F> {
+interface DeployContractCommandNewParams<F extends ContractFactory>
+    extends DeployContractWithResolverProxyCommandNewParams<F> {
     deployType?: DeployType
     deployedContract?: DeployedContract
 }
