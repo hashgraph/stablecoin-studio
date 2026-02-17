@@ -18,6 +18,7 @@
  *
  */
 
+import { ClientTransactionAdapter } from '../../../../../../port/out/hs/client/ClientTransactionAdapter.js';
 import LogService from '../../../../../../app/service/LogService.js';
 import Hex from '../../../../../../core/Hex.js';
 import { ICommandHandler } from '../../../../../../core/command/CommandHandler.js';
@@ -25,7 +26,6 @@ import { CommandHandler } from '../../../../../../core/decorator/CommandHandlerD
 import { lazyInject } from '../../../../../../core/decorator/LazyInjectDecorator.js';
 import { BackendAdapter } from '../../../../../../port/out/backend/BackendAdapter.js';
 // import { HashpackTransactionAdapter } from '../../../../../../port/out/hs/hashpack/HashpackTransactionAdapter.js';
-import { HTSTransactionAdapter } from '../../../../../../port/out/hs/hts/HTSTransactionAdapter.js';
 import { HederaWalletConnectTransactionAdapter } from '../../../../../../port/out/hs/walletconnect/HederaWalletConnectTransactionAdapter.js';
 import AccountService from '../../../../../service/AccountService.js';
 import TransactionService from '../../../../../service/TransactionService.js';
@@ -86,7 +86,7 @@ export class SignCommandHandler implements ICommandHandler<SignCommand> {
 
 		if (
 			// handler instanceof HashpackTransactionAdapter ||
-			handler instanceof HTSTransactionAdapter ||
+			handler instanceof ClientTransactionAdapter ||
 			handler instanceof HederaWalletConnectTransactionAdapter
 		) {
 			signature = await handler.sign(deserializedTransaction);

@@ -36,7 +36,7 @@ describe('➡️ BusinessLogicResolver Tests', () => {
         {
             businessLogicKey: '0x2a271dec87b7552f37d532385985700dca633511feb45860d02d80937f63f1b9',
             businessLogicAddress: ADDRESS_ZERO,
-        }
+        },
     ]
 
     async function deployBusinessLogicResolverFixture() {
@@ -157,7 +157,7 @@ describe('➡️ BusinessLogicResolver Tests', () => {
         it('GIVEN a list of logics WHEN registerBusinessLogics with zero address THEN Fails with ZeroAddressNotValidForBusinessLogic', async () => {
             await expect(
                 businessLogicResolver.registerBusinessLogics([BUSINESS_LOGIC_KEYS[4]], {
-                  gasLimit: GAS_LIMIT.businessLogicResolver.registerBusinessLogics,
+                    gasLimit: GAS_LIMIT.businessLogicResolver.registerBusinessLogics,
                 })
             ).to.be.revertedWithCustomError(businessLogicResolver, 'ZeroAddressNotValidForBusinessLogic')
         })
@@ -294,25 +294,21 @@ describe('➡️ BusinessLogicResolver Tests', () => {
 
             // Using nonOperator (non role)
             businessLogicResolver = businessLogicResolver.connect(nonOperator)
-            await expect (businessLogicResolver.addSelectorsToBlacklist(
-              CONFIG_ID.stableCoin, blackListedSelectors
-            )).to.be.revertedWithCustomError(businessLogicResolver, 'AccountHasNoRole')
-              .withArgs(nonOperator.address, ROLES.defaultAdmin.hash)
+            await expect(businessLogicResolver.addSelectorsToBlacklist(CONFIG_ID.stableCoin, blackListedSelectors))
+                .to.be.revertedWithCustomError(businessLogicResolver, 'AccountHasNoRole')
+                .withArgs(nonOperator.address, ROLES.defaultAdmin.hash)
         })
         it('GIVEN a configuration WHEN an account without admin role tries to remove a selector to the blacklist THEN Fails with AccountHasNoRole', async () => {
             const blackListedSelectors = ['0x8456cb59'] // pause() selector
 
-            await businessLogicResolver.addSelectorsToBlacklist(
-              CONFIG_ID.stableCoin, blackListedSelectors
-            )
+            await businessLogicResolver.addSelectorsToBlacklist(CONFIG_ID.stableCoin, blackListedSelectors)
 
             // Using nonOperator (non role)
             businessLogicResolver = businessLogicResolver.connect(nonOperator)
 
-            await expect (businessLogicResolver.removeSelectorsFromBlacklist(
-              CONFIG_ID.stableCoin, blackListedSelectors
-            )).to.be.revertedWithCustomError(businessLogicResolver, 'AccountHasNoRole')
-              .withArgs(nonOperator.address, ROLES.defaultAdmin.hash)
+            await expect(businessLogicResolver.removeSelectorsFromBlacklist(CONFIG_ID.stableCoin, blackListedSelectors))
+                .to.be.revertedWithCustomError(businessLogicResolver, 'AccountHasNoRole')
+                .withArgs(nonOperator.address, ROLES.defaultAdmin.hash)
         })
         it('GIVEN a configuration WHEN adding a selector to the blacklist THEN queries respond with correct values', async () => {
             const blackListedSelectors = ['0x8456cb59'] // pause() selector

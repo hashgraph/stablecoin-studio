@@ -10,15 +10,15 @@ import {
     deployStableCoin,
     DeployStableCoinCommand,
     MESSAGES,
-    DEFAULT_CONFIG_VERSION
+    DEFAULT_CONFIG_VERSION,
 } from '@scripts'
 import { deployFullInfrastructureInTests, GAS_LIMIT } from '@test/shared'
 import {
-  HederaReserveFacet__factory,
-  ReserveFacet,
-  ReserveFacet__factory,
-  StableCoinFactoryFacet,
-  StableCoinFactoryFacet__factory
+    HederaReserveFacet__factory,
+    ReserveFacet,
+    ReserveFacet__factory,
+    StableCoinFactoryFacet,
+    StableCoinFactoryFacet__factory,
 } from '@contracts'
 
 const toReserve = (amount: bigint) => {
@@ -70,8 +70,8 @@ describe('StableCoinFactory Tests', function () {
             stableCoinFactoryProxyAddress: stableCoinFactoryProxy,
         })
         await expect(deployStableCoin(deployCommand))
-          .to.be.revertedWithCustomError(stableCoinFactoryFacet, 'AddressZero')
-          .withArgs(ADDRESS_ZERO)
+            .to.be.revertedWithCustomError(stableCoinFactoryFacet, 'AddressZero')
+            .withArgs(ADDRESS_ZERO)
     })
 
     it('Cannot deploy a Stablecoin if configuration id key is 0', async function () {
@@ -91,13 +91,13 @@ describe('StableCoinFactory Tests', function () {
             businessLogicResolverProxyAddress: businessLogicResolver,
             stableCoinFactoryProxyAddress: stableCoinFactoryProxy,
             stableCoinConfigurationId: {
-              key: ethers.ZeroHash,
-              version: DEFAULT_CONFIG_VERSION
-            }
+                key: ethers.ZeroHash,
+                version: DEFAULT_CONFIG_VERSION,
+            },
         })
         await expect(deployStableCoin(deployCommand))
-          .to.be.revertedWithCustomError(stableCoinFactoryFacet, 'Bytes32Zero')
-          .withArgs(ethers.ZeroHash)
+            .to.be.revertedWithCustomError(stableCoinFactoryFacet, 'Bytes32Zero')
+            .withArgs(ethers.ZeroHash)
     })
 
     it('Create StableCoin setting all token keys to the Proxy', async function () {
@@ -294,12 +294,10 @@ describe('StableCoinFactory Tests', function () {
             })
         )
 
-        const hederaReserve = HederaReserveFacet__factory.connect(
-          hederaReserveContract.proxyAddress!, operator
-        )
+        const hederaReserve = HederaReserveFacet__factory.connect(hederaReserveContract.proxyAddress!, operator)
 
         await hederaReserve.initialize(1, operator.address, {
-          gasLimit: GAS_LIMIT.hederaReserve.initialize,
+            gasLimit: GAS_LIMIT.hederaReserve.initialize,
         })
 
         const reserveAmount = 10n
@@ -322,13 +320,15 @@ describe('StableCoinFactory Tests', function () {
             allToContract: false,
             createReserve: false,
             reserveAddress: await hederaReserve.getAddress(),
-            updatedAtThreshold: "1",
+            updatedAtThreshold: '1',
             businessLogicResolverProxyAddress: businessLogicResolver,
             stableCoinFactoryProxyAddress: stableCoinFactoryProxy,
         })
 
-        await expect(deployStableCoin(command))
-          .to.be.revertedWithCustomError(stableCoinFactoryFacet, 'ReserveAmountOutdated')
+        await expect(deployStableCoin(command)).to.be.revertedWithCustomError(
+            stableCoinFactoryFacet,
+            'ReserveAmountOutdated'
+        )
     })
 
     it('Create StableCoin setting an initial supply over the reserve, when the reserve is provided and not deployed, expect it to fail', async function () {
@@ -376,12 +376,10 @@ describe('StableCoinFactory Tests', function () {
             })
         )
 
-        const hederaReserve = HederaReserveFacet__factory.connect(
-          hederaReserveContract.proxyAddress!, operator
-        )
+        const hederaReserve = HederaReserveFacet__factory.connect(hederaReserveContract.proxyAddress!, operator)
 
         await hederaReserve.initialize(1, operator.address, {
-          gasLimit: GAS_LIMIT.hederaReserve.initialize,
+            gasLimit: GAS_LIMIT.hederaReserve.initialize,
         })
 
         const reserveAmount = 10n

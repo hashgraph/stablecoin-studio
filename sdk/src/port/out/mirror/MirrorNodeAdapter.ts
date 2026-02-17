@@ -357,7 +357,13 @@ export class MirrorNodeAdapter {
 			);
 
 			const account: AccountViewModel = {
-				id: res.data.account.toString(),
+				id: res.data.account
+					? res.data.account.toString()
+					: ((): string => {
+							throw new Error(
+								`No account ID returned from mirror node for ${accountId}`,
+							);
+					  })(),
 				accountEvmAddress: res.data.evm_address,
 				alias: res.data.alias,
 			};

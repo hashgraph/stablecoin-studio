@@ -1,0 +1,182 @@
+/*
+ *
+ * Hedera Stablecoin SDK
+ *
+ * Copyright (C) 2023 Hedera Hashgraph, LLC
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *
+ */
+
+import {
+	TransactionResponse as HTransactionResponse,
+	Transaction,
+	Client,
+} from '@hiero-ledger/sdk';
+import { singleton } from 'tsyringe';
+import { BaseHederaTransactionAdapter } from '../../hs/BaseHederaTransactionAdapter';
+import TransactionResponse from '../../../../domain/context/transaction/TransactionResponse.js';
+import { TransactionType } from '../../TransactionResponseEnums.js';
+import { HTSTransactionResponseAdapter } from '../../response/HTSTransactionResponseAdapter.js';
+import Injectable from '../../../../core/Injectable.js';
+import { InitializationData } from '../../TransactionAdapter.js';
+import Account from '../../../../domain/context/account/Account.js';
+import { Environment } from '../../../../domain/context/network/Environment.js';
+import {
+	WalletEvents,
+	WalletPairedEvent,
+} from '../../../../app/service/event/WalletEvent.js';
+import { SupportedWallets } from '../../../in/request/ConnectRequest.js';
+import { lazyInject } from '../../../../core/decorator/LazyInjectDecorator.js';
+import { MirrorNodeAdapter } from '../../mirror/MirrorNodeAdapter.js';
+import NetworkService from '../../../../app/service/NetworkService.js';
+import LogService from '../../../../app/service/LogService.js';
+import { WalletConnectError } from '../../../../domain/context/network/error/WalletConnectError.js';
+import { SigningError } from '../../hs/error/SigningError.js';
+import Hex from '../../../../core/Hex.js';
+import EventService from '../../../../app/service/event/EventService';
+
+@singleton()
+export class ClientTransactionAdapter extends BaseHederaTransactionAdapter {
+	private _client: Client;
+	public network: Environment;
+	public account: Account;
+
+	public get client(): Client {
+		return this._client;
+	}
+
+	constructor(
+		@lazyInject(EventService) public readonly eventService: EventService,
+		@lazyInject(MirrorNodeAdapter)
+		public readonly mirrorNodeAdapter: MirrorNodeAdapter,
+		@lazyInject(NetworkService)
+		public readonly networkService: NetworkService,
+	) {
+		super();
+	}
+
+	init(): Promise<string> {
+		this.eventService.emit(WalletEvents.walletInit, {
+			wallet: SupportedWallets.CLIENT,
+			initData: {},
+		});
+		LogService.logTrace('Client Initialized');
+		return Promise.resolve(this.networkService.environment);
+	}
+
+	async register(account: Account): Promise<InitializationData> {
+		Injectable.registerTransactionHandler(this);
+
+		const accountMirror = await this.mirrorNodeAdapter.getAccountInfo(
+			account.id,
+		);
+		this.account = account;
+		this.account.publicKey = accountMirror.publicKey;
+		this.network = this.networkService.environment;
+		this._client = Client.forName(this.networkService.environment);
+		const id = this.account.id?.value ?? '';
+		if (!account.privateKey)
+			throw new WalletConnectError(
+				'A private key is needed for the account',
+			);
+		const privateKey = account.privateKey.toHashgraphKey();
+		this._client.setOperator(id, privateKey);
+		const eventData: WalletPairedEvent = {
+			wallet: SupportedWallets.CLIENT,
+			data: {
+				account: this.account,
+				pairing: '',
+				topic: '',
+			},
+			network: {
+				name: this.networkService.environment,
+				recognized: true,
+				factoryId: this.networkService.configuration
+					? this.networkService.configuration.factoryAddress
+					: '',
+			},
+		};
+		this.eventService.emit(WalletEvents.walletPaired, eventData);
+		LogService.logTrace('Client registered as handler: ', eventData);
+		return Promise.resolve({
+			account: this.getAccount(),
+		});
+	}
+
+	stop(): Promise<boolean> {
+		this.client?.close();
+		LogService.logTrace('Client stopped');
+		this.eventService.emit(WalletEvents.walletDisconnect, {
+			wallet: SupportedWallets.CLIENT,
+		});
+		return Promise.resolve(true);
+	}
+
+	public async processTransaction(
+		tx: Transaction,
+		transactionType: TransactionType,
+		// eslint-disable-next-line @typescript-eslint/no-unused-vars
+		_startDate?: string,
+	): Promise<TransactionResponse> {
+		console.log('Executing transaction:', tx);
+		const tr: HTransactionResponse = await tx.execute(this.client);
+		this.logTransaction(
+			tr.transactionId.toString(),
+			this.networkService.environment,
+		);
+		return HTSTransactionResponseAdapter.manageResponse(
+			this.networkService.environment,
+			tr,
+			transactionType,
+			this.client,
+			undefined,
+			[],
+		);
+	}
+
+	public supportsEvmOperations(): boolean {
+		return false;
+	}
+
+	public getNetworkService(): NetworkService {
+		return this.networkService;
+	}
+
+	public getMirrorNodeAdapter(): MirrorNodeAdapter {
+		return this.mirrorNodeAdapter;
+	}
+
+	getAccount(): Account {
+		return this.account;
+	}
+
+	async sign(message: string | Transaction): Promise<string> {
+		if (!this.account.privateKey)
+			throw new SigningError('Private Key is empty');
+
+		if (!(message instanceof Transaction))
+			throw new SigningError('HTS must sign a transaction not a string');
+
+		try {
+			const privateKey = this.account.privateKey.toHashgraphKey();
+			const signedTx = await message.sign(privateKey); // firma y retorna Transaction
+
+			const bytes = signedTx.toBytes(); // Uint8Array
+			return Hex.fromUint8Array(bytes);
+		} catch (error) {
+			LogService.logError(error);
+			throw new SigningError(error);
+		}
+	}
+}

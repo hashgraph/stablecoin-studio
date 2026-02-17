@@ -1,0 +1,226 @@
+/*
+ *
+ * Hedera Stablecoin SDK
+ *
+ * Copyright (C) 2023 Hedera Hashgraph, LLC
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *
+ */
+
+import {
+	Client,
+	Transaction,
+	TransactionResponse as HTransactionResponse,
+} from '@hiero-ledger/sdk';
+import {
+	CustodialWalletService,
+	SignatureRequest,
+} from '@hashgraph/hedera-custodians-integration';
+import TransactionResponse from '../../../../domain/context/transaction/TransactionResponse.js';
+import DfnsSettings from '../../../../domain/context/custodialwalletsettings/DfnsSettings';
+import FireblocksSettings from '../../../../domain/context/custodialwalletsettings/FireblocksSettings';
+import Account from '../../../../domain/context/account/Account';
+import { InitializationData } from '../../TransactionAdapter';
+import { lazyInject } from '../../../../core/decorator/LazyInjectDecorator';
+import EventService from '../../../../app/service/event/EventService';
+import { MirrorNodeAdapter } from '../../mirror/MirrorNodeAdapter';
+import NetworkService from '../../../../app/service/NetworkService';
+import { Environment } from '../../../../domain/context/network/Environment';
+import LogService from '../../../../app/service/LogService';
+import { HTSTransactionResponseAdapter } from '../../response/HTSTransactionResponseAdapter';
+import { SigningError } from '../../hs/error/SigningError';
+import { SupportedWallets } from '../../../../domain/context/network/Wallet';
+import {
+	WalletEvents,
+	WalletPairedEvent,
+} from '../../../../app/service/event/WalletEvent';
+import Injectable from '../../../../core/Injectable';
+import { TransactionType } from '../../TransactionResponseEnums';
+import Hex from '../../../../core/Hex.js';
+import AWSKMSSettings from '../../../../domain/context/custodialwalletsettings/AWSKMSSettings';
+import { BaseHederaTransactionAdapter } from '../BaseHederaTransactionAdapter.js';
+
+export abstract class CustodialTransactionAdapter extends BaseHederaTransactionAdapter {
+	protected client: Client;
+	protected custodialWalletService: CustodialWalletService;
+	public account: Account;
+	protected network: Environment;
+
+	constructor(
+		@lazyInject(EventService) public readonly eventService: EventService,
+		@lazyInject(MirrorNodeAdapter)
+		public readonly mirrorNodeAdapter: MirrorNodeAdapter,
+		@lazyInject(NetworkService)
+		public readonly networkService: NetworkService,
+	) {
+		super();
+	}
+
+	protected initClient(accountId: string, publicKey: string): void {
+		const currentNetwork = this.networkService.environment;
+		switch (currentNetwork) {
+			case 'testnet':
+				this.client = Client.forTestnet();
+				break;
+			case 'mainnet':
+				this.client = Client.forMainnet();
+				break;
+			case 'previewnet':
+				this.client = Client.forPreviewnet();
+				break;
+			default:
+				throw new Error('Network not supported');
+		}
+		this.client.setOperatorWith(accountId, publicKey, this.signingService);
+	}
+
+	protected signingService = async (
+		message: Uint8Array,
+	): Promise<Uint8Array> => {
+		const signatureRequest = new SignatureRequest(message);
+		return await this.custodialWalletService.signTransaction(
+			signatureRequest,
+		);
+	};
+
+	protected createWalletPairedEvent(
+		wallet: SupportedWallets,
+	): WalletPairedEvent {
+		return {
+			wallet: wallet,
+			data: {
+				account: this.account,
+				pairing: '',
+				topic: '',
+			},
+			network: {
+				name: this.networkService.environment,
+				recognized: true,
+				factoryId:
+					this.networkService.configuration?.factoryAddress ?? '',
+			},
+		};
+	}
+
+	protected abstract initCustodialWalletService(
+		settings: FireblocksSettings | DfnsSettings | AWSKMSSettings,
+	): void;
+
+	protected abstract getSupportedWallet(): SupportedWallets;
+
+	async register(
+		settings: FireblocksSettings | DfnsSettings | AWSKMSSettings,
+	): Promise<InitializationData> {
+		Injectable.registerTransactionHandler(this);
+		const accountMirror = await this.mirrorNodeAdapter.getAccountInfo(
+			settings.hederaAccountId,
+		);
+		if (!accountMirror.publicKey) {
+			throw new Error('PublicKey not found in the mirror node');
+		}
+
+		this.account = new Account({
+			id: settings.hederaAccountId,
+			publicKey: accountMirror.publicKey,
+		});
+
+		this.initCustodialWalletService(settings);
+		this.initClient(settings.hederaAccountId, accountMirror.publicKey.key);
+
+		const wallet = this.getSupportedWallet();
+		const eventData = this.createWalletPairedEvent(wallet);
+		this.eventService.emit(WalletEvents.walletPaired, eventData);
+		LogService.logTrace(`${wallet} registered as handler: `, eventData);
+
+		return { account: this.getAccount() };
+	}
+
+	public getAccount(): Account {
+		return this.account;
+	}
+
+	public supportsEvmOperations(): boolean {
+		// Custodial adapter only supports native HTS operations
+		return false;
+	}
+
+	async sign(message: string): Promise<string> {
+		if (!this.custodialWalletService)
+			throw new SigningError('Custodial Wallet is empty');
+
+		try {
+			const encoded_message: Uint8Array = Hex.toUint8Array(message);
+			const encoded_signed_message = await this.signingService(
+				encoded_message,
+			);
+
+			const hexArray = Array.from(encoded_signed_message, (byte) =>
+				('0' + byte.toString(16)).slice(-2),
+			);
+
+			return hexArray.join('');
+		} catch (error) {
+			LogService.logError(error);
+			throw new SigningError(error);
+		}
+	}
+
+	// ===== Abstract Method Implementations =====
+
+	/**
+	 * Execute a Hedera SDK transaction via custodial wallet.
+	 * This is called by the base class for native HTS operations.
+	 */
+	public async processTransaction(
+		tx: Transaction,
+		transactionType: TransactionType,
+		// eslint-disable-next-line @typescript-eslint/no-unused-vars
+		_startDate?: string,
+	): Promise<TransactionResponse> {
+		try {
+			const txResponse: HTransactionResponse = await tx.execute(
+				this.client,
+			);
+
+			this.logTransaction(
+				txResponse.transactionId.toString(),
+				this.networkService.environment,
+			);
+
+			return HTSTransactionResponseAdapter.manageResponse(
+				this.networkService.environment,
+				txResponse,
+				transactionType,
+				this.client,
+			);
+		} catch (error) {
+			LogService.logError(error);
+			throw new SigningError(error);
+		}
+	}
+
+	/**
+	 * Get the network service.
+	 */
+	public getNetworkService(): NetworkService {
+		return this.networkService;
+	}
+
+	/**
+	 * Get the mirror node adapter.
+	 */
+	public getMirrorNodeAdapter(): MirrorNodeAdapter {
+		return this.mirrorNodeAdapter;
+	}
+}
