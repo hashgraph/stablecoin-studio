@@ -3,7 +3,7 @@ import {
 	ContractId as HContractId,
 	Long,
 } from '@hiero-ledger/sdk';
-import { proto } from '@hashgraph/proto';
+import { proto } from '@hiero-ledger/proto';
 import InvalidKeyForContract from './error/InvalidKeyForContract.js';
 import BaseError from '../../../core/error/BaseError.js';
 import CheckStrings from '../../../core/checks/strings/CheckStrings.js';

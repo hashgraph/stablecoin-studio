@@ -82,6 +82,7 @@
 		"@walletconnect/universal-provider": "2.21.9",
 		"@walletconnect/utils": "2.19.1",
 		"@hashgraph/stablecoin-npm-contracts": "*",
+		"@hiero-ledger/proto": "2.25.0",
 		"@hiero-ledger/sdk": "2.79.0",
 		"@metamask/detect-provider": "^2.0.0",
 		"@metamask/providers": "^10.2.1",
