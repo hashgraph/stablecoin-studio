@@ -47,9 +47,6 @@ import PublicKey from '../../../../domain/context/account/PublicKey';
 import ContractId from '../../../../domain/context/contract/ContractId';
 import { MirrorNodeAdapter } from '../../mirror/MirrorNodeAdapter';
 
-/**
- * Update operations: update, updateCustomFees, updateConfigVersion, updateConfig, updateResolver
- */
 export class UpdateOperations {
 	constructor(private adapter: BaseHederaTransactionAdapter) {}
 

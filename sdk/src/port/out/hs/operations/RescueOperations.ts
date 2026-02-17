@@ -28,9 +28,6 @@ import { RescuableFacet__factory } from '@hashgraph/stablecoin-npm-contracts';
 import { RESCUE_GAS, RESCUE_HBAR_GAS } from '../../../../core/Constants';
 import type { BaseHederaTransactionAdapter } from '../../hs/BaseHederaTransactionAdapter';
 
-/**
- * Rescue operations: rescue, rescueHBAR
- */
 export class RescueOperations {
 	constructor(private adapter: BaseHederaTransactionAdapter) {}
 

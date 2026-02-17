@@ -55,9 +55,6 @@ import {
 import type { BaseHederaTransactionAdapter } from '../../hs/BaseHederaTransactionAdapter';
 import { TransactionType } from '../../TransactionResponseEnums';
 
-/**
- * Token control operations: freeze, unfreeze, pause, unpause, delete, KYC
- */
 export class TokenControlOperations {
 	constructor(private adapter: BaseHederaTransactionAdapter) {}
 

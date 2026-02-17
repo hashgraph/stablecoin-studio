@@ -40,9 +40,6 @@ import type { BaseHederaTransactionAdapter } from '../../hs/BaseHederaTransactio
 import { StableCoinRole } from '../../../../domain/context/stablecoin/StableCoinRole';
 import { TransactionType } from '../../TransactionResponseEnums';
 
-/**
- * Query operations: hasRole, getRoles, balanceOf, supplierAllowance, isUnlimitedSupplierAllowance
- */
 export class QueryOperations {
 	constructor(private adapter: BaseHederaTransactionAdapter) {}
 

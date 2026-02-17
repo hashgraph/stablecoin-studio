@@ -32,12 +32,10 @@ import {
 	RELEASE_HOLD_GAS,
 	RECLAIM_HOLD_GAS,
 	EVM_ZERO_ADDRESS,
+	CONTROLLER_CREATE_HOLD_GAS,
 } from '../../../../core/Constants';
 import type { BaseHederaTransactionAdapter } from '../../hs/BaseHederaTransactionAdapter';
 
-/**
- * Hold management operations: createHold, executeHold, releaseHold, reclaimHold
- */
 export class HoldOperations {
 	constructor(private adapter: BaseHederaTransactionAdapter) {}
 
@@ -90,6 +88,61 @@ export class HoldOperations {
 			LogService.logError(error);
 			throw new SigningError(
 				`Unexpected error in createHold(): ${error}`,
+			);
+		}
+	}
+
+	async createHoldByController(
+		coin: StableCoinCapabilities,
+		amount: BigDecimal,
+		escrow: HederaId,
+		expirationDate: BigDecimal,
+		sourceId: HederaId,
+		targetId?: HederaId,
+		startDate?: string,
+	): Promise<TransactionResponse> {
+		try {
+			const contractId = coin.coin.proxyAddress?.value;
+			const evmAddress = coin.coin.evmProxyAddress?.value;
+			if (!contractId) {
+				throw new Error(
+					`StableCoin ${coin.coin.name} does not have a proxy address`,
+				);
+			}
+
+			const evmEscrow = await this.adapter.getEVMAddress(escrow);
+			const evmTo = targetId
+				? await this.adapter.getEVMAddress(targetId)
+				: EVM_ZERO_ADDRESS;
+			const evmSource = await this.adapter.getEVMAddress(sourceId);
+
+			const hold = {
+				amount: amount.toBigInt(),
+				expirationTimestamp: expirationDate.toBigInt(),
+				escrow: evmEscrow,
+				to: evmTo,
+				data: '0x',
+			};
+
+			const iface = new ethers.Interface(
+				HoldManagementFacet__factory.abi,
+			);
+			const params = [evmSource, hold, '0x'];
+			return await this.adapter.executeContractCall(
+				contractId,
+				iface,
+				'createHoldByController',
+				params,
+				CONTROLLER_CREATE_HOLD_GAS,
+				undefined,
+				undefined,
+				startDate,
+				evmAddress,
+			);
+		} catch (error) {
+			LogService.logError(error);
+			throw new SigningError(
+				`Unexpected error in createHoldByController(): ${error}`,
 			);
 		}
 	}

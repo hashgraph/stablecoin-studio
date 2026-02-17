@@ -38,9 +38,6 @@ import type { BaseHederaTransactionAdapter } from '../../hs/BaseHederaTransactio
 import { TransactionType } from '../../TransactionResponseEnums';
 import ContractId from '../../../../domain/context/contract/ContractId';
 
-/**
- * Reserve management operations: getReserveAddress, updateReserveAddress, getReserveAmount, updateReserveAmount
- */
 export class ReserveOperations {
 	constructor(private adapter: BaseHederaTransactionAdapter) {}
 

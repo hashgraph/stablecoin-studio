@@ -64,9 +64,6 @@ import { KeysStruct } from '../../../../domain/context/factory/FactoryKey';
 import type { BaseHederaTransactionAdapter } from '../../hs/BaseHederaTransactionAdapter';
 import { TransactionType } from '../../TransactionResponseEnums';
 
-/**
- * Token operations: create, associate, wipe, burn, cashin
- */
 export class TokenOperations {
 	constructor(private adapter: BaseHederaTransactionAdapter) {}
 

@@ -449,6 +449,24 @@ export abstract class BaseHederaTransactionAdapter extends TransactionAdapter {
 		);
 	}
 
+	async createHoldByController(
+		coin: StableCoinCapabilities,
+		amount: BigDecimal,
+		escrow: HederaId,
+		expirationDate: BigDecimal,
+		sourceId: HederaId,
+		targetId?: HederaId,
+	): Promise<TransactionResponse> {
+		return this.holdOps.createHoldByController(
+			coin,
+			amount,
+			escrow,
+			expirationDate,
+			sourceId,
+			targetId,
+		);
+	}
+
 	async executeHold(
 		coin: StableCoinCapabilities,
 		amount: BigDecimal,

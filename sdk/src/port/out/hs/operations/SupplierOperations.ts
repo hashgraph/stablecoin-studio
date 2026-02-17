@@ -35,9 +35,6 @@ import {
 } from '../../../../core/Constants';
 import type { BaseHederaTransactionAdapter } from '../../hs/BaseHederaTransactionAdapter';
 
-/**
- * Supplier role management operations
- */
 export class SupplierOperations {
 	constructor(private adapter: BaseHederaTransactionAdapter) {}
 

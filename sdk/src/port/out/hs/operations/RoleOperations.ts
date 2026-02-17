@@ -37,9 +37,6 @@ import {
 import { StableCoinRole } from '../../../../domain/context/stablecoin/StableCoinRole';
 import type { BaseHederaTransactionAdapter } from '../../hs/BaseHederaTransactionAdapter';
 
-/**
- * Role management operations: grantRole, revokeRole, grantRoles, revokeRoles
- */
 export class RoleOperations {
 	constructor(private adapter: BaseHederaTransactionAdapter) {}
 
