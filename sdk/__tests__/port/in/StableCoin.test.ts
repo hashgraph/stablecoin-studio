@@ -1162,7 +1162,8 @@ describe('🧪 Stablecoin test', () => {
 
 		expect(result_1).toBeTruthy();
 		expect(result_1.transactionId).toBeTruthy();
-		expect(result_2).toBe(true);
+		expect(result_2).toBeTruthy();
+		expect(result_2.transactionId).toBeTruthy();
 	}
 
 	async function getReserve(

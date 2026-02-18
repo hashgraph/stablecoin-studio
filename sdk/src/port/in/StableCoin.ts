@@ -158,7 +158,7 @@ interface IStableCoinInPort {
 	getBalanceOfHBAR(request: GetAccountBalanceHBARRequest): Promise<Balance>;
 	capabilities(request: CapabilitiesRequest): Promise<StableCoinCapabilities>;
 	pause(request: PauseRequest): Promise<TransactionResult>;
-	unPause(request: PauseRequest): Promise<boolean>;
+	unPause(request: PauseRequest): Promise<TransactionResult>;
 	delete(request: DeleteRequest): Promise<boolean>;
 	freeze(request: FreezeAccountRequest): Promise<TransactionResult>;
 	unFreeze(request: FreezeAccountRequest): Promise<TransactionResult>;
@@ -504,15 +504,14 @@ class StableCoinInPort implements IStableCoinInPort {
 	}
 
 	@LogError
-	async unPause(request: PauseRequest): Promise<boolean> {
+	async unPause(request: PauseRequest): Promise<TransactionResult> {
 		const { tokenId, startDate } = request;
 		handleValidation('PauseRequest', request);
 
-		return (
-			await this.commandBus.execute(
-				new UnPauseCommand(HederaId.from(tokenId), startDate),
-			)
-		).payload;
+		const response = await this.commandBus.execute(
+			new UnPauseCommand(HederaId.from(tokenId), startDate),
+		);
+		return new TransactionResult(response.payload, response.transactionId);
 	}
 
 	@LogError
