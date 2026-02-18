@@ -170,7 +170,7 @@ interface IStableCoinInPort {
 	updateReserveAddress(
 		request: UpdateReserveAddressRequest,
 	): Promise<boolean>;
-	grantKyc(request: KYCRequest): Promise<boolean>;
+	grantKyc(request: KYCRequest): Promise<TransactionResult>;
 	revokeKyc(request: KYCRequest): Promise<boolean>;
 	isAccountKYCGranted(request: KYCRequest): Promise<boolean>;
 	createHold(
@@ -573,18 +573,17 @@ class StableCoinInPort implements IStableCoinInPort {
 	}
 
 	@LogError
-	async grantKyc(request: KYCRequest): Promise<boolean> {
+	async grantKyc(request: KYCRequest): Promise<TransactionResult> {
 		const { tokenId, targetId } = request;
 		handleValidation('KYCRequest', request);
 
-		return (
-			await this.commandBus.execute(
-				new GrantKycCommand(
-					HederaId.from(targetId),
-					HederaId.from(tokenId),
-				),
-			)
-		).payload;
+		const response = await this.commandBus.execute(
+			new GrantKycCommand(
+				HederaId.from(targetId),
+				HederaId.from(tokenId),
+			),
+		);
+		return new TransactionResult(response.payload, response.transactionId);
 	}
 
 	@LogError
