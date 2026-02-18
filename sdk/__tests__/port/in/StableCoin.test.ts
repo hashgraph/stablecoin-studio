@@ -977,7 +977,7 @@ describe('🧪 Stablecoin test', () => {
 				treasuryAccountId: stableCoin?.treasury?.toString() ?? '0.0.0',
 			}),
 		);
-		await StableCoin.rescueHBAR(
+		const result = await StableCoin.rescueHBAR(
 			new RescueHBARRequest({
 				amount: rescueAmount.toString(),
 				tokenId: stableCoin?.tokenId?.toString() ?? '0.0.0',
@@ -995,6 +995,8 @@ describe('🧪 Stablecoin test', () => {
 		expect(finalAmount.value.toBigInt().toString()).toEqual(
 			final.toString(),
 		);
+		expect(result).toBeTruthy();
+		expect(result.transactionId).toBeTruthy();
 	}
 
 	async function wipeOperation(
