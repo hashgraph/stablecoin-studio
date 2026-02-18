@@ -61,6 +61,7 @@ import {
 } from '../../domain/context/stablecoin/Capability.js';
 import { TokenSupplyType } from '../../domain/context/stablecoin/TokenSupply.js';
 import Account from '../../domain/context/account/Account.js';
+import { TransactionResult } from '../../domain/context/transaction/TransactionResult.js';
 import { BurnCommand } from '../../app/usecase/command/stablecoin/operations/burn/BurnCommand.js';
 import { RescueCommand } from '../../app/usecase/command/stablecoin/operations/rescue/RescueCommand.js';
 import { RescueHBARCommand } from '../../app/usecase/command/stablecoin/operations/rescueHBAR/RescueHBARCommand.js';
@@ -148,7 +149,7 @@ interface IStableCoinInPort {
 	}>;
 	getInfo(request: GetStableCoinDetailsRequest): Promise<StableCoinViewModel>;
 	cashIn(request: CashInRequest): Promise<boolean>;
-	burn(request: BurnRequest): Promise<boolean>;
+	burn(request: BurnRequest): Promise<TransactionResult>;
 	rescue(request: RescueRequest): Promise<boolean>;
 	rescueHBAR(request: RescueHBARRequest): Promise<boolean>;
 	wipe(request: WipeRequest): Promise<boolean>;
@@ -378,15 +379,14 @@ class StableCoinInPort implements IStableCoinInPort {
 	}
 
 	@LogError
-	async burn(request: BurnRequest): Promise<boolean> {
+	async burn(request: BurnRequest): Promise<TransactionResult> {
 		const { tokenId, amount, startDate } = request;
 		handleValidation('BurnRequest', request);
 
-		return (
-			await this.commandBus.execute(
-				new BurnCommand(amount, HederaId.from(tokenId), startDate),
-			)
-		).payload;
+		const response = await this.commandBus.execute(
+			new BurnCommand(amount, HederaId.from(tokenId), startDate),
+		);
+		return new TransactionResult(response.payload, response.transactionId);
 	}
 
 	@LogError

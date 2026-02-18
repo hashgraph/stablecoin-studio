@@ -72,7 +72,7 @@ export class BurnCommandHandler implements ICommandHandler<BurnCommand> {
 
 		const res = await handler.burn(capabilities, amountBd, startDate);
 		return Promise.resolve(
-			new BurnCommandResponse(res.error === undefined),
+			new BurnCommandResponse(res.error === undefined, res.id),
 		);
 	}
 }
