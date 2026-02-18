@@ -942,7 +942,7 @@ describe('🧪 Stablecoin test', () => {
 			}),
 		);
 
-		await StableCoin.rescue(
+		const result = await StableCoin.rescue(
 			new RescueRequest({
 				amount: rescueAmount.toString(),
 				tokenId: stableCoin?.tokenId?.toString() ?? '0.0.0',
@@ -963,6 +963,8 @@ describe('🧪 Stablecoin test', () => {
 		expect(finalAmount.value.toBigInt().toString()).toEqual(
 			final.toString(),
 		);
+		expect(result).toBeTruthy();
+		expect(result.transactionId).toBeTruthy();
 	}
 
 	async function rescueHBAROperation(

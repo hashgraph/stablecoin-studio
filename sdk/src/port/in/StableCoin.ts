@@ -150,7 +150,7 @@ interface IStableCoinInPort {
 	getInfo(request: GetStableCoinDetailsRequest): Promise<StableCoinViewModel>;
 	cashIn(request: CashInRequest): Promise<TransactionResult>;
 	burn(request: BurnRequest): Promise<TransactionResult>;
-	rescue(request: RescueRequest): Promise<boolean>;
+	rescue(request: RescueRequest): Promise<TransactionResult>;
 	rescueHBAR(request: RescueHBARRequest): Promise<boolean>;
 	wipe(request: WipeRequest): Promise<TransactionResult>;
 	associate(request: AssociateTokenRequest): Promise<boolean>;
@@ -389,15 +389,14 @@ class StableCoinInPort implements IStableCoinInPort {
 	}
 
 	@LogError
-	async rescue(request: RescueRequest): Promise<boolean> {
+	async rescue(request: RescueRequest): Promise<TransactionResult> {
 		const { tokenId, amount, startDate } = request;
 		handleValidation('RescueRequest', request);
 
-		return (
-			await this.commandBus.execute(
-				new RescueCommand(amount, HederaId.from(tokenId), startDate),
-			)
-		).payload;
+		const response = await this.commandBus.execute(
+			new RescueCommand(amount, HederaId.from(tokenId), startDate),
+		);
+		return new TransactionResult(response.payload, response.transactionId);
 	}
 
 	@LogError
