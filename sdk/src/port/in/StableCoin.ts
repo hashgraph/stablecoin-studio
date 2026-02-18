@@ -148,7 +148,7 @@ interface IStableCoinInPort {
 		reserve: ReserveViewModel;
 	}>;
 	getInfo(request: GetStableCoinDetailsRequest): Promise<StableCoinViewModel>;
-	cashIn(request: CashInRequest): Promise<boolean>;
+	cashIn(request: CashInRequest): Promise<TransactionResult>;
 	burn(request: BurnRequest): Promise<TransactionResult>;
 	rescue(request: RescueRequest): Promise<boolean>;
 	rescueHBAR(request: RescueHBARRequest): Promise<boolean>;
@@ -362,20 +362,19 @@ class StableCoinInPort implements IStableCoinInPort {
 	}
 
 	@LogError
-	async cashIn(request: CashInRequest): Promise<boolean> {
+	async cashIn(request: CashInRequest): Promise<TransactionResult> {
 		const { tokenId, amount, targetId, startDate } = request;
 		handleValidation('CashInRequest', request);
 
-		return (
-			await this.commandBus.execute(
-				new CashInCommand(
-					amount,
-					HederaId.from(targetId),
-					HederaId.from(tokenId),
-					startDate,
-				),
-			)
-		).payload;
+		const response = await this.commandBus.execute(
+			new CashInCommand(
+				amount,
+				HederaId.from(targetId),
+				HederaId.from(tokenId),
+				startDate,
+			),
+		);
+		return new TransactionResult(response.payload, response.transactionId);
 	}
 
 	@LogError

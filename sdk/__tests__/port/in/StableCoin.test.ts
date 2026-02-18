@@ -904,7 +904,7 @@ describe('🧪 Stablecoin test', () => {
 			}),
 		);
 
-		await StableCoin.cashIn(
+		const result = await StableCoin.cashIn(
 			new CashInRequest({
 				amount: cashInAmount.toString(),
 				tokenId: stableCoin?.tokenId?.toString() ?? '0.0.0',
@@ -926,6 +926,8 @@ describe('🧪 Stablecoin test', () => {
 		expect(finalAmount.value.toBigInt().toString()).toEqual(
 			final.toString(),
 		);
+		expect(result).toBeTruthy();
+		expect(result.transactionId).toBeTruthy();
 	}
 
 	async function rescueOperation(
