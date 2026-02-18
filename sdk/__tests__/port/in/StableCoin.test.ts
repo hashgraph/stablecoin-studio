@@ -1138,7 +1138,8 @@ describe('🧪 Stablecoin test', () => {
 			}),
 		);
 
-		expect(result_1).toBe(true);
+		expect(result_1).toBeTruthy();
+		expect(result_1.transactionId).toBeTruthy();
 		expect(result_2).toBeTruthy();
 		expect(result_2.transactionId).toBeTruthy();
 		expect(kycOK_1).toBe(true);
