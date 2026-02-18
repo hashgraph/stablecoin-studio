@@ -1007,7 +1007,7 @@ describe('🧪 Stablecoin test', () => {
 			}),
 		);
 
-		await StableCoin.wipe(
+		const result = await StableCoin.wipe(
 			new WipeRequest({
 				amount: wipeAmount.toString(),
 				tokenId: stableCoin?.tokenId?.toString() ?? '0.0.0',
@@ -1029,6 +1029,8 @@ describe('🧪 Stablecoin test', () => {
 		expect(finalAmount.value.toBigInt().toString()).toEqual(
 			final.toString(),
 		);
+		expect(result).toBeTruthy();
+		expect(result.transactionId).toBeTruthy();
 	}
 
 	async function capabilitiesOperation(

@@ -152,7 +152,7 @@ interface IStableCoinInPort {
 	burn(request: BurnRequest): Promise<TransactionResult>;
 	rescue(request: RescueRequest): Promise<boolean>;
 	rescueHBAR(request: RescueHBARRequest): Promise<boolean>;
-	wipe(request: WipeRequest): Promise<boolean>;
+	wipe(request: WipeRequest): Promise<TransactionResult>;
 	associate(request: AssociateTokenRequest): Promise<boolean>;
 	getBalanceOf(request: GetAccountBalanceRequest): Promise<Balance>;
 	getBalanceOfHBAR(request: GetAccountBalanceHBARRequest): Promise<Balance>;
@@ -417,20 +417,19 @@ class StableCoinInPort implements IStableCoinInPort {
 	}
 
 	@LogError
-	async wipe(request: WipeRequest): Promise<boolean> {
+	async wipe(request: WipeRequest): Promise<TransactionResult> {
 		const { tokenId, amount, targetId, startDate } = request;
 		handleValidation('WipeRequest', request);
 
-		return (
-			await this.commandBus.execute(
-				new WipeCommand(
-					amount,
-					HederaId.from(targetId),
-					HederaId.from(tokenId),
-					startDate,
-				),
-			)
-		).payload;
+		const response = await this.commandBus.execute(
+			new WipeCommand(
+				amount,
+				HederaId.from(targetId),
+				HederaId.from(tokenId),
+				startDate,
+			),
+		);
+		return new TransactionResult(response.payload, response.transactionId);
 	}
 
 	@LogError
