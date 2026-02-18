@@ -169,7 +169,7 @@ interface IStableCoinInPort {
 	getReserveAddress(request: GetReserveAddressRequest): Promise<string>;
 	updateReserveAddress(
 		request: UpdateReserveAddressRequest,
-	): Promise<boolean>;
+	): Promise<TransactionResult>;
 	grantKyc(request: KYCRequest): Promise<TransactionResult>;
 	revokeKyc(request: KYCRequest): Promise<TransactionResult>;
 	isAccountKYCGranted(request: KYCRequest): Promise<boolean>;
@@ -651,21 +651,20 @@ class StableCoinInPort implements IStableCoinInPort {
 	@LogError
 	async updateReserveAddress(
 		request: UpdateReserveAddressRequest,
-	): Promise<boolean> {
+	): Promise<TransactionResult> {
 		handleValidation('UpdateReserveAddressRequest', request);
 
 		const reserveAddressId: string = (
 			await this.mirrorNode.getContractInfo(request.reserveAddress)
 		).id;
 
-		return (
-			await this.commandBus.execute(
-				new UpdateReserveAddressCommand(
-					HederaId.from(request.tokenId),
-					new ContractId(reserveAddressId),
-				),
-			)
-		).payload;
+		const response = await this.commandBus.execute(
+			new UpdateReserveAddressCommand(
+				HederaId.from(request.tokenId),
+				new ContractId(reserveAddressId),
+			),
+		);
+		return new TransactionResult(response.payload, response.transactionId);
 	}
 
 	@LogError

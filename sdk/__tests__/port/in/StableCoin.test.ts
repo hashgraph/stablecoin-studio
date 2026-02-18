@@ -1181,13 +1181,15 @@ describe('🧪 Stablecoin test', () => {
 	async function updateReserve(
 		stableCoin: StableCoinViewModel,
 		newReserveAddress: string,
-	): Promise<boolean> {
-		return await StableCoin.updateReserveAddress(
+	): Promise<void> {
+		const result = await StableCoin.updateReserveAddress(
 			new UpdateReserveAddressRequest({
 				tokenId: stableCoin?.tokenId?.toString() ?? '0.0.0',
 				reserveAddress: newReserveAddress,
 			}),
 		);
+		expect(result).toBeTruthy();
+		expect(result.transactionId).toBeTruthy();
 	}
 
 	async function updateToken(stableCoin: StableCoinViewModel): Promise<void> {
