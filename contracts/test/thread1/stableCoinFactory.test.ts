@@ -52,7 +52,7 @@ describe('StableCoinFactory Tests', function () {
         stableCoinFactoryFacet = StableCoinFactoryFacet__factory.connect(stableCoinFactoryProxy, operator)
     })
 
-    it.only('Cannot deploy a Stablecoin if Business Logic Resolver has zero address', async function () {
+    it('Cannot deploy a Stablecoin if Business Logic Resolver has zero address', async function () {
         // Deploy Token using Client
         const deployCommand = await DeployStableCoinCommand.newInstance({
             signer: operator,
@@ -76,7 +76,7 @@ describe('StableCoinFactory Tests', function () {
         })
     })
 
-    it.only('Cannot deploy a Stablecoin if configuration id key is 0', async function () {
+    it('Cannot deploy a Stablecoin if configuration id key is 0', async function () {
         // Deploy Token using Client
         const deployCommand = await DeployStableCoinCommand.newInstance({
             signer: operator,

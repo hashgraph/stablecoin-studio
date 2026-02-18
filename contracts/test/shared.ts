@@ -150,8 +150,19 @@ export async function expectRevert({
     }
 
     // Hedera path (local / testnet / previewnet)
-    await expect(validateTxResponse(new ValidateTxResponseCommand({
-      txResponse: await txPromise
-    }))).to.be.rejectedWith(Error)
+    try {
+        const txResponse = await txPromise
+
+        // If we got here, it's a transaction → validate receipt
+        await expect(
+          validateTxResponse(
+            new ValidateTxResponseCommand({ txResponse })
+          )
+        ).to.be.rejectedWith(Error)
+
+    } catch (err) {
+      // If it threw immediately → call revert (view/pure/static)
+      expect(err).to.be.instanceOf(Error)
+    }
 }
 

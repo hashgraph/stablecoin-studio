@@ -344,67 +344,68 @@ describe('➡️ Roles Tests', function () {
                 gasLimit: GAS_LIMIT.hederaTokenManager.revokeRole,
             })
         )
-        expect (await rolesFacet.getNumberOfAccountsWithRole(ROLES.defaultAdmin.hash)).to.eq(1)
         revokeRoleResponseList.push(
             await rolesFacet.revokeRole(ROLES.cashin.hash, nonOperator, {
                 gasLimit: GAS_LIMIT.hederaTokenManager.revokeRole,
             })
         )
-        expect (await rolesFacet.getNumberOfAccountsWithRole(ROLES.cashin.hash)).to.eq(1)
         revokeRoleResponseList.push(
             await rolesFacet.revokeRole(ROLES.burn.hash, nonOperator, {
                 gasLimit: GAS_LIMIT.hederaTokenManager.revokeRole,
             })
         )
-        expect (await rolesFacet.getNumberOfAccountsWithRole(ROLES.burn.hash)).to.eq(1)
         revokeRoleResponseList.push(
             await rolesFacet.revokeRole(ROLES.delete.hash, nonOperator, {
                 gasLimit: GAS_LIMIT.hederaTokenManager.revokeRole,
             })
         )
-        expect (await rolesFacet.getNumberOfAccountsWithRole(ROLES.delete.hash)).to.eq(1)
         revokeRoleResponseList.push(
             await rolesFacet.revokeRole(ROLES.freeze.hash, nonOperator, {
                 gasLimit: GAS_LIMIT.hederaTokenManager.revokeRole,
             })
         )
-        expect (await rolesFacet.getNumberOfAccountsWithRole(ROLES.freeze.hash)).to.eq(1)
         revokeRoleResponseList.push(
             await rolesFacet.revokeRole(ROLES.pause.hash, nonOperator, {
                 gasLimit: GAS_LIMIT.hederaTokenManager.revokeRole,
             })
         )
-        expect (await rolesFacet.getNumberOfAccountsWithRole(ROLES.pause.hash)).to.eq(1)
         revokeRoleResponseList.push(
             await rolesFacet.revokeRole(ROLES.rescue.hash, nonOperator, {
                 gasLimit: GAS_LIMIT.hederaTokenManager.revokeRole,
             })
         )
-        expect (await rolesFacet.getNumberOfAccountsWithRole(ROLES.rescue.hash)).to.eq(1)
         revokeRoleResponseList.push(
             await rolesFacet.revokeRole(ROLES.wipe.hash, nonOperator, {
                 gasLimit: GAS_LIMIT.hederaTokenManager.revokeRole,
             })
         )
-        expect (await rolesFacet.getNumberOfAccountsWithRole(ROLES.wipe.hash)).to.eq(1)
         revokeRoleResponseList.push(
             await rolesFacet.revokeRole(ROLES.kyc.hash, nonOperator, {
                 gasLimit: GAS_LIMIT.hederaTokenManager.revokeRole,
             })
         )
-        expect (await rolesFacet.getNumberOfAccountsWithRole(ROLES.kyc.hash)).to.eq(1)
         revokeRoleResponseList.push(
             await rolesFacet.revokeRole(ROLES.customFees.hash, nonOperator, {
                 gasLimit: GAS_LIMIT.hederaTokenManager.revokeRole,
             })
         )
-        expect (await rolesFacet.getNumberOfAccountsWithRole(ROLES.customFees.hash)).to.eq(1)
         for (const revokeRoleResponse of revokeRoleResponseList) {
             await new ValidateTxResponseCommand({
                 txResponse: revokeRoleResponse,
                 confirmationEvent: 'RoleRevoked',
             }).execute()
         }
+
+        expect (await rolesFacet.getNumberOfAccountsWithRole(ROLES.defaultAdmin.hash)).to.eq(1)
+        expect (await rolesFacet.getNumberOfAccountsWithRole(ROLES.cashin.hash)).to.eq(1)
+        expect (await rolesFacet.getNumberOfAccountsWithRole(ROLES.burn.hash)).to.eq(1)
+        expect (await rolesFacet.getNumberOfAccountsWithRole(ROLES.delete.hash)).to.eq(1)
+        expect (await rolesFacet.getNumberOfAccountsWithRole(ROLES.freeze.hash)).to.eq(1)
+        expect (await rolesFacet.getNumberOfAccountsWithRole(ROLES.pause.hash)).to.eq(1)
+        expect (await rolesFacet.getNumberOfAccountsWithRole(ROLES.rescue.hash)).to.eq(1)
+        expect (await rolesFacet.getNumberOfAccountsWithRole(ROLES.wipe.hash)).to.eq(1)
+        expect (await rolesFacet.getNumberOfAccountsWithRole(ROLES.kyc.hash)).to.eq(1)
+        expect (await rolesFacet.getNumberOfAccountsWithRole(ROLES.customFees.hash)).to.eq(1)
 
         // Check roles
         const rolesAfterRevoke = await rolesFacet.getRoles(nonOperator, {
