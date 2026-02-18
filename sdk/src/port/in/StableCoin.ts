@@ -159,7 +159,7 @@ interface IStableCoinInPort {
 	capabilities(request: CapabilitiesRequest): Promise<StableCoinCapabilities>;
 	pause(request: PauseRequest): Promise<TransactionResult>;
 	unPause(request: PauseRequest): Promise<TransactionResult>;
-	delete(request: DeleteRequest): Promise<boolean>;
+	delete(request: DeleteRequest): Promise<TransactionResult>;
 	freeze(request: FreezeAccountRequest): Promise<TransactionResult>;
 	unFreeze(request: FreezeAccountRequest): Promise<TransactionResult>;
 	isAccountFrozen(request: FreezeAccountRequest): Promise<boolean>;
@@ -515,15 +515,14 @@ class StableCoinInPort implements IStableCoinInPort {
 	}
 
 	@LogError
-	async delete(request: DeleteRequest): Promise<boolean> {
+	async delete(request: DeleteRequest): Promise<TransactionResult> {
 		const { tokenId, startDate } = request;
 		handleValidation('DeleteRequest', request);
 
-		return (
-			await this.commandBus.execute(
-				new DeleteCommand(HederaId.from(tokenId), startDate),
-			)
-		).payload;
+		const response = await this.commandBus.execute(
+			new DeleteCommand(HederaId.from(tokenId), startDate),
+		);
+		return new TransactionResult(response.payload, response.transactionId);
 	}
 
 	@LogError

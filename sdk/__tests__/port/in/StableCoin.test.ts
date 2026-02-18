@@ -1148,22 +1148,22 @@ describe('🧪 Stablecoin test', () => {
 	async function pauseUnpauseOperation(
 		stableCoin: StableCoinViewModel,
 	): Promise<void> {
-		const result_1 = await StableCoin.pause(
+		const result_pause = await StableCoin.pause(
 			new PauseRequest({
 				tokenId: stableCoin?.tokenId?.toString() ?? '0.0.0',
 			}),
 		);
 
-		const result_2 = await StableCoin.unPause(
+		const result_unpasue = await StableCoin.unPause(
 			new PauseRequest({
 				tokenId: stableCoin?.tokenId?.toString() ?? '0.0.0',
 			}),
 		);
 
-		expect(result_1).toBeTruthy();
-		expect(result_1.transactionId).toBeTruthy();
-		expect(result_2).toBeTruthy();
-		expect(result_2.transactionId).toBeTruthy();
+		expect(result_pause).toBeTruthy();
+		expect(result_pause.transactionId).toBeTruthy();
+		expect(result_unpasue).toBeTruthy();
+		expect(result_unpasue.transactionId).toBeTruthy();
 	}
 
 	async function getReserve(
