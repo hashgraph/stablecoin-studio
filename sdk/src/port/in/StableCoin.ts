@@ -157,11 +157,11 @@ interface IStableCoinInPort {
 	getBalanceOf(request: GetAccountBalanceRequest): Promise<Balance>;
 	getBalanceOfHBAR(request: GetAccountBalanceHBARRequest): Promise<Balance>;
 	capabilities(request: CapabilitiesRequest): Promise<StableCoinCapabilities>;
-	pause(request: PauseRequest): Promise<boolean>;
+	pause(request: PauseRequest): Promise<TransactionResult>;
 	unPause(request: PauseRequest): Promise<boolean>;
 	delete(request: DeleteRequest): Promise<boolean>;
-	freeze(request: FreezeAccountRequest): Promise<boolean>;
-	unFreeze(request: FreezeAccountRequest): Promise<boolean>;
+	freeze(request: FreezeAccountRequest): Promise<TransactionResult>;
+	unFreeze(request: FreezeAccountRequest): Promise<TransactionResult>;
 	isAccountFrozen(request: FreezeAccountRequest): Promise<boolean>;
 	isAccountAssociated(
 		request: IsAccountAssociatedTokenRequest,
@@ -493,15 +493,14 @@ class StableCoinInPort implements IStableCoinInPort {
 	}
 
 	@LogError
-	async pause(request: PauseRequest): Promise<boolean> {
+	async pause(request: PauseRequest): Promise<TransactionResult> {
 		const { tokenId, startDate } = request;
 		handleValidation('PauseRequest', request);
 
-		return (
-			await this.commandBus.execute(
-				new PauseCommand(HederaId.from(tokenId), startDate),
-			)
-		).payload;
+		const response = await this.commandBus.execute(
+			new PauseCommand(HederaId.from(tokenId), startDate),
+		);
+		return new TransactionResult(response.payload, response.transactionId);
 	}
 
 	@LogError
@@ -529,35 +528,33 @@ class StableCoinInPort implements IStableCoinInPort {
 	}
 
 	@LogError
-	async freeze(request: FreezeAccountRequest): Promise<boolean> {
+	async freeze(request: FreezeAccountRequest): Promise<TransactionResult> {
 		const { tokenId, targetId, startDate } = request;
 		handleValidation('FreezeAccountRequest', request);
 
-		return (
-			await this.commandBus.execute(
-				new FreezeCommand(
-					HederaId.from(targetId),
-					HederaId.from(tokenId),
-					startDate,
-				),
-			)
-		).payload;
+		const response = await this.commandBus.execute(
+			new FreezeCommand(
+				HederaId.from(targetId),
+				HederaId.from(tokenId),
+				startDate,
+			),
+		);
+		return new TransactionResult(response.payload, response.transactionId);
 	}
 
 	@LogError
-	async unFreeze(request: FreezeAccountRequest): Promise<boolean> {
+	async unFreeze(request: FreezeAccountRequest): Promise<TransactionResult> {
 		const { tokenId, targetId, startDate } = request;
 		handleValidation('FreezeAccountRequest', request);
 
-		return (
-			await this.commandBus.execute(
-				new UnFreezeCommand(
-					HederaId.from(targetId),
-					HederaId.from(tokenId),
-					startDate,
-				),
-			)
-		).payload;
+		const response = await this.commandBus.execute(
+			new UnFreezeCommand(
+				HederaId.from(targetId),
+				HederaId.from(tokenId),
+				startDate,
+			),
+		);
+		return new TransactionResult(response.payload, response.transactionId);
 	}
 
 	@LogError

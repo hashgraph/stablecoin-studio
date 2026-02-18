@@ -1063,7 +1063,7 @@ describe('🧪 Stablecoin test', () => {
 			}),
 		);
 
-		const result_1 = await StableCoin.freeze(
+		const result_freeze = await StableCoin.freeze(
 			new FreezeAccountRequest({
 				targetId: CLIENT_ACCOUNT_ED25519.id.toString(),
 				tokenId: stableCoin?.tokenId?.toString() ?? '0.0.0',
@@ -1077,7 +1077,7 @@ describe('🧪 Stablecoin test', () => {
 			}),
 		);
 
-		const result_2 = await StableCoin.unFreeze(
+		const result_unfrezze = await StableCoin.unFreeze(
 			new FreezeAccountRequest({
 				targetId: CLIENT_ACCOUNT_ED25519.id.toString(),
 				tokenId: stableCoin?.tokenId?.toString() ?? '0.0.0',
@@ -1091,8 +1091,10 @@ describe('🧪 Stablecoin test', () => {
 			}),
 		);
 
-		expect(result_1).toBe(true);
-		expect(result_2).toBe(true);
+		expect(result_freeze).toBeTruthy();
+		expect(result_freeze.transactionId).toBeTruthy();
+		expect(result_unfrezze).toBeTruthy();
+		expect(result_unfrezze.transactionId).toBeTruthy();
 		expect(notFrozen_1).toBe(false);
 		expect(Frozen).toBe(true);
 		expect(notFrozen_2).toBe(false);
@@ -1158,7 +1160,8 @@ describe('🧪 Stablecoin test', () => {
 			}),
 		);
 
-		expect(result_1).toBe(true);
+		expect(result_1).toBeTruthy();
+		expect(result_1.transactionId).toBeTruthy();
 		expect(result_2).toBe(true);
 	}
 
