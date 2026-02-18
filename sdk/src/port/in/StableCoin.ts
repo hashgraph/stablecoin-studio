@@ -186,7 +186,7 @@ interface IStableCoinInPort {
 	getHeldAmountFor(request: GetHeldAmountForRequest): Promise<BigDecimal>;
 	getHoldCountFor(request: GetHoldCountForRequest): Promise<number>;
 	getHoldsIdFor(request: GetHoldsIdForRequest): Promise<number[]>;
-	transfers(request: TransfersRequest): Promise<boolean>;
+	transfers(request: TransfersRequest): Promise<TransactionResult>;
 	update(request: UpdateRequest): Promise<boolean>;
 	signTransaction(request: SignTransactionRequest): Promise<boolean>;
 	submitTransaction(request: SubmitTransactionRequest): Promise<boolean>;
@@ -834,7 +834,7 @@ class StableCoinInPort implements IStableCoinInPort {
 	}
 
 	@LogError
-	async transfers(request: TransfersRequest): Promise<boolean> {
+	async transfers(request: TransfersRequest): Promise<TransactionResult> {
 		const { tokenId, targetsId, amounts, targetId } = request;
 
 		handleValidation('TransfersRequest', request);
@@ -844,16 +844,15 @@ class StableCoinInPort implements IStableCoinInPort {
 			targetsIdHederaIds.push(HederaId.from(targetId));
 		});
 
-		return (
-			await this.commandBus.execute(
-				new TransfersCommand(
-					amounts,
-					targetsIdHederaIds,
-					HederaId.from(tokenId),
-					HederaId.from(targetId),
-				),
-			)
-		).payload;
+		const response = await this.commandBus.execute(
+			new TransfersCommand(
+				amounts,
+				targetsIdHederaIds,
+				HederaId.from(tokenId),
+				HederaId.from(targetId),
+			),
+		);
+		return new TransactionResult(response.payload, response.transactionId);
 	}
 
 	@LogError
