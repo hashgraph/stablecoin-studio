@@ -60,12 +60,15 @@ import {
 	CASHIN_GAS,
 	BURN_GAS,
 } from '../../../../core/Constants';
-import { KeysStruct } from '../../../../domain/context/factory/FactoryKey';
-import type { BaseHederaTransactionAdapter } from '../../hs/BaseHederaTransactionAdapter';
+import type { TransactionExecutor } from '../TransactionExecutor';
+import type { EvmAddressResolver } from '../EvmAddressResolver';
 import { TransactionType } from '../../TransactionResponseEnums';
 
 export class TokenOperations {
-	constructor(private adapter: BaseHederaTransactionAdapter) {}
+	constructor(
+		private executor: TransactionExecutor,
+		private evmResolver: EvmAddressResolver,
+	) {}
 
 	/** Create stablecoin using native Hedera contract execution */
 	async create(
@@ -90,7 +93,7 @@ export class TokenOperations {
 					!coin.cashInRoleAccount ||
 					coin.cashInRoleAccount.toString() === '0.0.0'
 						? '0x0000000000000000000000000000000000000000'
-						: await this.adapter.getEVMAddress(
+						: await this.evmResolver.resolve(
 								coin.cashInRoleAccount,
 						  ),
 				allowance:
@@ -100,7 +103,7 @@ export class TokenOperations {
 						: coin.cashInRoleAllowance.toFixedNumber(),
 			};
 
-			const keys: KeysStruct[] = this.adapter.setKeysForSmartContract([
+			const keys = this.evmResolver.buildKeysForSmartContract([
 				coin.adminKey,
 				coin.kycKey,
 				coin.freezeKey,
@@ -160,7 +163,7 @@ export class TokenOperations {
 					.map(async (r) => {
 						const fr = new FactoryRole();
 						fr.role = r.role;
-						fr.account = await this.adapter.getEVMAddress(
+						fr.account = await this.evmResolver.resolve(
 							r.account as HederaId,
 						);
 						return fr;
@@ -178,18 +181,11 @@ export class TokenOperations {
 				reserveConfigurationId.version = reserveConfigVersion ?? 0;
 			}
 
-			const mirrorNodeAdapter = this.adapter.getMirrorNodeAdapter();
-			const resolverEvm = (
-				await mirrorNodeAdapter.getContractInfo(resolver.value)
-			).evmAddress;
+			const resolverEvm = await this.evmResolver.resolve(resolver);
 			const reserveEvm =
 				reserveAddress?.toString?.() === '0.0.0' || !reserveAddress
 					? '0x0000000000000000000000000000000000000000'
-					: (
-							await mirrorNodeAdapter.getContractInfo(
-								reserveAddress.value,
-							)
-					  ).evmAddress;
+					: await this.evmResolver.resolve(reserveAddress);
 
 			const stableCoinToCreate = new FactoryStableCoin(
 				coin.name,
@@ -215,7 +211,7 @@ export class TokenOperations {
 				reserveConfigurationId,
 			);
 
-			return await this.adapter.executeContractCall(
+			return await this.executor.executeContractCall(
 				factory.value,
 				new ethers.Interface(StableCoinFactoryFacet__factory.abi),
 				'deployStableCoin',
@@ -239,16 +235,16 @@ export class TokenOperations {
 		startDate?: string,
 	): Promise<TransactionResponse> {
 		try {
-			const account = this.adapter.getAccount();
+			const account = this.executor.getAccount();
 
 			// Check if EVM operations are supported and account has EVM address
-			if (this.adapter.supportsEvmOperations() && account.evmAddress) {
+			if (this.executor.supportsEvmOperations() && account.evmAddress) {
 				// EVM path - use IHRC.associate on the token contract
 				const tokenEvm = CheckEvmAddress.toEvmAddress(
 					tokenId.toHederaAddress().toSolidityAddress(),
 				);
 
-				return await this.adapter.executeContractCall(
+				return await this.executor.executeContractCall(
 					tokenEvm,
 					new ethers.Interface(IHRC__factory.abi),
 					'associate',
@@ -265,7 +261,7 @@ export class TokenOperations {
 					.setAccountId(AccountId.fromString(account.id.toString()))
 					.setTokenIds([TokenId.fromString(tokenId.toString())]);
 
-				return await this.adapter.processTransaction(
+				return await this.executor.processTransaction(
 					associateTx,
 					TransactionType.RECEIPT,
 					startDate,
@@ -302,10 +298,10 @@ export class TokenOperations {
 
 				const iface = new ethers.Interface(WipeableFacet__factory.abi);
 				const params = [
-					await this.adapter.getEVMAddress(targetId),
+					await this.evmResolver.resolve(targetId),
 					amount.toBigInt(),
 				];
-				return await this.adapter.executeContractCall(
+				return await this.executor.executeContractCall(
 					contractId,
 					iface,
 					'wipe',
@@ -328,7 +324,7 @@ export class TokenOperations {
 					.setTokenId(TokenId.fromString(coin.coin.tokenId.value))
 					.setAmount(amount.toLong());
 
-				return await this.adapter.processTransaction(
+				return await this.executor.processTransaction(
 					wipeTx,
 					TransactionType.RECEIPT,
 					startDate,
@@ -364,10 +360,10 @@ export class TokenOperations {
 
 				const iface = new ethers.Interface(CashInFacet__factory.abi);
 				const params = [
-					await this.adapter.getEVMAddress(targetId),
+					await this.evmResolver.resolve(targetId),
 					amount.toBigInt(),
 				];
-				return await this.adapter.executeContractCall(
+				return await this.executor.executeContractCall(
 					contractId,
 					iface,
 					'mint',
@@ -389,7 +385,7 @@ export class TokenOperations {
 					.setTokenId(coin.coin.tokenId.value)
 					.setAmount(amount.toLong());
 
-				return await this.adapter.processTransaction(
+				return await this.executor.processTransaction(
 					mintTx,
 					TransactionType.RECEIPT,
 					startDate,
@@ -424,7 +420,7 @@ export class TokenOperations {
 
 				const iface = new ethers.Interface(BurnableFacet__factory.abi);
 				const params = [amount.toBigInt()];
-				return await this.adapter.executeContractCall(
+				return await this.executor.executeContractCall(
 					contractId,
 					iface,
 					'burn',
@@ -446,7 +442,7 @@ export class TokenOperations {
 					.setTokenId(coin.coin.tokenId.value)
 					.setAmount(amount.toLong());
 
-				return await this.adapter.processTransaction(
+				return await this.executor.processTransaction(
 					burnTx,
 					TransactionType.RECEIPT,
 					startDate,

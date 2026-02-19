@@ -35,10 +35,14 @@ import {
 	MAX_ROLES_GAS,
 } from '../../../../core/Constants';
 import { StableCoinRole } from '../../../../domain/context/stablecoin/StableCoinRole';
-import type { BaseHederaTransactionAdapter } from '../../hs/BaseHederaTransactionAdapter';
+import type { TransactionExecutor } from '../TransactionExecutor';
+import type { EvmAddressResolver } from '../EvmAddressResolver';
 
 export class RoleOperations {
-	constructor(private adapter: BaseHederaTransactionAdapter) {}
+	constructor(
+		private executor: TransactionExecutor,
+		private evmResolver: EvmAddressResolver,
+	) {}
 
 	async grantRole(
 		coin: StableCoinCapabilities,
@@ -55,8 +59,8 @@ export class RoleOperations {
 			}
 
 			const iface = new ethers.Interface(RolesFacet__factory.abi);
-			const params = [role, await this.adapter.getEVMAddress(targetId)];
-			return await this.adapter.executeContractCall(
+			const params = [role, await this.evmResolver.resolve(targetId)];
+			return await this.executor.executeContractCall(
 				contractId,
 				iface,
 				'grantRole',
@@ -88,8 +92,8 @@ export class RoleOperations {
 			}
 
 			const iface = new ethers.Interface(RolesFacet__factory.abi);
-			const params = [role, await this.adapter.getEVMAddress(targetId)];
-			return await this.adapter.executeContractCall(
+			const params = [role, await this.evmResolver.resolve(targetId)];
+			return await this.executor.executeContractCall(
 				contractId,
 				iface,
 				'revokeRole',
@@ -117,7 +121,7 @@ export class RoleOperations {
 		try {
 			const accounts: string[] = [];
 			for (const id of targetsId)
-				accounts.push(await this.adapter.getEVMAddress(id));
+				accounts.push(await this.evmResolver.resolve(id));
 			const amountsFormatted = amounts.map((a) => a.toBigInt());
 
 			const contractId = coin.coin.proxyAddress?.value;
@@ -132,7 +136,7 @@ export class RoleOperations {
 			const maxRolesGas = MAX_ROLES_GAS;
 			gas = gas > maxRolesGas ? maxRolesGas : gas;
 
-			return await this.adapter.executeContractCall(
+			return await this.executor.executeContractCall(
 				contractId,
 				new ethers.Interface(RoleManagementFacet__factory.abi),
 				'grantRoles',
@@ -159,7 +163,7 @@ export class RoleOperations {
 		try {
 			const accounts: string[] = [];
 			for (const id of targetsId)
-				accounts.push(await this.adapter.getEVMAddress(id));
+				accounts.push(await this.evmResolver.resolve(id));
 
 			const contractId = coin.coin.proxyAddress?.value;
 			const evmAddress = coin.coin.evmProxyAddress?.value;
@@ -173,7 +177,7 @@ export class RoleOperations {
 			const maxRolesGas = MAX_ROLES_GAS;
 			gas = gas > maxRolesGas ? maxRolesGas : gas;
 
-			return await this.adapter.executeContractCall(
+			return await this.executor.executeContractCall(
 				contractId,
 				new ethers.Interface(RoleManagementFacet__factory.abi),
 				'revokeRoles',

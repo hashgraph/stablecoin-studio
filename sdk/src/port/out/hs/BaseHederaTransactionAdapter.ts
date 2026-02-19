@@ -36,6 +36,8 @@ import { SigningError } from './error/SigningError';
 import { ethers } from 'ethers';
 import { MirrorNodeAdapter } from '../mirror/MirrorNodeAdapter';
 import NetworkService from '../../../app/service/NetworkService';
+import type { TransactionExecutor } from './TransactionExecutor';
+import { EvmAddressResolver } from './EvmAddressResolver';
 import { TokenOperations } from '../hs/operations/TokenOperations';
 import { TokenControlOperations } from '../hs/operations/TokenControlOperations';
 import { RoleOperations } from '../hs/operations/RoleOperations';
@@ -48,47 +50,54 @@ import { RescueOperations } from '../hs/operations/RescueOperations';
 
 /**
  * Base adapter containing all shared business logic for Hedera transaction operations.
- * Subclasses (WalletConnect, MultiSign, Custodial) only need to implement the execution methods.
+ * Implements TransactionExecutor so operation classes depend on the interface, not this class.
  *
- * Composition Pattern: Business logic is organized into operation classes for better maintainability.
+ * Subclasses (WalletConnect, MultiSign, Custodial) only need to implement processTransaction().
  */
-export abstract class BaseHederaTransactionAdapter extends TransactionAdapter {
-	// Operation class instances
-	protected tokenOps: TokenOperations;
-	protected tokenControlOps: TokenControlOperations;
-	protected roleOps: RoleOperations;
-	protected supplierOps: SupplierOperations;
-	protected holdOps: HoldOperations;
-	protected reserveOps: ReserveOperations;
-	protected queryOps: QueryOperations;
-	protected updateOps: UpdateOperations;
-	protected rescueOps: RescueOperations;
+export abstract class BaseHederaTransactionAdapter
+	extends TransactionAdapter
+	implements TransactionExecutor
+{
+	// Shared utility for EVM address resolution
+	protected evmResolver!: EvmAddressResolver;
+
+	// Refactored operations (depend on TransactionExecutor interface)
+	protected tokenOps!: TokenOperations;
+	protected tokenControlOps!: TokenControlOperations;
+	protected roleOps!: RoleOperations;
+	protected rescueOps!: RescueOperations;
+
+	// Not yet refactored (still depend on BaseHederaTransactionAdapter)
+	protected supplierOps!: SupplierOperations;
+	protected holdOps!: HoldOperations;
+	protected reserveOps!: ReserveOperations;
+	protected queryOps!: QueryOperations;
+	protected updateOps!: UpdateOperations;
 
 	constructor() {
 		super();
-		// Initialize operation classes
-		this.tokenOps = new TokenOperations(this);
-		this.tokenControlOps = new TokenControlOperations(this);
-		this.roleOps = new RoleOperations(this);
+		// Lazy getter avoids constructor-time resolution issues with DI
+		this.evmResolver = new EvmAddressResolver(
+			() => this.getMirrorNodeAdapter(),
+		);
+
+		// Refactored: depend on TransactionExecutor + EvmAddressResolver
+		this.tokenOps = new TokenOperations(this, this.evmResolver);
+		this.tokenControlOps = new TokenControlOperations(this, this.evmResolver);
+		this.roleOps = new RoleOperations(this, this.evmResolver);
+		this.rescueOps = new RescueOperations(this);
+
+		// Not yet refactored: still receive `this` as BaseHederaTransactionAdapter
 		this.supplierOps = new SupplierOperations(this);
 		this.holdOps = new HoldOperations(this);
 		this.reserveOps = new ReserveOperations(this);
 		this.queryOps = new QueryOperations(this);
 		this.updateOps = new UpdateOperations(this);
-		this.rescueOps = new RescueOperations(this);
 	}
 
 	/**
 	 * Build a ContractExecuteTransaction without processing it.
 	 * Pure building logic - no side effects, no execution or serialization.
-	 *
-	 * @param contractId The contract ID to call
-	 * @param iface The ethers interface for encoding
-	 * @param functionName The function name to call
-	 * @param params The function parameters
-	 * @param gasLimit Gas limit for the transaction
-	 * @param payableAmountHbar Optional HBAR amount to send
-	 * @returns ContractExecuteTransaction ready to be processed
 	 */
 	protected buildContractTransaction(
 		contractId: string,
@@ -98,10 +107,8 @@ export abstract class BaseHederaTransactionAdapter extends TransactionAdapter {
 		gasLimit: number,
 		payableAmountHbar?: string,
 	): ContractExecuteTransaction {
-		// Encode function call data
 		const functionCallData = iface.encodeFunctionData(functionName, params);
 
-		// Build ContractExecuteTransaction
 		let transaction = new ContractExecuteTransaction()
 			.setContractId(contractId)
 			.setFunctionParameters(
@@ -118,41 +125,14 @@ export abstract class BaseHederaTransactionAdapter extends TransactionAdapter {
 		return transaction;
 	}
 
-	/**
-	 * Process a Hedera SDK transaction. This is the MAIN processing point that subclasses must implement.
-	 * All execution paths (HTS native, contract calls, etc.) eventually route through this method.
-	 *
-	 * Subclasses override this to define their processing strategy:
-	 * - Integrated wallets (HTS, WalletConnect, Custodial): Execute on network (sign + send + receipt)
-	 * - MultiSig/External wallets: Serialize and return bytes (NO network execution)
-	 *
-	 * @param tx The transaction to process
-	 * @param transactionType Type of transaction response to retrieve (RECEIPT or RECORD)
-	 * @param startDate Optional start date for the transaction (ISO string) - used for multi-sig coordination
-	 * @returns Transaction response (with receipt OR serialized transaction data)
-	 */
+	// ===== TransactionExecutor interface =====
+
 	public abstract processTransaction(
 		tx: Transaction,
 		transactionType: TransactionType,
 		startDate?: string,
 	): Promise<TransactionResponse>;
 
-	/**
-	 * Execute a contract call by building a ContractExecuteTransaction and processing it.
-	 * Default implementation builds the transaction using Hedera contract ID and routes through processTransaction.
-	 * Override this method if you need special address handling (e.g., WalletConnect EVM sessions).
-	 *
-	 * @param contractId The contract ID (Hedera format 0.0.123)
-	 * @param iface The ethers interface for encoding
-	 * @param functionName The function name to call
-	 * @param params The function parameters
-	 * @param gasLimit Gas limit for the transaction
-	 * @param transactionType Type of transaction response to retrieve (RECEIPT or RECORD). Defaults to RECEIPT for mutations.
-	 * @param payableAmountHbar Optional HBAR amount to send
-	 * @param startDate Optional start date for the transaction
-	 * @param evmAddress Optional EVM address (0x...) - avoids Mirror Node call for WalletConnect EVM sessions
-	 * @returns Transaction response
-	 */
 	public async executeContractCall(
 		contractId: string,
 		iface: ethers.Interface,
@@ -166,7 +146,6 @@ export abstract class BaseHederaTransactionAdapter extends TransactionAdapter {
 		_evmAddress?: string,
 	): Promise<TransactionResponse> {
 		try {
-			// Build the contract transaction
 			const transaction = this.buildContractTransaction(
 				contractId,
 				iface,
@@ -176,7 +155,6 @@ export abstract class BaseHederaTransactionAdapter extends TransactionAdapter {
 				payableAmountHbar,
 			);
 
-			// Route through processTransaction (the main processing point)
 			return await this.processTransaction(
 				transaction,
 				transactionType,
@@ -188,16 +166,15 @@ export abstract class BaseHederaTransactionAdapter extends TransactionAdapter {
 		}
 	}
 
-	/**
-	 * Get the account associated with this adapter.
-	 */
 	public abstract getAccount(): Account;
 
-	/**
-	 * Check if this adapter supports EVM operations (vs native HTS only).
-	 * Implementations should return true if they can execute EVM/eth_sendTransaction calls.
-	 */
 	public abstract supportsEvmOperations(): boolean;
+
+	// ===== Abstract methods for subclasses =====
+
+	public abstract getNetworkService(): NetworkService;
+
+	public abstract getMirrorNodeAdapter(): MirrorNodeAdapter;
 
 	// ===== Token Operations =====
 
@@ -367,7 +344,7 @@ export abstract class BaseHederaTransactionAdapter extends TransactionAdapter {
 		return this.roleOps.revokeRoles(coin, targetsId, roles);
 	}
 
-	// ===== Supplier Operations =====
+	// ===== Supplier Operations (not yet refactored) =====
 
 	async grantSupplierRole(
 		coin: StableCoinCapabilities,
@@ -422,7 +399,7 @@ export abstract class BaseHederaTransactionAdapter extends TransactionAdapter {
 		return this.supplierOps.resetSupplierAllowance(coin, targetId);
 	}
 
-	// ===== Update Operations =====
+	// ===== Update Operations (not yet refactored) =====
 
 	async updateCustomFees(
 		coin: StableCoinCapabilities,
@@ -431,7 +408,7 @@ export abstract class BaseHederaTransactionAdapter extends TransactionAdapter {
 		return this.updateOps.updateCustomFees(coin, customFees);
 	}
 
-	// ===== Hold Operations =====
+	// ===== Hold Operations (not yet refactored) =====
 
 	async createHold(
 		coin: StableCoinCapabilities,
@@ -494,7 +471,7 @@ export abstract class BaseHederaTransactionAdapter extends TransactionAdapter {
 		return this.holdOps.reclaimHold(coin, sourceId, holdId);
 	}
 
-	// ===== Reserve Operations =====
+	// ===== Reserve Operations (not yet refactored) =====
 
 	async getReserveAddress(
 		coin: StableCoinCapabilities,
@@ -522,7 +499,7 @@ export abstract class BaseHederaTransactionAdapter extends TransactionAdapter {
 		return this.reserveOps.updateReserveAmount(reserveAddress, amount);
 	}
 
-	// ===== Query Operations =====
+	// ===== Query Operations (not yet refactored) =====
 
 	async hasRole(
 		coin: StableCoinCapabilities,
@@ -560,7 +537,7 @@ export abstract class BaseHederaTransactionAdapter extends TransactionAdapter {
 		return this.queryOps.supplierAllowance(coin, targetId);
 	}
 
-	// ===== Configuration Updates =====
+	// ===== Configuration Updates (not yet refactored) =====
 
 	async update(
 		coin: StableCoinCapabilities,
@@ -618,14 +595,4 @@ export abstract class BaseHederaTransactionAdapter extends TransactionAdapter {
 			configId,
 		);
 	}
-
-	/**
-	 * Get the network service. Subclasses must provide access to the network service.
-	 */
-	public abstract getNetworkService(): NetworkService;
-
-	/**
-	 * Get the mirror node adapter. Subclasses must provide access to the mirror node adapter.
-	 */
-	public abstract getMirrorNodeAdapter(): MirrorNodeAdapter;
 }

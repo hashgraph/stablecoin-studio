@@ -52,11 +52,15 @@ import {
 	UNPAUSE_GAS,
 	DELETE_GAS,
 } from '../../../../core/Constants';
-import type { BaseHederaTransactionAdapter } from '../../hs/BaseHederaTransactionAdapter';
+import type { TransactionExecutor } from '../TransactionExecutor';
+import type { EvmAddressResolver } from '../EvmAddressResolver';
 import { TransactionType } from '../../TransactionResponseEnums';
 
 export class TokenControlOperations {
-	constructor(private adapter: BaseHederaTransactionAdapter) {}
+	constructor(
+		private executor: TransactionExecutor,
+		private evmResolver: EvmAddressResolver,
+	) {}
 
 	async freeze(
 		coin: StableCoinCapabilities,
@@ -79,8 +83,8 @@ export class TokenControlOperations {
 				}
 
 				const iface = new ethers.Interface(FreezableFacet__factory.abi);
-				const params = [await this.adapter.getEVMAddress(targetId)];
-				return await this.adapter.executeContractCall(
+				const params = [await this.evmResolver.resolve(targetId)];
+				return await this.executor.executeContractCall(
 					contractId,
 					iface,
 					'freeze',
@@ -102,7 +106,7 @@ export class TokenControlOperations {
 					.setAccountId(AccountId.fromString(targetId.toString()))
 					.setTokenId(TokenId.fromString(coin.coin.tokenId.value));
 
-				return await this.adapter.processTransaction(
+				return await this.executor.processTransaction(
 					freezeTx,
 					TransactionType.RECEIPT,
 					startDate,
@@ -136,8 +140,8 @@ export class TokenControlOperations {
 				}
 
 				const iface = new ethers.Interface(FreezableFacet__factory.abi);
-				const params = [await this.adapter.getEVMAddress(targetId)];
-				return await this.adapter.executeContractCall(
+				const params = [await this.evmResolver.resolve(targetId)];
+				return await this.executor.executeContractCall(
 					contractId,
 					iface,
 					'unfreeze',
@@ -159,7 +163,7 @@ export class TokenControlOperations {
 					.setAccountId(AccountId.fromString(targetId.toString()))
 					.setTokenId(TokenId.fromString(coin.coin.tokenId.value));
 
-				return await this.adapter.processTransaction(
+				return await this.executor.processTransaction(
 					unfreezeTx,
 					TransactionType.RECEIPT,
 					startDate,
@@ -192,8 +196,8 @@ export class TokenControlOperations {
 				}
 
 				const iface = new ethers.Interface(KYCFacet__factory.abi);
-				const params = [await this.adapter.getEVMAddress(targetId)];
-				return await this.adapter.executeContractCall(
+				const params = [await this.evmResolver.resolve(targetId)];
+				return await this.executor.executeContractCall(
 					contractId,
 					iface,
 					'grantKyc',
@@ -215,7 +219,7 @@ export class TokenControlOperations {
 					.setAccountId(AccountId.fromString(targetId.toString()))
 					.setTokenId(TokenId.fromString(coin.coin.tokenId.value));
 
-				return await this.adapter.processTransaction(
+				return await this.executor.processTransaction(
 					grantKycTx,
 					TransactionType.RECEIPT,
 				);
@@ -247,8 +251,8 @@ export class TokenControlOperations {
 				}
 
 				const iface = new ethers.Interface(KYCFacet__factory.abi);
-				const params = [await this.adapter.getEVMAddress(targetId)];
-				return await this.adapter.executeContractCall(
+				const params = [await this.evmResolver.resolve(targetId)];
+				return await this.executor.executeContractCall(
 					contractId,
 					iface,
 					'revokeKyc',
@@ -270,7 +274,7 @@ export class TokenControlOperations {
 					.setAccountId(AccountId.fromString(targetId.toString()))
 					.setTokenId(TokenId.fromString(coin.coin.tokenId.value));
 
-				return await this.adapter.processTransaction(
+				return await this.executor.processTransaction(
 					revokeKycTx,
 					TransactionType.RECEIPT,
 				);
@@ -302,7 +306,7 @@ export class TokenControlOperations {
 				}
 
 				const iface = new ethers.Interface(PausableFacet__factory.abi);
-				return await this.adapter.executeContractCall(
+				return await this.executor.executeContractCall(
 					contractId,
 					iface,
 					'pause',
@@ -324,7 +328,7 @@ export class TokenControlOperations {
 					TokenId.fromString(coin.coin.tokenId.value),
 				);
 
-				return await this.adapter.processTransaction(
+				return await this.executor.processTransaction(
 					pauseTx,
 					TransactionType.RECEIPT,
 					startDate,
@@ -354,7 +358,7 @@ export class TokenControlOperations {
 				}
 
 				const iface = new ethers.Interface(PausableFacet__factory.abi);
-				return await this.adapter.executeContractCall(
+				return await this.executor.executeContractCall(
 					contractId,
 					iface,
 					'unpause',
@@ -376,7 +380,7 @@ export class TokenControlOperations {
 					TokenId.fromString(coin.coin.tokenId.value),
 				);
 
-				return await this.adapter.processTransaction(
+				return await this.executor.processTransaction(
 					unpauseTx,
 					TransactionType.RECEIPT,
 				);
@@ -408,7 +412,7 @@ export class TokenControlOperations {
 				}
 
 				const iface = new ethers.Interface(DeletableFacet__factory.abi);
-				return await this.adapter.executeContractCall(
+				return await this.executor.executeContractCall(
 					contractId,
 					iface,
 					'deleteToken',
@@ -430,7 +434,7 @@ export class TokenControlOperations {
 					TokenId.fromString(coin.coin.tokenId.value),
 				);
 
-				return await this.adapter.processTransaction(
+				return await this.executor.processTransaction(
 					deleteTx,
 					TransactionType.RECEIPT,
 					startDate,

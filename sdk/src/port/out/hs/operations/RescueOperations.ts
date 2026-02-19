@@ -26,10 +26,10 @@ import { SigningError } from '../../hs/error/SigningError';
 import { ethers } from 'ethers';
 import { RescuableFacet__factory } from '@hashgraph/stablecoin-npm-contracts';
 import { RESCUE_GAS, RESCUE_HBAR_GAS } from '../../../../core/Constants';
-import type { BaseHederaTransactionAdapter } from '../../hs/BaseHederaTransactionAdapter';
+import type { TransactionExecutor } from '../TransactionExecutor';
 
 export class RescueOperations {
-	constructor(private adapter: BaseHederaTransactionAdapter) {}
+	constructor(private executor: TransactionExecutor) {}
 
 	async rescue(
 		coin: StableCoinCapabilities,
@@ -47,7 +47,7 @@ export class RescueOperations {
 
 			const iface = new ethers.Interface(RescuableFacet__factory.abi);
 			const params = [amount.toBigInt()];
-			return await this.adapter.executeContractCall(
+			return await this.executor.executeContractCall(
 				contractId,
 				iface,
 				'rescue',
@@ -80,7 +80,7 @@ export class RescueOperations {
 
 			const iface = new ethers.Interface(RescuableFacet__factory.abi);
 			const params = [amount.toBigInt()];
-			return await this.adapter.executeContractCall(
+			return await this.executor.executeContractCall(
 				contractId,
 				iface,
 				'rescueHBAR',
