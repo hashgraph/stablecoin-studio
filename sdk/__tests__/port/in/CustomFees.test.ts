@@ -137,7 +137,9 @@ describe('🧪 [ADAPTER] HTSTransactionAdapter with ECDSA accounts', () => {
 			net: net,
 		});
 
-		await Fees.addFractionalFee(FractionalFee);
+		const result = await Fees.addFractionalFee(FractionalFee);
+		expect(result).toBeTruthy();
+		expect(result.transactionId).toBeTruthy();
 
 		const tokenCustomFees: RequestCustomFee[] = await getTokenCustomFees(
 			stableCoinCapabilitiesHTS.coin.tokenId!,
@@ -169,7 +171,9 @@ describe('🧪 [ADAPTER] HTSTransactionAdapter with ECDSA accounts', () => {
 			net: net,
 		});
 
-		await Fees.addFractionalFee(FractionalFee);
+		const result = await Fees.addFractionalFee(FractionalFee);
+		expect(result).toBeTruthy();
+		expect(result.transactionId).toBeTruthy();
 
 		const tokenCustomFees: RequestCustomFee[] = await getTokenCustomFees(
 			stableCoinCapabilitiesHTS.coin.tokenId!,

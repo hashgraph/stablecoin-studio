@@ -50,7 +50,7 @@ export { HBAR_DECIMALS, MAX_PERCENTAGE_DECIMALS, MAX_CUSTOM_FEES };
 
 interface ICustomFees {
 	addFixedFee(request: AddFixedFeeRequest): Promise<TransactionResult>;
-	addFractionalFee(request: AddFractionalFeeRequest): Promise<boolean>;
+	addFractionalFee(request: AddFractionalFeeRequest): Promise<TransactionResult>;
 	updateCustomFees(request: UpdateCustomFeesRequest): Promise<boolean>;
 }
 
@@ -86,7 +86,7 @@ class CustomFeesInPort implements ICustomFees {
 	}
 
 	@LogError
-	async addFractionalFee(request: AddFractionalFeeRequest): Promise<boolean> {
+	async addFractionalFee(request: AddFractionalFeeRequest): Promise<TransactionResult> {
 		const {
 			tokenId,
 			collectorId,
@@ -111,20 +111,19 @@ class CustomFeesInPort implements ICustomFees {
 				this.getFractionFromPercentage(percentage ?? '');
 		}
 
-		return (
-			await this.commandBus.execute(
-				new addFractionalFeesCommand(
-					HederaId.from(tokenId),
-					HederaId.from(collectorId),
-					parseInt(_amountNumerator),
-					parseInt(_amountDenominator),
-					BigDecimal.fromString(_min, decimals),
-					BigDecimal.fromString(_max, decimals),
-					net,
-					collectorsExempt,
-				),
-			)
-		).payload;
+		const response = await this.commandBus.execute(
+			new addFractionalFeesCommand(
+				HederaId.from(tokenId),
+				HederaId.from(collectorId),
+				parseInt(_amountNumerator),
+				parseInt(_amountDenominator),
+				BigDecimal.fromString(_min, decimals),
+				BigDecimal.fromString(_max, decimals),
+				net,
+				collectorsExempt,
+			),
+		);
+		return new TransactionResult(response.payload, response.transactionId);
 	}
 
 	@LogError
