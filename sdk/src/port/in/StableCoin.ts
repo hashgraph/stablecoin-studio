@@ -707,48 +707,45 @@ class StableCoinInPort implements IStableCoinInPort {
 	async executeHold(request: ExecuteHoldRequest): Promise<TransactionResult> {
 		handleValidation(ExecuteHoldRequest.name, request);
 		const { tokenId, targetId, amount, sourceId, holdId } = request;
-		return (
-			await this.commandBus.execute(
-				new ExecuteHoldCommand(
-					HederaId.from(tokenId),
-					holdId,
-					HederaId.from(sourceId),
-					amount,
-					targetId ? HederaId.from(targetId) : undefined,
-				),
-			)
-		).payload;
+		const response = await this.commandBus.execute(
+			new ExecuteHoldCommand(
+				HederaId.from(tokenId),
+				holdId,
+				HederaId.from(sourceId),
+				amount,
+				targetId ? HederaId.from(targetId) : undefined,
+			),
+		)
+		return new TransactionResult(response.payload, response.transactionId);
 	}
 
 	@LogError
 	async releaseHold(request: ReleaseHoldRequest): Promise<TransactionResult> {
 		handleValidation(ReleaseHoldRequest.name, request);
 		const { tokenId, amount, sourceId, holdId } = request;
-		return (
-			await this.commandBus.execute(
-				new ReleaseHoldCommand(
-					HederaId.from(tokenId),
-					holdId,
-					HederaId.from(sourceId),
-					amount,
-				),
-			)
-		).payload;
+		const response = await this.commandBus.execute(
+			new ReleaseHoldCommand(
+				HederaId.from(tokenId),
+				holdId,
+				HederaId.from(sourceId),
+				amount,
+			),
+		)
+		return new TransactionResult(response.payload, response.transactionId);
 	}
 
 	@LogError
 	async reclaimHold(request: ReclaimHoldRequest): Promise<TransactionResult> {
 		handleValidation(ReclaimHoldRequest.name, request);
 		const { tokenId, sourceId, holdId } = request;
-		return (
-			await this.commandBus.execute(
-				new ReclaimHoldCommand(
-					HederaId.from(tokenId),
-					holdId,
-					HederaId.from(sourceId),
-				),
-			)
-		).payload;
+		const response = await this.commandBus.execute(
+			new ReclaimHoldCommand(
+				HederaId.from(tokenId),
+				holdId,
+				HederaId.from(sourceId),
+			),
+		);
+		return new TransactionResult(response.payload, response.transactionId);
 	}
 
 	@LogError
