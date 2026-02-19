@@ -213,10 +213,12 @@ describe('🧪 Role test', () => {
 			}),
 		);
 
-		expect(revokeRes).toBe(true);
+		expect(revokeRes).toBeTruthy();
+		expect(revokeRes.transactionId).toBeTruthy();
 		expect(noRole_1).toBe(false);
 		expect(noRole_2).toBe(false);
-		expect(grantRes).toBe(true);
+		expect(grantRes).toBeTruthy();
+		expect(grantRes.transactionId).toBeTruthy();
 		expect(hasRole_1).toBe(true);
 		expect(hasRole_2).toBe(true);
 		expect(isUnlimited).toBe(true);
@@ -673,7 +675,8 @@ describe('🧪 Role test', () => {
 			}),
 		);
 
-		expect(revokeRes).toBe(true);
+		expect(revokeRes).toBeTruthy();
+		expect(revokeRes.transactionId).toBeTruthy();
 		expect(accounts_Before.length).toEqual(0);
 		expect(accounts_After.length).toEqual(2);
 		expect(accounts_After[0]).toEqual(CLIENT_ACCOUNT_ED25519.id.toString());

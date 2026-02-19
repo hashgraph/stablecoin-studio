@@ -70,8 +70,8 @@ interface IRole {
 	hasRole(request: HasRoleRequest): Promise<boolean>;
 	grantRole(request: GrantRoleRequest): Promise<TransactionResult>;
 	revokeRole(request: RevokeRoleRequest): Promise<TransactionResult>;
-	grantMultiRoles(request: GrantMultiRolesRequest): Promise<boolean>;
-	revokeMultiRoles(request: RevokeMultiRolesRequest): Promise<boolean>;
+	grantMultiRoles(request: GrantMultiRolesRequest): Promise<TransactionResult>;
+	revokeMultiRoles(request: RevokeMultiRolesRequest): Promise<TransactionResult>;
 	getRoles(request: GetRolesRequest): Promise<string[]>;
 	getAccountsWithRole(
 		request: GetAccountsWithRolesRequest,
@@ -174,7 +174,7 @@ class RoleInPort implements IRole {
 	}
 
 	@LogError
-	async grantMultiRoles(request: GrantMultiRolesRequest): Promise<boolean> {
+	async grantMultiRoles(request: GrantMultiRolesRequest): Promise<TransactionResult> {
 		const { tokenId, targetsId, roles, amounts, startDate } = request;
 		handleValidation('GrantMultiRolesRequest', request);
 
@@ -183,21 +183,20 @@ class RoleInPort implements IRole {
 			targetsIdHederaIds.push(HederaId.from(targetId));
 		});
 
-		return (
-			await this.commandBus.execute(
-				new GrantMultiRolesCommand(
-					roles,
-					targetsIdHederaIds,
-					amounts ?? [],
-					HederaId.from(tokenId),
-					startDate,
-				),
-			)
-		).payload;
+		const response = await this.commandBus.execute(
+			new GrantMultiRolesCommand(
+				roles,
+				targetsIdHederaIds,
+				amounts ?? [],
+				HederaId.from(tokenId),
+				startDate,
+			),
+		);
+		return new TransactionResult(response.payload, response.transactionId);
 	}
 
 	@LogError
-	async revokeMultiRoles(request: RevokeMultiRolesRequest): Promise<boolean> {
+	async revokeMultiRoles(request: RevokeMultiRolesRequest): Promise<TransactionResult> {
 		const { tokenId, targetsId, roles, startDate } = request;
 		handleValidation('HasRoleRequest', request);
 
@@ -206,16 +205,15 @@ class RoleInPort implements IRole {
 			targetsIdHederaIds.push(HederaId.from(targetId));
 		});
 
-		return (
-			await this.commandBus.execute(
-				new RevokeMultiRolesCommand(
-					roles,
-					targetsIdHederaIds,
-					HederaId.from(tokenId),
-					startDate,
-				),
-			)
-		).payload;
+		const response = await this.commandBus.execute(
+			new RevokeMultiRolesCommand(
+				roles,
+				targetsIdHederaIds,
+				HederaId.from(tokenId),
+				startDate,
+			),
+		);
+		return new TransactionResult(response.payload, response.transactionId);
 	}
 
 	@LogError
