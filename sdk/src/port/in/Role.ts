@@ -62,13 +62,14 @@ import { GrantMultiRolesCommand } from '../../app/usecase/command/stablecoin/rol
 import { RevokeMultiRolesCommand } from '../../app/usecase/command/stablecoin/roles/revokeMultiRoles/RevokeMultiRolesCommand.js';
 import GetAccountsWithRolesRequest from './request/GetAccountsWithRolesRequest.js';
 import { GetAccountsWithRolesQuery } from '../../app/usecase/query/stablecoin/roles/getAccountsWithRole/GetAccountsWithRolesQuery.js';
+import { TransactionResult } from '../../domain/context/transaction/TransactionResult.js';
 
 export { StableCoinRole, StableCoinRoleLabel, MAX_ACCOUNTS_ROLES };
 
 interface IRole {
 	hasRole(request: HasRoleRequest): Promise<boolean>;
-	grantRole(request: GrantRoleRequest): Promise<boolean>;
-	revokeRole(request: RevokeRoleRequest): Promise<boolean>;
+	grantRole(request: GrantRoleRequest): Promise<TransactionResult>;
+	revokeRole(request: RevokeRoleRequest): Promise<TransactionResult>;
 	grantMultiRoles(request: GrantMultiRolesRequest): Promise<boolean>;
 	revokeMultiRoles(request: RevokeMultiRolesRequest): Promise<boolean>;
 	getRoles(request: GetRolesRequest): Promise<string[]>;
@@ -112,68 +113,63 @@ class RoleInPort implements IRole {
 	}
 
 	@LogError
-	async grantRole(request: GrantRoleRequest): Promise<boolean> {
+	async grantRole(request: GrantRoleRequest): Promise<TransactionResult> {
 		const { tokenId, targetId, role, supplierType, amount } = request;
 		handleValidation('GrantRoleRequest', request);
 
 		if (role === StableCoinRole.CASHIN_ROLE) {
 			if (supplierType == 'limited') {
-				return (
-					await this.commandBus.execute(
-						new GrantSupplierRoleCommand(
-							HederaId.from(targetId),
-							HederaId.from(tokenId),
-							amount!,
-						),
-					)
-				).payload;
+				const response = await this.commandBus.execute(
+					new GrantSupplierRoleCommand(
+						HederaId.from(targetId),
+						HederaId.from(tokenId),
+						amount!,
+					),
+				);
+				return new TransactionResult(response.payload, response.transactionId);
 			} else {
-				return (
-					await this.commandBus.execute(
-						new GrantUnlimitedSupplierRoleCommand(
-							HederaId.from(targetId),
-							HederaId.from(tokenId),
-						),
-					)
-				).payload;
-			}
-		} else {
-			return (
-				await this.commandBus.execute(
-					new GrantRoleCommand(
-						role!,
+				const response = await this.commandBus.execute(
+					new GrantUnlimitedSupplierRoleCommand(
 						HederaId.from(targetId),
 						HederaId.from(tokenId),
 					),
-				)
-			).payload;
+				);
+				return new TransactionResult(response.payload, response.transactionId);
+			}
+		} else {
+			const response = await this.commandBus.execute(
+				new GrantRoleCommand(
+					role!,
+					HederaId.from(targetId),
+					HederaId.from(tokenId),
+				),
+			);
+			return new TransactionResult(response.payload, response.transactionId);
 		}
 	}
 
 	@LogError
-	async revokeRole(request: RevokeRoleRequest): Promise<boolean> {
+	async revokeRole(request: RevokeRoleRequest): Promise<TransactionResult> {
 		const { tokenId, targetId, role } = request;
 		handleValidation('HasRoleRequest', request);
 
 		if (role === StableCoinRole.CASHIN_ROLE) {
-			return (
-				await this.commandBus.execute(
-					new RevokeSupplierRoleCommand(
-						HederaId.from(targetId),
-						HederaId.from(tokenId),
-					),
-				)
-			).payload;
+			const response = await this.commandBus.execute(
+				new RevokeSupplierRoleCommand(
+					HederaId.from(targetId),
+					HederaId.from(tokenId),
+				),
+			);
+			return new TransactionResult(response.payload, response.transactionId);
 		} else {
-			return (
-				await this.commandBus.execute(
-					new RevokeRoleCommand(
-						role!,
-						HederaId.from(targetId),
-						HederaId.from(tokenId),
-					),
-				)
-			).payload;
+			const response = await this.commandBus.execute(
+				new RevokeRoleCommand(
+					role!,
+					HederaId.from(targetId),
+					HederaId.from(tokenId),
+				),
+			);
+			return new TransactionResult(response.payload, response.transactionId);
 		}
 	}
 

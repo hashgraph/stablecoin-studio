@@ -56,7 +56,7 @@ export class RevokeRoleCommandHandler
 
 		// return Promise.resolve({ payload: res.response ?? false });
 		return Promise.resolve(
-			new RevokeRoleCommandResponse(res.error === undefined),
+			new RevokeRoleCommandResponse(res.error === undefined, res.id),
 		);
 	}
 }
