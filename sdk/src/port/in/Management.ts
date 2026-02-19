@@ -37,7 +37,7 @@ import ConfigInfoViewModel from './response/ConfigInfoViewModel.js';
 import { TransactionResult } from '../../domain/context/transaction/TransactionResult.js';
 
 interface IManagementInPort {
-	updateConfigVersion(request: UpdateConfigVersionRequest): Promise<boolean>;
+	updateConfigVersion(request: UpdateConfigVersionRequest): Promise<TransactionResult>;
 	updateConfig(request: UpdateConfigRequest): Promise<TransactionResult>;
 
 	getConfigInfo(request: GetConfigInfoRequest): Promise<ConfigInfoViewModel>;
@@ -55,18 +55,17 @@ class ManagementInPort implements IManagementInPort {
 	@LogError
 	async updateConfigVersion(
 		request: UpdateConfigVersionRequest,
-	): Promise<boolean> {
+	): Promise<TransactionResult> {
 		const { configVersion, tokenId } = request;
 		handleValidation('UpdateConfigVersionRequest', request);
 
-		return (
-			await this.commandBus.execute(
-				new UpdateConfigVersionCommand(
-					HederaId.from(tokenId),
-					configVersion,
-				),
-			)
-		).payload;
+		const response = await this.commandBus.execute(
+			new UpdateConfigVersionCommand(
+				HederaId.from(tokenId),
+				configVersion,
+			),
+		);
+		return new TransactionResult(response.payload, response.transactionId);
 	}
 
 	@LogError
