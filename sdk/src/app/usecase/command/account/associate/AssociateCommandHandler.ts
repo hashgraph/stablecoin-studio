@@ -56,13 +56,13 @@ export class AssociateCommandHandler
 		).payload;
 
 		if (tokenRelationship) {
-			Promise.resolve(new AssociateCommandResponse(true));
+			return Promise.resolve(new AssociateCommandResponse(true));
 		}
 
 		const res = await handler.associateToken(tokenId, targetId);
 
 		return Promise.resolve(
-			new AssociateCommandResponse(res.error === undefined),
+			new AssociateCommandResponse(res.error === undefined, res.id),
 		);
 	}
 }

@@ -155,7 +155,7 @@ interface IStableCoinInPort {
 	rescue(request: RescueRequest): Promise<TransactionResult>;
 	rescueHBAR(request: RescueHBARRequest): Promise<TransactionResult>;
 	wipe(request: WipeRequest): Promise<TransactionResult>;
-	associate(request: AssociateTokenRequest): Promise<boolean>;
+	associate(request: AssociateTokenRequest): Promise<TransactionResult>;
 	getBalanceOf(request: GetAccountBalanceRequest): Promise<Balance>;
 	getBalanceOfHBAR(request: GetAccountBalanceHBARRequest): Promise<Balance>;
 	capabilities(request: CapabilitiesRequest): Promise<StableCoinCapabilities>;
@@ -429,18 +429,17 @@ class StableCoinInPort implements IStableCoinInPort {
 	}
 
 	@LogError
-	async associate(request: AssociateTokenRequest): Promise<boolean> {
+	async associate(request: AssociateTokenRequest): Promise<TransactionResult> {
 		const { tokenId, targetId } = request;
 		handleValidation('AssociateTokenRequest', request);
 
-		return (
-			await this.commandBus.execute(
-				new AssociateCommand(
-					HederaId.from(targetId),
-					HederaId.from(tokenId),
-				),
-			)
-		).payload;
+		const response = await this.commandBus.execute(
+			new AssociateCommand(
+				HederaId.from(targetId),
+				HederaId.from(tokenId),
+			),
+		);
+		return new TransactionResult(response.payload, response.transactionId);
 	}
 
 	@LogError
