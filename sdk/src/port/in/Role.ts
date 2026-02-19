@@ -81,7 +81,7 @@ interface IRole {
 	resetAllowance(request: ResetSupplierAllowanceRequest): Promise<TransactionResult>;
 	increaseAllowance(
 		request: IncreaseSupplierAllowanceRequest,
-	): Promise<boolean>;
+	): Promise<TransactionResult>;
 	decreaseAllowance(
 		request: DecreaseSupplierAllowanceRequest,
 	): Promise<boolean>;
@@ -278,20 +278,19 @@ class RoleInPort implements IRole {
 	@LogError
 	async increaseAllowance(
 		request: IncreaseSupplierAllowanceRequest,
-	): Promise<boolean> {
+	): Promise<TransactionResult> {
 		const { tokenId, amount, targetId, startDate } = request;
 		handleValidation('IncreaseSupplierAllowanceRequest', request);
 
-		return (
-			await this.commandBus.execute(
-				new IncreaseAllowanceCommand(
-					amount,
-					HederaId.from(targetId),
-					HederaId.from(tokenId),
-					startDate,
-				),
-			)
-		).payload;
+		const response = await this.commandBus.execute(
+			new IncreaseAllowanceCommand(
+				amount,
+				HederaId.from(targetId),
+				HederaId.from(tokenId),
+				startDate,
+			),
+		);
+		return new TransactionResult(response.payload, response.transactionId);
 	}
 
 	@LogError
