@@ -102,7 +102,9 @@ describe('🧪 Management test', () => {
 			}),
 		);
 		checkConfig(resolver, configId, configVersion, configInfo);
-		expect(res).toBe(true);
+		expect(res).toBeTruthy();
+		expect(res.success).toBeTruthy();
+		expect(res.transactionId).toBeTruthy();
 	}, 600_000);
 
 	it('Updates configVersion correctly', async () => {

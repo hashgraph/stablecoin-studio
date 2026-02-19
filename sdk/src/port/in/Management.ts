@@ -41,7 +41,7 @@ interface IManagementInPort {
 	updateConfig(request: UpdateConfigRequest): Promise<TransactionResult>;
 
 	getConfigInfo(request: GetConfigInfoRequest): Promise<ConfigInfoViewModel>;
-	updateResolver(request: UpdateResolverRequest): Promise<boolean>;
+	updateResolver(request: UpdateResolverRequest): Promise<TransactionResult>;
 }
 
 class ManagementInPort implements IManagementInPort {
@@ -84,20 +84,19 @@ class ManagementInPort implements IManagementInPort {
 	}
 
 	@LogError
-	async updateResolver(request: UpdateResolverRequest): Promise<boolean> {
+	async updateResolver(request: UpdateResolverRequest): Promise<TransactionResult> {
 		const { configId, tokenId, resolver, configVersion } = request;
 		handleValidation('UpdateResolverRequest', request);
 
-		return (
-			await this.commandBus.execute(
-				new UpdateResolverCommand(
-					HederaId.from(tokenId),
-					configVersion,
-					configId,
-					new ContractId(resolver),
-				),
-			)
-		).payload;
+		const response = await this.commandBus.execute(
+			new UpdateResolverCommand(
+				HederaId.from(tokenId),
+				configVersion,
+				configId,
+				new ContractId(resolver),
+			),
+		);
+		return new TransactionResult(response.payload, response.transactionId);
 	}
 
 	@LogError
