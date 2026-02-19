@@ -103,7 +103,10 @@ describe('🧪 [ADAPTER] HTSTransactionAdapter with ECDSA accounts', () => {
 			decimals: stableCoinCapabilitiesHTS.coin.decimals,
 			amount: amount.toString(),
 		});
-		await Fees.addFixedFee(fixedFee);
+		const result = await Fees.addFixedFee(fixedFee);
+		expect(result).toBeTruthy();
+		expect(result.success).toBeTruthy();
+		expect(result.transactionId).toBeTruthy();
 
 		const tokenCustomFees: RequestCustomFee[] = await getTokenCustomFees(
 			stableCoinCapabilitiesHTS.coin.tokenId!,

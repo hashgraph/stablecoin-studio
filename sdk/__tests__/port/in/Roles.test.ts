@@ -545,13 +545,17 @@ describe('🧪 Role test', () => {
 		);
 
 		expect(revokeRes).toBeTruthy();
+		expect(revokeRes.success).toBeTruthy();
 		expect(revokeRes.transactionId).toBeTruthy();
 		expect(grantRes).toBeTruthy();
+		expect(grantRes.success).toBeTruthy();
 		expect(grantRes.transactionId).toBeTruthy();
 		expect(allowanceBefore.value).toStrictEqual(
 			BigDecimal.fromString('10', stableCoinSC?.decimals ?? 6),
 		);
-		expect(decreaseAllowance).toBe(true);
+		expect(decreaseAllowance).toBeTruthy();
+		expect(decreaseAllowance.success).toBeTruthy();
+		expect(decreaseAllowance.transactionId).toBeTruthy();
 		expect(allowanceAfter.value).toStrictEqual(
 			BigDecimal.fromString('5', stableCoinSC?.decimals ?? 6),
 		);
@@ -589,8 +593,10 @@ describe('🧪 Role test', () => {
 		);
 
 		expect(revokeRes).toBeTruthy();
+		expect(revokeRes.success).toBeTruthy();
 		expect(revokeRes.transactionId).toBeTruthy();
 		expect(grantRes).toBeTruthy();
+		expect(grantRes.success).toBeTruthy();
 		expect(grantRes.transactionId).toBeTruthy();
 		expect(isLimited).toBe(true);
 		expect(isUnlimited).toBe(false);
@@ -634,8 +640,10 @@ describe('🧪 Role test', () => {
 		);
 
 		expect(revokeRes).toBeTruthy();
+		expect(revokeRes.success).toBeTruthy();
 		expect(revokeRes.transactionId).toBeTruthy();
 		expect(grantRes).toBeTruthy();
+		expect(grantRes.success).toBeTruthy();
 		expect(grantRes.transactionId).toBeTruthy();
 		expect(isLimited).toBe(false);
 		expect(isUnlimited).toBe(true);
@@ -679,6 +687,7 @@ describe('🧪 Role test', () => {
 		);
 
 		expect(revokeRes).toBeTruthy();
+		expect(revokeRes.success).toBeTruthy();
 		expect(revokeRes.transactionId).toBeTruthy();
 		expect(accounts_Before.length).toEqual(0);
 		expect(accounts_After.length).toEqual(2);
