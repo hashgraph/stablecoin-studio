@@ -34,10 +34,11 @@ import { GetReserveAmountQuery } from '../../app/usecase/query/stablecoin/getRes
 import { QueryBus } from '../../core/query/QueryBus.js';
 import { LogError } from '../../core/decorator/LogErrorDecorator.js';
 import { MirrorNodeAdapter } from '../../port/out/mirror/MirrorNodeAdapter.js';
+import { TransactionResult } from '../../domain/context/transaction/TransactionResult.js';
 
 interface IReserveDataFeedInPort {
 	getReserveAmount(request: GetReserveAmountRequest): Promise<Balance>;
-	updateReserveAmount(request: UpdateReserveAmountRequest): Promise<boolean>;
+	updateReserveAmount(request: UpdateReserveAmountRequest): Promise<TransactionResult>;
 }
 
 class ReserveDataFeedInPort implements IReserveDataFeedInPort {
@@ -65,23 +66,22 @@ class ReserveDataFeedInPort implements IReserveDataFeedInPort {
 	@LogError
 	async updateReserveAmount(
 		request: UpdateReserveAmountRequest,
-	): Promise<boolean> {
+	): Promise<TransactionResult> {
 		handleValidation('UpdateReserveAmountRequest', request);
 
 		const reserveId: string = (
 			await this.mirrorNode.getContractInfo(request.reserveAddress)
 		).id;
-		return (
-			await this.commandBus.execute(
-				new UpdateReserveAmountCommand(
-					new ContractId(reserveId),
-					BigDecimal.fromString(
-						request.reserveAmount,
-						RESERVE_DECIMALS,
-					),
+		const response = await this.commandBus.execute(
+			new UpdateReserveAmountCommand(
+				new ContractId(reserveId),
+				BigDecimal.fromString(
+					request.reserveAmount,
+					RESERVE_DECIMALS,
 				),
-			)
-		).payload;
+			),
+		);
+		return new TransactionResult(response.payload, response.transactionId);
 	}
 }
 
