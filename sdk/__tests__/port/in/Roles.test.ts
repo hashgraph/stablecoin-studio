@@ -444,7 +444,9 @@ describe('🧪 Role test', () => {
 		expect(allowanceBefore.value).toStrictEqual(
 			BigDecimal.fromString('10', stableCoinSC?.decimals ?? 6),
 		);
-		expect(resetAllowance).toBe(true);
+		expect(resetAllowance).toBeTruthy();
+		expect(resetAllowance.success).toBeTruthy();
+		expect(resetAllowance.transactionId).toBeTruthy();
 		expect(allowanceAfter.value).toStrictEqual(
 			BigDecimal.fromString('0', stableCoinSC?.decimals ?? 6),
 		);
