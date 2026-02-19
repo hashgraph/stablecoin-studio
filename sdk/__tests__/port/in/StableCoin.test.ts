@@ -473,6 +473,8 @@ describe('🧪 Stablecoin test', () => {
 				transactionId: '1',
 			}),
 		);
+		expect(result).toBeTruthy();
+		expect(result.transactionId).toBeTruthy();
 
 		await Network.connect(
 			new ConnectRequest({
