@@ -34,10 +34,11 @@ import { UpdateConfigVersionCommand } from '../../app/usecase/command/stablecoin
 import { UpdateConfigCommand } from '../../app/usecase/command/stablecoin/management/updateConfig/updateConfigCommand.js';
 import { GetConfigInfoQuery } from '../../app/usecase/query/stablecoin/management/getConfigInfo/GetConfigInfoQuery.js';
 import ConfigInfoViewModel from './response/ConfigInfoViewModel.js';
+import { TransactionResult } from '../../domain/context/transaction/TransactionResult.js';
 
 interface IManagementInPort {
 	updateConfigVersion(request: UpdateConfigVersionRequest): Promise<boolean>;
-	updateConfig(request: UpdateConfigRequest): Promise<boolean>;
+	updateConfig(request: UpdateConfigRequest): Promise<TransactionResult>;
 
 	getConfigInfo(request: GetConfigInfoRequest): Promise<ConfigInfoViewModel>;
 	updateResolver(request: UpdateResolverRequest): Promise<boolean>;
@@ -69,19 +70,18 @@ class ManagementInPort implements IManagementInPort {
 	}
 
 	@LogError
-	async updateConfig(request: UpdateConfigRequest): Promise<boolean> {
+	async updateConfig(request: UpdateConfigRequest): Promise<TransactionResult> {
 		const { configId, configVersion, tokenId } = request;
 		handleValidation('UpdateConfigRequest', request);
 
-		return (
-			await this.commandBus.execute(
-				new UpdateConfigCommand(
-					HederaId.from(tokenId),
-					configId,
-					configVersion,
-				),
-			)
-		).payload;
+		const response = await this.commandBus.execute(
+			new UpdateConfigCommand(
+				HederaId.from(tokenId),
+				configId,
+				configVersion,
+			),
+		);
+		return new TransactionResult(response.payload, response.transactionId);
 	}
 
 	@LogError

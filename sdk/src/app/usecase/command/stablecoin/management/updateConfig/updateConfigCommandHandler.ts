@@ -60,7 +60,7 @@ export class UpdateConfigCommandHandler
 		);
 
 		return Promise.resolve(
-			new UpdateConfigCommandResponse(res.error === undefined),
+			new UpdateConfigCommandResponse(res.error === undefined, res.id),
 		);
 	}
 }
