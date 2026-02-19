@@ -51,7 +51,7 @@ export { HBAR_DECIMALS, MAX_PERCENTAGE_DECIMALS, MAX_CUSTOM_FEES };
 interface ICustomFees {
 	addFixedFee(request: AddFixedFeeRequest): Promise<TransactionResult>;
 	addFractionalFee(request: AddFractionalFeeRequest): Promise<TransactionResult>;
-	updateCustomFees(request: UpdateCustomFeesRequest): Promise<boolean>;
+	updateCustomFees(request: UpdateCustomFeesRequest): Promise<TransactionResult>;
 }
 
 class CustomFeesInPort implements ICustomFees {
@@ -127,7 +127,7 @@ class CustomFeesInPort implements ICustomFees {
 	}
 
 	@LogError
-	async updateCustomFees(request: UpdateCustomFeesRequest): Promise<boolean> {
+	async updateCustomFees(request: UpdateCustomFeesRequest): Promise<TransactionResult> {
 		const { tokenId, customFees } = request;
 		handleValidation('UpdateCustomFeesRequest', request);
 
@@ -179,14 +179,13 @@ class CustomFeesInPort implements ICustomFees {
 			}
 		});
 
-		return (
-			await this.commandBus.execute(
-				new UpdateCustomFeesCommand(
-					HederaId.from(tokenId),
-					requestedCustomFee,
-				),
-			)
-		).payload;
+		const response = await this.commandBus.execute(
+			new UpdateCustomFeesCommand(
+				HederaId.from(tokenId),
+				requestedCustomFee,
+			),
+		);
+		return new TransactionResult(response.payload, response.transactionId);
 	}
 
 	getFractionFromPercentage(percentage: string): string[] {

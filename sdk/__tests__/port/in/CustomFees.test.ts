@@ -139,6 +139,7 @@ describe('🧪 [ADAPTER] HTSTransactionAdapter with ECDSA accounts', () => {
 
 		const result = await Fees.addFractionalFee(FractionalFee);
 		expect(result).toBeTruthy();
+		expect(result.success).toBeTruthy();
 		expect(result.transactionId).toBeTruthy();
 
 		const tokenCustomFees: RequestCustomFee[] = await getTokenCustomFees(
@@ -173,6 +174,7 @@ describe('🧪 [ADAPTER] HTSTransactionAdapter with ECDSA accounts', () => {
 
 		const result = await Fees.addFractionalFee(FractionalFee);
 		expect(result).toBeTruthy();
+		expect(result.success).toBeTruthy();
 		expect(result.transactionId).toBeTruthy();
 
 		const tokenCustomFees: RequestCustomFee[] = await getTokenCustomFees(
@@ -239,7 +241,10 @@ describe('🧪 [ADAPTER] HTSTransactionAdapter with ECDSA accounts', () => {
 			tokenId: stableCoinCapabilitiesHTS.coin.tokenId!.toString(),
 		});
 
-		await Fees.updateCustomFees(newFees);
+		const result = await Fees.updateCustomFees(newFees);
+		expect(result).toBeTruthy();
+		expect(result.success).toBeTruthy();
+		expect(result.transactionId).toBeTruthy();
 
 		const tokenCustomFees: RequestCustomFee[] = await getTokenCustomFees(
 			stableCoinCapabilitiesHTS.coin.tokenId!,
