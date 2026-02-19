@@ -459,11 +459,13 @@ describe('🧪 Stablecoin test', () => {
 
 			Injectable.resolveTransactionHandler();
 
-			await StableCoin.signTransaction(
+			const result = await StableCoin.signTransaction(
 				new SignTransactionRequest({
 					transactionId: '1',
 				}),
 			);
+			expect(result).toBeTruthy();
+			expect(result.transactionId).toBeTruthy();
 		}
 
 		const result = await StableCoin.submitTransaction(
