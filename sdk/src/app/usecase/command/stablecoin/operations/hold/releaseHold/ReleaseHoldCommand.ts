@@ -23,7 +23,10 @@ import { CommandResponse } from '../../../../../../../core/command/CommandRespon
 import { HederaId } from '../../../../../../../domain/context/shared/HederaId.js';
 
 export class ReleaseHoldCommandResponse implements CommandResponse {
-	constructor(public readonly payload: boolean) {}
+	constructor(
+		public readonly payload: boolean,
+		public readonly transactionId?: string,
+	) {}
 }
 
 export class ReleaseHoldCommand extends Command<ReleaseHoldCommandResponse> {

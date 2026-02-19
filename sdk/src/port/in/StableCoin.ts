@@ -179,9 +179,9 @@ interface IStableCoinInPort {
 	createHoldByController(
 		request: CreateHoldByControllerRequest,
 	): Promise<{ holdId: number; payload: boolean }>;
-	executeHold(request: ExecuteHoldRequest): Promise<boolean>;
-	releaseHold(request: ReleaseHoldRequest): Promise<boolean>;
-	reclaimHold(request: ReclaimHoldRequest): Promise<boolean>;
+	executeHold(request: ExecuteHoldRequest): Promise<TransactionResult>;
+	releaseHold(request: ReleaseHoldRequest): Promise<TransactionResult>;
+	reclaimHold(request: ReclaimHoldRequest): Promise<TransactionResult>;
 	getHoldFor(request: GetHoldForRequest): Promise<HoldViewModel>;
 	getHeldAmountFor(request: GetHeldAmountForRequest): Promise<BigDecimal>;
 	getHoldCountFor(request: GetHoldCountForRequest): Promise<number>;
@@ -704,7 +704,7 @@ class StableCoinInPort implements IStableCoinInPort {
 	}
 
 	@LogError
-	async executeHold(request: ExecuteHoldRequest): Promise<boolean> {
+	async executeHold(request: ExecuteHoldRequest): Promise<TransactionResult> {
 		handleValidation(ExecuteHoldRequest.name, request);
 		const { tokenId, targetId, amount, sourceId, holdId } = request;
 		return (
@@ -721,7 +721,7 @@ class StableCoinInPort implements IStableCoinInPort {
 	}
 
 	@LogError
-	async releaseHold(request: ReleaseHoldRequest): Promise<boolean> {
+	async releaseHold(request: ReleaseHoldRequest): Promise<TransactionResult> {
 		handleValidation(ReleaseHoldRequest.name, request);
 		const { tokenId, amount, sourceId, holdId } = request;
 		return (
@@ -737,7 +737,7 @@ class StableCoinInPort implements IStableCoinInPort {
 	}
 
 	@LogError
-	async reclaimHold(request: ReclaimHoldRequest): Promise<boolean> {
+	async reclaimHold(request: ReclaimHoldRequest): Promise<TransactionResult> {
 		handleValidation(ReclaimHoldRequest.name, request);
 		const { tokenId, sourceId, holdId } = request;
 		return (
