@@ -1192,7 +1192,7 @@ describe('🧪 Stablecoin test', () => {
 		expect(result.transactionId).toBeTruthy();
 	}
 
-	async function updateToken(stableCoin: StableCoinViewModel): Promise<void> {
+	async function updateToken(stableCoin: StableCoinViewModel) {
 		const name = 'New Token Name';
 		const symbol = 'New Token Symbol';
 		const autoRenewPeriod = 30 * 24 * 3600;
@@ -1220,7 +1220,7 @@ describe('🧪 Stablecoin test', () => {
 				: Account.NullPublicKey;
 		const metadata = 'New Metadata';
 
-		await StableCoin.update(
+		const result = await StableCoin.update(
 			new UpdateRequest({
 				tokenId: stableCoin?.tokenId?.toString() ?? '0.0.0',
 				name: name,
@@ -1237,6 +1237,9 @@ describe('🧪 Stablecoin test', () => {
 				metadata: metadata,
 			}),
 		);
+
+		expect(result).toBeTruthy();
+		expect(result.transactionId).toBeTruthy();
 
 		const res = await StableCoin.getInfo(
 			new GetStableCoinDetailsRequest({
@@ -1274,6 +1277,8 @@ describe('🧪 Stablecoin test', () => {
 				: pauseKey?.toString(),
 		);
 		expect(res.metadata).toEqual(metadata);
+
+		return result;
 	}
 
 	function timestampInNanoToDays(timestamp: number): string {

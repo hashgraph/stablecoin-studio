@@ -187,7 +187,7 @@ interface IStableCoinInPort {
 	getHoldCountFor(request: GetHoldCountForRequest): Promise<number>;
 	getHoldsIdFor(request: GetHoldsIdForRequest): Promise<number[]>;
 	transfers(request: TransfersRequest): Promise<TransactionResult>;
-	update(request: UpdateRequest): Promise<boolean>;
+	update(request: UpdateRequest): Promise<TransactionResult>;
 	signTransaction(request: SignTransactionRequest): Promise<boolean>;
 	submitTransaction(request: SubmitTransactionRequest): Promise<boolean>;
 	removeTransaction(request: RemoveTransactionRequest): Promise<boolean>;
@@ -855,7 +855,7 @@ class StableCoinInPort implements IStableCoinInPort {
 	}
 
 	@LogError
-	async update(request: UpdateRequest): Promise<boolean> {
+	async update(request: UpdateRequest): Promise<TransactionResult> {
 		const {
 			tokenId,
 			name,
@@ -870,50 +870,49 @@ class StableCoinInPort implements IStableCoinInPort {
 			metadata,
 		} = request;
 		handleValidation('UpdateRequest', request);
-		return (
-			await this.commandBus.execute(
-				new UpdateCommand(
-					HederaId.from(tokenId),
-					name,
-					symbol,
-					autoRenewPeriod ? Number(autoRenewPeriod) : undefined,
-					expirationTimestamp
-						? Number(expirationTimestamp)
-						: undefined,
-					kycKey
-						? new PublicKey({
-								key: kycKey.key,
-								type: kycKey.type,
-						  })
-						: undefined,
-					freezeKey
-						? new PublicKey({
-								key: freezeKey.key,
-								type: freezeKey.type,
-						  })
-						: undefined,
-					feeScheduleKey
-						? new PublicKey({
-								key: feeScheduleKey.key,
-								type: feeScheduleKey.type,
-						  })
-						: undefined,
-					pauseKey
-						? new PublicKey({
-								key: pauseKey.key,
-								type: pauseKey.type,
-						  })
-						: undefined,
-					wipeKey
-						? new PublicKey({
-								key: wipeKey.key,
-								type: wipeKey.type,
-						  })
-						: undefined,
-					metadata,
-				),
-			)
-		).payload;
+		const response = await this.commandBus.execute(
+			new UpdateCommand(
+				HederaId.from(tokenId),
+				name,
+				symbol,
+				autoRenewPeriod ? Number(autoRenewPeriod) : undefined,
+				expirationTimestamp
+					? Number(expirationTimestamp)
+					: undefined,
+				kycKey
+					? new PublicKey({
+							key: kycKey.key,
+							type: kycKey.type,
+					  })
+					: undefined,
+				freezeKey
+					? new PublicKey({
+							key: freezeKey.key,
+							type: freezeKey.type,
+					  })
+					: undefined,
+				feeScheduleKey
+					? new PublicKey({
+							key: feeScheduleKey.key,
+							type: feeScheduleKey.type,
+					  })
+					: undefined,
+				pauseKey
+					? new PublicKey({
+							key: pauseKey.key,
+							type: pauseKey.type,
+					  })
+					: undefined,
+				wipeKey
+					? new PublicKey({
+							key: wipeKey.key,
+							type: wipeKey.type,
+					  })
+					: undefined,
+				metadata,
+			),
+		);
+		return new TransactionResult(response.payload, response.transactionId);
 	}
 
 	@LogError

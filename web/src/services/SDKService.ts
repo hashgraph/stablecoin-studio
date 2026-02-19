@@ -468,7 +468,7 @@ export class SDKService {
 		return await StableCoin.create(createRequest);
 	}
 
-	public static async updateStableCoin(updateRequest: UpdateRequest): Promise<boolean> {
+	public static async updateStableCoin(updateRequest: UpdateRequest) {
 		return await StableCoin.update(updateRequest);
 	}
 
