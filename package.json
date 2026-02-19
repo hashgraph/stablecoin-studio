@@ -74,7 +74,7 @@
   },
   "overrides": {
     "react-refresh": "0.11.0",
-    "webpack": "5.98.0"
+    "webpack": "5.104.1"
   },
   "workspaces": [
     "backend",
