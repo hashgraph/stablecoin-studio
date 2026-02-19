@@ -188,7 +188,7 @@ interface IStableCoinInPort {
 	update(request: UpdateRequest): Promise<TransactionResult>;
 	signTransaction(request: SignTransactionRequest): Promise<TransactionResult>;
 	submitTransaction(request: SubmitTransactionRequest): Promise<TransactionResult>;
-	removeTransaction(request: RemoveTransactionRequest): Promise<boolean>;
+	removeTransaction(request: RemoveTransactionRequest): Promise<TransactionResult>;
 	getTransactions(
 		request: GetTransactionsRequest,
 	): Promise<MultiSigTransactionsViewModel>;
@@ -943,13 +943,13 @@ class StableCoinInPort implements IStableCoinInPort {
 	@LogError
 	async removeTransaction(
 		request: RemoveTransactionRequest,
-	): Promise<boolean> {
+	): Promise<TransactionResult> {
 		const { transactionId } = request;
 
 		handleValidation('RemoveTransactionRequest', request);
 
-		return (await this.commandBus.execute(new RemoveCommand(transactionId)))
-			.payload;
+		const response = await this.commandBus.execute(new RemoveCommand(transactionId));
+		return new TransactionResult(response.payload, response.transactionId);
 	}
 
 	@LogError
