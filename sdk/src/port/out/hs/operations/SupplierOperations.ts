@@ -33,10 +33,14 @@ import {
 	DECREASE_SUPPLY_GAS,
 	RESET_SUPPLY_GAS,
 } from '../../../../core/Constants';
-import type { BaseHederaTransactionAdapter } from '../../hs/BaseHederaTransactionAdapter';
+import type { TransactionExecutor } from '../TransactionExecutor';
+import type { EvmAddressResolver } from '../EvmAddressResolver';
 
 export class SupplierOperations {
-	constructor(private adapter: BaseHederaTransactionAdapter) {}
+	constructor(
+		private executor: TransactionExecutor,
+		private evmResolver: EvmAddressResolver,
+	) {}
 
 	async grantSupplierRole(
 		coin: StableCoinCapabilities,
@@ -54,10 +58,10 @@ export class SupplierOperations {
 
 			const iface = new ethers.Interface(SupplierAdminFacet__factory.abi);
 			const params = [
-				await this.adapter.getEVMAddress(targetId),
+				await this.evmResolver.resolve(targetId),
 				amount.toBigInt(),
 			];
-			return await this.adapter.executeContractCall(
+			return await this.executor.executeContractCall(
 				contractId,
 				iface,
 				'grantSupplierRole',
@@ -90,8 +94,8 @@ export class SupplierOperations {
 			}
 
 			const iface = new ethers.Interface(SupplierAdminFacet__factory.abi);
-			const params = [await this.adapter.getEVMAddress(targetId)];
-			return await this.adapter.executeContractCall(
+			const params = [await this.evmResolver.resolve(targetId)];
+			return await this.executor.executeContractCall(
 				contractId,
 				iface,
 				'grantUnlimitedSupplierRole',
@@ -124,8 +128,8 @@ export class SupplierOperations {
 			}
 
 			const iface = new ethers.Interface(SupplierAdminFacet__factory.abi);
-			const params = [await this.adapter.getEVMAddress(targetId)];
-			return await this.adapter.executeContractCall(
+			const params = [await this.evmResolver.resolve(targetId)];
+			return await this.executor.executeContractCall(
 				contractId,
 				iface,
 				'revokeSupplierRole',
@@ -160,10 +164,10 @@ export class SupplierOperations {
 
 			const iface = new ethers.Interface(SupplierAdminFacet__factory.abi);
 			const params = [
-				await this.adapter.getEVMAddress(targetId),
+				await this.evmResolver.resolve(targetId),
 				amount.toBigInt(),
 			];
-			return await this.adapter.executeContractCall(
+			return await this.executor.executeContractCall(
 				contractId,
 				iface,
 				'increaseSupplierAllowance',
@@ -198,10 +202,10 @@ export class SupplierOperations {
 
 			const iface = new ethers.Interface(SupplierAdminFacet__factory.abi);
 			const params = [
-				await this.adapter.getEVMAddress(targetId),
+				await this.evmResolver.resolve(targetId),
 				amount.toBigInt(),
 			];
-			return await this.adapter.executeContractCall(
+			return await this.executor.executeContractCall(
 				contractId,
 				iface,
 				'decreaseSupplierAllowance',
@@ -234,8 +238,8 @@ export class SupplierOperations {
 			}
 
 			const iface = new ethers.Interface(SupplierAdminFacet__factory.abi);
-			const params = [await this.adapter.getEVMAddress(targetId)];
-			return await this.adapter.executeContractCall(
+			const params = [await this.evmResolver.resolve(targetId)];
+			return await this.executor.executeContractCall(
 				contractId,
 				iface,
 				'resetSupplierAllowance',

@@ -42,13 +42,17 @@ import {
 	SC_FixedFee,
 	SC_FractionalFee,
 } from '../../../../domain/context/fee/CustomFee';
-import type { BaseHederaTransactionAdapter } from '../../hs/BaseHederaTransactionAdapter';
+import type { TransactionExecutor } from '../TransactionExecutor';
+import type { EvmAddressResolver } from '../EvmAddressResolver';
+import { MirrorNodeAdapter } from '../../mirror/MirrorNodeAdapter';
 import PublicKey from '../../../../domain/context/account/PublicKey';
 import ContractId from '../../../../domain/context/contract/ContractId';
-import { MirrorNodeAdapter } from '../../mirror/MirrorNodeAdapter';
 
 export class UpdateOperations {
-	constructor(private adapter: BaseHederaTransactionAdapter) {}
+	constructor(
+		private executor: TransactionExecutor,
+		private evmResolver: EvmAddressResolver,
+	) {}
 
 	async update(
 		coin: StableCoinCapabilities,
@@ -83,7 +87,8 @@ export class UpdateOperations {
 				pauseKey,
 			];
 
-			const keys = this.adapter.setKeysForSmartContract(providedKeys);
+			const keys =
+				this.evmResolver.buildKeysForSmartContract(providedKeys);
 
 			const updateTokenStruct = {
 				tokenName: name ?? '',
@@ -100,7 +105,7 @@ export class UpdateOperations {
 				HederaTokenManagerFacet__factory.abi,
 			);
 			const params = [updateTokenStruct];
-			return await this.adapter.executeContractCall(
+			return await this.executor.executeContractCall(
 				contractId,
 				iface,
 				'updateToken',
@@ -134,12 +139,12 @@ export class UpdateOperations {
 			const { fixedFees, fractionalFees } = await this.prepareCustomFees(
 				coin,
 				customFees,
-				this.adapter.getMirrorNodeAdapter(),
+				this.evmResolver.getMirrorNodeAdapter(),
 			);
 
 			const iface = new ethers.Interface(CustomFeesFacet__factory.abi);
 			const params = [fixedFees, fractionalFees];
-			return await this.adapter.executeContractCall(
+			return await this.executor.executeContractCall(
 				contractId,
 				iface,
 				'updateTokenCustomFees',
@@ -174,7 +179,7 @@ export class UpdateOperations {
 
 			const iface = new ethers.Interface(DiamondFacet__factory.abi);
 			const params = [configVersion];
-			return await this.adapter.executeContractCall(
+			return await this.executor.executeContractCall(
 				contractId,
 				iface,
 				'updateConfigVersion',
@@ -209,7 +214,7 @@ export class UpdateOperations {
 
 			const iface = new ethers.Interface(DiamondFacet__factory.abi);
 			const params = [configId, configVersion];
-			return await this.adapter.executeContractCall(
+			return await this.executor.executeContractCall(
 				contractId,
 				iface,
 				'updateConfig',
@@ -244,11 +249,11 @@ export class UpdateOperations {
 				);
 			}
 
-			const resolverEvm = await this.adapter.getEVMAddress(resolver);
+			const resolverEvm = await this.evmResolver.resolve(resolver);
 
 			const iface = new ethers.Interface(DiamondFacet__factory.abi);
 			const params = [resolverEvm, configId, configVersion];
-			return await this.adapter.executeContractCall(
+			return await this.executor.executeContractCall(
 				contractId,
 				iface,
 				'updateResolver',

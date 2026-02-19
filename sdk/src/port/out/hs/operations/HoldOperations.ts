@@ -34,10 +34,14 @@ import {
 	EVM_ZERO_ADDRESS,
 	CONTROLLER_CREATE_HOLD_GAS,
 } from '../../../../core/Constants';
-import type { BaseHederaTransactionAdapter } from '../../hs/BaseHederaTransactionAdapter';
+import type { TransactionExecutor } from '../TransactionExecutor';
+import type { EvmAddressResolver } from '../EvmAddressResolver';
 
 export class HoldOperations {
-	constructor(private adapter: BaseHederaTransactionAdapter) {}
+	constructor(
+		private executor: TransactionExecutor,
+		private evmResolver: EvmAddressResolver,
+	) {}
 
 	async createHold(
 		coin: StableCoinCapabilities,
@@ -56,9 +60,9 @@ export class HoldOperations {
 				);
 			}
 
-			const evmEscrow = await this.adapter.getEVMAddress(escrow);
+			const evmEscrow = await this.evmResolver.resolve(escrow);
 			const evmTo = targetId
-				? await this.adapter.getEVMAddress(targetId)
+				? await this.evmResolver.resolve(targetId)
 				: EVM_ZERO_ADDRESS;
 
 			const hold = {
@@ -73,7 +77,7 @@ export class HoldOperations {
 				HoldManagementFacet__factory.abi,
 			);
 			const params = [hold];
-			return await this.adapter.executeContractCall(
+			return await this.executor.executeContractCall(
 				contractId,
 				iface,
 				'createHold',
@@ -110,11 +114,11 @@ export class HoldOperations {
 				);
 			}
 
-			const evmEscrow = await this.adapter.getEVMAddress(escrow);
+			const evmEscrow = await this.evmResolver.resolve(escrow);
 			const evmTo = targetId
-				? await this.adapter.getEVMAddress(targetId)
+				? await this.evmResolver.resolve(targetId)
 				: EVM_ZERO_ADDRESS;
-			const evmSource = await this.adapter.getEVMAddress(sourceId);
+			const evmSource = await this.evmResolver.resolve(sourceId);
 
 			const hold = {
 				amount: amount.toBigInt(),
@@ -128,7 +132,7 @@ export class HoldOperations {
 				HoldManagementFacet__factory.abi,
 			);
 			const params = [evmSource, hold, '0x'];
-			return await this.adapter.executeContractCall(
+			return await this.executor.executeContractCall(
 				contractId,
 				iface,
 				'createHoldByController',
@@ -165,18 +169,18 @@ export class HoldOperations {
 			}
 
 			const holdIdentifier = {
-				tokenHolder: await this.adapter.getEVMAddress(sourceId),
+				tokenHolder: await this.evmResolver.resolve(sourceId),
 				holdId,
 			};
 			const targetId = target
-				? await this.adapter.getEVMAddress(target)
+				? await this.evmResolver.resolve(target)
 				: EVM_ZERO_ADDRESS;
 
 			const iface = new ethers.Interface(
 				HoldManagementFacet__factory.abi,
 			);
 			const params = [holdIdentifier, targetId, amount.toBigInt()];
-			return await this.adapter.executeContractCall(
+			return await this.executor.executeContractCall(
 				contractId,
 				iface,
 				'executeHold',
@@ -212,7 +216,7 @@ export class HoldOperations {
 			}
 
 			const holdIdentifier = {
-				tokenHolder: await this.adapter.getEVMAddress(sourceId),
+				tokenHolder: await this.evmResolver.resolve(sourceId),
 				holdId,
 			};
 
@@ -220,7 +224,7 @@ export class HoldOperations {
 				HoldManagementFacet__factory.abi,
 			);
 			const params = [holdIdentifier, amount.toBigInt()];
-			return await this.adapter.executeContractCall(
+			return await this.executor.executeContractCall(
 				contractId,
 				iface,
 				'releaseHold',
@@ -255,7 +259,7 @@ export class HoldOperations {
 			}
 
 			const holdIdentifier = {
-				tokenHolder: await this.adapter.getEVMAddress(sourceId),
+				tokenHolder: await this.evmResolver.resolve(sourceId),
 				holdId,
 			};
 
@@ -263,7 +267,7 @@ export class HoldOperations {
 				HoldManagementFacet__factory.abi,
 			);
 			const params = [holdIdentifier];
-			return await this.adapter.executeContractCall(
+			return await this.executor.executeContractCall(
 				contractId,
 				iface,
 				'reclaimHold',

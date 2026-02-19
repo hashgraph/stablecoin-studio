@@ -34,18 +34,12 @@ import { KeysStruct } from '../../../domain/context/factory/FactoryKey';
  * resolution issues with dependency injection.
  */
 export class EvmAddressResolver {
-	constructor(
-		private readonly getMirrorNode: () => MirrorNodeAdapter,
-	) {}
+	constructor(private readonly getMirrorNode: () => MirrorNodeAdapter) {}
 
-	async resolve(
-		parameter: ContractId | HederaId | string,
-	): Promise<string> {
+	async resolve(parameter: ContractId | HederaId | string): Promise<string> {
 		if (parameter instanceof ContractId) {
 			return (
-				await this.getMirrorNode().getContractInfo(
-					parameter.toString(),
-				)
+				await this.getMirrorNode().getContractInfo(parameter.toString())
 			).evmAddress.toString();
 		}
 		if (parameter instanceof HederaId) {
@@ -59,10 +53,12 @@ export class EvmAddressResolver {
 		return parameter as string;
 	}
 
+	getMirrorNodeAdapter(): MirrorNodeAdapter {
+		return this.getMirrorNode();
+	}
+
 	// eslint-disable-next-line @typescript-eslint/no-explicit-any
-	buildKeysForSmartContract(
-		providedKeys: any[],
-	): KeysStruct[] {
+	buildKeysForSmartContract(providedKeys: any[]): KeysStruct[] {
 		const KEY_TYPE_BITS = [1, 2, 4, 8, 16, 32, 64];
 		const keys: KeysStruct[] = [];
 
@@ -73,9 +69,7 @@ export class EvmAddressResolver {
 				key.publicKey =
 					providedKey.key == PublicKey.NULL.key
 						? '0x'
-						: HPublicKey.fromString(
-								providedKey.key,
-						  ).toBytesRaw();
+						: HPublicKey.fromString(providedKey.key).toBytesRaw();
 				key.isEd25519 = providedKey.type === 'ED25519';
 				keys.push(key);
 			}

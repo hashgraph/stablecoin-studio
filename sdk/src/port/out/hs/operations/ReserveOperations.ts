@@ -34,12 +34,16 @@ import {
 	GET_RESERVE_AMOUNT_GAS,
 	UPDATE_RESERVE_AMOUNT_GAS,
 } from '../../../../core/Constants';
-import type { BaseHederaTransactionAdapter } from '../../hs/BaseHederaTransactionAdapter';
+import type { TransactionExecutor } from '../TransactionExecutor';
+import type { EvmAddressResolver } from '../EvmAddressResolver';
 import { TransactionType } from '../../TransactionResponseEnums';
 import ContractId from '../../../../domain/context/contract/ContractId';
 
 export class ReserveOperations {
-	constructor(private adapter: BaseHederaTransactionAdapter) {}
+	constructor(
+		private executor: TransactionExecutor,
+		private evmResolver: EvmAddressResolver,
+	) {}
 
 	async getReserveAddress(
 		coin: StableCoinCapabilities,
@@ -54,7 +58,7 @@ export class ReserveOperations {
 			}
 
 			const iface = new ethers.Interface(ReserveFacet__factory.abi);
-			return await this.adapter.executeContractCall(
+			return await this.executor.executeContractCall(
 				contractId,
 				iface,
 				'getReserveAddress',
@@ -87,11 +91,11 @@ export class ReserveOperations {
 				);
 			}
 
-			const evm = await this.adapter.getEVMAddress(reserveAddress);
+			const evm = await this.evmResolver.resolve(reserveAddress);
 
 			const iface = new ethers.Interface(ReserveFacet__factory.abi);
 			const params = [evm];
-			return await this.adapter.executeContractCall(
+			return await this.executor.executeContractCall(
 				contractId,
 				iface,
 				'updateReserveAddress',
@@ -123,7 +127,7 @@ export class ReserveOperations {
 			}
 
 			const iface = new ethers.Interface(ReserveFacet__factory.abi);
-			return await this.adapter.executeContractCall(
+			return await this.executor.executeContractCall(
 				contractId,
 				iface,
 				'getReserveAmount',
@@ -148,10 +152,10 @@ export class ReserveOperations {
 		startDate?: string,
 	): Promise<TransactionResponse> {
 		try {
-			const evm = await this.adapter.getEVMAddress(reserveAddress);
+			const evm = await this.evmResolver.resolve(reserveAddress);
 			const iface = new ethers.Interface(HederaReserveFacet__factory.abi);
 
-			return await this.adapter.executeContractCall(
+			return await this.executor.executeContractCall(
 				reserveAddress.toHederaAddress().toString(),
 				iface,
 				'setAmount',

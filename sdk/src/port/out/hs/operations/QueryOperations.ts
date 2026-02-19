@@ -36,12 +36,16 @@ import {
 	IS_UNLIMITED_ALLOWANCE_GAS,
 	GET_SUPPLY_ALLOWANCE_GAS,
 } from '../../../../core/Constants';
-import type { BaseHederaTransactionAdapter } from '../../hs/BaseHederaTransactionAdapter';
+import type { TransactionExecutor } from '../TransactionExecutor';
+import type { EvmAddressResolver } from '../EvmAddressResolver';
 import { StableCoinRole } from '../../../../domain/context/stablecoin/StableCoinRole';
 import { TransactionType } from '../../TransactionResponseEnums';
 
 export class QueryOperations {
-	constructor(private adapter: BaseHederaTransactionAdapter) {}
+	constructor(
+		private executor: TransactionExecutor,
+		private evmResolver: EvmAddressResolver,
+	) {}
 
 	async hasRole(
 		coin: StableCoinCapabilities,
@@ -49,7 +53,7 @@ export class QueryOperations {
 		role: StableCoinRole,
 	): Promise<TransactionResponse> {
 		try {
-			const targetEvm = await this.adapter.getEVMAddress(targetId);
+			const targetEvm = await this.evmResolver.resolve(targetId);
 			const contractId = coin.coin.proxyAddress?.value;
 			if (!contractId) {
 				throw new Error(
@@ -58,7 +62,7 @@ export class QueryOperations {
 			}
 
 			const iface = new ethers.Interface(RolesFacet__factory.abi);
-			return await this.adapter.executeContractCall(
+			return await this.executor.executeContractCall(
 				contractId,
 				iface,
 				'hasRole',
@@ -80,7 +84,7 @@ export class QueryOperations {
 		targetId: HederaId,
 	): Promise<TransactionResponse> {
 		try {
-			const targetEvm = await this.adapter.getEVMAddress(targetId);
+			const targetEvm = await this.evmResolver.resolve(targetId);
 			const contractId = coin.coin.proxyAddress?.value;
 			if (!contractId) {
 				throw new Error(
@@ -89,7 +93,7 @@ export class QueryOperations {
 			}
 
 			const iface = new ethers.Interface(RolesFacet__factory.abi);
-			return await this.adapter.executeContractCall(
+			return await this.executor.executeContractCall(
 				contractId,
 				iface,
 				'getRoles',
@@ -111,7 +115,7 @@ export class QueryOperations {
 		targetId: HederaId,
 	): Promise<TransactionResponse> {
 		try {
-			const targetEvm = await this.adapter.getEVMAddress(targetId);
+			const targetEvm = await this.evmResolver.resolve(targetId);
 			const contractId = coin.coin.proxyAddress?.value;
 			if (!contractId) {
 				throw new Error(
@@ -122,7 +126,7 @@ export class QueryOperations {
 			const iface = new ethers.Interface(
 				HederaTokenManagerFacet__factory.abi,
 			);
-			return await this.adapter.executeContractCall(
+			return await this.executor.executeContractCall(
 				contractId,
 				iface,
 				'balanceOf',
@@ -144,7 +148,7 @@ export class QueryOperations {
 		targetId: HederaId,
 	): Promise<TransactionResponse> {
 		try {
-			const targetEvm = await this.adapter.getEVMAddress(targetId);
+			const targetEvm = await this.evmResolver.resolve(targetId);
 			const contractId = coin.coin.proxyAddress?.value;
 			if (!contractId) {
 				throw new Error(
@@ -153,7 +157,7 @@ export class QueryOperations {
 			}
 
 			const iface = new ethers.Interface(SupplierAdminFacet__factory.abi);
-			return await this.adapter.executeContractCall(
+			return await this.executor.executeContractCall(
 				contractId,
 				iface,
 				'isUnlimitedSupplierAllowance',
@@ -177,7 +181,7 @@ export class QueryOperations {
 		targetId: HederaId,
 	): Promise<TransactionResponse> {
 		try {
-			const targetEvm = await this.adapter.getEVMAddress(targetId);
+			const targetEvm = await this.evmResolver.resolve(targetId);
 			const contractId = coin.coin.proxyAddress?.value;
 			if (!contractId) {
 				throw new Error(
@@ -186,7 +190,7 @@ export class QueryOperations {
 			}
 
 			const iface = new ethers.Interface(SupplierAdminFacet__factory.abi);
-			return await this.adapter.executeContractCall(
+			return await this.executor.executeContractCall(
 				contractId,
 				iface,
 				'getSupplierAllowance',

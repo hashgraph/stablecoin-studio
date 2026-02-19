@@ -61,13 +61,10 @@ export abstract class BaseHederaTransactionAdapter
 	// Shared utility for EVM address resolution
 	protected evmResolver!: EvmAddressResolver;
 
-	// Refactored operations (depend on TransactionExecutor interface)
 	protected tokenOps!: TokenOperations;
 	protected tokenControlOps!: TokenControlOperations;
 	protected roleOps!: RoleOperations;
 	protected rescueOps!: RescueOperations;
-
-	// Not yet refactored (still depend on BaseHederaTransactionAdapter)
 	protected supplierOps!: SupplierOperations;
 	protected holdOps!: HoldOperations;
 	protected reserveOps!: ReserveOperations;
@@ -77,22 +74,22 @@ export abstract class BaseHederaTransactionAdapter
 	constructor() {
 		super();
 		// Lazy getter avoids constructor-time resolution issues with DI
-		this.evmResolver = new EvmAddressResolver(
-			() => this.getMirrorNodeAdapter(),
+		this.evmResolver = new EvmAddressResolver(() =>
+			this.getMirrorNodeAdapter(),
 		);
 
-		// Refactored: depend on TransactionExecutor + EvmAddressResolver
 		this.tokenOps = new TokenOperations(this, this.evmResolver);
-		this.tokenControlOps = new TokenControlOperations(this, this.evmResolver);
+		this.tokenControlOps = new TokenControlOperations(
+			this,
+			this.evmResolver,
+		);
 		this.roleOps = new RoleOperations(this, this.evmResolver);
 		this.rescueOps = new RescueOperations(this);
-
-		// Not yet refactored: still receive `this` as BaseHederaTransactionAdapter
-		this.supplierOps = new SupplierOperations(this);
-		this.holdOps = new HoldOperations(this);
-		this.reserveOps = new ReserveOperations(this);
-		this.queryOps = new QueryOperations(this);
-		this.updateOps = new UpdateOperations(this);
+		this.supplierOps = new SupplierOperations(this, this.evmResolver);
+		this.holdOps = new HoldOperations(this, this.evmResolver);
+		this.reserveOps = new ReserveOperations(this, this.evmResolver);
+		this.queryOps = new QueryOperations(this, this.evmResolver);
+		this.updateOps = new UpdateOperations(this, this.evmResolver);
 	}
 
 	/**
@@ -344,7 +341,7 @@ export abstract class BaseHederaTransactionAdapter
 		return this.roleOps.revokeRoles(coin, targetsId, roles);
 	}
 
-	// ===== Supplier Operations (not yet refactored) =====
+	// ===== Supplier Operations =====
 
 	async grantSupplierRole(
 		coin: StableCoinCapabilities,
@@ -399,7 +396,7 @@ export abstract class BaseHederaTransactionAdapter
 		return this.supplierOps.resetSupplierAllowance(coin, targetId);
 	}
 
-	// ===== Update Operations (not yet refactored) =====
+	// ===== Update Operations =====
 
 	async updateCustomFees(
 		coin: StableCoinCapabilities,
@@ -408,7 +405,7 @@ export abstract class BaseHederaTransactionAdapter
 		return this.updateOps.updateCustomFees(coin, customFees);
 	}
 
-	// ===== Hold Operations (not yet refactored) =====
+	// ===== Hold Operations =====
 
 	async createHold(
 		coin: StableCoinCapabilities,
@@ -471,7 +468,7 @@ export abstract class BaseHederaTransactionAdapter
 		return this.holdOps.reclaimHold(coin, sourceId, holdId);
 	}
 
-	// ===== Reserve Operations (not yet refactored) =====
+	// ===== Reserve Operations =====
 
 	async getReserveAddress(
 		coin: StableCoinCapabilities,
@@ -499,7 +496,7 @@ export abstract class BaseHederaTransactionAdapter
 		return this.reserveOps.updateReserveAmount(reserveAddress, amount);
 	}
 
-	// ===== Query Operations (not yet refactored) =====
+	// ===== Query Operations =====
 
 	async hasRole(
 		coin: StableCoinCapabilities,
@@ -537,7 +534,7 @@ export abstract class BaseHederaTransactionAdapter
 		return this.queryOps.supplierAllowance(coin, targetId);
 	}
 
-	// ===== Configuration Updates (not yet refactored) =====
+	// ===== Configuration Updates =====
 
 	async update(
 		coin: StableCoinCapabilities,
