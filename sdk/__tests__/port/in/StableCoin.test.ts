@@ -27,6 +27,7 @@ import {
 	Account,
 	Balance,
 	BigDecimal,
+	CreateHoldTransactionResult,
 	HBAR_DECIMALS,
 	HederaId,
 	LoggerTransports,
@@ -37,6 +38,7 @@ import {
 	StableCoinRole,
 	StableCoinViewModel,
 	TokenSupplyType,
+	TransactionResult,
 } from '../../../src/index.js';
 import {
 	BurnRequest,
@@ -92,6 +94,7 @@ import Injectable from '../../../src/core/Injectable.js';
 import { CONFIG_SC, DEFAULT_VERSION } from '../../../src/core/Constants.js';
 import { Time } from '../../../src/core/Time.js';
 import HoldViewModel from '../../../src/port/in/response/HoldViewModel.js';
+import { CreateHoldCommandResponse } from 'app/usecase/command/stablecoin/operations/hold/createHold/CreateHoldCommand.js';
 
 const initialSupply = parseInt(INITIAL_SUPPLY);
 const maxSupply = parseInt(MAX_SUPPLY);
@@ -607,7 +610,10 @@ describe('🧪 Stablecoin test', () => {
 			nextHoldId,
 		);
 
-		expect(result.payload).toBeTruthy();
+
+		expect(result).toBeTruthy();
+		expect(result.success).toBeTruthy();
+		expect(result.transactionId).toBeDefined();
 		expect(result.holdId).toBe(parseInt(holdId, 16));
 		expect(holderBalance).toEqual(balanceSourceBefore);
 
@@ -626,13 +632,13 @@ describe('🧪 Stablecoin test', () => {
 		const escrow = CLIENT_ACCOUNT_ED25519.id.toString();
 		const targetId = CLIENT_ACCOUNT_ECDSA.id.toString();
 		const sourceId = CLIENT_ACCOUNT_ED25519.id.toString();
+
 		const balanceSourceBefore = await StableCoin.getBalanceOf(
 			new GetAccountBalanceRequest({
 				tokenId: stableCoin?.tokenId?.toString() ?? '0.0.0',
 				targetId: sourceId,
 			}),
 		);
-
 		await StableCoin.create(requestSC);
 		await StableCoin.cashIn(
 			new CashInRequest({
@@ -682,7 +688,9 @@ describe('🧪 Stablecoin test', () => {
 			nextHoldId,
 		);
 
-		expect(result.payload).toBeTruthy();
+		expect(result).toBeTruthy();
+		expect(result.success).toBeTruthy();
+		expect(result.transactionId).toBeDefined();
 		expect(result.holdId).toBe(parseInt(holdId, 16));
 		expect(holderBalance).toEqual(balanceSourceBefore);
 
@@ -1304,7 +1312,7 @@ describe('🧪 Stablecoin test', () => {
 		escrow: string,
 		expirationDate: string,
 		targetId: string,
-	): Promise<{ holdId: number; payload: boolean }> {
+	): Promise<CreateHoldTransactionResult> {
 		await StableCoin.create(requestSC);
 		await StableCoin.cashIn(
 			new CashInRequest({

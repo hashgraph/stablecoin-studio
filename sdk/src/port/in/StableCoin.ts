@@ -117,17 +117,17 @@ import GetHoldForRequest from './request/GetHoldForRequest.js';
 import GetHeldAmountForRequest from './request/GetHeldAmountForRequest.js';
 import GetHoldCountForRequest from './request/GetHoldCountForRequest.js';
 import GetHoldsIdForRequest from './request/GetHoldsIdForRequest.js';
-import { CreateHoldCommand } from '../../app/usecase/command/stablecoin/operations/hold/createHold/CreateHoldCommand.js';
-import { ExecuteHoldCommand } from '../../app/usecase/command/stablecoin/operations/hold/executeHold/ExecuteHoldCommand.js';
-import { ReleaseHoldCommand } from '../../app/usecase/command/stablecoin/operations/hold/releaseHold/ReleaseHoldCommand.js';
-import { ReclaimHoldCommand } from '../../app/usecase/command/stablecoin/operations/hold/reclaimHold/ReclaimHoldCommand.js';
+import { CreateHoldCommand, CreateHoldCommandResponse } from '../../app/usecase/command/stablecoin/operations/hold/createHold/CreateHoldCommand.js';
+import { ExecuteHoldCommand, ExecuteHoldCommandResponse } from '../../app/usecase/command/stablecoin/operations/hold/executeHold/ExecuteHoldCommand.js';
+import { ReleaseHoldCommand, ReleaseHoldCommandResponse } from '../../app/usecase/command/stablecoin/operations/hold/releaseHold/ReleaseHoldCommand.js';
+import { ReclaimHoldCommand, ReclaimHoldCommandResponse } from '../../app/usecase/command/stablecoin/operations/hold/reclaimHold/ReclaimHoldCommand.js';
 import { GetHoldForQuery } from '../../app/usecase/query/stablecoin/hold/getHoldFor/GetHoldForQuery.js';
 import HoldViewModel from '../../port/in/response/HoldViewModel.js';
 import { ONE_THOUSAND } from '../../core/Constants.js';
 import { GetHoldCountForQuery } from '../../app/usecase/query/stablecoin/hold/getHoldCountFor/GetHoldCountForQuery.js';
 import { GetHoldsIdForQuery } from '../../app/usecase/query/stablecoin/hold/getHoldsIdFor/GetHoldsIdForQuery.js';
 import { GetHeldAmountForQuery } from '../../app/usecase/query/stablecoin/hold/getHeldAmountFor/GetHeldAmountForQuery.js';
-import { CreateHoldByControllerCommand } from '../../app/usecase/command/stablecoin/operations/hold/createHoldByController/CreateHoldByControllerCommand.js';
+import { CreateHoldByControllerCommand, CreateHoldByControllerCommandResponse } from '../../app/usecase/command/stablecoin/operations/hold/createHoldByController/CreateHoldByControllerCommand.js';
 
 export {
 	StableCoinViewModel,
@@ -141,6 +141,8 @@ export {
 export { StableCoinCapabilities, Capability, Access, Operation, Balance };
 export { TokenSupplyType };
 export { BigDecimal, HederaId, ContractId, EvmAddress, PublicKey };
+
+export type CreateHoldTransactionResult = { holdId: number } & TransactionResult;
 
 interface IStableCoinInPort {
 	create(request: CreateRequest): Promise<{
@@ -173,12 +175,8 @@ interface IStableCoinInPort {
 	grantKyc(request: KYCRequest): Promise<TransactionResult>;
 	revokeKyc(request: KYCRequest): Promise<TransactionResult>;
 	isAccountKYCGranted(request: KYCRequest): Promise<boolean>;
-	createHold(
-		request: CreateHoldRequest,
-	): Promise<{ holdId: number; payload: boolean }>;
-	createHoldByController(
-		request: CreateHoldByControllerRequest,
-	): Promise<{ holdId: number; payload: boolean }>;
+	createHold(request: CreateHoldRequest,): Promise<CreateHoldTransactionResult>;
+	createHoldByController(request: CreateHoldByControllerRequest,): Promise<CreateHoldTransactionResult>;
 	executeHold(request: ExecuteHoldRequest): Promise<TransactionResult>;
 	releaseHold(request: ReleaseHoldRequest): Promise<TransactionResult>;
 	reclaimHold(request: ReclaimHoldRequest): Promise<TransactionResult>;
@@ -670,10 +668,10 @@ class StableCoinInPort implements IStableCoinInPort {
 	@LogError
 	async createHold(
 		request: CreateHoldRequest,
-	): Promise<{ holdId: number; payload: boolean }> {
+	): Promise<CreateHoldTransactionResult> {
 		handleValidation(CreateHoldRequest.name, request);
 		const { tokenId, targetId, amount, expirationDate, escrow } = request;
-		return await this.commandBus.execute(
+		const response = await this.commandBus.execute(
 			new CreateHoldCommand(
 				HederaId.from(tokenId),
 				amount,
@@ -682,16 +680,21 @@ class StableCoinInPort implements IStableCoinInPort {
 				targetId ? HederaId.from(targetId) : undefined,
 			),
 		);
+		return { 
+			holdId: response.holdId,
+			success: response.payload,
+			transactionId: response.transactionId,
+		} as CreateHoldTransactionResult
 	}
 
 	@LogError
 	async createHoldByController(
 		request: CreateHoldByControllerRequest,
-	): Promise<{ holdId: number; payload: boolean }> {
+	): Promise<CreateHoldTransactionResult> {
 		handleValidation(CreateHoldByControllerRequest.name, request);
 		const { tokenId, targetId, sourceId, amount, expirationDate, escrow } =
 			request;
-		return await this.commandBus.execute(
+		const response = await this.commandBus.execute(
 			new CreateHoldByControllerCommand(
 				HederaId.from(tokenId),
 				HederaId.from(sourceId),
@@ -701,6 +704,11 @@ class StableCoinInPort implements IStableCoinInPort {
 				targetId ? HederaId.from(targetId) : undefined,
 			),
 		);
+		return { 
+			holdId: response.holdId,
+			success: response.payload,
+			transactionId: response.transactionId,
+		} as CreateHoldTransactionResult
 	}
 
 	@LogError
