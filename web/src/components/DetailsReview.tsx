@@ -178,7 +178,10 @@ const keyToString = (
 	}
 
 	// Legacy string-based handling
-	if (keySelection.label === 'Current user account' || keySelection.label === 'Hedera Token Manager smart contract') {
+	if (
+		keySelection.label === 'Current user account' ||
+		keySelection.label === 'Hedera Token Manager smart contract'
+	) {
 		return keySelection.label;
 	}
 
@@ -326,12 +329,16 @@ const DetailsReview = ({
 			return { value: 1, label: 'Current user account' };
 		}
 
-		if (accountInfo?.publicKey?.key && valueStr.substring(0, 6) === accountInfo.publicKey.key.substring(0, 6)) {
+		if (
+			accountInfo?.publicKey?.key &&
+			valueStr.substring(0, 6) === accountInfo.publicKey.key.substring(0, 6)
+		) {
 			return { value: 1, label: 'Current user account' };
 		}
 
 		// Check if the account ID in the URL matches the current user's account ID
-		const accountIdFromUrl = hashScanURL?.split('account/')[1] || hashScanURL?.split('contract/')[1];
+		const accountIdFromUrl =
+			hashScanURL?.split('account/')[1] || hashScanURL?.split('contract/')[1];
 		if (accountIdFromUrl && accountIdFromUrl === accountInfo?.id) {
 			return { value: 1, label: 'Current user account' };
 		}
@@ -416,20 +423,10 @@ const DetailsReview = ({
 				);
 			}
 			if (formValues['wipe key']) {
-				request.wipeKey = formatKey(
-					formValues['wipe key'],
-					'wipe key',
-					accountInfo,
-					getValues,
-				);
+				request.wipeKey = formatKey(formValues['wipe key'], 'wipe key', accountInfo, getValues);
 			}
 			if (formValues['pause key']) {
-				request.pauseKey = formatKey(
-					formValues['pause key'],
-					'pause key',
-					accountInfo,
-					getValues,
-				);
+				request.pauseKey = formatKey(formValues['pause key'], 'pause key', accountInfo, getValues);
 			}
 			if (formValues['kyc key']) {
 				request.kycKey = formatKey(formValues['kyc key'], 'kyc key', accountInfo, getValues);
@@ -568,9 +565,15 @@ const DetailsReview = ({
 								<>
 									{typeof detail.value === 'string' && detail.value.includes('GMT') ? (
 										<Text {...commonTextProps}>{new Date(detail.value).toDateString()}</Text>
-									) : typeof detail.value === 'object' && detail.value?.primary && detail.value?.secondary ? (
+									) : typeof detail.value === 'object' &&
+									  detail.value?.primary &&
+									  detail.value?.secondary ? (
 										// Render two-line format for keys with primary (label) and secondary (Account ID)
-										<HStack {...(detail.valueInBold ? textInBoldProps : commonTextProps)} alignItems='flex-start' spacing={2}>
+										<HStack
+											{...(detail.valueInBold ? textInBoldProps : commonTextProps)}
+											alignItems='flex-start'
+											spacing={2}
+										>
 											<Stack spacing={0} flex={1} alignItems='flex-end'>
 												<Text fontWeight={600}>{detail.value.primary}</Text>
 												<Text fontSize='12px' color='brand.gray' opacity={0.8}>
@@ -592,7 +595,9 @@ const DetailsReview = ({
 										<HStack {...(detail.valueInBold ? textInBoldProps : commonTextProps)}>
 											<Text>{detail.value.toString()}</Text>
 											{detail.copyButton && (
-												<TooltipCopy valueToCopy={detail.copyValue ?? detail.value.toString() ?? ''}>
+												<TooltipCopy
+													valueToCopy={detail.copyValue ?? detail.value.toString() ?? ''}
+												>
 													<Icon name='Copy' />
 												</TooltipCopy>
 											)}

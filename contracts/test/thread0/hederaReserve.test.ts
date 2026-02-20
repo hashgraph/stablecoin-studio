@@ -4,14 +4,14 @@ import { expect } from 'chai'
 import { deployFullInfrastructureInTests, deployStableCoinInTests } from '@test/shared'
 import { HederaReserveFacet, HederaReserveFacet__factory } from '@contracts'
 import {
-  DEFAULT_TOKEN,
-  delay,
-  deployContract,
-  DeployContractCommand,
-  DeployFullInfrastructureCommand,
-  GAS_LIMIT,
-  MESSAGES,
-  ADDRESS_ZERO
+    DEFAULT_TOKEN,
+    delay,
+    deployContract,
+    DeployContractCommand,
+    DeployFullInfrastructureCommand,
+    GAS_LIMIT,
+    MESSAGES,
+    ADDRESS_ZERO,
 } from '@scripts'
 import { ethers } from 'hardhat'
 
@@ -38,9 +38,7 @@ describe('HederaReserve Tests Before Deploying Full Infrastructure', function ()
             })
         )
 
-        const hederaReserve = HederaReserveFacet__factory.connect(
-          hederaReserveContract.proxyAddress!, operator
-        )
+        const hederaReserve = HederaReserveFacet__factory.connect(hederaReserveContract.proxyAddress!, operator)
 
         await expect(
             hederaReserve.initialize(reserve, ADDRESS_ZERO, {
@@ -250,7 +248,9 @@ describe('HederaReserve Tests', function () {
     })
 
     it('Get round data is not implemented', async function () {
-        await expect(hederaReserveFacet.getRoundData(1))
-          .to.be.revertedWithCustomError(hederaReserveFacet, 'NotImplemented')
+        await expect(hederaReserveFacet.getRoundData(1)).to.be.revertedWithCustomError(
+            hederaReserveFacet,
+            'NotImplemented'
+        )
     })
 })
