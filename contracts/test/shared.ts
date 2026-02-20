@@ -123,7 +123,7 @@ export function randomAccountAddressList(length = 3): string[] {
 }
 
 type RevertAssertionParams = {
-    txPromise: Promise<TransactionResponse>
+    txPromise: Promise<any>
     contract: any
     customError: string
     args?: any[]

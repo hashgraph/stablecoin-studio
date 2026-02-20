@@ -12,7 +12,7 @@ import {
     MESSAGES,
     DEFAULT_CONFIG_VERSION,
 } from '@scripts'
-import { deployFullInfrastructureInTests, expectRevert, expectRevert, GAS_LIMIT } from '@test/shared'
+import { deployFullInfrastructureInTests, expectRevert, GAS_LIMIT } from '@test/shared'
 import {
     HederaReserveFacet__factory,
     ReserveFacet,

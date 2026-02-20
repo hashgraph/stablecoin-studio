@@ -250,7 +250,7 @@ describe('➡️ DiamondCutManager Tests', () => {
         expect(configVersionDoesNotExist).to.be.false
         await expectRevert({
             txPromise: diamondCutManager.checkResolverProxyConfigurationRegistered(CONFIG_ID.stableCoin, 2, {
-                gasLimit: GAS_LIMIT.businessLogicResolver.checkResolverProxyConfigurationRegistered,
+                gasLimit: GAS_LIMIT.diamondCutManager.checkResolverProxyConfigurationRegistered,
             }),
             contract: diamondCutManager,
             customError: 'ResolverProxyConfigurationNoRegistered',
@@ -263,7 +263,7 @@ describe('➡️ DiamondCutManager Tests', () => {
         expect(configDoesNotExist).to.equal(false)
         await expectRevert({
             txPromise: diamondCutManager.checkResolverProxyConfigurationRegistered(configId, DEFAULT_CONFIG_VERSION, {
-                gasLimit: GAS_LIMIT.businessLogicResolver.checkResolverProxyConfigurationRegistered,
+                gasLimit: GAS_LIMIT.diamondCutManager.checkResolverProxyConfigurationRegistered,
             }),
             contract: diamondCutManager,
             customError: 'ResolverProxyConfigurationNoRegistered',

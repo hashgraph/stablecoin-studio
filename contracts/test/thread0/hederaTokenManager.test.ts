@@ -21,7 +21,6 @@ import {
     allTokenKeysToKey,
     AllTokenKeysToKeyCommand,
     DEFAULT_TOKEN,
-    delay,
     deployContract,
     DeployContractCommand,
     DeployFullInfrastructureCommand,
@@ -214,7 +213,7 @@ describe('HederaTokenManager Tests Before Deploying Full Infrastructure', functi
                     ...init,
                     token: {
                         ...init.token,
-                        treasury: hederaTokenManagerContract.proxyAddress,
+                        treasury: hederaTokenManagerContract.proxyAddress!.toString(),
                         tokenKeys: [
                             {
                                 keyType: 93,
@@ -223,18 +222,18 @@ describe('HederaTokenManager Tests Before Deploying Full Infrastructure', functi
                                     contractId: '0x0000000000000000000000000000000000000000',
                                     ed25519: '0x',
                                     ECDSA_secp256k1: '0x',
-                                    delegatableContractId: hederaTokenManagerContract.proxyAddress,
+                                    delegatableContractId: hederaTokenManagerContract.proxyAddress!.toString(),
                                 },
                             },
                         ],
                         expiry: {
                             ...init.token.expiry,
-                            autoRenewAccount: hederaTokenManagerContract.proxyAddress,
+                            autoRenewAccount: hederaTokenManagerContract.proxyAddress!.toString(),
                         },
                     },
-                    originalSender: operator.address,
+                    originalSender: operator.address!.toString(),
                     cashinRole: {
-                        account: operator.address,
+                        account: operator.address!.toString(),
                         allowance: 1,
                     },
                 },
@@ -327,15 +326,15 @@ describe('HederaTokenManager Tests Before Deploying Full Infrastructure', functi
                     ...init,
                     token: {
                         ...init.token,
-                        treasury: hederaTokenManagerContract.proxyAddress,
+                        treasury: hederaTokenManagerContract.proxyAddress!.toString(),
                         expiry: {
                             ...init.token.expiry,
-                            autoRenewAccount: hederaTokenManagerContract.proxyAddress,
+                            autoRenewAccount: hederaTokenManagerContract.proxyAddress!.toString(),
                         },
                     },
-                    originalSender: operator.address,
+                    originalSender: operator.address!.toString(),
                     cashinRole: {
-                        account: operator.address,
+                        account: operator.address!.toString(),
                         allowance: ethers.MaxUint256,
                     },
                 },
@@ -374,7 +373,8 @@ describe('➡️ HederaTokenManager Tests', function () {
 
     async function getAccountPublicKey(operatorSigner: Signer, isEdd25519 = false) {
         if (isEdd25519) {
-            const ed25519PrivateKey = operatorSigner.privateKey
+            const operatorWallet = operatorSigner as Wallet
+            const ed25519PrivateKey = operatorWallet.privateKey
             const privateKey = PrivateKey.fromStringED25519(ed25519PrivateKey)
             return `0x${privateKey.publicKey.toString().slice(-64)}`
         } else {
@@ -470,10 +470,11 @@ describe('➡️ HederaTokenManager Tests', function () {
         })
     })
 
-    it('Admin can update token with ed25519 keys', async function () {
-        const operatorPublicKey = (network.name === 'hardhat') ?
-            await getAccountPublicKey(operator) :
-            await getAccountPublicKey(ed25519Wallet, true)
+    it.only('Admin can update token with ed25519 keys', async function () {
+        const operatorPublicKey =
+            network.name === 'hardhat'
+                ? await getAccountPublicKey(operator)
+                : await getAccountPublicKey(ed25519Wallet, true)
         const keys = tokenKeysToKey(
             new TokenKeysToKeyCommand({ publicKey: operatorPublicKey, isEd25519: true, addKyc: false })
         )
