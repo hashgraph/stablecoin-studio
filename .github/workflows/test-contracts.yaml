@@ -115,7 +115,7 @@ jobs:
             contracts/typechain-types
             contracts/cache
           key: ${{ runner.os }}-contracts-build-${{ github.sha }}
-          fail-on-cache-miss: true
+          fail-on-cache-miss: false
 
       - name: Run coverage
         run: |
@@ -177,7 +177,7 @@ jobs:
             contracts/typechain-types
             contracts/cache
           key: ${{ runner.os }}-contracts-build-${{ github.sha }}
-          fail-on-cache-miss: true
+          fail-on-cache-miss: false
 
       - name: Setup Hiero Solo Network
         id: solo
