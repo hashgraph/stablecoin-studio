@@ -9,11 +9,12 @@ import {
     StableCoinTokenMock__factory,
 } from '@contracts'
 import {
-  ADDRESS_ZERO, MESSAGES,
-  ROLES,
-  delay,
-  DeployFullInfrastructureCommand,
-  ValidateTxResponseCommand
+    ADDRESS_ZERO,
+    MESSAGES,
+    ROLES,
+    delay,
+    DeployFullInfrastructureCommand,
+    ValidateTxResponseCommand,
 } from '@scripts'
 import { deployStableCoinInTests, deployFullInfrastructureInTests, GAS_LIMIT } from '@test/shared'
 

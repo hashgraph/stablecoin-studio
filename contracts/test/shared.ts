@@ -37,10 +37,9 @@ export async function deployFullInfrastructureInTests(
     command: DeployFullInfrastructureCommand,
     anyAccountBalance = 0
 ): Promise<DeployFullInfrastructureResult> {
-
     if (network.name == 'hardhat') {
-      // * Deploy precompiled mock
-      await deployPrecompiledMock(anyAccountBalance)
+        // * Deploy precompiled mock
+        await deployPrecompiledMock(anyAccountBalance)
     }
 
     return await deployFullInfrastructure(command)

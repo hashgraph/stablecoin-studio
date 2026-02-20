@@ -9,7 +9,7 @@ import {
     RescuableFacet__factory,
     StableCoinTokenMock__factory,
     RolesFacet,
-    RolesFacet__factory
+    RolesFacet__factory,
 } from '@contracts'
 import {
     delay,
@@ -76,14 +76,14 @@ describe('➡️ Rescue Tests', function () {
         await new ValidateTxResponseCommand({ txResponse: response }).execute()
     })
 
-    it("Account trying to reentrant rescue reverts", async () => {
+    it('Account trying to reentrant rescue reverts', async () => {
         const amountToRescue = ONE_HBAR
         // By https://docs.hedera.com/hedera/tutorials/smart-contracts/hscs-workshop/hardhat#tinybars-vs-weibars
         const amountToRescueInEvm = amountToRescue / WEIBARS_PER_TINYBAR
 
-        const Attacker = await ethers.getContractFactory("ReentrancyAttacker");
-        const attacker = await Attacker.deploy(await rescuableFacet.getAddress(), amountToRescue);
-        await attacker.waitForDeployment();
+        const Attacker = await ethers.getContractFactory('ReentrancyAttacker')
+        const attacker = await Attacker.deploy(await rescuableFacet.getAddress(), amountToRescue)
+        await attacker.waitForDeployment()
 
         await expect(
             rolesFacet.grantRole(ROLES.rescue.hash, attacker.getAddress(), {
@@ -93,11 +93,10 @@ describe('➡️ Rescue Tests', function () {
             .to.emit(rolesFacet, 'RoleGranted')
             .withArgs(ROLES.rescue.hash, attacker.getAddress(), operator.address)
 
-        await expect(
-          attacker.attack()
-        ).to.be.revertedWithCustomError(rescuableFacet, 'HBARRescueError')
-         .withArgs(ONE_HBAR)
-    });
+        await expect(attacker.attack())
+            .to.be.revertedWithCustomError(rescuableFacet, 'HBARRescueError')
+            .withArgs(ONE_HBAR)
+    })
 
     it('Account with RESCUE role can rescue 10 tokens', async function () {
         // Get the initial balance of the token owner and client

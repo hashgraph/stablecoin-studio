@@ -4,6 +4,6 @@ pragma solidity 0.8.24;
 
 contract RevertingReceiver {
     receive() external payable {
-        revert("I reject all funds");
+        revert('I reject all funds');
     }
 }

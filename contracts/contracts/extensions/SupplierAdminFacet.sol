@@ -42,13 +42,7 @@ contract SupplierAdminFacet is ISupplierAdmin, IStaticFunctionSelectors, Supplie
     function grantSupplierRole(
         address supplier,
         uint256 amount
-    )
-        external
-        override(ISupplierAdmin)
-        onlyRole(ADMIN_ROLE)
-        addressIsNotZero(supplier)
-        greaterThan(amount, 0)
-    {
+    ) external override(ISupplierAdmin) onlyRole(ADMIN_ROLE) addressIsNotZero(supplier) greaterThan(amount, 0) {
         _grantSupplierRole(supplier, amount);
     }
 
@@ -107,13 +101,7 @@ contract SupplierAdminFacet is ISupplierAdmin, IStaticFunctionSelectors, Supplie
     function increaseSupplierAllowance(
         address supplier,
         uint256 amount
-    )
-        external
-        override(ISupplierAdmin)
-        onlyRole(ADMIN_ROLE)
-        addressIsNotZero(supplier)
-        greaterThan(amount, 0)
-    {
+    ) external override(ISupplierAdmin) onlyRole(ADMIN_ROLE) addressIsNotZero(supplier) greaterThan(amount, 0) {
         if (_supplierAdminStorage().unlimitedSupplierAllowances[supplier])
             revert AccountHasUnlimitedSupplierAllowance(supplier);
         uint256 oldAllowance = _supplierAdminStorage().supplierAllowances[supplier];
@@ -135,13 +123,7 @@ contract SupplierAdminFacet is ISupplierAdmin, IStaticFunctionSelectors, Supplie
     function decreaseSupplierAllowance(
         address supplier,
         uint256 amount
-    )
-        external
-        override(ISupplierAdmin)
-        onlyRole(ADMIN_ROLE)
-        addressIsNotZero(supplier)
-        greaterThan(amount, 0)
-    {
+    ) external override(ISupplierAdmin) onlyRole(ADMIN_ROLE) addressIsNotZero(supplier) greaterThan(amount, 0) {
         if (_supplierAdminStorage().unlimitedSupplierAllowances[supplier])
             revert AccountHasUnlimitedSupplierAllowance(supplier);
         _decreaseSupplierAllowance(supplier, amount);

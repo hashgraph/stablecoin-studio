@@ -37,6 +37,7 @@ import {
 	TokenUnfreezeTransaction,
 	TokenGrantKycTransaction,
 	TokenRevokeKycTransaction,
+	PublicKey as HPublicKey,
 } from '@hiero-ledger/sdk';
 import { StableCoinFactoryFacet__factory } from '@hashgraph/stablecoin-npm-contracts';
 import {
@@ -128,6 +129,7 @@ interface allowance {
 }
 
 const tokens = new Map<string, token>();
+let globalCustomFees: any[] = [];
 const roles = new Map<string, StableCoinRole[]>();
 const accounts_with_roles = new Map<string, string[]>();
 const suppliers = new Map<string, allowance>();
@@ -183,6 +185,13 @@ export function identifiers(accountId: HederaId | string): string[] {
 		id = accountId.toString();
 		accountEvmAddress = CheckEvmAddress.toEvmAddress(
 			accountId.toHederaAddress().toSolidityAddress(),
+		);
+	} else if (typeof accountId === 'string' && accountId.includes('.')) {
+		// Hedera ID string format (e.g. '0.0.1234')
+		const hederaId = HederaId.from(accountId);
+		id = hederaId.toString();
+		accountEvmAddress = CheckEvmAddress.toEvmAddress(
+			hederaId.toHederaAddress().toSolidityAddress(),
 		);
 	} else {
 		id = '0.0.' + hexToDecimal('0x' + accountId.toUpperCase().substring(2));
@@ -377,7 +386,11 @@ function decreaseHeldAmount(
 	}
 }
 
-function smartContractCalls(functionName: string, decoded: any): void {
+function smartContractCalls(
+	functionName: string,
+	decoded: any,
+	contractId?: string,
+): void {
 	if (functionName == 'deployStableCoin') {
 		const requestedToken = (decoded as any).requestedToken;
 
@@ -429,7 +442,7 @@ function smartContractCalls(functionName: string, decoded: any): void {
 		newRoles.forEach((newRole: StableCoinRole) => {
 			if (newRole == StableCoinRole.CASHIN_ROLE) {
 				for (let i = 0; i < accounts.length; i++) {
-					if (amounts[i] == UINT256_MAX)
+					if (amounts[i] == UINT256_MAX || amounts[i] == 0n)
 						grantUnlimitedSupplierRole(
 							'0x' + accounts[i].toUpperCase().substring(2),
 						);
@@ -656,6 +669,28 @@ function smartContractCalls(functionName: string, decoded: any): void {
 		const target =
 			'0x' + holdIdentifier.tokenHolder.toUpperCase().substring(2);
 		decreaseHeldAmount(holdIdentifier, target);
+	} else if (functionName == 'updateTokenCustomFees') {
+		const fixedFees =
+			(decoded as any).fixedFees ?? (decoded as any)[0] ?? [];
+		const fractionalFees =
+			(decoded as any).fractionalFees ?? (decoded as any)[1] ?? [];
+
+		// Convert SC fees to mock CustomFee-like objects
+		const mockCustomFees: any[] = [];
+		fixedFees.forEach((fee: any) => {
+			mockCustomFees.push({
+				feeCollectorAccountId: fee.feeCollector ?? fee[4] ?? '0.0.0',
+				allCollectorsAreExempt: false,
+			});
+		});
+		fractionalFees.forEach((fee: any) => {
+			mockCustomFees.push({
+				feeCollectorAccountId: fee.feeCollector ?? fee[5] ?? '0.0.0',
+				allCollectorsAreExempt: false,
+			});
+		});
+
+		globalCustomFees = mockCustomFees;
 	} else if (functionName == 'updateToken') {
 		const updatedToken = (decoded as any).updatedToken;
 		TokenName = updatedToken.tokenName;
@@ -785,11 +820,20 @@ jest.mock('../src/port/out/mirror/MirrorNodeAdapter', () => {
 
 		const requestCustomFees: RequestCustomFee[] = [];
 
-		if (customFees) {
+		if (customFees && customFees.length > 0) {
 			customFees.forEach((customFee) => {
 				requestCustomFees.push({
 					collectorId: customFee.feeCollectorAccountId!.toString(),
 					collectorsExempt: customFee.allCollectorsAreExempt,
+					decimals: 3,
+				});
+			});
+		} else if (globalCustomFees.length > 0) {
+			globalCustomFees.forEach((customFee: any) => {
+				requestCustomFees.push({
+					collectorId:
+						customFee.feeCollectorAccountId?.toString() ?? '0.0.0',
+					collectorsExempt: customFee.allCollectorsAreExempt ?? false,
 					decimals: 3,
 				});
 			});
@@ -988,14 +1032,14 @@ jest.mock('../src/port/out/mirror/MirrorNodeAdapter', () => {
 	};
 });
 
-jest.mock('../src/port/out/hs/hts/HTSTransactionAdapter', () => {
+jest.mock('../src/port/out/hs/client/ClientTransactionAdapter', () => {
 	const actual = jest.requireActual(
-		'../src/port/out/hs/hts/HTSTransactionAdapter.ts',
+		'../src/port/out/hs/client/ClientTransactionAdapter.ts',
 	);
 
-	const HTSTransactionAdapterMock = new actual.HTSTransactionAdapter();
+	const ClientTransactionAdapterMock = new actual.ClientTransactionAdapter();
 
-	HTSTransactionAdapterMock.init = jest.fn(() => {
+	ClientTransactionAdapterMock.init = jest.fn(() => {
 		balances.set(
 			identifiers(HederaId.from(PROXY_CONTRACT_ID))[1],
 			initialSupply,
@@ -1006,7 +1050,7 @@ jest.mock('../src/port/out/hs/hts/HTSTransactionAdapter', () => {
 		);
 	});
 
-	HTSTransactionAdapterMock.register = function (
+	ClientTransactionAdapterMock.register = function (
 		account: Account,
 	): InitializationData {
 		user_account = account;
@@ -1020,17 +1064,48 @@ jest.mock('../src/port/out/hs/hts/HTSTransactionAdapter', () => {
 		return response;
 	};
 
-	HTSTransactionAdapterMock.stop = function (): Promise<boolean> {
+	ClientTransactionAdapterMock.stop = function (): Promise<boolean> {
 		return Promise.resolve(true);
 	};
 
-	HTSTransactionAdapterMock.signAndSendTransaction = function (
+	ClientTransactionAdapterMock.processTransaction = function (
 		t: Transaction,
 		transactionType: TransactionType,
-		functionName: string,
-		abi: object[],
 	): Promise<TransactionResponse> {
-		signAndSendTransaction(t, transactionType, functionName, abi);
+		signAndSendTransaction(t, transactionType, '', []);
+		const returnedResponse = new TransactionResponse('1', [], undefined);
+		return Promise.resolve(returnedResponse);
+	};
+
+	ClientTransactionAdapterMock.executeContractCall = function (
+		contractId: string,
+		iface: any,
+		functionName: string,
+		params: unknown[],
+		gasLimit: number,
+		transactionType?: TransactionType,
+		payableAmountHbar?: string,
+		startDate?: string,
+		evmAddress?: string,
+	): Promise<TransactionResponse> {
+		let decoded: any;
+		try {
+			// Encode then decode through the ABI to get proper tuple format
+			// (accessible by both name and numeric index)
+			const encodedData = iface.encodeFunctionData(functionName, params);
+			decoded = iface.decodeFunctionData(functionName, encodedData);
+		} catch {
+			// Fallback: build decoded object from ABI input names
+			const fragment = iface.getFunction(functionName);
+			decoded = {} as any;
+			if (fragment && fragment.inputs) {
+				fragment.inputs.forEach((input: any, i: number) => {
+					decoded[input.name] = params[i];
+				});
+			}
+		}
+		smartContractCalls(functionName, decoded, contractId);
+
 		const tokenAddress = '0x000000000000000000000000000000000054C563';
 		const reservAddressReturned = identifiers(
 			HederaId.from(reserveAddress),
@@ -1054,22 +1129,87 @@ jest.mock('../src/port/out/hs/hts/HTSTransactionAdapter', () => {
 		return Promise.resolve(returnedResponse);
 	};
 
-	HTSTransactionAdapterMock.getAccount = function (): Account {
+	ClientTransactionAdapterMock.getAccount = function (): Account {
 		return user_account;
 	};
 
-	HTSTransactionAdapterMock.sign = function (
+	ClientTransactionAdapterMock.sign = function (
 		message: string | Transaction,
 	): Promise<string> {
 		return Promise.resolve('signedMessage');
 	};
 
-	HTSTransactionAdapterMock.getMirrorNodeAdapter =
+	ClientTransactionAdapterMock.getMirrorNodeAdapter =
 		function (): MirrorNodeAdapter {
 			return new MirrorNodeAdapter();
 		};
 
-	HTSTransactionAdapterMock.create = async function (
+	ClientTransactionAdapterMock.getEVMAddress = async function (
+		parameter: any,
+	): Promise<any> {
+		if (parameter instanceof ContractId) {
+			const mirrorNodeAdapter = new MirrorNodeAdapter();
+			return (
+				await mirrorNodeAdapter.getContractInfo(parameter.toString())
+			).evmAddress.toString();
+		}
+		if (parameter instanceof HederaId) {
+			if (parameter.value == HederaId.NULL.value) {
+				return EVM_ZERO_ADDRESS;
+			}
+			const mirrorNodeAdapter = new MirrorNodeAdapter();
+			return (
+				await mirrorNodeAdapter.accountToEvmAddress(parameter)
+			).toString();
+		}
+		return parameter;
+	};
+
+	ClientTransactionAdapterMock.setKeysForSmartContract = function (
+		providedKeys: any[],
+	): KeysStruct[] {
+		const keys: KeysStruct[] = [];
+		providedKeys.forEach((providedKey, index) => {
+			if (providedKey) {
+				const key = new KeysStruct();
+				switch (index) {
+					case 0:
+						key.keyType = BigInt(1);
+						break;
+					case 1:
+						key.keyType = BigInt(2);
+						break;
+					case 2:
+						key.keyType = BigInt(4);
+						break;
+					case 3:
+						key.keyType = BigInt(8);
+						break;
+					case 4:
+						key.keyType = BigInt(16);
+						break;
+					case 5:
+						key.keyType = BigInt(32);
+						break;
+					case 6:
+						key.keyType = BigInt(64);
+						break;
+				}
+				const providedKeyCasted = providedKey as PublicKey;
+				key.publicKey =
+					providedKeyCasted.key == PublicKey.NULL.key
+						? '0x'
+						: HPublicKey.fromString(
+								providedKeyCasted.key,
+						  ).toBytesRaw();
+				key.isEd25519 = providedKeyCasted.type === 'ED25519';
+				keys.push(key);
+			}
+		});
+		return keys;
+	};
+
+	ClientTransactionAdapterMock.create = async function (
 		coin: StableCoinProps,
 		factory: ContractId,
 		createReserve: boolean,
@@ -1204,13 +1344,16 @@ jest.mock('../src/port/out/hs/hts/HTSTransactionAdapter', () => {
 				reserveConfigurationId,
 			);
 			const params = [stableCoinToCreate];
-			return await this.contractCall(
+			const iface = new ethers.Interface(
+				StableCoinFactoryFacet__factory.abi,
+			);
+			return await this.executeContractCall(
 				factory.value,
+				iface,
 				'deployStableCoin',
 				params,
 				CREATE_SC_GAS,
 				TransactionType.RECORD,
-				StableCoinFactoryFacet__factory.abi,
 				TOKEN_CREATION_COST_HBAR,
 			);
 		} catch (error) {
@@ -1221,7 +1364,7 @@ jest.mock('../src/port/out/hs/hts/HTSTransactionAdapter', () => {
 	};
 
 	return {
-		HTSTransactionAdapter: jest.fn(() => HTSTransactionAdapterMock),
+		ClientTransactionAdapter: jest.fn(() => ClientTransactionAdapterMock),
 	};
 });
 

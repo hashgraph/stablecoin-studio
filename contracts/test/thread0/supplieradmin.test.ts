@@ -13,7 +13,7 @@ import {
     SupplierAdminFacet__factory,
     ReserveFacet,
     ReserveFacet__factory,
-    StableCoinTokenMock__factory
+    StableCoinTokenMock__factory,
 } from '@contracts'
 import {
     ADDRESS_ZERO,
@@ -266,18 +266,18 @@ describe('➡️ Supplier Admin Tests', function () {
     })
 
     it('should not allow admin to decrease an amount greater than the supplier allowance', async function () {
-      const supplierAllowance = await supplierAdminFacet.getSupplierAllowance(nonOperator, {
-          gasLimit: GAS_LIMIT.hederaTokenManager.getSupplierAllowance,
-      })
-      const amount = BigInt(supplierAllowance) + 1n
+        const supplierAllowance = await supplierAdminFacet.getSupplierAllowance(nonOperator, {
+            gasLimit: GAS_LIMIT.hederaTokenManager.getSupplierAllowance,
+        })
+        const amount = BigInt(supplierAllowance) + 1n
 
-      await expect(
-          supplierAdminFacet.decreaseSupplierAllowance(nonOperator, amount, {
-              gasLimit: GAS_LIMIT.hederaTokenManager.decreaseSupplierAllowance,
-          })
-      )
-          .to.be.revertedWithCustomError(supplierAdminFacet, 'GreaterThan')
-          .withArgs(amount, supplierAllowance)
+        await expect(
+            supplierAdminFacet.decreaseSupplierAllowance(nonOperator, amount, {
+                gasLimit: GAS_LIMIT.hederaTokenManager.decreaseSupplierAllowance,
+            })
+        )
+            .to.be.revertedWithCustomError(supplierAdminFacet, 'GreaterThan')
+            .withArgs(amount, supplierAllowance)
     })
 
     it('should not allow admin to increase supplier allowance to address zero account', async function () {
@@ -547,8 +547,7 @@ describe('➡️ Supplier Admin Tests - (Unlimited)', function () {
             cashInFacet.mint(ADDRESS_ZERO, AmountToMint, {
                 gasLimit: GAS_LIMIT.hederaTokenManager.mint,
             })
-        )
-            .to.be.revertedWithCustomError(cashInFacet, 'AddressZero')
+        ).to.be.revertedWithCustomError(cashInFacet, 'AddressZero')
     })
 
     it('An account with unlimited supplier role cannot cash in a negative or zero amount', async function () {
@@ -568,8 +567,7 @@ describe('➡️ Supplier Admin Tests - (Unlimited)', function () {
             cashInFacet.mint(stableCoinProxyAddress, AmountToMint, {
                 gasLimit: GAS_LIMIT.hederaTokenManager.mint,
             })
-        )
-            .to.not.emit(cashInFacet, 'TokenTransfer')
+        ).to.not.emit(cashInFacet, 'TokenTransfer')
     })
 
     it('An account with unlimited supplier role can cash in 100 tokens to the treasury account', async function () {
@@ -718,15 +716,15 @@ describe('➡️ Supplier Admin Tests - (Unlimited)', function () {
     })
 
     it('An account with unlimited supplier role can mint tokens when reserve has zero address', async function () {
-      await reserveFacet.updateReserveAddress(ADDRESS_ZERO);
-      const AmountToMint = 100n * ONE_TOKEN
-      await expect(
-          cashInFacet.mint(operator.address, AmountToMint, {
-              gasLimit: GAS_LIMIT.hederaTokenManager.mint,
-          })
-      )
-          .to.emit(cashInFacet, 'TokensMinted')
-          .withArgs(operator.address, tokenAddress, AmountToMint, operator.address)
+        await reserveFacet.updateReserveAddress(ADDRESS_ZERO)
+        const AmountToMint = 100n * ONE_TOKEN
+        await expect(
+            cashInFacet.mint(operator.address, AmountToMint, {
+                gasLimit: GAS_LIMIT.hederaTokenManager.mint,
+            })
+        )
+            .to.emit(cashInFacet, 'TokensMinted')
+            .withArgs(operator.address, tokenAddress, AmountToMint, operator.address)
     })
 })
 
@@ -795,8 +793,7 @@ describe('➡️ Supplier Admin Tests 1 - (Limited)', function () {
             cashInFacet.mint(ADDRESS_ZERO, AmountToMint, {
                 gasLimit: GAS_LIMIT.hederaTokenManager.mint,
             })
-        )
-            .to.be.revertedWithCustomError(cashInFacet, 'AddressZero')
+        ).to.be.revertedWithCustomError(cashInFacet, 'AddressZero')
     })
 
     it('An account with unlimited supplier role cannot cash in a negative amount', async function () {
@@ -878,15 +875,14 @@ describe('➡️ Supplier Admin Tests 2 - (Limited)', function () {
     })
 
     it('An account cannot cash in more tokens than owned', async function () {
-      const initialBalanceOf = await hederaTokenManagerFacet.balanceOf(operator.address)
-      console.log(initialBalanceOf)
+        const initialBalanceOf = await hederaTokenManagerFacet.balanceOf(operator.address)
+        console.log(initialBalanceOf)
 
-      const AmountToMint = 100n * TEN_TOKENS
+        const AmountToMint = 100n * TEN_TOKENS
         await expect(
             cashInFacet.mint(operator.address, AmountToMint, {
                 gasLimit: GAS_LIMIT.hederaTokenManager.mint,
             })
-        )
-            .to.be.revertedWithCustomError(cashInFacet, 'TheSmartContractIsNotTheTreasuryAccount')
+        ).to.be.revertedWithCustomError(cashInFacet, 'TheSmartContractIsNotTheTreasuryAccount')
     })
 })

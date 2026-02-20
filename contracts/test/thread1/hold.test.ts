@@ -190,13 +190,12 @@ describe('➡️ Hold Management Tests', () => {
                 tokenHolder: account_Operator,
                 holdId: 999,
             }
-            await expect (holdManagementFacet.getHoldFor(holdIdentifier_nonExistent))
-              .to.be.revertedWithCustomError(holdManagementFacet, 'HoldNotFound')
-              .withArgs(holdIdentifier_nonExistent.tokenHolder, holdIdentifier_nonExistent.holdId)
+            await expect(holdManagementFacet.getHoldFor(holdIdentifier_nonExistent))
+                .to.be.revertedWithCustomError(holdManagementFacet, 'HoldNotFound')
+                .withArgs(holdIdentifier_nonExistent.tokenHolder, holdIdentifier_nonExistent.holdId)
         })
         it('GIVEN an account with HOLD_CREATOR_ROLE role WHEN getHoldFor from page index 0 and page length 0 THEN it returns an empty array', async () => {
-            expect(await holdManagementFacet.getHoldsIdFor(account_Operator, 0, 0))
-              .to.deep.equal([])
+            expect(await holdManagementFacet.getHoldsIdFor(account_Operator, 0, 0)).to.deep.equal([])
         })
     })
 
@@ -405,10 +404,9 @@ describe('➡️ Hold Management Tests', () => {
             }
             await expect(holdManagementFacet.createHold(hold_wrong)).to.emit(holdManagementFacet, 'HoldCreated')
             await delay({ time: 1, unit: 'sec' })
-            await expect(
-                holdManagementFacet.executeHold(holdIdentifier, account_nonOperator, _AMOUNT)
-            ).to.be.revertedWithCustomError(holdManagementFacet, 'InvalidDestination')
-             .withArgs(account_Operator, account_nonOperator)
+            await expect(holdManagementFacet.executeHold(holdIdentifier, account_nonOperator, _AMOUNT))
+                .to.be.revertedWithCustomError(holdManagementFacet, 'InvalidDestination')
+                .withArgs(account_Operator, account_nonOperator)
         })
     })
     describe('Release with wrong input arguments', () => {
@@ -664,35 +662,23 @@ describe('➡️ Hold Management Tests', () => {
         })
         it('GIVEN a token without the supply key THEN calling the create hold by controller AND fail with ResponseCodeInvalid', async () => {
             await setInitialData({ addSupply: false })
-            await expect(holdManagementFacet.createHoldByController(
-              account_nonOperator, hold, EMPTY_HEX_BYTES
-            )).to.be.revertedWithCustomError(
-                holdManagementFacet,
-                'ResponseCodeInvalid'
-            )
+            await expect(
+                holdManagementFacet.createHoldByController(account_nonOperator, hold, EMPTY_HEX_BYTES)
+            ).to.be.revertedWithCustomError(holdManagementFacet, 'ResponseCodeInvalid')
             holdManagementFacet = holdManagementFacet.connect(operator)
-            await expect(holdManagementFacet.createHoldByController(
-              account_nonOperator, hold, EMPTY_HEX_BYTES
-            )).to.be.revertedWithCustomError(
-                holdManagementFacet,
-                'ResponseCodeInvalid'
-            )
+            await expect(
+                holdManagementFacet.createHoldByController(account_nonOperator, hold, EMPTY_HEX_BYTES)
+            ).to.be.revertedWithCustomError(holdManagementFacet, 'ResponseCodeInvalid')
         })
         it('GIVEN a token without the wipe key THEN calling the create hold by controller AND fail with ResponseCodeInvalid', async () => {
             await setInitialData({ addWipe: false })
-            await expect(holdManagementFacet.createHoldByController(
-              account_nonOperator, hold, EMPTY_HEX_BYTES
-            )).to.be.revertedWithCustomError(
-                holdManagementFacet,
-                'ResponseCodeInvalid'
-            )
+            await expect(
+                holdManagementFacet.createHoldByController(account_nonOperator, hold, EMPTY_HEX_BYTES)
+            ).to.be.revertedWithCustomError(holdManagementFacet, 'ResponseCodeInvalid')
             holdManagementFacet = holdManagementFacet.connect(operator)
-            await expect(holdManagementFacet.createHoldByController(
-              account_nonOperator, hold, EMPTY_HEX_BYTES
-            )).to.be.revertedWithCustomError(
-                holdManagementFacet,
-                'ResponseCodeInvalid'
-            )
+            await expect(
+                holdManagementFacet.createHoldByController(account_nonOperator, hold, EMPTY_HEX_BYTES)
+            ).to.be.revertedWithCustomError(holdManagementFacet, 'ResponseCodeInvalid')
         })
     })
 })

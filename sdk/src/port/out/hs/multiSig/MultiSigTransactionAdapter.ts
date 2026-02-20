@@ -19,7 +19,7 @@
  */
 
 import { singleton } from 'tsyringe';
-import { HederaTransactionAdapter } from '../HederaTransactionAdapter.js';
+import { BaseHederaTransactionAdapter } from '../BaseHederaTransactionAdapter.js';
 import {
 	AccountId,
 	Client,
@@ -33,12 +33,12 @@ import { lazyInject } from '../../../../core/decorator/LazyInjectDecorator.js';
 import NetworkService from '../../../../app/service/NetworkService.js';
 import { MirrorNodeAdapter } from '../../mirror/MirrorNodeAdapter.js';
 import { BackendAdapter } from '../../backend/BackendAdapter.js';
-import { SupportedWallets } from '../../../../domain/context/network/Wallet';
+import { SupportedWallets } from '../../../../domain/context/network/Wallet.js';
 import {
 	Environment,
 	previewnet,
 	mainnet,
-} from '../../../../domain/context/network/Environment';
+} from '../../../../domain/context/network/Environment.js';
 import Injectable from '../../../../core/Injectable.js';
 import { InitializationData } from '../../TransactionAdapter.js';
 import LogService from '../../../../app/service/LogService.js';
@@ -49,10 +49,10 @@ import {
 import EventService from '../../../../app/service/event/EventService.js';
 import Hex from '../../../../core/Hex.js';
 import TransactionService from '../../../../app/service/TransactionService.js';
-import { TransactionType } from '../../TransactionResponseEnums';
+import { TransactionType } from '../../TransactionResponseEnums.js';
 
 @singleton()
-export class MultiSigTransactionAdapter extends HederaTransactionAdapter {
+export class MultiSigTransactionAdapter extends BaseHederaTransactionAdapter {
 	public account: Account;
 	protected network: Environment;
 
@@ -65,14 +65,17 @@ export class MultiSigTransactionAdapter extends HederaTransactionAdapter {
 		@lazyInject(BackendAdapter)
 		public readonly backendAdapter: BackendAdapter,
 	) {
-		super(mirrorNodeAdapter, networkService);
+		super();
 	}
 
-	async signAndSendTransaction(
+	/**
+	 * Main execution point - serializes transaction and sends to backend for multi-sig coordination.
+	 * This is called by all operations (both native HTS and contract calls).
+	 * Note: transactionType is not used in MultiSig as we serialize the transaction for external signing.
+	 */
+	public async processTransaction(
 		t: Transaction,
-		transactionType: TransactionType,
-		nameFunction?: string,
-		abi?: never[],
+		_transactionType: TransactionType,
 		startDate?: string,
 	): Promise<TransactionResponse<never, Error>> {
 		const publicKeys: string[] = [];
@@ -136,7 +139,25 @@ export class MultiSigTransactionAdapter extends HederaTransactionAdapter {
 		return new TransactionResponse(transactionId);
 	}
 
-	// ! MultiSig cannot be used to sign anything
+	// ===== Abstract Method Implementations =====
+
+	public supportsEvmOperations(): boolean {
+		// MultiSig can work with both EVM and native operations
+		// The backend handles the actual signing
+		return true;
+	}
+
+	public getNetworkService(): NetworkService {
+		return this.networkService;
+	}
+
+	public getMirrorNodeAdapter(): MirrorNodeAdapter {
+		return this.mirrorNodeAdapter;
+	}
+
+	// ===== Wallet Lifecycle Methods =====
+
+	// ! MultiSig cannot be used to sign anything directly
 	sign(): Promise<string> {
 		throw new Error('Method not implemented.');
 	}

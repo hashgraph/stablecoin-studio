@@ -78,10 +78,7 @@ abstract contract TokenOwnerStorageWrapper is Common {
      * @param to The address the tokens are transferred to
      * @param amount The amount of tokens to be transferred
      */
-    function _transfer(
-        address to,
-        int64 amount
-    ) internal {
+    function _transfer(address to, int64 amount) internal {
         if (to != address(this)) {
             address currentTokenAddress = _getTokenAddress();
 

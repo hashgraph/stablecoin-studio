@@ -20,50 +20,49 @@
 
 import {
 	CustodialWalletService,
-	DFNSConfig,
+	FireblocksConfig,
 } from '@hashgraph/hedera-custodians-integration';
 import { singleton } from 'tsyringe';
-import LogService from '../../../../../app/service/LogService';
-import { WalletEvents } from '../../../../../app/service/event/WalletEvent';
-import { SupportedWallets } from '../../../../../domain/context/network/Wallet';
-import DfnsSettings from '../../../../../domain/context/custodialwalletsettings/DfnsSettings';
+import { WalletEvents } from '../../../../app/service/event/WalletEvent';
+import LogService from '../../../../app/service/LogService';
+import { SupportedWallets } from '../../../../domain/context/network/Wallet';
+import FireblocksSettings from '../../../../domain/context/custodialwalletsettings/FireblocksSettings';
 import { CustodialTransactionAdapter } from './CustodialTransactionAdapter';
 
 @singleton()
-export class DFNSTransactionAdapter extends CustodialTransactionAdapter {
+export class FireblocksTransactionAdapter extends CustodialTransactionAdapter {
 	init(): Promise<string> {
 		this.eventService.emit(WalletEvents.walletInit, {
-			wallet: SupportedWallets.DFNS,
+			wallet: this.getSupportedWallet(),
 			initData: {},
 		});
-		LogService.logTrace('DFNS Initialized');
+		LogService.logTrace('Fireblocks Initialized');
 		return Promise.resolve(this.networkService.environment);
 	}
 
-	initCustodialWalletService(settings: DfnsSettings): void {
+	initCustodialWalletService(settings: FireblocksSettings): void {
+		const { apiKey, apiSecretKey, baseUrl, vaultAccountId, assetId } =
+			settings;
 		this.custodialWalletService = new CustodialWalletService(
-			new DFNSConfig(
-				settings.serviceAccountSecretKey,
-				settings.serviceAccountCredentialId,
-				settings.serviceAccountAuthToken,
-				settings.appOrigin,
-				settings.appId,
-				settings.baseUrl,
-				settings.walletId,
-				settings.publicKey,
+			new FireblocksConfig(
+				apiKey,
+				apiSecretKey,
+				baseUrl,
+				vaultAccountId,
+				assetId,
 			),
 		);
 	}
 
 	getSupportedWallet(): SupportedWallets {
-		return SupportedWallets.DFNS;
+		return SupportedWallets.FIREBLOCKS;
 	}
 
 	stop(): Promise<boolean> {
 		this.client?.close();
-		LogService.logTrace('DFNS stopped');
+		LogService.logTrace('Fireblocks stopped');
 		this.eventService.emit(WalletEvents.walletDisconnect, {
-			wallet: SupportedWallets.DFNS,
+			wallet: SupportedWallets.FIREBLOCKS,
 		});
 		return Promise.resolve(true);
 	}

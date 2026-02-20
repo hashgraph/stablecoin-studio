@@ -3,11 +3,11 @@ import { expect } from 'chai'
 import { deployFullInfrastructureInTests, deployStableCoinInTests } from '@test/shared'
 import { MigrationProxy, MigrationProxy__factory } from '@contracts'
 import {
-  deployContract,
-  DeployContractCommand,
-  DeployFullInfrastructureCommand,
-  GAS_LIMIT,
-  ADDRESS_ZERO
+    deployContract,
+    DeployContractCommand,
+    DeployFullInfrastructureCommand,
+    GAS_LIMIT,
+    ADDRESS_ZERO,
 } from '@scripts'
 import { ethers } from 'hardhat'
 
@@ -26,7 +26,7 @@ describe('MigrationProxy tests', function () {
     })
 
     it('GIVEN a deployed migration proxy WHEN initializing the proxy THEN ...', async function () {
-        const {...deployedContracts} = await deployFullInfrastructureInTests(
+        const { ...deployedContracts } = await deployFullInfrastructureInTests(
             await DeployFullInfrastructureCommand.newInstance({
                 signer: operator,
                 useDeployed: false,
@@ -44,20 +44,24 @@ describe('MigrationProxy tests', function () {
             })
         )
 
-        migrationProxy = MigrationProxy__factory.connect(
-          migrationProxyContract.proxyAddress!, operator
-        )
+        migrationProxy = MigrationProxy__factory.connect(migrationProxyContract.proxyAddress!, operator)
 
-        await expect (migrationProxy.initializeV2Migration(
-          deployedContracts.businessLogicResolver.proxyAddress!, STABLECOIN_CONFIG_ID, 0, [],
-          { gasLimit: GAS_LIMIT.migrationProxy.initialize }
-        )).to.not.be.reverted;
+        await expect(
+            migrationProxy.initializeV2Migration(
+                deployedContracts.businessLogicResolver.proxyAddress!,
+                STABLECOIN_CONFIG_ID,
+                0,
+                [],
+                { gasLimit: GAS_LIMIT.migrationProxy.initialize }
+            )
+        ).to.not.be.reverted
     })
 
     it('GIVEN an already initialized migration proxy WHEN trying to initialize again THEN transaction fails with AlreadyInitialized', async function () {
-        await expect(migrationProxy.initializeV2Migration(
-          ADDRESS_ZERO, NO_CONFIG_ID, 0, [],
-          { gasLimit: GAS_LIMIT.migrationProxy.initialize }
-        )).to.be.revertedWithCustomError(migrationProxy, 'ContractIsAlreadyInitialized')
+        await expect(
+            migrationProxy.initializeV2Migration(ADDRESS_ZERO, NO_CONFIG_ID, 0, [], {
+                gasLimit: GAS_LIMIT.migrationProxy.initialize,
+            })
+        ).to.be.revertedWithCustomError(migrationProxy, 'ContractIsAlreadyInitialized')
     })
 })
