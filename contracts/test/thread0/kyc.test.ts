@@ -9,12 +9,7 @@ import {
     StableCoinTokenMock__factory,
 } from '@contracts'
 import { ADDRESS_ZERO, MESSAGES, ONE_TOKEN, ROLES, DeployFullInfrastructureCommand } from '@scripts'
-import {
-  deployStableCoinInTests,
-  deployFullInfrastructureInTests,
-  expectRevert,
-  GAS_LIMIT
-} from '@test/shared'
+import { deployStableCoinInTests, deployFullInfrastructureInTests, expectRevert, GAS_LIMIT } from '@test/shared'
 
 describe('➡️ KYC Tests', function () {
     const ACCOUNT_KYC_NOT_GRANTED_FOR_TOKEN = 176
@@ -139,7 +134,7 @@ describe('➡️ KYC Tests', function () {
                 gasLimit: GAS_LIMIT.hederaTokenManager.grantKyc,
             }),
             contract: kycFacet,
-            customError: 'AddressZero'
+            customError: 'AddressZero',
         })
 
         await expectRevert({
@@ -147,7 +142,7 @@ describe('➡️ KYC Tests', function () {
                 gasLimit: GAS_LIMIT.hederaTokenManager.revokeKyc,
             }),
             contract: kycFacet,
-            customError: 'AddressZero'
+            customError: 'AddressZero',
         })
     })
 })

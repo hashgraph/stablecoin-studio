@@ -1,12 +1,5 @@
 import { SignerWithAddress } from '@nomicfoundation/hardhat-ethers/signers'
-import {
-  ADDRESS_ZERO,
-  BusinessLogicRegistryData,
-  delay,
-  FacetConfiguration,
-  GAS_LIMIT,
-  ROLES
-} from '@scripts'
+import { ADDRESS_ZERO, BusinessLogicRegistryData, delay, FacetConfiguration, GAS_LIMIT, ROLES } from '@scripts'
 import {
     BusinessLogicResolver,
     DiamondFacet,
@@ -18,11 +11,9 @@ import {
     RolesFacet,
     RolesFacet__factory,
     DiamondCutFacet,
-    DiamondCutFacet__factory
+    DiamondCutFacet__factory,
 } from '@contracts'
-import {
-  expectRevert
-} from '@test/shared'
+import { expectRevert } from '@test/shared'
 import { expect } from 'chai'
 import { ethers } from 'hardhat'
 
@@ -203,9 +194,12 @@ describe('➡️ ResolverProxy Tests', () => {
     it('GIVEN a diamond cut facet deployed WHEN getting the function selectors THEN the function selectors are obtained', async () => {
         const diamondCut = await ethers.getContractAt('DiamondCutFacet', diamondCutFacet)
 
-        expect(await diamondCut.getStaticFunctionSelectors()).to.deep.eq(
-          ['0x002eeb22', '0x0b3bad61', '0xe5d3a872', '0x78a1bf05']
-         )
+        expect(await diamondCut.getStaticFunctionSelectors()).to.deep.eq([
+            '0x002eeb22',
+            '0x0b3bad61',
+            '0xe5d3a872',
+            '0x78a1bf05',
+        ])
     })
 
     it('GIVEN a diamond cut facet deployed WHEN getting the interfaces ids THEN the interfaces ids are obtained', async () => {
@@ -224,11 +218,22 @@ describe('➡️ ResolverProxy Tests', () => {
     it('GIVEN a diamond loupe facet deployed WHEN getting the function selectors THEN the function selectors are obtained', async () => {
         const diamondLoupe = await ethers.getContractAt('DiamondLoupeFacet', diamondLoupeFacet)
 
-        expect(await diamondLoupe.getStaticFunctionSelectors()).to.deep.eq(
-          ['0x662ea47d', '0x430720f9', '0xbf02c5b9', '0x8214de3e', '0xca1f70ec', '0x39a9e956',
-           '0xcd25d535', '0x20202e6d', '0x3bed2f49', '0x9fea53e7', '0xb3fd6894', '0xe317d12f',
-           '0x7a070c2d', '0x01ffc9a7']
-        )
+        expect(await diamondLoupe.getStaticFunctionSelectors()).to.deep.eq([
+            '0x662ea47d',
+            '0x430720f9',
+            '0xbf02c5b9',
+            '0x8214de3e',
+            '0xca1f70ec',
+            '0x39a9e956',
+            '0xcd25d535',
+            '0x20202e6d',
+            '0x3bed2f49',
+            '0x9fea53e7',
+            '0xb3fd6894',
+            '0xe317d12f',
+            '0x7a070c2d',
+            '0x01ffc9a7',
+        ])
     })
 
     it('GIVEN a diamond loupe facet deployed WHEN getting the interfaces ids THEN the interfaces ids are obtained', async () => {
@@ -241,10 +246,10 @@ describe('➡️ ResolverProxy Tests', () => {
         const ResolverProxyFactory = await ethers.getContractFactory('ResolverProxy')
         await expectRevert({
             txPromise: ResolverProxyFactory.deploy(ADDRESS_ZERO, CONFIG_ID, 1, [], {
-                gasLimit: GAS_LIMIT.resolverProxy.deploy
+                gasLimit: GAS_LIMIT.resolverProxy.deploy,
             }),
             contract: ResolverProxyFactory,
-            customError: 'ResolverAddressIsZero'
+            customError: 'ResolverAddressIsZero',
         })
     })
 
@@ -252,10 +257,10 @@ describe('➡️ ResolverProxy Tests', () => {
         const ResolverProxyFactory = await ethers.getContractFactory('ResolverProxy')
         await expectRevert({
             txPromise: ResolverProxyFactory.deploy(await resolver.getAddress(), NO_CONFIG_ID, 1, [], {
-                gasLimit: GAS_LIMIT.resolverProxy.deploy
+                gasLimit: GAS_LIMIT.resolverProxy.deploy,
             }),
             contract: ResolverProxyFactory,
-            customError: 'ConfigurationIdIsZero'
+            customError: 'ConfigurationIdIsZero',
         })
     })
 
@@ -268,32 +273,30 @@ describe('➡️ ResolverProxy Tests', () => {
 
         const facetAddress = await diamondLoupe.getFacetAddressesByPage(1, 1)
 
-        expect (await diamondLoupe.getFacetsLength()).to.eq(2)
-        expect (await diamondLoupe.getFacetsByPage(1, 1)).to.deep.eq(
-            [[
-              '0xd4408b4f5b6c8488e6b89c9cd1aba76ff1dd23cbd95a4b7c24737fc3700125ce',
-              facetAddress[0],
-              [
-                '0x91d14854',
-                '0x47c9b7cd',
-                '0xb19737bf',
-                '0x2f2ff15d',
-                '0xd547741f',
-                '0xce6ccfaf',
-                '0x7e0b9df8'
-              ],
-              [ '0xce6ccfaf' ]
-            ]]
-        )
-        expect (await diamondLoupe.getFacetSelectorsLength(
-          '0xd4408b4f5b6c8488e6b89c9cd1aba76ff1dd23cbd95a4b7c24737fc3700125ce')
+        expect(await diamondLoupe.getFacetsLength()).to.eq(2)
+        expect(await diamondLoupe.getFacetsByPage(1, 1)).to.deep.eq([
+            [
+                '0xd4408b4f5b6c8488e6b89c9cd1aba76ff1dd23cbd95a4b7c24737fc3700125ce',
+                facetAddress[0],
+                ['0x91d14854', '0x47c9b7cd', '0xb19737bf', '0x2f2ff15d', '0xd547741f', '0xce6ccfaf', '0x7e0b9df8'],
+                ['0xce6ccfaf'],
+            ],
+        ])
+        expect(
+            await diamondLoupe.getFacetSelectorsLength(
+                '0xd4408b4f5b6c8488e6b89c9cd1aba76ff1dd23cbd95a4b7c24737fc3700125ce'
+            )
         ).to.eq(7)
-        expect (await diamondLoupe.getFacetSelectorsByPage(
-          '0xd4408b4f5b6c8488e6b89c9cd1aba76ff1dd23cbd95a4b7c24737fc3700125ce', 1, 1)
+        expect(
+            await diamondLoupe.getFacetSelectorsByPage(
+                '0xd4408b4f5b6c8488e6b89c9cd1aba76ff1dd23cbd95a4b7c24737fc3700125ce',
+                1,
+                1
+            )
         ).to.deep.eq(['0x47c9b7cd'])
-        expect (await diamondLoupe.getFacetIdsByPage(
-          1, 1
-        )).to.deep.eq(['0xd4408b4f5b6c8488e6b89c9cd1aba76ff1dd23cbd95a4b7c24737fc3700125ce'])
+        expect(await diamondLoupe.getFacetIdsByPage(1, 1)).to.deep.eq([
+            '0xd4408b4f5b6c8488e6b89c9cd1aba76ff1dd23cbd95a4b7c24737fc3700125ce',
+        ])
     })
 
     it('GIVEN deployed facets WHEN deploy a new resolverProxy with correct configuration THEN a new resolverProxy proxy was deployed', async () => {
@@ -325,7 +328,7 @@ describe('➡️ ResolverProxy Tests', () => {
         const BURN_SIGNATURE = '0x5cd3a608'
         await expectRevert({
             txPromise: burnableFacet.burn(10, {
-                gasLimit: GAS_LIMIT.hederaTokenManager.burn
+                gasLimit: GAS_LIMIT.hederaTokenManager.burn,
             }),
             contract: resolverProxy,
             customError: 'FunctionNotFound',
@@ -365,10 +368,10 @@ describe('➡️ ResolverProxy Tests', () => {
 
         await expectRevert({
             txPromise: diamondCut.updateConfigVersion(0, {
-                gasLimit: GAS_LIMIT.diamondFacet.updateConfigVersion
+                gasLimit: GAS_LIMIT.diamondFacet.updateConfigVersion,
             }),
             contract: roleImpl,
-            customError: 'AccountHasNoRole'
+            customError: 'AccountHasNoRole',
         })
     })
 
@@ -447,7 +450,7 @@ describe('➡️ ResolverProxy Tests', () => {
                 gasLimit: GAS_LIMIT.diamondFacet.updateConfig,
             }),
             contract: roleImpl,
-            customError: 'AccountHasNoRole'
+            customError: 'AccountHasNoRole',
         })
     })
 
@@ -523,7 +526,7 @@ describe('➡️ ResolverProxy Tests', () => {
 
         const diamondCut = await ethers.getContractAt('DiamondCutFacet', resolverProxy)
 
-       await expectRevert({
+        await expectRevert({
             txPromise: diamondCut.updateResolver(await resolver_2.getAddress(), CONFIG_ID_2, 1, {
                 gasLimit: GAS_LIMIT.diamondFacet.updateResolver,
             }),
@@ -548,13 +551,13 @@ describe('➡️ ResolverProxy Tests', () => {
 
         diamondCut = diamondCut.connect(signer_A)
 
-       await expectRevert({
+        await expectRevert({
             txPromise: diamondCut.updateResolver(await resolver_2.getAddress(), CONFIG_ID_2, 2, {
                 gasLimit: GAS_LIMIT.diamondFacet.updateResolver,
             }),
             contract: resolver,
             customError: 'ResolverProxyConfigurationNoRegistered',
-            args: [CONFIG_ID_2, 2]
+            args: [CONFIG_ID_2, 2],
         })
     })
 

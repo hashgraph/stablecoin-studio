@@ -73,7 +73,7 @@ describe('➡️ Freeze Tests', function () {
             }),
             contract: freezableFacet,
             customError: 'AddressZero',
-            args: [ADDRESS_ZERO]
+            args: [ADDRESS_ZERO],
         })
     })
 
@@ -85,7 +85,7 @@ describe('➡️ Freeze Tests', function () {
             }),
             contract: freezableFacet,
             customError: 'AddressZero',
-            args: [ADDRESS_ZERO]
+            args: [ADDRESS_ZERO],
         })
     })
 

@@ -11,12 +11,7 @@ import {
     StableCoinTokenMock__factory,
 } from '@contracts'
 import { DeployFullInfrastructureCommand, MESSAGES, ONE_TOKEN, ROLES } from '@scripts'
-import {
-  deployStableCoinInTests,
-  deployFullInfrastructureInTests,
-  expectRevert,
-  GAS_LIMIT
-} from '@test/shared'
+import { deployStableCoinInTests, deployFullInfrastructureInTests, expectRevert, GAS_LIMIT } from '@test/shared'
 
 describe('➡️ Delete Tests', function () {
     const TOKEN_WAS_DELETED = 179

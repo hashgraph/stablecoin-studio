@@ -9,18 +9,14 @@ import {
     StableCoinTokenMock__factory,
 } from '@contracts'
 import {
-  ADDRESS_ZERO, MESSAGES,
-  ROLES,
-  delay,
-  DeployFullInfrastructureCommand,
-  ValidateTxResponseCommand
+    ADDRESS_ZERO,
+    MESSAGES,
+    ROLES,
+    delay,
+    DeployFullInfrastructureCommand,
+    ValidateTxResponseCommand,
 } from '@scripts'
-import {
-  deployStableCoinInTests,
-  deployFullInfrastructureInTests,
-  expectRevert,
-  GAS_LIMIT
-} from '@test/shared'
+import { deployStableCoinInTests, deployFullInfrastructureInTests, expectRevert, GAS_LIMIT } from '@test/shared'
 
 describe('➡️ Custom Fees Tests', function () {
     // Contracts

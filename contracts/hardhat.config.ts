@@ -26,7 +26,7 @@ const hardhatConfig: HardhatUserConfig = {
         [NETWORK_LIST.name[0]]: {
             chainId: NETWORK_LIST.chainId[0],
             hardfork: DEFAULT_EVM_VERSION,
-            blockGasLimit: GAS_LIMIT.max
+            blockGasLimit: GAS_LIMIT.max,
         },
         [NETWORK_LIST.name[1]]: {
             chainId: NETWORK_LIST.chainId[1],

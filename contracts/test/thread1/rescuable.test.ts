@@ -9,7 +9,7 @@ import {
     RescuableFacet__factory,
     StableCoinTokenMock__factory,
     RolesFacet,
-    RolesFacet__factory
+    RolesFacet__factory,
 } from '@contracts'
 import {
     delay,
@@ -22,12 +22,7 @@ import {
     ROLES,
     ValidateTxResponseCommand,
 } from '@scripts'
-import {
-  deployStableCoinInTests,
-  deployFullInfrastructureInTests,
-  expectRevert,
-  GAS_LIMIT
-} from '@test/shared'
+import { deployStableCoinInTests, deployFullInfrastructureInTests, expectRevert, GAS_LIMIT } from '@test/shared'
 import { TransactionRequest } from 'ethers'
 
 describe('➡️ Rescue Tests', function () {
@@ -81,14 +76,12 @@ describe('➡️ Rescue Tests', function () {
         await new ValidateTxResponseCommand({ txResponse: response }).execute()
     })
 
-    it("Account trying to reentrant rescue reverts", async () => {
+    it('Account trying to reentrant rescue reverts', async () => {
         const amountToRescue = ONE_HBAR
-        // By https://docs.hedera.com/hedera/tutorials/smart-contracts/hscs-workshop/hardhat#tinybars-vs-weibars
-        const amountToRescueInEvm = amountToRescue / WEIBARS_PER_TINYBAR
 
-        const Attacker = await ethers.getContractFactory("ReentrancyAttacker");
-        const attacker = await Attacker.deploy(await rescuableFacet.getAddress(), amountToRescue);
-        await attacker.waitForDeployment();
+        const Attacker = await ethers.getContractFactory('ReentrancyAttacker')
+        const attacker = await Attacker.deploy(await rescuableFacet.getAddress(), amountToRescue)
+        await attacker.waitForDeployment()
 
         await expect(
             rolesFacet.grantRole(ROLES.rescue.hash, attacker.getAddress(), {
@@ -99,12 +92,12 @@ describe('➡️ Rescue Tests', function () {
             .withArgs(ROLES.rescue.hash, attacker.getAddress(), operator.address)
 
         await expectRevert({
-            txPromise: attacker.attack({gasLimit: GAS_LIMIT.high}),
+            txPromise: attacker.attack({ gasLimit: GAS_LIMIT.high }),
             contract: rescuableFacet,
             customError: 'HBARRescueError',
-            args: [ONE_HBAR]
+            args: [ONE_HBAR],
         })
-    });
+    })
 
     it('Account with RESCUE role can rescue 10 tokens', async function () {
         // Get the initial balance of the token owner and client
@@ -144,7 +137,7 @@ describe('➡️ Rescue Tests', function () {
             }),
             contract: rescuableFacet,
             customError: 'NegativeAmount',
-            args: [0]
+            args: [0],
         })
     })
 
@@ -160,7 +153,7 @@ describe('➡️ Rescue Tests', function () {
             }),
             contract: rescuableFacet,
             customError: 'GreaterThan',
-            args: [TokenOwnerBalance + 1n, TokenOwnerBalance]
+            args: [TokenOwnerBalance + 1n, TokenOwnerBalance],
         })
     })
 
@@ -172,7 +165,7 @@ describe('➡️ Rescue Tests', function () {
             }),
             contract: rescuableFacet,
             customError: 'AccountHasNoRole',
-            args: [nonOperator.address, ROLES.rescue.hash]
+            args: [nonOperator.address, ROLES.rescue.hash],
         })
     })
 
@@ -197,9 +190,10 @@ describe('➡️ Rescue Tests', function () {
 
         // check new balances : success
         const finalTokenOwnerBalance = await ethers.provider.getBalance(stableCoinProxyAddress)
-        const expectedTokenOwnerBalance = network.name === 'hardhat' ?
-            initialTokenOwnerBalance - amountToRescueInEvm :
-            initialTokenOwnerBalance - amountToRescue
+        const expectedTokenOwnerBalance =
+            network.name === 'hardhat'
+                ? initialTokenOwnerBalance - amountToRescueInEvm
+                : initialTokenOwnerBalance - amountToRescue
         expect(finalTokenOwnerBalance.toString()).to.equals(expectedTokenOwnerBalance.toString())
     })
 
@@ -214,7 +208,7 @@ describe('➡️ Rescue Tests', function () {
             }),
             contract: rescuableFacet,
             customError: 'GreaterThan',
-            args: [TokenOwnerBalance + 1n, TokenOwnerBalance]
+            args: [TokenOwnerBalance + 1n, TokenOwnerBalance],
         })
     })
 
@@ -227,7 +221,7 @@ describe('➡️ Rescue Tests', function () {
             }),
             contract: rescuableFacet,
             customError: 'AccountHasNoRole',
-            args: [nonOperator.address, ROLES.rescue.hash]
+            args: [nonOperator.address, ROLES.rescue.hash],
         })
     })
 })

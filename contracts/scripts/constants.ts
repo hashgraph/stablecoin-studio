@@ -183,7 +183,7 @@ export const GAS_LIMIT = {
         createConfiguration: 8_000_000n,
         createBatchConfiguration: 8_000_000n,
         cancelBatchConfiguration: 140_000n,
-        checkResolverProxyConfigurationRegistered: 150_000n
+        checkResolverProxyConfigurationRegistered: 150_000n,
     },
     diamondFacet: {
         deploy: 3_500_000n,
@@ -198,7 +198,7 @@ export const GAS_LIMIT = {
         executeHold: 1_500_000n,
         releaseHold: 500_000n,
         reclaimHold: 400_000n,
-        getHoldFor: 150_000n
+        getHoldFor: 150_000n,
     },
 }
 

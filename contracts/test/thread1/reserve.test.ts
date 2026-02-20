@@ -19,11 +19,7 @@ import {
     MESSAGES,
     ValidateTxResponseCommand,
 } from '@scripts'
-import {
-  deployFullInfrastructureInTests,
-  expectRevert,
-  GAS_LIMIT
-} from '@test/shared'
+import { deployFullInfrastructureInTests, expectRevert, GAS_LIMIT } from '@test/shared'
 
 let operator: SignerWithAddress
 let nonOperator: SignerWithAddress
@@ -125,7 +121,7 @@ describe('➡️ Reserve Tests', function () {
                 gasLimit: GAS_LIMIT.hederaTokenManager.updateUpdatedAtThreshold,
             }),
             contract: reserveFacet,
-            customError: 'AccountHasNoRole'
+            customError: 'AccountHasNoRole',
         })
     })
 
@@ -150,7 +146,7 @@ describe('➡️ Reserve Tests', function () {
             }),
             contract: reserveFacet,
             customError: 'AccountHasNoRole',
-            args: [nonOperator, ROLES.defaultAdmin.hash]
+            args: [nonOperator, ROLES.defaultAdmin.hash],
         })
     })
 
@@ -267,7 +263,7 @@ describe('Reserve Tests with reserve and token with same Decimals', function () 
             }),
             contract: cashInFacet,
             customError: 'AmountBiggerThanReserve',
-            args: [totalReserve + 1n]
+            args: [totalReserve + 1n],
         })
     })
 })
@@ -352,7 +348,7 @@ describe('Reserve Tests with reserve decimals higher than token decimals', funct
             }),
             contract: cashInFacet,
             customError: 'AmountBiggerThanReserve',
-            args: [totalReserve + 1n]
+            args: [totalReserve + 1n],
         })
     })
 })
@@ -436,7 +432,7 @@ describe('Reserve Tests with reserve decimals lower than token decimals', functi
             }),
             contract: cashInFacet,
             customError: 'FormatNumberIncorrect',
-            args: [totalReserve + 1n]
+            args: [totalReserve + 1n],
         })
     })
 

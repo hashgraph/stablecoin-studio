@@ -19,7 +19,6 @@ task('migrateStableCoinToV2', 'Migrate a v1 stable coin to v2')
     .addParam('stablecoinaddress', 'The address of current stablecoin proxy', undefined, types.string)
     .addParam('stablecoinproxyadminaddress', 'The address of current stablecoin proxy admin', undefined, types.string)
     .setAction(async (args, hre) => {
-        const ERC1967_IMPLEMENTATION_SLOT = "0x360894a13ba1a3210667c828492db98dca3e2076cc3735a920a3ca505d382bbc"
         // Inlined to avoid circular dependency
         const { MigrationProxy__factory, ProxyAdmin__factory } = await import('@contracts/index')
         const { deployContract, DeployContractCommand, GAS_LIMIT, TransactionReceiptError } = await import('@scripts')

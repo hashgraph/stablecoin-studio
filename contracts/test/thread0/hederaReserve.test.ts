@@ -1,21 +1,16 @@
-import { Overrides } from 'ethers'
 import { SignerWithAddress } from '@nomicfoundation/hardhat-ethers/signers'
 import { expect } from 'chai'
-import {
-  deployFullInfrastructureInTests,
-  deployStableCoinInTests,
-  expectRevert
-} from '@test/shared'
+import { deployFullInfrastructureInTests, deployStableCoinInTests, expectRevert } from '@test/shared'
 import { HederaReserveFacet, HederaReserveFacet__factory } from '@contracts'
 import {
-  DEFAULT_TOKEN,
-  delay,
-  deployContract,
-  DeployContractCommand,
-  DeployFullInfrastructureCommand,
-  GAS_LIMIT,
-  MESSAGES,
-  ADDRESS_ZERO
+    DEFAULT_TOKEN,
+    delay,
+    deployContract,
+    DeployContractCommand,
+    DeployFullInfrastructureCommand,
+    GAS_LIMIT,
+    MESSAGES,
+    ADDRESS_ZERO,
 } from '@scripts'
 import { ethers } from 'hardhat'
 
@@ -42,9 +37,7 @@ describe('HederaReserve Tests Before Deploying Full Infrastructure', function ()
             })
         )
 
-        const hederaReserve = HederaReserveFacet__factory.connect(
-          hederaReserveContract.proxyAddress!, operator
-        )
+        const hederaReserve = HederaReserveFacet__factory.connect(hederaReserveContract.proxyAddress!, operator)
 
         await expectRevert({
             txPromise: hederaReserve.initialize(reserve, ADDRESS_ZERO, {
@@ -52,7 +45,7 @@ describe('HederaReserve Tests Before Deploying Full Infrastructure', function ()
             }),
             contract: hederaReserve,
             customError: 'AddressZero',
-            args: [ADDRESS_ZERO]
+            args: [ADDRESS_ZERO],
         })
     })
 })
@@ -99,20 +92,18 @@ describe('HederaReserve Tests', function () {
                 gasLimit: GAS_LIMIT.hederaReserve.initialize,
             }),
             contract: hederaReserveFacet,
-            customError: 'ContractIsAlreadyInitialized'
+            customError: 'ContractIsAlreadyInitialized',
         })
     })
 
     it('Cannot update admin with zero address', async function () {
-        const ONE = 1
-
         await expectRevert({
             txPromise: hederaReserveFacet.setAdmin(ADDRESS_ZERO, {
                 gasLimit: GAS_LIMIT.hederaReserve.setAdmin,
             }),
             contract: hederaReserveFacet,
             customError: 'AddressZero',
-            args: [ADDRESS_ZERO]
+            args: [ADDRESS_ZERO],
         })
     })
 
@@ -265,7 +256,7 @@ describe('HederaReserve Tests', function () {
                 gasLimit: GAS_LIMIT.hederaReserve.roundData,
             }),
             contract: hederaReserveFacet,
-            customError: 'NotImplemented'
+            customError: 'NotImplemented',
         })
     })
 })

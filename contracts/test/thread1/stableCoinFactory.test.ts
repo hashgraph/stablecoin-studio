@@ -10,15 +10,15 @@ import {
     deployStableCoin,
     DeployStableCoinCommand,
     MESSAGES,
-    DEFAULT_CONFIG_VERSION
+    DEFAULT_CONFIG_VERSION,
 } from '@scripts'
 import { deployFullInfrastructureInTests, expectRevert, expectRevert, GAS_LIMIT } from '@test/shared'
 import {
-  HederaReserveFacet__factory,
-  ReserveFacet,
-  ReserveFacet__factory,
-  StableCoinFactoryFacet,
-  StableCoinFactoryFacet__factory
+    HederaReserveFacet__factory,
+    ReserveFacet,
+    ReserveFacet__factory,
+    StableCoinFactoryFacet,
+    StableCoinFactoryFacet__factory,
 } from '@contracts'
 
 const toReserve = (amount: bigint) => {
@@ -72,7 +72,7 @@ describe('StableCoinFactory Tests', function () {
         await expectRevert({
             txPromise: deployStableCoin(deployCommand),
             contract: stableCoinFactoryFacet,
-            customError: 'AddressZero'
+            customError: 'AddressZero',
         })
     })
 
@@ -93,15 +93,15 @@ describe('StableCoinFactory Tests', function () {
             businessLogicResolverProxyAddress: businessLogicResolver,
             stableCoinFactoryProxyAddress: stableCoinFactoryProxy,
             stableCoinConfigurationId: {
-              key: ethers.ZeroHash,
-              version: DEFAULT_CONFIG_VERSION
-            }
+                key: ethers.ZeroHash,
+                version: DEFAULT_CONFIG_VERSION,
+            },
         })
         await expectRevert({
             txPromise: deployStableCoin(deployCommand),
             contract: stableCoinFactoryFacet,
             customError: 'Bytes32Zero',
-            args: [ethers.ZeroHash]
+            args: [ethers.ZeroHash],
         })
     })
 
@@ -299,12 +299,10 @@ describe('StableCoinFactory Tests', function () {
             })
         )
 
-        const hederaReserve = HederaReserveFacet__factory.connect(
-          hederaReserveContract.proxyAddress!, operator
-        )
+        const hederaReserve = HederaReserveFacet__factory.connect(hederaReserveContract.proxyAddress!, operator)
 
         await hederaReserve.initialize(1, operator.address, {
-          gasLimit: GAS_LIMIT.hederaReserve.initialize,
+            gasLimit: GAS_LIMIT.hederaReserve.initialize,
         })
 
         const reserveAmount = 10n
@@ -327,7 +325,7 @@ describe('StableCoinFactory Tests', function () {
             allToContract: false,
             createReserve: false,
             reserveAddress: await hederaReserve.getAddress(),
-            updatedAtThreshold: "1",
+            updatedAtThreshold: '1',
             businessLogicResolverProxyAddress: businessLogicResolver,
             stableCoinFactoryProxyAddress: stableCoinFactoryProxy,
         })
@@ -335,7 +333,7 @@ describe('StableCoinFactory Tests', function () {
         await expectRevert({
             txPromise: deployStableCoin(command),
             contract: stableCoinFactoryFacet,
-            customError: 'ReserveAmountOutdated'
+            customError: 'ReserveAmountOutdated',
         })
     })
 
@@ -384,12 +382,10 @@ describe('StableCoinFactory Tests', function () {
             })
         )
 
-        const hederaReserve = HederaReserveFacet__factory.connect(
-          hederaReserveContract.proxyAddress!, operator
-        )
+        const hederaReserve = HederaReserveFacet__factory.connect(hederaReserveContract.proxyAddress!, operator)
 
         await hederaReserve.initialize(1, operator.address, {
-          gasLimit: GAS_LIMIT.hederaReserve.initialize,
+            gasLimit: GAS_LIMIT.hederaReserve.initialize,
         })
 
         const reserveAmount = 10n

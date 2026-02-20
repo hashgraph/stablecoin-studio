@@ -347,9 +347,11 @@ describe('➡️ Role Management Tests', function () {
             txPromise: roleManagementFacet.grantRoles(
                 [ROLES.cashin.hash],
                 randomAccountList,
-                randomAccountList.map(() => 0), {
+                randomAccountList.map(() => 0),
+                {
                     gasLimit: GAS_LIMIT.hederaTokenManager.grantRoles,
-            }),
+                }
+            ),
             contract: roleManagementFacet,
             customError: 'AmountIsZero',
         })

@@ -10,20 +10,8 @@ import {
     WipeableFacet__factory,
     StableCoinTokenMock__factory,
 } from '@contracts'
-import {
-  delay,
-  DeployFullInfrastructureCommand,
-  ADDRESS_ZERO,
-  MESSAGES,
-  ONE_TOKEN,
-  ROLES
-} from '@scripts'
-import {
-  deployStableCoinInTests,
-  deployFullInfrastructureInTests,
-  expectRevert,
-  GAS_LIMIT
-} from '@test/shared'
+import { delay, DeployFullInfrastructureCommand, ADDRESS_ZERO, MESSAGES, ONE_TOKEN, ROLES } from '@scripts'
+import { deployStableCoinInTests, deployFullInfrastructureInTests, expectRevert, GAS_LIMIT } from '@test/shared'
 
 describe('➡️ Wipe Tests', function () {
     // Contracts
@@ -99,7 +87,7 @@ describe('➡️ Wipe Tests', function () {
             }),
             contract: wipeFacet,
             customError: 'AddressZero',
-            args: [ADDRESS_ZERO]
+            args: [ADDRESS_ZERO],
         })
     })
 

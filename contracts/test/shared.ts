@@ -14,7 +14,7 @@ import {
     DeployFullInfrastructureResult,
     HEDERA_PRECOMPILED_ADDRESS,
     validateTxResponse,
-    ValidateTxResponseCommand
+    ValidateTxResponseCommand,
 } from '@scripts'
 import { SignerWithAddress } from '@nomicfoundation/hardhat-ethers/signers'
 import { IHederaTokenManager } from '@contracts'
@@ -40,10 +40,9 @@ export async function deployFullInfrastructureInTests(
     command: DeployFullInfrastructureCommand,
     anyAccountBalance = 0
 ): Promise<DeployFullInfrastructureResult> {
-
     if (network.name === 'hardhat') {
-      // * Deploy precompiled mock
-      await deployPrecompiledMock(anyAccountBalance)
+        // * Deploy precompiled mock
+        await deployPrecompiledMock(anyAccountBalance)
     }
 
     return await deployFullInfrastructure(command)
@@ -130,16 +129,10 @@ type RevertAssertionParams = {
     args?: any[]
 }
 
-export async function expectRevert({
-    txPromise,
-    contract,
-    customError,
-    args = [],
-}: RevertAssertionParams) {
+export async function expectRevert({ txPromise, contract, customError, args = [] }: RevertAssertionParams) {
     if (network.name === 'hardhat') {
         // Hardhat supports custom error decoding
-        const assertion = expect(txPromise)
-            .to.be.revertedWithCustomError(contract, customError)
+        const assertion = expect(txPromise).to.be.revertedWithCustomError(contract, customError)
 
         if (args.length > 0) {
             await assertion.withArgs(...args)
@@ -154,15 +147,9 @@ export async function expectRevert({
         const txResponse = await txPromise
 
         // If we got here, it's a transaction → validate receipt
-        await expect(
-          validateTxResponse(
-            new ValidateTxResponseCommand({ txResponse })
-          )
-        ).to.be.rejectedWith(Error)
-
+        await expect(validateTxResponse(new ValidateTxResponseCommand({ txResponse }))).to.be.rejectedWith(Error)
     } catch (err) {
-      // If it threw immediately → call revert (view/pure/static)
-      expect(err).to.be.instanceOf(Error)
+        // If it threw immediately → call revert (view/pure/static)
+        expect(err).to.be.instanceOf(Error)
     }
 }
-

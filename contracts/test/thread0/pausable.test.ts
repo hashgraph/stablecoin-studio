@@ -3,11 +3,7 @@ import { SignerWithAddress } from '@nomicfoundation/hardhat-ethers/signers'
 import { ethers } from 'hardhat'
 import { IHRC__factory, PausableFacet, PausableFacet__factory, StableCoinTokenMock__factory } from '@contracts'
 import { DEFAULT_TOKEN, MESSAGES, ROLES, DeployFullInfrastructureCommand, ValidateTxResponseCommand } from '@scripts'
-import {
-  deployStableCoinInTests,
-  deployFullInfrastructureInTests,
-  expectRevert,
-  GAS_LIMIT } from '@test/shared'
+import { deployStableCoinInTests, deployFullInfrastructureInTests, expectRevert, GAS_LIMIT } from '@test/shared'
 
 describe('Pause Tests', function () {
     // Contracts

@@ -9,12 +9,7 @@ import {
     StableCoinTokenMock__factory,
 } from '@contracts'
 import { DEFAULT_TOKEN, MESSAGES, ROLES, delay, DeployFullInfrastructureCommand } from '@scripts'
-import {
-  deployStableCoinInTests,
-  deployFullInfrastructureInTests,
-  expectRevert,
-  GAS_LIMIT
-} from '@test/shared'
+import { deployStableCoinInTests, deployFullInfrastructureInTests, expectRevert, GAS_LIMIT } from '@test/shared'
 
 describe('➡️ Burn Tests', () => {
     // Contracts
