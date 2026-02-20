@@ -137,9 +137,11 @@ describe('➡️ Reserve Tests', function () {
         await hederaReserveFacet.waitForDeployment()
 
         reserveFacet = reserveFacet.connect(nonOperator)
-        await expect (reserveFacet.updateReserveAddress(hederaReserveFacet, {
-            gasLimit: GAS_LIMIT.hederaTokenManager.updateReserveAddress,
-        }))
+        await expect(
+            reserveFacet.updateReserveAddress(hederaReserveFacet, {
+                gasLimit: GAS_LIMIT.hederaTokenManager.updateReserveAddress,
+            })
+        )
             .to.be.revertedWithCustomError(reserveFacet, 'AccountHasNoRole')
             .withArgs(nonOperator, ROLES.defaultAdmin.hash)
     })

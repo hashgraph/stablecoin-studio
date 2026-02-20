@@ -10,14 +10,7 @@ import {
     WipeableFacet__factory,
     StableCoinTokenMock__factory,
 } from '@contracts'
-import {
-  delay,
-  DeployFullInfrastructureCommand,
-  ADDRESS_ZERO,
-  MESSAGES,
-  ONE_TOKEN,
-  ROLES
-} from '@scripts'
+import { delay, DeployFullInfrastructureCommand, ADDRESS_ZERO, MESSAGES, ONE_TOKEN, ROLES } from '@scripts'
 import { deployStableCoinInTests, deployFullInfrastructureInTests, GAS_LIMIT } from '@test/shared'
 
 describe('➡️ Wipe Tests', function () {

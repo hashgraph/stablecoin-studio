@@ -10,7 +10,6 @@ import {_DIAMOND_CUT_MANAGER_STORAGE_POSITION} from '../../constants/storagePosi
 import {EnumerableSetBytes4} from '../../core/EnumerableSetBytes4.sol';
 
 abstract contract DiamondCutManagerWrapper is IDiamondCutManager, BusinessLogicResolverWrapper {
-
     struct DiamondCutManagerStorage {
         bytes32[] configurations;
         mapping(bytes32 configId => bool isActive) activeConfigurations;

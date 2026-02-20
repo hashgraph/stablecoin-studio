@@ -35,14 +35,7 @@ contract BurnableFacet is
      */
     function burn(
         int64 amount
-    )
-        external
-        override(IBurnable)
-        onlyRole(_BURN_ROLE)
-        greaterThanZero(amount)
-        checkBurnAmount(amount)
-        returns (bool)
-    {
+    ) external override(IBurnable) onlyRole(_BURN_ROLE) greaterThanZero(amount) checkBurnAmount(amount) returns (bool) {
         address currentTokenAddress = _getTokenAddress();
 
         (int64 responseCode, ) = IHederaTokenService(_PRECOMPILED_ADDRESS).burnToken(

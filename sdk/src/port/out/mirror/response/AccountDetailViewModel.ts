@@ -49,7 +49,7 @@ export default interface AccountDetailViewModel extends QueryResponse {
 	staked_account_id?: string | null;
 	staked_node_id?: string | null;
 	stake_period_start?: string | null;
-	transactions?: Array<any>;
+	transactions?: Array<Record<string, unknown>>;
 	links?: {
 		next?: string;
 	};

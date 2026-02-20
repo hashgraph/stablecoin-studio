@@ -19,7 +19,7 @@
  */
 
 import PublicKey from './PublicKey.js';
-import { proto } from '@hashgraph/proto';
+import { proto } from '@hiero-ledger/proto';
 import { UnsupportedKeyType } from './error/UnsupportedKeyType.js';
 import { KeyType } from './KeyProps.js';
 import Hex from '../../../core/Hex.js';

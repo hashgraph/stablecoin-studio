@@ -18,7 +18,6 @@
  *
  */
 
-import { HederaTransactionAdapter } from '../../HederaTransactionAdapter';
 import {
 	Client,
 	Transaction,
@@ -28,30 +27,31 @@ import {
 	CustodialWalletService,
 	SignatureRequest,
 } from '@hashgraph/hedera-custodians-integration';
-import TransactionResponse from '../../../../../domain/context/transaction/TransactionResponse.js';
-import DfnsSettings from '../../../../../domain/context/custodialwalletsettings/DfnsSettings';
-import FireblocksSettings from '../../../../../domain/context/custodialwalletsettings/FireblocksSettings';
-import Account from '../../../../../domain/context/account/Account';
-import { InitializationData } from '../../../TransactionAdapter';
-import { lazyInject } from '../../../../../core/decorator/LazyInjectDecorator';
-import EventService from '../../../../../app/service/event/EventService';
-import { MirrorNodeAdapter } from '../../../mirror/MirrorNodeAdapter';
-import NetworkService from '../../../../../app/service/NetworkService';
-import { Environment } from '../../../../../domain/context/network/Environment';
-import LogService from '../../../../../app/service/LogService';
-import { HTSTransactionResponseAdapter } from '../HTSTransactionResponseAdapter';
-import { SigningError } from '../../error/SigningError';
-import { SupportedWallets } from '../../../../../domain/context/network/Wallet';
+import TransactionResponse from '../../../../domain/context/transaction/TransactionResponse.js';
+import DfnsSettings from '../../../../domain/context/custodialwalletsettings/DfnsSettings';
+import FireblocksSettings from '../../../../domain/context/custodialwalletsettings/FireblocksSettings';
+import Account from '../../../../domain/context/account/Account';
+import { InitializationData } from '../../TransactionAdapter';
+import { lazyInject } from '../../../../core/decorator/LazyInjectDecorator';
+import EventService from '../../../../app/service/event/EventService';
+import { MirrorNodeAdapter } from '../../mirror/MirrorNodeAdapter';
+import NetworkService from '../../../../app/service/NetworkService';
+import { Environment } from '../../../../domain/context/network/Environment';
+import LogService from '../../../../app/service/LogService';
+import { HTSTransactionResponseAdapter } from '../../response/HTSTransactionResponseAdapter';
+import { SigningError } from '../../hs/error/SigningError';
+import { SupportedWallets } from '../../../../domain/context/network/Wallet';
 import {
 	WalletEvents,
 	WalletPairedEvent,
-} from '../../../../../app/service/event/WalletEvent';
-import Injectable from '../../../../../core/Injectable';
-import { TransactionType } from '../../../TransactionResponseEnums';
-import Hex from '../../../../../core/Hex.js';
-import AWSKMSSettings from '../../../../../domain/context/custodialwalletsettings/AWSKMSSettings';
+} from '../../../../app/service/event/WalletEvent';
+import Injectable from '../../../../core/Injectable';
+import { TransactionType } from '../../TransactionResponseEnums';
+import Hex from '../../../../core/Hex.js';
+import AWSKMSSettings from '../../../../domain/context/custodialwalletsettings/AWSKMSSettings';
+import { BaseHederaTransactionAdapter } from '../BaseHederaTransactionAdapter.js';
 
-export abstract class CustodialTransactionAdapter extends HederaTransactionAdapter {
+export abstract class CustodialTransactionAdapter extends BaseHederaTransactionAdapter {
 	protected client: Client;
 	protected custodialWalletService: CustodialWalletService;
 	public account: Account;
@@ -64,7 +64,7 @@ export abstract class CustodialTransactionAdapter extends HederaTransactionAdapt
 		@lazyInject(NetworkService)
 		public readonly networkService: NetworkService,
 	) {
-		super(mirrorNodeAdapter, networkService);
+		super();
 	}
 
 	protected initClient(accountId: string, publicKey: string): void {
@@ -92,41 +92,6 @@ export abstract class CustodialTransactionAdapter extends HederaTransactionAdapt
 		return await this.custodialWalletService.signTransaction(
 			signatureRequest,
 		);
-	};
-
-	public signAndSendTransaction = async (
-		transaction: Transaction,
-		transactionType: TransactionType,
-		nameFunction?: string,
-		abi?: object[],
-	): Promise<TransactionResponse> => {
-		try {
-			LogService.logTrace(
-				'Custodial wallet signing and sending transaction:',
-				nameFunction,
-			);
-
-			const txResponse: HTransactionResponse = await transaction.execute(
-				this.client,
-			);
-
-			this.logTransaction(
-				txResponse.transactionId.toString(),
-				this.networkService.environment,
-			);
-
-			return HTSTransactionResponseAdapter.manageResponse(
-				this.networkService.environment,
-				txResponse,
-				transactionType,
-				this.client,
-				nameFunction,
-				abi,
-			);
-		} catch (error) {
-			LogService.logError(error);
-			throw new SigningError(error);
-		}
 	};
 
 	protected createWalletPairedEvent(
@@ -185,6 +150,11 @@ export abstract class CustodialTransactionAdapter extends HederaTransactionAdapt
 		return this.account;
 	}
 
+	public supportsEvmOperations(): boolean {
+		// Custodial adapter only supports native HTS operations
+		return false;
+	}
+
 	async sign(message: string): Promise<string> {
 		if (!this.custodialWalletService)
 			throw new SigningError('Custodial Wallet is empty');
@@ -204,5 +174,53 @@ export abstract class CustodialTransactionAdapter extends HederaTransactionAdapt
 			LogService.logError(error);
 			throw new SigningError(error);
 		}
+	}
+
+	// ===== Abstract Method Implementations =====
+
+	/**
+	 * Execute a Hedera SDK transaction via custodial wallet.
+	 * This is called by the base class for native HTS operations.
+	 */
+	public async processTransaction(
+		tx: Transaction,
+		transactionType: TransactionType,
+		// eslint-disable-next-line @typescript-eslint/no-unused-vars
+		_startDate?: string,
+	): Promise<TransactionResponse> {
+		try {
+			const txResponse: HTransactionResponse = await tx.execute(
+				this.client,
+			);
+
+			this.logTransaction(
+				txResponse.transactionId.toString(),
+				this.networkService.environment,
+			);
+
+			return HTSTransactionResponseAdapter.manageResponse(
+				this.networkService.environment,
+				txResponse,
+				transactionType,
+				this.client,
+			);
+		} catch (error) {
+			LogService.logError(error);
+			throw new SigningError(error);
+		}
+	}
+
+	/**
+	 * Get the network service.
+	 */
+	public getNetworkService(): NetworkService {
+		return this.networkService;
+	}
+
+	/**
+	 * Get the mirror node adapter.
+	 */
+	public getMirrorNodeAdapter(): MirrorNodeAdapter {
+		return this.mirrorNodeAdapter;
 	}
 }
