@@ -180,8 +180,8 @@ export const GAS_LIMIT = {
         upgrade: 200_000n,
     },
     diamondCutManager: {
-        createConfiguration: 140_000n,
-        createBatchConfiguration: 140_000n,
+        createConfiguration: 8_000_000n,
+        createBatchConfiguration: 8_000_000n,
         cancelBatchConfiguration: 140_000n,
         checkResolverProxyConfigurationRegistered: 150_000n
     },
