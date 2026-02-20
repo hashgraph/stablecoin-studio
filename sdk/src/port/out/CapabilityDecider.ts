@@ -19,24 +19,27 @@
  */
 
 import {
-	Operation,
 	Access,
+	Operation,
 } from '../../domain/context/stablecoin/Capability.js';
 import StableCoinCapabilities from '../../domain/context/stablecoin/StableCoinCapabilities.js';
 
 export class CapabilityDecider {
-	static decide(
+	static getAccessDecision(
 		capabilities: StableCoinCapabilities,
 		operation: Operation,
 	): Decision {
-		const extractedOperation = capabilities.capabilities.find(
-			(op) => op.operation == operation,
+		const capability = capabilities.capabilities.find(
+			(cap) => cap.operation === operation,
 		);
 
-		if (!extractedOperation) return Decision.FORBIDDEN;
-		if (extractedOperation.access == Access.CONTRACT)
-			return Decision.CONTRACT;
-		else return Decision.HTS;
+		if (!capability) {
+			return Decision.FORBIDDEN;
+		}
+
+		return capability.access === Access.CONTRACT
+			? Decision.CONTRACT
+			: Decision.HTS;
 	}
 }
 

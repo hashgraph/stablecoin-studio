@@ -37,8 +37,8 @@ const main = async () => {
 			mirrorNode: mirrorNodeConfig,
 			rpcNode: RPCNodeConfig,
 			configuration: {
-				factoryAddress: '0.0.6431833',
-				resolverAddress: '0.0.6431794',
+				factoryAddress: process.env.FACTORY_ADDRESS!,
+				resolverAddress: process.env.RESOLVER_ADDRESS!,
 			},
 		}),
 	);
@@ -90,6 +90,7 @@ const main = async () => {
 		},
 		supplyType: TokenSupplyType.INFINITE,
 		createReserve: false,
+		updatedAtThreshold: '0',
 		grantKYCToOriginalSender: true,
 		burnRoleAccount: account.accountId.toString(),
 		wipeRoleAccount: account.accountId.toString(),

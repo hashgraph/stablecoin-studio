@@ -192,7 +192,6 @@ describe('➡️ Hold Management Tests', () => {
                 tokenHolder: account_Operator,
                 holdId: 999,
             }
-            // ProviderError: [Request ID: f9a1aaea-b1f7-45a8-841c-291b6720ad49] execution reverted: CONTRACT_REVERT_EXECUTED
             await expectRevert({
                 txPromise: holdManagementFacet.getHoldFor(holdIdentifier_nonExistent, {
                     gasLimit: GAS_LIMIT.hold.getHoldFor,
@@ -201,7 +200,6 @@ describe('➡️ Hold Management Tests', () => {
                 customError: 'HoldNotFound',
                 args: [holdIdentifier_nonExistent.tokenHolder, holdIdentifier_nonExistent.holdId],
             })
-            // -----------------
         })
         it('GIVEN an account with HOLD_CREATOR_ROLE role WHEN getHoldFor from page index 0 and page length 0 THEN it returns an empty array', async () => {
             expect(await holdManagementFacet.getHoldsIdFor(account_Operator, 0, 0)).to.deep.equal([])

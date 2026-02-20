@@ -509,7 +509,7 @@ describe('➡️ HederaTokenManager Tests', function () {
     })
 
     it('Admin can update token with ECDSA keys', async function () {
-        const operatorPublicKey = await getAccountPublicKey(nonOperator)
+        const operatorPublicKey = await getAccountPublicKey(operator)
         const keys = tokenKeysToKey(
             new TokenKeysToKeyCommand({ publicKey: operatorPublicKey, isEd25519: false, addKyc: false })
         )
