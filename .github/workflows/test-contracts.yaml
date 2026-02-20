@@ -62,8 +62,8 @@ jobs:
         run: |
           npm run build:contracts          
 
-      - name: Cache Hardhat artifacts
-        uses: actions/cache@v4
+      - name: Save Hardhat artifacts
+        uses: actions/cache/save@v4
         with:
           path: |
             contracts/artifacts
