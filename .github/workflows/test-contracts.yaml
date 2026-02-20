@@ -130,7 +130,7 @@ jobs:
     name: Test Stablecoin Studio Contracts
     needs: [build]
     runs-on: token-studio-linux-medium
-    timeout-minutes: 15
+    timeout-minutes: 60
 
     steps:
       - name: Harden Runner
@@ -187,6 +187,50 @@ jobs:
           installRelay: true
           installMirrorNode: true
           hbarAmount: 10000000
+
+      - name: Create ECDSA account 0
+        if: steps.solo.outcome == 'success'
+        env:
+          DEPLOYMENT: ${{ steps.solo.outputs.deployment }}
+          KEY: ${{ env.LOCAL_PRIVATE_KEY_0 }}
+        run: |
+          DER_KEY=${KEY#0x}
+      
+          solo ledger account create \
+            --ecdsa-private-key "$DER_KEY" \
+            --set-alias \
+            --hbar-amount 10000000 \
+            --deployment "$DEPLOYMENT" \
+            --dev
+
+      - name: Create ECDSA account 1
+        if: steps.solo.outcome == 'success'
+        env:
+          DEPLOYMENT: ${{ steps.solo.outputs.deployment }}
+          KEY: ${{ env.LOCAL_PRIVATE_KEY_1 }}
+        run: |
+          DER_KEY=${KEY#0x}
+          
+          solo ledger account create \
+            --ecdsa-private-key "$DER_KEY" \
+            --set-alias \
+            --hbar-amount 10000000 \
+            --deployment "$DEPLOYMENT" \
+            --dev
+
+      - name: Create ED25519 account
+        if: steps.solo.outcome == 'success'
+        env:
+          DEPLOYMENT: ${{ steps.solo.outputs.deployment }}
+          KEY: ${{ env.LOCAL_PRIVATE_KEY_2 }}
+        run: |
+          DER_KEY=${KEY#0x}
+          
+          solo ledger account create \
+            --ed25519-private-key "$DER_KEY" \
+            --hbar-amount 10000000 \
+            --deployment "$DEPLOYMENT" \
+            --dev
 
       - name: Run tests
         if: steps.docker-check.outputs.available == 'true' && steps.solo.outcome == 'success'
