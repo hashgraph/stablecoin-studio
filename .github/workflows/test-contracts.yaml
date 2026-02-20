@@ -12,9 +12,7 @@ on:
 env:
   LOCAL_PRIVATE_KEY_0: "0x105d050185ccb907fba04dd92d8de9e32c18305e097ab41dadda21489a211524"
   LOCAL_PRIVATE_KEY_1: "0x2e1d968b041d84dd120a5860cee60cd83f9374ef527ca86996317ada3d0d03e7"
-  LOCAL_PRIVATE_KEY_2: "0x45a5a7108a18dd5013cf2d5857a28144beadc9c70b3bdbd914e38df4e804b8d8"
-  LOCAL_PRIVATE_KEY_3: "0x6e9d61a325be3f6675cf8b7676c70e4a004d2308e3e182370a41f5653d52c6bd"
-  LOCAL_PRIVATE_KEY_4: "0x0b58b1bd44469ac9f813b5aeaf6213ddaea26720f0b2f133d08b6f234130a64f"
+  LOCAL_PRIVATE_KEY_2: "0x44162cd9b9a2f5582bd13b43cfd8be3bc20b8a81ee77f6bf77391598bcfbae4c"
   LOCAL_JSON_RPC_ENDPOINT: "http://localhost:7546"
   LOCAL_MIRROR_NODE_ENDPOINT: "http://localhost:5551"
 
@@ -74,88 +72,30 @@ jobs:
           key: ${{ runner.os }}-contracts-build-${{ github.sha }}
 
   # ==========================================================================
-  # Job 1: Execute smart contracts tests (depends on build job)
+  # Job 1: Execute smart contracts coverage (depends on test job)
   # ==========================================================================
   # Runs the smart contracts coverage.
   # ==========================================================================
-  tests:
-    name: Test Stablecoin Studio Contracts
+  coverage:
+    name: Coverage of Stablecoin Studio Contracts
     needs: [build]
     runs-on: token-studio-linux-medium
     timeout-minutes: 15
 
     steps:
       - name: Harden Runner
-        uses: step-security/harden-runner@v2
+        uses: step-security/harden-runner@5ef0c079ce82195b2a36a210272d6b661572d83e # v2.14.2
         with:
           egress-policy: audit
 
       - name: Checkout code
-        uses: actions/checkout@v4
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
 
       - name: Setup Node.js
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4.4.0
         with:
           node-version: "22"
-
-      - name: Restore dependencies from cache
-        uses: actions/cache/restore@v4
-        with:
-          path: |
-            node_modules
-            */node_modules
-            ~/.npm
-          key: ${{ runner.os }}-deps-${{ hashFiles('package-lock.json') }}
-          fail-on-cache-miss: true
-
-      - name: Restore build artifacts from cache
-        uses: actions/cache/restore@v4
-        with:
-          path: |
-            contracts/artifacts
-            contracts/typechain-types
-            contracts/cache
-          key: ${{ runner.os }}-contracts-build-${{ github.sha }}
-          fail-on-cache-miss: true
-
-      - name: Install and run Hedera Local Network
-        run: |
-          npm install @hashgraph/hedera-local -g
-          hedera start --detached
-
-      - name: Run tests coverage
-        run: |
-          npm run test --workspace=contracts -- --network local
-
-      - name: Stop Hedera Local Network
-        if: always()
-        run: hedera stop
-
-
-  # ==========================================================================
-  # Job 2: Execute smart contracts coverage (depends on test job)
-  # ==========================================================================
-  # Runs the smart contracts coverage.
-  # ==========================================================================
-  coverage:
-    name: Coverage of Stablecoin Studio Contracts
-    needs: [tests]
-    runs-on: token-studio-linux-medium
-    timeout-minutes: 15
-
-    steps:
-      - name: Harden Runner
-        uses: step-security/harden-runner@v2
-        with:
-          egress-policy: audit
-
-      - name: Checkout code
-        uses: actions/checkout@v4
-
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: "22"
+          cache: npm
 
       - name: Restore dependencies from cache
         uses: actions/cache/restore@v4
@@ -180,3 +120,81 @@ jobs:
       - name: Run coverage
         run: |
           npm run coverage:contracts
+
+  # ==========================================================================
+  # Job 2: Execute smart contracts tests (depends on build job)
+  # ==========================================================================
+  # Runs the smart contracts coverage.
+  # ==========================================================================
+  tests:
+    name: Test Stablecoin Studio Contracts
+    needs: [build]
+    runs-on: token-studio-linux-medium
+    timeout-minutes: 15
+
+    steps:
+      - name: Harden Runner
+        uses: step-security/harden-runner@5ef0c079ce82195b2a36a210272d6b661572d83e # v2.14.2
+        with:
+          egress-policy: audit
+
+      - name: Checkout code
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+
+      - name: Setup Node.js
+        uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4.4.0
+        with:
+          node-version: "22"
+          cache: npm
+
+      - name: Check Docker availability
+        id: docker-check
+        run: |
+          if docker info > /dev/null 2>&1; then
+            echo "available=true" >> "${GITHUB_OUTPUT}"
+            echo "Docker is available"
+            docker --version
+          else
+            echo "available=false" >> "${GITHUB_OUTPUT}"
+            echo "::warning::Docker not available - skipping Solo deployment test"
+          fi
+
+      - name: Restore dependencies from cache
+        uses: actions/cache/restore@v4
+        with:
+          path: |
+            node_modules
+            */node_modules
+            ~/.npm
+          key: ${{ runner.os }}-deps-${{ hashFiles('package-lock.json') }}
+          fail-on-cache-miss: true
+
+      - name: Restore build artifacts from cache
+        uses: actions/cache/restore@v4
+        with:
+          path: |
+            contracts/artifacts
+            contracts/typechain-types
+            contracts/cache
+          key: ${{ runner.os }}-contracts-build-${{ github.sha }}
+          fail-on-cache-miss: true
+
+      - name: Setup Hiero Solo Network
+        id: solo
+        if: steps.docker-check.outputs.available == 'true'
+        uses: hiero-ledger/hiero-solo-action@fbca3e7a99ce9aa8a250563a81187abe115e0dad # v0.16.0
+        with:
+          installRelay: true
+          installMirrorNode: true
+          hbarAmount: 10000000
+
+      - name: Run tests
+        if: steps.docker-check.outputs.available == 'true' && steps.solo.outcome == 'success'
+        run: |
+          npm run test --workspace=contracts -- --network local
+
+      - name: Stop Hiero Solo Network
+        if: always() && steps.docker-check.outputs.available == 'true'
+        run: |
+          docker stop $(docker ps -q --filter "name=hiero") || true
+          docker rm $(docker ps -aq --filter "name=hiero") || true
