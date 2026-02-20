@@ -470,7 +470,7 @@ describe('➡️ HederaTokenManager Tests', function () {
         })
     })
 
-    it.only('Admin can update token with ed25519 keys', async function () {
+    it('Admin can update token with ed25519 keys', async function () {
         const operatorPublicKey =
             network.name === 'hardhat'
                 ? await getAccountPublicKey(operator)
