@@ -24,10 +24,10 @@ import {
 	Client,
 } from '@hiero-ledger/sdk';
 import { singleton } from 'tsyringe';
-import { HederaTransactionAdapter } from '../HederaTransactionAdapter.js';
+import { BaseHederaTransactionAdapter } from '../../hs/BaseHederaTransactionAdapter';
 import TransactionResponse from '../../../../domain/context/transaction/TransactionResponse.js';
 import { TransactionType } from '../../TransactionResponseEnums.js';
-import { HTSTransactionResponseAdapter } from './HTSTransactionResponseAdapter.js';
+import { HTSTransactionResponseAdapter } from '../../response/HTSTransactionResponseAdapter.js';
 import Injectable from '../../../../core/Injectable.js';
 import { InitializationData } from '../../TransactionAdapter.js';
 import Account from '../../../../domain/context/account/Account.js';
@@ -37,17 +37,17 @@ import {
 	WalletPairedEvent,
 } from '../../../../app/service/event/WalletEvent.js';
 import { SupportedWallets } from '../../../in/request/ConnectRequest.js';
-import EventService from '../../../../app/service/event/EventService.js';
 import { lazyInject } from '../../../../core/decorator/LazyInjectDecorator.js';
 import { MirrorNodeAdapter } from '../../mirror/MirrorNodeAdapter.js';
 import NetworkService from '../../../../app/service/NetworkService.js';
 import LogService from '../../../../app/service/LogService.js';
 import { WalletConnectError } from '../../../../domain/context/network/error/WalletConnectError.js';
-import { SigningError } from '../error/SigningError.js';
+import { SigningError } from '../../hs/error/SigningError.js';
 import Hex from '../../../../core/Hex.js';
+import EventService from '../../../../app/service/event/EventService';
 
 @singleton()
-export class HTSTransactionAdapter extends HederaTransactionAdapter {
+export class ClientTransactionAdapter extends BaseHederaTransactionAdapter {
 	private _client: Client;
 	public network: Environment;
 	public account: Account;
@@ -63,7 +63,7 @@ export class HTSTransactionAdapter extends HederaTransactionAdapter {
 		@lazyInject(NetworkService)
 		public readonly networkService: NetworkService,
 	) {
-		super(mirrorNodeAdapter, networkService);
+		super();
 	}
 
 	init(): Promise<string> {
@@ -123,13 +123,14 @@ export class HTSTransactionAdapter extends HederaTransactionAdapter {
 		return Promise.resolve(true);
 	}
 
-	public async signAndSendTransaction(
-		t: Transaction,
+	public async processTransaction(
+		tx: Transaction,
 		transactionType: TransactionType,
-		functionName: string,
-		abi: object[],
+		// eslint-disable-next-line @typescript-eslint/no-unused-vars
+		_startDate?: string,
 	): Promise<TransactionResponse> {
-		const tr: HTransactionResponse = await t.execute(this.client);
+		console.log('Executing transaction:', tx);
+		const tr: HTransactionResponse = await tx.execute(this.client);
 		this.logTransaction(
 			tr.transactionId.toString(),
 			this.networkService.environment,
@@ -139,9 +140,21 @@ export class HTSTransactionAdapter extends HederaTransactionAdapter {
 			tr,
 			transactionType,
 			this.client,
-			functionName,
-			abi,
+			undefined,
+			[],
 		);
+	}
+
+	public supportsEvmOperations(): boolean {
+		return false;
+	}
+
+	public getNetworkService(): NetworkService {
+		return this.networkService;
+	}
+
+	public getMirrorNodeAdapter(): MirrorNodeAdapter {
+		return this.mirrorNodeAdapter;
 	}
 
 	getAccount(): Account {

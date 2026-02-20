@@ -64,7 +64,7 @@ const rpcNode: JsonRpcRelay = {
 	baseUrl: RPC_NODE.baseUrl,
 };
 
-describe('🧪 [ADAPTER] HTSTransactionAdapter with ECDSA accounts', () => {
+describe('🧪 [ADAPTER] ClientTransactionAdapter with ECDSA accounts', () => {
 	// token to operate through HTS
 	const stableCoinCapabilitiesHTS = {
 		coin: {

@@ -352,17 +352,17 @@ describe('➡️ DiamondCutManager Tests', () => {
     })
 
     it('GIVEN a batch deploying WHEN cancelling a batch configuration with an invalid configId THEN fails with DefaultValueForConfigurationIdNotPermitted', async () => {
-        await expect (
-          diamondCutManager.cancelBatchConfiguration(ethers.ZeroHash)
-        ).to.be.revertedWithCustomError(diamondCutManager, 'DefaultValueForConfigurationIdNotPermitted')
+        await expect(diamondCutManager.cancelBatchConfiguration(ethers.ZeroHash)).to.be.revertedWithCustomError(
+            diamondCutManager,
+            'DefaultValueForConfigurationIdNotPermitted'
+        )
     })
 
     it('GIVEN a resolver and a non admin user WHEN cancelling a batch configuration THEN fails with AccountHasNoRole', async () => {
         diamondCutManager = diamondCutManager.connect(nonOperator)
-        await expect (
-          diamondCutManager.cancelBatchConfiguration("0x" + "1".repeat(64))
-        ).to.be.revertedWithCustomError(diamondCutManager, 'AccountHasNoRole')
-          .withArgs(nonOperator, ROLES.defaultAdmin.hash)
+        await expect(diamondCutManager.cancelBatchConfiguration('0x' + '1'.repeat(64)))
+            .to.be.revertedWithCustomError(diamondCutManager, 'AccountHasNoRole')
+            .withArgs(nonOperator, ROLES.defaultAdmin.hash)
     })
 
     it('GIVEN a batch deploying WHEN run cancelBatchConfiguration THEN all the related information is removed', async () => {

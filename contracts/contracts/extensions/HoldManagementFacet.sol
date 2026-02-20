@@ -360,7 +360,7 @@ contract HoldManagementFacet is
             operatorData: operatorData
         });
         bool added = holdDataStorage.holdIdsByAccount[tokenHolder].add(holdId);
-        assert (added == true);
+        assert(added == true);
 
         holdDataStorage.totalHeldAmount += hold.amount;
         holdDataStorage.totalHeldAmountByAccount[tokenHolder] += hold.amount;
@@ -382,7 +382,7 @@ contract HoldManagementFacet is
 
         if (hold.amount == 0) {
             bool removed = holdDataStorage.holdIdsByAccount[tokenHolder].remove(holdId);
-            assert (removed == true);
+            assert(removed == true);
             delete holdDataStorage.holdsByAccountAndId[tokenHolder][holdId];
         }
     }

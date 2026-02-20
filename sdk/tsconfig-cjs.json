@@ -1,6 +1,7 @@
 {
 	"extends": "./tsconfig.json",
 	"compilerOptions": {
+		"target": "ES2021" /* Avoid static class blocks for CJS compatibility */,
 		"module": "CommonJS" /* Specify what module code is generated. */,
 		"outDir": "./build/cjs" /* Specify an output folder for all emitted files. */
 	},
