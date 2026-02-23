@@ -18,7 +18,7 @@
  *
  */
 
-import { BurnRequest, StableCoin } from '@hashgraph/stablecoin-npm-sdk';
+import { BurnRequest, StableCoin, TransactionResult } from '@hashgraph/stablecoin-npm-sdk';
 import BurnStableCoinService from '../../../../src/app/service/stablecoin/BurnStableCoinService';
 import { utilsService } from '../../../../src/index.js';
 import Language from '../../../../src/domain/language/Language.js';
@@ -51,10 +51,10 @@ describe(`Testing BurnStableCoinService class`, () => {
   it('Should instance burnStableCoin', async () => {
     BurnMock = jest
       .spyOn(StableCoin, 'burn')
-      .mockImplementation(async (request: BurnRequest): Promise<boolean> => {
+      .mockImplementation(async (request: BurnRequest): Promise<TransactionResult> => {
         expect(request.amount).toEqual(amount);
         expect(request.tokenId).toEqual(token);
-        return true;
+        return { success: true } as TransactionResult;
       });
 
     await service.burnStableCoin(request);
