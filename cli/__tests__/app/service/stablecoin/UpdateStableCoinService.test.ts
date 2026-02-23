@@ -18,7 +18,7 @@
  *
  */
 
-import { StableCoin, UpdateRequest } from '@hashgraph/stablecoin-npm-sdk';
+import { StableCoin, TransactionResult, UpdateRequest } from '@hashgraph/stablecoin-npm-sdk';
 import UpdateStableCoinService from '../../../../src/app/service/stablecoin/UpdateStableCoinService';
 import { utilsService } from '../../../../src/index.js';
 import Language from '../../../../src/domain/language/Language.js';
@@ -77,7 +77,7 @@ describe(`Testing UpdateStableCoinService class`, () => {
   it('Should instance update', async () => {
     const updateMock = jest
       .spyOn(StableCoin, 'update')
-      .mockImplementation(async (request: UpdateRequest): Promise<boolean> => {
+      .mockImplementation(async (request: UpdateRequest): Promise<TransactionResult> => {
         expect(request.tokenId).toEqual(token);
         expect(request.name).toEqual(name);
         expect(request.symbol).toEqual(symbol);
@@ -94,7 +94,7 @@ describe(`Testing UpdateStableCoinService class`, () => {
         expect(request.pauseKey.type).toEqual(pauseKey.type);
         expect(request.feeScheduleKey.key).toEqual(feeScheduleKey.key);
         expect(request.feeScheduleKey.type).toEqual(feeScheduleKey.type);
-        return false;
+        return { success: true } as TransactionResult;
       });
 
     await service.update(request);

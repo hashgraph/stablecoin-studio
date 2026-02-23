@@ -21,6 +21,7 @@
 import {
   AssociateTokenRequest,
   StableCoin,
+  TransactionResult,
 } from '@hashgraph/stablecoin-npm-sdk';
 import AssociateStableCoinService from '../../../../src/app/service/stablecoin/AssociateStableCoinService';
 import { utilsService } from '../../../../src/index.js';
@@ -48,10 +49,10 @@ describe(`Testing AssociateStableCoinService class`, () => {
     const AssociateMock = jest
       .spyOn(StableCoin, 'associate')
       .mockImplementation(
-        async (request: AssociateTokenRequest): Promise<boolean> => {
+        async (request: AssociateTokenRequest): Promise<TransactionResult> => {
           expect(request.targetId).toEqual(account);
           expect(request.tokenId).toEqual(token);
-          return true;
+          return { success: true } as TransactionResult;
         },
       );
     await service.associateStableCoin(account, token);
