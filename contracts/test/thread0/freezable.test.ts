@@ -9,7 +9,7 @@ import {
     StableCoinTokenMock__factory,
 } from '@contracts'
 import { DeployFullInfrastructureCommand, MESSAGES, ROLES, ONE_TOKEN, ADDRESS_ZERO } from '@scripts'
-import { deployStableCoinInTests, deployFullInfrastructureInTests, GAS_LIMIT } from '@test/shared'
+import { deployStableCoinInTests, deployFullInfrastructureInTests, expectRevert, GAS_LIMIT } from '@test/shared'
 
 describe('➡️ Freeze Tests', function () {
     const ACCOUNT_FROZEN_FOR_TOKEN = 165
@@ -55,35 +55,38 @@ describe('➡️ Freeze Tests', function () {
 
     it("Account without FREEZE role can't freeze transfers of the token for the account", async function () {
         freezableFacet = freezableFacet.connect(nonOperator)
-        await expect(
-            freezableFacet.freeze(operator.address, {
+        await expectRevert({
+            txPromise: freezableFacet.freeze(operator.address, {
                 gasLimit: GAS_LIMIT.hederaTokenManager.freeze,
-            })
-        )
-            .to.be.revertedWithCustomError(freezableFacet, 'AccountHasNoRole')
-            .withArgs(nonOperator, ROLES.freeze.hash)
+            }),
+            contract: freezableFacet,
+            customError: 'AccountHasNoRole',
+            args: [nonOperator, ROLES.freeze.hash],
+        })
     })
 
     it("Account with FREEZE role can't freeze address zero account", async function () {
         freezableFacet = freezableFacet.connect(operator)
-        await expect(
-            freezableFacet.freeze(ADDRESS_ZERO, {
+        await expectRevert({
+            txPromise: freezableFacet.freeze(ADDRESS_ZERO, {
                 gasLimit: GAS_LIMIT.hederaTokenManager.freeze,
-            })
-        )
-            .to.be.revertedWithCustomError(freezableFacet, 'AddressZero')
-            .withArgs(ADDRESS_ZERO)
+            }),
+            contract: freezableFacet,
+            customError: 'AddressZero',
+            args: [ADDRESS_ZERO],
+        })
     })
 
     it("Account with FREEZE role can't unfreeze address zero account", async function () {
         freezableFacet = freezableFacet.connect(operator)
-        await expect(
-            freezableFacet.unfreeze(ADDRESS_ZERO, {
+        await expectRevert({
+            txPromise: freezableFacet.unfreeze(ADDRESS_ZERO, {
                 gasLimit: GAS_LIMIT.hederaTokenManager.unfreeze,
-            })
-        )
-            .to.be.revertedWithCustomError(freezableFacet, 'AddressZero')
-            .withArgs(ADDRESS_ZERO)
+            }),
+            contract: freezableFacet,
+            customError: 'AddressZero',
+            args: [ADDRESS_ZERO],
+        })
     })
 
     it("Account with FREEZE role can freeze and unfreeze transfers of the token for the account + Account without FREEZE role can't unfreeze transfers of the token for the account", async function () {
@@ -106,23 +109,25 @@ describe('➡️ Freeze Tests', function () {
             .withArgs(tokenAddress, operator.address)
 
         // Should NOT be able to mint more tokens
-        await expect(
-            cashInFacet.mint(operator.address, ONE_TOKEN, {
+        await expectRevert({
+            txPromise: cashInFacet.mint(operator.address, ONE_TOKEN, {
                 gasLimit: GAS_LIMIT.hederaTokenManager.mint,
-            })
-        )
-            .to.be.revertedWithCustomError(cashInFacet, 'ResponseCodeInvalid')
-            .withArgs(ACCOUNT_FROZEN_FOR_TOKEN)
+            }),
+            contract: cashInFacet,
+            customError: 'ResponseCodeInvalid',
+            args: [ACCOUNT_FROZEN_FOR_TOKEN],
+        })
 
         // Should NOT be able to unfreeze from non-operator account
         freezableFacet = freezableFacet.connect(nonOperator)
-        await expect(
-            freezableFacet.unfreeze(operator.address, {
+        await expectRevert({
+            txPromise: freezableFacet.unfreeze(operator.address, {
                 gasLimit: GAS_LIMIT.hederaTokenManager.unfreeze,
-            })
-        )
-            .to.be.revertedWithCustomError(freezableFacet, 'AccountHasNoRole')
-            .withArgs(nonOperator, ROLES.freeze.hash)
+            }),
+            contract: freezableFacet,
+            customError: 'AccountHasNoRole',
+            args: [nonOperator, ROLES.freeze.hash],
+        })
 
         // Should be able to unfreeze transfers from operator account
         freezableFacet = freezableFacet.connect(operator)

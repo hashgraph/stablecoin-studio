@@ -7,7 +7,6 @@ import {IERC20Metadata} from '@openzeppelin/contracts/token/ERC20/extensions/IER
 import {IERC20} from '@openzeppelin/contracts/token/ERC20/IERC20.sol';
 // solhint-disable-next-line max-line-length
 import {IHederaTokenService} from '@hashgraph/smart-contracts/contracts/system-contracts/hedera-token-service/IHederaTokenService.sol';
-import {SafeCast} from '@openzeppelin/contracts/utils/math/SafeCast.sol';
 import {_TOKEN_OWNER_STORAGE_POSITION} from '../constants/storagePositions.sol';
 
 abstract contract TokenOwnerStorageWrapper is Common {

@@ -73,7 +73,7 @@ const hardhatConfig: HardhatUserConfig = {
         target: 'ethers-v6',
     },
     mocha: {
-        timeout: 400000,
+        timeout: 800000,
     },
 }
 

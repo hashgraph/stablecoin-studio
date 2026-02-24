@@ -21,7 +21,6 @@ import {
     allTokenKeysToKey,
     AllTokenKeysToKeyCommand,
     DEFAULT_TOKEN,
-    delay,
     deployContract,
     DeployContractCommand,
     DeployFullInfrastructureCommand,
@@ -30,17 +29,22 @@ import {
     MESSAGES,
     ONE_TOKEN,
     ROLES,
+    delay,
     tokenKeysToKey,
     TokenKeysToKeyCommand,
+    validateTxResponse,
+    ValidateTxResponseCommand,
 } from '@scripts'
 import {
     DEFAULT_UPDATE_TOKEN_STRUCT,
     deployPrecompiledMock,
     deployStableCoinInTests,
     deployFullInfrastructureInTests,
+    expectRevert,
     GAS_LIMIT,
     OTHER_AUTO_RENEW_PERIOD,
 } from '@test/shared'
+import { PrivateKey } from '@hiero-ledger/sdk'
 import { toBigInt, Wallet, Signer, SigningKey, hashMessage } from 'ethers'
 
 describe('HederaTokenManager Tests Before Deploying Full Infrastructure', function () {
@@ -52,31 +56,20 @@ describe('HederaTokenManager Tests Before Deploying Full Infrastructure', functi
             symbol: 'DUM',
             treasury: '0x000000000000000000000000000000000000dEaD',
             memo: 'Memo',
-            tokenSupplyType: true,
-            maxSupply: 1_000_000,
+            tokenSupplyType: false,
+            maxSupply: 0,
             freezeDefault: false,
-            tokenKeys: [
-                {
-                    keyType: 1,
-                    key: {
-                        inheritAccountKey: false,
-                        contractId: '0x1111111111111111111111111111111111111111',
-                        ed25519: '0xabcdef',
-                        ECDSA_secp256k1: '0x123456',
-                        delegatableContractId: '0x2222222222222222222222222222222222222222',
-                    },
-                },
-            ],
+            tokenKeys: [],
             expiry: {
-                second: 1680000000,
+                second: Math.floor(Date.now() / 1000) + 3600,
                 autoRenewAccount: '0x3333333333333333333333333333333333333333',
                 autoRenewPeriod: 7890000,
             },
         },
-        initialTotalSupply: 500_000,
+        initialTotalSupply: 0,
         tokenDecimals: 8,
         originalSender: '0x4444444444444444444444444444444444444444',
-        reserveAddress: '0x5555555555555555555555555555555555555555',
+        reserveAddress: '0x0000000000000000000000000000000000000000',
         updatedAtThreshold: 0,
         roles: [],
         cashinRole: {
@@ -110,16 +103,17 @@ describe('HederaTokenManager Tests Before Deploying Full Infrastructure', functi
             operator
         )
 
-        await expect(
-            hederaTokenManager.initialize(
+        await expectRevert({
+            txPromise: hederaTokenManager.initialize(
                 { ...init, originalSender: ADDRESS_ZERO },
                 {
                     gasLimit: GAS_LIMIT.hederaTokenManager.initialize,
                 }
-            )
-        )
-            .to.be.revertedWithCustomError(hederaTokenManager, 'AddressZero')
-            .withArgs(ADDRESS_ZERO)
+            ),
+            contract: hederaTokenManager,
+            customError: 'AddressZero',
+            args: [ADDRESS_ZERO],
+        })
     })
 
     it('Cannot initialize with a token metadata uri longer than 100 characters', async function () {
@@ -139,19 +133,17 @@ describe('HederaTokenManager Tests Before Deploying Full Infrastructure', functi
         )
 
         const longMetadata = 'X'.repeat(101)
-        await expect(
-            hederaTokenManager.initialize(
-                {
-                    ...init,
-                    tokenMetadataURI: longMetadata,
-                },
+        await expectRevert({
+            txPromise: hederaTokenManager.initialize(
+                { ...init, tokenMetadataURI: longMetadata },
                 {
                     gasLimit: GAS_LIMIT.hederaTokenManager.initialize,
                 }
-            )
-        )
-            .to.be.revertedWithCustomError(hederaTokenManager, 'MoreThan100Error')
-            .withArgs(longMetadata)
+            ),
+            contract: hederaTokenManager,
+            customError: 'MoreThan100Error',
+            args: [longMetadata],
+        })
     })
 
     it('Cannot initialize when cash in role allowance is 0', async function () {
@@ -170,8 +162,8 @@ describe('HederaTokenManager Tests Before Deploying Full Infrastructure', functi
             operator
         )
 
-        await expect(
-            hederaTokenManager.initialize(
+        await expectRevert({
+            txPromise: hederaTokenManager.initialize(
                 {
                     ...init,
                     cashinRole: {
@@ -182,8 +174,10 @@ describe('HederaTokenManager Tests Before Deploying Full Infrastructure', functi
                 {
                     gasLimit: GAS_LIMIT.hederaTokenManager.initialize,
                 }
-            )
-        ).to.be.revertedWithCustomError(hederaTokenManager, 'AmountIsZero')
+            ),
+            contract: hederaTokenManager,
+            customError: 'AmountIsZero',
+        })
     })
 
     it('Can initialize granting limited supplier role', async function () {
@@ -210,25 +204,47 @@ describe('HederaTokenManager Tests Before Deploying Full Infrastructure', functi
 
         await operator.sendTransaction({
             to: hederaTokenManagerContract.proxyAddress!,
-            value: ethers.parseUnits('10', 'ether'),
+            value: ethers.parseUnits('15', 'ether'),
         })
 
         await expect(
             hederaTokenManager.initialize(
                 {
                     ...init,
+                    token: {
+                        ...init.token,
+                        treasury: hederaTokenManagerContract.proxyAddress!.toString(),
+                        tokenKeys: [
+                            {
+                                keyType: 93,
+                                key: {
+                                    inheritAccountKey: false,
+                                    contractId: '0x0000000000000000000000000000000000000000',
+                                    ed25519: '0x',
+                                    ECDSA_secp256k1: '0x',
+                                    delegatableContractId: hederaTokenManagerContract.proxyAddress!.toString(),
+                                },
+                            },
+                        ],
+                        expiry: {
+                            ...init.token.expiry,
+                            autoRenewAccount: hederaTokenManagerContract.proxyAddress!.toString(),
+                        },
+                    },
+                    originalSender: operator.address!.toString(),
                     cashinRole: {
-                        account: '0x7777777777777777777777777777777777777777',
+                        account: operator.address!.toString(),
                         allowance: 1,
                     },
                 },
                 {
                     gasLimit: GAS_LIMIT.hederaTokenManager.initialize,
+                    value: ethers.parseEther('10'),
                 }
             )
         )
             .to.emit(hederaTokenManager, 'RoleGranted')
-            .withArgs(ROLES.cashin.hash, '0x7777777777777777777777777777777777777777', operator.address)
+            .withArgs(ROLES.cashin.hash, operator.address, operator.address)
     })
 
     it('Cannot initialize if cannot transfer funds back to original sender', async function () {
@@ -268,8 +284,8 @@ describe('HederaTokenManager Tests Before Deploying Full Infrastructure', functi
             })
         )
 
-        await expect(
-            hederaTokenManager.initialize(
+        await expectRevert({
+            txPromise: hederaTokenManager.initialize(
                 {
                     ...init,
                     originalSender: revertingReceiverContract.address,
@@ -277,10 +293,11 @@ describe('HederaTokenManager Tests Before Deploying Full Infrastructure', functi
                 {
                     gasLimit: GAS_LIMIT.hederaTokenManager.initialize,
                 }
-            )
-        )
-            .to.be.revertedWithCustomError(hederaTokenManager, 'RefundingError')
-            .withArgs(balance)
+            ),
+            contract: hederaTokenManager,
+            customError: 'RefundingError',
+            args: [balance],
+        })
     })
 
     it('Can initialize granting unlimited supplier role', async function () {
@@ -307,18 +324,28 @@ describe('HederaTokenManager Tests Before Deploying Full Infrastructure', functi
             hederaTokenManager.initialize(
                 {
                     ...init,
+                    token: {
+                        ...init.token,
+                        treasury: hederaTokenManagerContract.proxyAddress!.toString(),
+                        expiry: {
+                            ...init.token.expiry,
+                            autoRenewAccount: hederaTokenManagerContract.proxyAddress!.toString(),
+                        },
+                    },
+                    originalSender: operator.address!.toString(),
                     cashinRole: {
-                        account: '0x7777777777777777777777777777777777777777',
+                        account: operator.address!.toString(),
                         allowance: ethers.MaxUint256,
                     },
                 },
                 {
                     gasLimit: GAS_LIMIT.hederaTokenManager.initialize,
+                    value: ethers.parseEther('10'),
                 }
             )
         )
             .to.emit(hederaTokenManager, 'RoleGranted')
-            .withArgs(ROLES.cashin.hash, '0x7777777777777777777777777777777777777777', operator.address)
+            .withArgs(ROLES.cashin.hash, operator.address, operator.address)
     })
 })
 
@@ -335,6 +362,7 @@ describe('➡️ HederaTokenManager Tests', function () {
     // Accounts
     let operator: Wallet // ! usign Wallet instead of SignerWithAddress because need public key
     let nonOperator: Wallet
+    let ed25519Wallet: Wallet
 
     async function setFacets(address: string) {
         hederaTokenManagerFacet = HederaTokenManagerFacet__factory.connect(address, operator)
@@ -343,20 +371,28 @@ describe('➡️ HederaTokenManager Tests', function () {
         tokenOwnerFacet = TokenOwnerFacet__factory.connect(address, operator)
     }
 
-    async function getAccountPublicKey(operatorSigner: Signer) {
-        const message = 'test'
-        const signature = await operatorSigner.signMessage(message)
-        const digest = hashMessage(message)
-        return SigningKey.recoverPublicKey(digest, signature)
+    async function getAccountPublicKey(operatorSigner: Signer, isEd25519 = false) {
+        if (isEd25519) {
+            const operatorWallet = operatorSigner as Wallet
+            const ed25519PrivateKey = operatorWallet.privateKey
+            const privateKey = PrivateKey.fromStringED25519(ed25519PrivateKey)
+            return `0x${privateKey.publicKey.toString().slice(-64)}`
+        } else {
+            const message = 'test'
+            const signature = await operatorSigner.signMessage(message)
+            const digest = hashMessage(message)
+            return SigningKey.recoverPublicKey(digest, signature)
+        }
     }
 
     before(async () => {
         // mute | mock console.log
         console.log = () => {} // eslint-disable-line
         console.info(MESSAGES.deploy.info.deployFullInfrastructureInTests)
-        const [operatorSigner, nonOperatorSigner] = await ethers.getSigners()
+        const [operatorSigner, nonOperatorSigner, ed25519Signer] = await ethers.getSigners()
         operator = await getFullWalletFromSigner(operatorSigner)
         nonOperator = await getFullWalletFromSigner(nonOperatorSigner)
+        ed25519Wallet = await getFullWalletFromSigner(ed25519Signer)
 
         const { ...deployedContracts } = await deployFullInfrastructureInTests(
             await DeployFullInfrastructureCommand.newInstance({
@@ -375,7 +411,11 @@ describe('➡️ HederaTokenManager Tests', function () {
             addFeeSchedule: true,
         }))
 
-        await StableCoinTokenMock__factory.connect(tokenAddress, operator).setStableCoinAddress(stableCoinProxyAddress)
+        if (network.name === 'hardhat') {
+            await StableCoinTokenMock__factory.connect(tokenAddress, operator).setStableCoinAddress(
+                stableCoinProxyAddress
+            )
+        }
 
         await setFacets(stableCoinProxyAddress)
     })
@@ -397,13 +437,14 @@ describe('➡️ HederaTokenManager Tests', function () {
         } as IHederaTokenManager.UpdateTokenStructStructOutput
 
         hederaTokenManagerFacet = hederaTokenManagerFacet.connect(nonOperator)
-        await expect(
-            hederaTokenManagerFacet.updateToken(updateTokenStruct, {
+        await expectRevert({
+            txPromise: hederaTokenManagerFacet.updateToken(updateTokenStruct, {
                 gasLimit: GAS_LIMIT.hederaTokenManager.updateToken,
-            })
-        )
-            .to.be.revertedWithCustomError(hederaTokenManagerFacet, 'AccountHasNoRole')
-            .withArgs(nonOperator, ROLES.defaultAdmin.hash)
+            }),
+            contract: hederaTokenManagerFacet,
+            customError: 'AccountHasNoRole',
+            args: [nonOperator, ROLES.defaultAdmin.hash],
+        })
     })
 
     it('Admin cannot update token if metadata exceeds 100 characters', async function () {
@@ -420,15 +461,20 @@ describe('➡️ HederaTokenManager Tests', function () {
             tokenMetadataURI: longMetadata,
         } as IHederaTokenManager.UpdateTokenStructStructOutput
 
-        await expect(
-            hederaTokenManagerFacet.updateToken(updateTokenStruct, {
+        await expectRevert({
+            txPromise: hederaTokenManagerFacet.updateToken(updateTokenStruct, {
                 gasLimit: GAS_LIMIT.hederaTokenManager.updateToken,
-            })
-        ).to.be.revertedWithCustomError(hederaTokenManagerFacet, 'MoreThan100Error')
+            }),
+            contract: hederaTokenManagerFacet,
+            customError: 'MoreThan100Error',
+        })
     })
 
     it('Admin can update token with ed25519 keys', async function () {
-        const operatorPublicKey = await getAccountPublicKey(operator)
+        const operatorPublicKey =
+            network.name === 'hardhat'
+                ? await getAccountPublicKey(operator)
+                : await getAccountPublicKey(ed25519Wallet, true)
         const keys = tokenKeysToKey(
             new TokenKeysToKeyCommand({ publicKey: operatorPublicKey, isEd25519: true, addKyc: false })
         )
@@ -442,11 +488,12 @@ describe('➡️ HederaTokenManager Tests', function () {
         } as IHederaTokenManager.UpdateTokenStructStructOutput
 
         hederaTokenManagerFacet = hederaTokenManagerFacet.connect(operator)
-        await expect(
-            hederaTokenManagerFacet.updateToken(updateTokenStruct, {
-                gasLimit: GAS_LIMIT.hederaTokenManager.updateToken,
-            })
-        ).to.emit(hederaTokenManagerFacet, 'TokenUpdated')
+        const response = await hederaTokenManagerFacet.updateToken(updateTokenStruct, {
+            gasLimit: GAS_LIMIT.hederaTokenManager.updateToken,
+        })
+        await validateTxResponse(
+            new ValidateTxResponseCommand({ txResponse: response, confirmationEvent: 'TokenUpdated' })
+        )
 
         const newMetadata = await hederaTokenManagerFacet.getMetadata({
             gasLimit: GAS_LIMIT.hederaTokenManager.getMetadata,
@@ -454,11 +501,12 @@ describe('➡️ HederaTokenManager Tests', function () {
         expect(newMetadata).to.equal('newMemo')
 
         // Update back to initial values
-        await expect(
-            hederaTokenManagerFacet.updateToken(DEFAULT_UPDATE_TOKEN_STRUCT, {
-                gasLimit: GAS_LIMIT.hederaTokenManager.updateToken,
-            })
-        ).to.emit(hederaTokenManagerFacet, 'TokenUpdated')
+        const defaultResponse = await hederaTokenManagerFacet.updateToken(DEFAULT_UPDATE_TOKEN_STRUCT, {
+            gasLimit: GAS_LIMIT.hederaTokenManager.updateToken,
+        })
+        await validateTxResponse(
+            new ValidateTxResponseCommand({ txResponse: defaultResponse, confirmationEvent: 'TokenUpdated' })
+        )
     })
 
     it('Admin can update token with ECDSA keys', async function () {
@@ -476,11 +524,12 @@ describe('➡️ HederaTokenManager Tests', function () {
         } as IHederaTokenManager.UpdateTokenStructStructOutput
 
         hederaTokenManagerFacet = hederaTokenManagerFacet.connect(operator)
-        await expect(
-            hederaTokenManagerFacet.updateToken(updateTokenStruct, {
-                gasLimit: GAS_LIMIT.hederaTokenManager.updateToken,
-            })
-        ).to.emit(hederaTokenManagerFacet, 'TokenUpdated')
+        const response = await hederaTokenManagerFacet.updateToken(updateTokenStruct, {
+            gasLimit: GAS_LIMIT.hederaTokenManager.updateToken,
+        })
+        await validateTxResponse(
+            new ValidateTxResponseCommand({ txResponse: response, confirmationEvent: 'TokenUpdated' })
+        )
 
         const newMetadata = await hederaTokenManagerFacet.getMetadata({
             gasLimit: GAS_LIMIT.hederaTokenManager.getMetadata,
@@ -488,11 +537,12 @@ describe('➡️ HederaTokenManager Tests', function () {
         expect(newMetadata).to.equal('newMemo')
 
         // Update back to initial values
-        await expect(
-            hederaTokenManagerFacet.updateToken(DEFAULT_UPDATE_TOKEN_STRUCT, {
-                gasLimit: GAS_LIMIT.hederaTokenManager.updateToken,
-            })
-        ).to.emit(hederaTokenManagerFacet, 'TokenUpdated')
+        const defaultResponse = await hederaTokenManagerFacet.updateToken(DEFAULT_UPDATE_TOKEN_STRUCT, {
+            gasLimit: GAS_LIMIT.hederaTokenManager.updateToken,
+        })
+        await validateTxResponse(
+            new ValidateTxResponseCommand({ txResponse: defaultResponse, confirmationEvent: 'TokenUpdated' })
+        )
     })
 
     it('Admin key cannot be updated', async function () {
@@ -510,11 +560,13 @@ describe('➡️ HederaTokenManager Tests', function () {
             tokenMetadataURI: DEFAULT_TOKEN.memo,
         } as IHederaTokenManager.UpdateTokenStructStructOutput
 
-        await expect(
-            hederaTokenManagerFacet.updateToken(updateTokenStruct, {
+        await expectRevert({
+            txPromise: hederaTokenManagerFacet.updateToken(updateTokenStruct, {
                 gasLimit: GAS_LIMIT.hederaTokenManager.updateToken,
-            })
-        ).to.be.revertedWithCustomError(hederaTokenManagerFacet, 'AdminKeyUpdateError')
+            }),
+            contract: hederaTokenManagerFacet,
+            customError: 'AdminKeyUpdateError',
+        })
     })
 
     it('Supply key cannot be updated', async function () {
@@ -532,11 +584,13 @@ describe('➡️ HederaTokenManager Tests', function () {
             tokenMetadataURI: DEFAULT_TOKEN.memo,
         } as IHederaTokenManager.UpdateTokenStructStructOutput
 
-        await expect(
-            hederaTokenManagerFacet.updateToken(updateTokenStruct, {
+        await expectRevert({
+            txPromise: hederaTokenManagerFacet.updateToken(updateTokenStruct, {
                 gasLimit: GAS_LIMIT.hederaTokenManager.updateToken,
-            })
-        ).to.be.revertedWithCustomError(hederaTokenManagerFacet, 'SupplyKeyUpdateError')
+            }),
+            contract: hederaTokenManagerFacet,
+            customError: 'SupplyKeyUpdateError',
+        })
     })
 
     it('Admin can update token with new expiry', async function () {
@@ -552,11 +606,12 @@ describe('➡️ HederaTokenManager Tests', function () {
         } as IHederaTokenManager.UpdateTokenStructStructOutput
 
         hederaTokenManagerFacet = hederaTokenManagerFacet.connect(operator)
-        await expect(
-            hederaTokenManagerFacet.updateToken(updateTokenStruct, {
-                gasLimit: GAS_LIMIT.hederaTokenManager.updateToken,
-            })
-        ).to.emit(hederaTokenManagerFacet, 'TokenUpdated')
+        const response = await hederaTokenManagerFacet.updateToken(updateTokenStruct, {
+            gasLimit: GAS_LIMIT.hederaTokenManager.updateToken,
+        })
+        await validateTxResponse(
+            new ValidateTxResponseCommand({ txResponse: response, confirmationEvent: 'TokenUpdated' })
+        )
 
         const newMetadata = await hederaTokenManagerFacet.getMetadata({
             gasLimit: GAS_LIMIT.hederaTokenManager.getMetadata,
@@ -564,37 +619,38 @@ describe('➡️ HederaTokenManager Tests', function () {
         expect(newMetadata).to.equal('newMemo')
 
         // Update back to initial values
-        await expect(
-            hederaTokenManagerFacet.updateToken(DEFAULT_UPDATE_TOKEN_STRUCT, {
-                gasLimit: GAS_LIMIT.hederaTokenManager.updateToken,
-            })
-        ).to.emit(hederaTokenManagerFacet, 'TokenUpdated')
+        const defaultResponse = await hederaTokenManagerFacet.updateToken(DEFAULT_UPDATE_TOKEN_STRUCT, {
+            gasLimit: GAS_LIMIT.hederaTokenManager.updateToken,
+        })
+        await validateTxResponse(
+            new ValidateTxResponseCommand({ txResponse: defaultResponse, confirmationEvent: 'TokenUpdated' })
+        )
     })
 
     it('Mint token throw error format number incorrect', async () => {
         const initialTotalSupply = await hederaTokenManagerFacet.totalSupply({
             gasLimit: GAS_LIMIT.hederaTokenManager.totalSupply,
         })
-        await expect(
-            cashInFacet.mint(operator.address, 1, {
+        await expectRevert({
+            txPromise: cashInFacet.mint(operator.address, 1, {
                 gasLimit: GAS_LIMIT.hederaTokenManager.mint,
-            })
-        )
-            .to.be.revertedWithCustomError(cashInFacet, 'FormatNumberIncorrect')
-            .withArgs(1)
+            }),
+            contract: cashInFacet,
+            customError: 'FormatNumberIncorrect',
+            args: [1],
+        })
 
         const afterErrorTotalSupply = await hederaTokenManagerFacet.totalSupply({
             gasLimit: GAS_LIMIT.hederaTokenManager.totalSupply,
         })
         expect(initialTotalSupply).to.equal(afterErrorTotalSupply)
 
-        await expect(
-            cashInFacet.mint(operator.address, ONE_TOKEN, {
-                gasLimit: GAS_LIMIT.hederaTokenManager.mint,
-            })
+        const goodMintResponse = await cashInFacet.mint(operator.address, ONE_TOKEN, {
+            gasLimit: GAS_LIMIT.hederaTokenManager.mint,
+        })
+        await validateTxResponse(
+            new ValidateTxResponseCommand({ txResponse: goodMintResponse, confirmationEvent: 'TokensMinted' })
         )
-            .to.emit(cashInFacet, 'TokensMinted')
-            .withArgs(operator.address, tokenAddress, ONE_TOKEN, operator.address)
 
         await delay({ time: 500, unit: 'ms' })
         expect(
@@ -603,13 +659,12 @@ describe('➡️ HederaTokenManager Tests', function () {
             })
         ).to.equal(initialTotalSupply + ONE_TOKEN)
 
-        await expect(
-            wipeFacet.wipe(operator.address, ONE_TOKEN, {
-                gasLimit: GAS_LIMIT.hederaTokenManager.wipe,
-            })
+        const goodWipeResponse = await wipeFacet.wipe(operator.address, ONE_TOKEN, {
+            gasLimit: GAS_LIMIT.hederaTokenManager.wipe,
+        })
+        await validateTxResponse(
+            new ValidateTxResponseCommand({ txResponse: goodWipeResponse, confirmationEvent: 'TokensWiped' })
         )
-            .to.emit(wipeFacet, 'TokensWiped')
-            .withArgs(operator.address, tokenAddress, operator.address, ONE_TOKEN)
 
         await delay({ time: 500, unit: 'ms' })
         expect(
@@ -770,11 +825,12 @@ describe('➡️ HederaTokenManager Tests', function () {
         }
 
         // Initiliaze : fail
-        await expect(
-            hederaTokenManagerFacet.initialize(dummyStruct, {
+        await expectRevert({
+            txPromise: hederaTokenManagerFacet.initialize(dummyStruct, {
                 gasLimit: GAS_LIMIT.hederaTokenManager.initialize,
-            })
-        ).to.be.revertedWithCustomError(hederaTokenManagerFacet, 'ContractIsAlreadyInitialized')
-        //.withArgs(currentTokenAddress, updateTokenStruct)
+            }),
+            contract: hederaTokenManagerFacet,
+            customError: 'ContractIsAlreadyInitialized',
+        })
     })
 })

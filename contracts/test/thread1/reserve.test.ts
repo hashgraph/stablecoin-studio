@@ -19,7 +19,7 @@ import {
     MESSAGES,
     ValidateTxResponseCommand,
 } from '@scripts'
-import { deployFullInfrastructureInTests, GAS_LIMIT } from '@test/shared'
+import { deployFullInfrastructureInTests, expectRevert, GAS_LIMIT } from '@test/shared'
 
 let operator: SignerWithAddress
 let nonOperator: SignerWithAddress
@@ -116,10 +116,13 @@ describe('➡️ Reserve Tests', function () {
 
     it('Set updatedAt threshold fails if set by non Admin', async () => {
         reserveFacet = reserveFacet.connect(nonOperator)
-        await expect(reserveFacet.updateUpdatedAtThreshold('1')).to.be.revertedWithCustomError(
-            reserveFacet,
-            'AccountHasNoRole'
-        )
+        await expectRevert({
+            txPromise: reserveFacet.updateUpdatedAtThreshold('1', {
+                gasLimit: GAS_LIMIT.hederaTokenManager.updateUpdatedAtThreshold,
+            }),
+            contract: reserveFacet,
+            customError: 'AccountHasNoRole',
+        })
     })
 
     it('Get datafeed', async () => {
@@ -137,13 +140,14 @@ describe('➡️ Reserve Tests', function () {
         await hederaReserveFacet.waitForDeployment()
 
         reserveFacet = reserveFacet.connect(nonOperator)
-        await expect(
-            reserveFacet.updateReserveAddress(hederaReserveFacet, {
+        await expectRevert({
+            txPromise: reserveFacet.updateReserveAddress(hederaReserveFacet, {
                 gasLimit: GAS_LIMIT.hederaTokenManager.updateReserveAddress,
-            })
-        )
-            .to.be.revertedWithCustomError(reserveFacet, 'AccountHasNoRole')
-            .withArgs(nonOperator, ROLES.defaultAdmin.hash)
+            }),
+            contract: reserveFacet,
+            customError: 'AccountHasNoRole',
+            args: [nonOperator, ROLES.defaultAdmin.hash],
+        })
     })
 
     it('Update datafeed', async () => {
@@ -253,13 +257,14 @@ describe('Reserve Tests with reserve and token with same Decimals', function () 
         const totalReserve = result[0]
 
         // Cashin more tokens than reserve amount: fail
-        await expect(
-            cashInFacet.mint(operator.address, totalReserve + 1n, {
+        await expectRevert({
+            txPromise: cashInFacet.mint(operator.address, totalReserve + 1n, {
                 gasLimit: GAS_LIMIT.hederaTokenManager.mint,
-            })
-        )
-            .to.be.revertedWithCustomError(cashInFacet, 'AmountBiggerThanReserve')
-            .withArgs(totalReserve + 1n)
+            }),
+            contract: cashInFacet,
+            customError: 'AmountBiggerThanReserve',
+            args: [totalReserve + 1n],
+        })
     })
 })
 
@@ -337,13 +342,14 @@ describe('Reserve Tests with reserve decimals higher than token decimals', funct
         const totalReserve = result[0]
 
         // Cashin more tokens than reserve amount: fail
-        await expect(
-            cashInFacet.mint(operator.address, totalReserve + 1n, {
+        await expectRevert({
+            txPromise: cashInFacet.mint(operator.address, totalReserve + 1n, {
                 gasLimit: GAS_LIMIT.hederaTokenManager.mint,
-            })
-        )
-            .to.be.revertedWithCustomError(cashInFacet, 'AmountBiggerThanReserve')
-            .withArgs(totalReserve + 1n)
+            }),
+            contract: cashInFacet,
+            customError: 'AmountBiggerThanReserve',
+            args: [totalReserve + 1n],
+        })
     })
 })
 
@@ -420,13 +426,14 @@ describe('Reserve Tests with reserve decimals lower than token decimals', functi
         const totalReserve = result[0]
 
         // Cashin more tokens than reserve amount: fail
-        await expect(
-            cashInFacet.mint(operator.address, totalReserve + 1n, {
+        await expectRevert({
+            txPromise: cashInFacet.mint(operator.address, totalReserve + 1n, {
                 gasLimit: GAS_LIMIT.hederaTokenManager.mint,
-            })
-        )
-            .to.be.revertedWithCustomError(cashInFacet, 'FormatNumberIncorrect')
-            .withArgs(totalReserve + 1n)
+            }),
+            contract: cashInFacet,
+            customError: 'FormatNumberIncorrect',
+            args: [totalReserve + 1n],
+        })
     })
 
     it('Can not mint tokens if updated at date expired', async function () {
@@ -439,10 +446,13 @@ describe('Reserve Tests with reserve decimals lower than token decimals', functi
         await reserveFacet.updateUpdatedAtThreshold('1')
         await delay({ time: 2, unit: 'sec' })
 
-        await expect(cashInFacet.mint(operator.address, totalReserve - 1n)).to.be.revertedWithCustomError(
-            cashInFacet,
-            'ReserveAmountOutdated'
-        )
+        await expectRevert({
+            txPromise: cashInFacet.mint(operator.address, totalReserve - 1n, {
+                gasLimit: GAS_LIMIT.hederaTokenManager.mint,
+            }),
+            contract: cashInFacet,
+            customError: 'ReserveAmountOutdated',
+        })
 
         await reserveFacet.updateUpdatedAtThreshold('0')
     })

@@ -13,6 +13,7 @@ import {
     DiamondCutFacet,
     DiamondCutFacet__factory,
 } from '@contracts'
+import { expectRevert } from '@test/shared'
 import { expect } from 'chai'
 import { ethers } from 'hardhat'
 
@@ -243,18 +244,24 @@ describe('➡️ ResolverProxy Tests', () => {
 
     it('GIVEN deployed facets WHEN deploy a new resolverProxy with an address zero BLR THEN fails with ResolverAddressIsZero', async () => {
         const ResolverProxyFactory = await ethers.getContractFactory('ResolverProxy')
-        await expect(
-            ResolverProxyFactory.deploy(ADDRESS_ZERO, CONFIG_ID, 1, [], { gasLimit: GAS_LIMIT.resolverProxy.deploy })
-        ).to.be.revertedWithCustomError(ResolverProxyFactory, 'ResolverAddressIsZero')
+        await expectRevert({
+            txPromise: ResolverProxyFactory.deploy(ADDRESS_ZERO, CONFIG_ID, 1, [], {
+                gasLimit: GAS_LIMIT.resolverProxy.deploy,
+            }),
+            contract: ResolverProxyFactory,
+            customError: 'ResolverAddressIsZero',
+        })
     })
 
     it('GIVEN deployed facets WHEN deploy a new resolverProxy with resolver proxy configuration id is 0 THEN fails with ConfigurationIdIsZero', async () => {
         const ResolverProxyFactory = await ethers.getContractFactory('ResolverProxy')
-        await expect(
-            ResolverProxyFactory.deploy(await resolver.getAddress(), NO_CONFIG_ID, 1, [], {
+        await expectRevert({
+            txPromise: ResolverProxyFactory.deploy(await resolver.getAddress(), NO_CONFIG_ID, 1, [], {
                 gasLimit: GAS_LIMIT.resolverProxy.deploy,
-            })
-        ).to.be.revertedWithCustomError(ResolverProxyFactory, 'ConfigurationIdIsZero')
+            }),
+            contract: ResolverProxyFactory,
+            customError: 'ConfigurationIdIsZero',
+        })
     })
 
     it('GIVEN a diamond loupe facet deployed WHEN calling to external get functions THEN properly information is obtained', async () => {
@@ -319,9 +326,14 @@ describe('➡️ ResolverProxy Tests', () => {
         const diamondLoupe = await ethers.getContractAt('DiamondLoupeFacet', resolverProxy)
 
         const BURN_SIGNATURE = '0x5cd3a608'
-        await expect(burnableFacet.burn(10))
-            .to.be.revertedWithCustomError(resolverProxy, 'FunctionNotFound')
-            .withArgs(BURN_SIGNATURE)
+        await expectRevert({
+            txPromise: burnableFacet.burn(10, {
+                gasLimit: GAS_LIMIT.hederaTokenManager.burn,
+            }),
+            contract: resolverProxy,
+            customError: 'FunctionNotFound',
+            args: [BURN_SIGNATURE],
+        })
         expect(await diamondLoupe.supportsInterface(BURN_SIGNATURE)).to.be.false
     })
 
@@ -354,7 +366,13 @@ describe('➡️ ResolverProxy Tests', () => {
 
         const diamondCut = await ethers.getContractAt('DiamondCutFacet', resolverProxy)
 
-        await expect(diamondCut.updateConfigVersion(0)).to.be.revertedWithCustomError(roleImpl, 'AccountHasNoRole')
+        await expectRevert({
+            txPromise: diamondCut.updateConfigVersion(0, {
+                gasLimit: GAS_LIMIT.diamondFacet.updateConfigVersion,
+            }),
+            contract: roleImpl,
+            customError: 'AccountHasNoRole',
+        })
     })
 
     it('GIVEN resolverProxy and admin user WHEN updating to non existing version THEN fails with ResolverProxyConfigurationNoRegistered', async () => {
@@ -373,13 +391,14 @@ describe('➡️ ResolverProxy Tests', () => {
 
         diamondCut = diamondCut.connect(signer_A)
 
-        await expect(
-            diamondCut.updateConfigVersion(100, {
+        await expectRevert({
+            txPromise: diamondCut.updateConfigVersion(100, {
                 gasLimit: GAS_LIMIT.diamondFacet.updateConfigVersion,
-            })
-        )
-            .to.be.revertedWithCustomError(resolver, 'ResolverProxyConfigurationNoRegistered')
-            .withArgs(CONFIG_ID, 100)
+            }),
+            contract: resolver,
+            customError: 'ResolverProxyConfigurationNoRegistered',
+            args: [CONFIG_ID, 100],
+        })
     })
 
     it('GIVEN resolverProxy and admin user WHEN updating version THEN succeeds', async () => {
@@ -426,10 +445,13 @@ describe('➡️ ResolverProxy Tests', () => {
 
         const diamondCut = await ethers.getContractAt('DiamondCutFacet', resolverProxy)
 
-        await expect(diamondCut.updateConfig(CONFIG_ID_2, 1)).to.be.revertedWithCustomError(
-            roleImpl,
-            'AccountHasNoRole'
-        )
+        await expectRevert({
+            txPromise: diamondCut.updateConfig(CONFIG_ID_2, 1, {
+                gasLimit: GAS_LIMIT.diamondFacet.updateConfig,
+            }),
+            contract: roleImpl,
+            customError: 'AccountHasNoRole',
+        })
     })
 
     it('GIVEN resolverProxy and admin user WHEN updating to non existing configID THEN fails with ResolverProxyConfigurationNoRegistered', async () => {
@@ -448,13 +470,14 @@ describe('➡️ ResolverProxy Tests', () => {
 
         diamondCut = diamondCut.connect(signer_A)
 
-        await expect(
-            diamondCut.updateConfig(CONFIG_ID_2, 1, {
+        await expectRevert({
+            txPromise: diamondCut.updateConfig(CONFIG_ID_2, 1, {
                 gasLimit: GAS_LIMIT.diamondFacet.updateConfig,
-            })
-        )
-            .to.be.revertedWithCustomError(resolver, 'ResolverProxyConfigurationNoRegistered')
-            .withArgs(CONFIG_ID_2, 1)
+            }),
+            contract: resolver,
+            customError: 'ResolverProxyConfigurationNoRegistered',
+            args: [CONFIG_ID_2, 1],
+        })
     })
 
     it('GIVEN resolverProxy and admin user WHEN updating configID THEN succeeds', async () => {
@@ -503,9 +526,13 @@ describe('➡️ ResolverProxy Tests', () => {
 
         const diamondCut = await ethers.getContractAt('DiamondCutFacet', resolverProxy)
 
-        await expect(
-            diamondCut.updateResolver(await resolver_2.getAddress(), CONFIG_ID_2, 1)
-        ).to.be.revertedWithCustomError(roleImpl, 'AccountHasNoRole')
+        await expectRevert({
+            txPromise: diamondCut.updateResolver(await resolver_2.getAddress(), CONFIG_ID_2, 1, {
+                gasLimit: GAS_LIMIT.diamondFacet.updateResolver,
+            }),
+            contract: roleImpl,
+            customError: 'AccountHasNoRole',
+        })
     })
 
     it('GIVEN resolverProxy and admin user WHEN updating to non existing resolver THEN fails with ResolverProxyConfigurationNoRegistered', async () => {
@@ -524,13 +551,14 @@ describe('➡️ ResolverProxy Tests', () => {
 
         diamondCut = diamondCut.connect(signer_A)
 
-        await expect(
-            diamondCut.updateResolver(await resolver_2.getAddress(), CONFIG_ID_2, 2, {
+        await expectRevert({
+            txPromise: diamondCut.updateResolver(await resolver_2.getAddress(), CONFIG_ID_2, 2, {
                 gasLimit: GAS_LIMIT.diamondFacet.updateResolver,
-            })
-        )
-            .to.be.revertedWithCustomError(resolver, 'ResolverProxyConfigurationNoRegistered')
-            .withArgs(CONFIG_ID_2, 2)
+            }),
+            contract: resolver,
+            customError: 'ResolverProxyConfigurationNoRegistered',
+            args: [CONFIG_ID_2, 2],
+        })
     })
 
     it('GIVEN resolverProxy and admin user WHEN updating resolver THEN succeeds', async () => {

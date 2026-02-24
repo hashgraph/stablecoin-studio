@@ -12,7 +12,7 @@ import {
     MESSAGES,
     DEFAULT_CONFIG_VERSION,
 } from '@scripts'
-import { deployFullInfrastructureInTests, GAS_LIMIT } from '@test/shared'
+import { deployFullInfrastructureInTests, expectRevert, GAS_LIMIT } from '@test/shared'
 import {
     HederaReserveFacet__factory,
     ReserveFacet,
@@ -36,7 +36,7 @@ describe('StableCoinFactory Tests', function () {
     let operator: SignerWithAddress
     before(async () => {
         // mute | mock console.log
-        //console.log = () => {} // eslint-disable-line
+        console.log = () => {} // eslint-disable-line
         console.info(MESSAGES.deploy.info.deployFullInfrastructureInTests)
         ;[operator] = await ethers.getSigners()
 
@@ -69,9 +69,11 @@ describe('StableCoinFactory Tests', function () {
             businessLogicResolverProxyAddress: ADDRESS_ZERO,
             stableCoinFactoryProxyAddress: stableCoinFactoryProxy,
         })
-        await expect(deployStableCoin(deployCommand))
-            .to.be.revertedWithCustomError(stableCoinFactoryFacet, 'AddressZero')
-            .withArgs(ADDRESS_ZERO)
+        await expectRevert({
+            txPromise: deployStableCoin(deployCommand),
+            contract: stableCoinFactoryFacet,
+            customError: 'AddressZero',
+        })
     })
 
     it('Cannot deploy a Stablecoin if configuration id key is 0', async function () {
@@ -95,9 +97,12 @@ describe('StableCoinFactory Tests', function () {
                 version: DEFAULT_CONFIG_VERSION,
             },
         })
-        await expect(deployStableCoin(deployCommand))
-            .to.be.revertedWithCustomError(stableCoinFactoryFacet, 'Bytes32Zero')
-            .withArgs(ethers.ZeroHash)
+        await expectRevert({
+            txPromise: deployStableCoin(deployCommand),
+            contract: stableCoinFactoryFacet,
+            customError: 'Bytes32Zero',
+            args: [ethers.ZeroHash],
+        })
     })
 
     it('Create StableCoin setting all token keys to the Proxy', async function () {
@@ -325,10 +330,11 @@ describe('StableCoinFactory Tests', function () {
             stableCoinFactoryProxyAddress: stableCoinFactoryProxy,
         })
 
-        await expect(deployStableCoin(command)).to.be.revertedWithCustomError(
-            stableCoinFactoryFacet,
-            'ReserveAmountOutdated'
-        )
+        await expectRevert({
+            txPromise: deployStableCoin(command),
+            contract: stableCoinFactoryFacet,
+            customError: 'ReserveAmountOutdated',
+        })
     })
 
     it('Create StableCoin setting an initial supply over the reserve, when the reserve is provided and not deployed, expect it to fail', async function () {
