@@ -70,10 +70,6 @@ const baseFieldsCanEdit = [
 		type: 'text',
 	},
 	{
-		id: 'Expiration time',
-		type: 'date',
-	},
-	{
 		id: 'Autorenew period',
 		type: 'number',
 	},
@@ -393,26 +389,6 @@ const DetailsReview = ({
 				}
 			}
 
-			const expirationValue = formValues['expiration time'];
-			if (expirationValue) {
-				let timestamp: number;
-				// DatePickerController returns a Date object
-				if (expirationValue instanceof Date) {
-					timestamp = expirationValue.getTime(); // Returns milliseconds since epoch
-				} else {
-					// Fallback to parsing if it's a string
-					timestamp = Date.parse(expirationValue);
-				}
-
-				if (!isNaN(timestamp)) {
-					// Convert milliseconds to nanoseconds (must be 19 digits)
-					const nanoseconds = (timestamp * 1000000).toString();
-					console.log('Expiration timestamp (ms):', timestamp);
-					console.log('Expiration timestamp (ns):', nanoseconds);
-					console.log('Length:', nanoseconds.length);
-					request.expirationTimestamp = nanoseconds;
-				}
-			}
 			// Only send keys that were edited
 			if (formValues['freeze key']) {
 				request.freezeKey = formatKey(
