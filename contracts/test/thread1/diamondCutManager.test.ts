@@ -76,7 +76,7 @@ describe('➡️ DiamondCutManager Tests', () => {
         const facetAddresses: string[] = []
 
         for (const facet of facets) {
-            if (network.name != 'hardhat') {
+            if (network.name !== 'hardhat') {
                 await delay({ time: 700, unit: 'ms' })
             }
             facetIds.push(facet.id)
@@ -140,7 +140,7 @@ describe('➡️ DiamondCutManager Tests', () => {
         selectorsLength: bigint
     ) {
         for (let selectorIndex = 0; selectorIndex < selectorsLength; selectorIndex++) {
-            if (network.name != 'hardhat') {
+            if (network.name !== 'hardhat') {
                 await delay({ time: 700, unit: 'ms' })
             }
             const selectorId = facet.selectors[selectorIndex]
@@ -164,7 +164,7 @@ describe('➡️ DiamondCutManager Tests', () => {
 
     async function validateInterfaces(configId: string, configVersion: number, facet: IDiamondLoupe.FacetStructOutput) {
         for (const interfaceId of facet.interfaceIds) {
-            if (network.name != 'hardhat') {
+            if (network.name !== 'hardhat') {
                 await delay({ time: 700, unit: 'ms' })
             }
             const interfaceExists = await diamondCutManager.resolveSupportsInterface(

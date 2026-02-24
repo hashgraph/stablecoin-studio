@@ -61,7 +61,7 @@ describe('➡️ Freeze Tests', function () {
             }),
             contract: freezableFacet,
             customError: 'AccountHasNoRole',
-            args: [nonOperator.address, ROLES.freeze.hash],
+            args: [nonOperator, ROLES.freeze.hash],
         })
     })
 
@@ -81,7 +81,7 @@ describe('➡️ Freeze Tests', function () {
         freezableFacet = freezableFacet.connect(operator)
         await expectRevert({
             txPromise: freezableFacet.unfreeze(ADDRESS_ZERO, {
-                gasLimit: GAS_LIMIT.hederaTokenManager.freeze,
+                gasLimit: GAS_LIMIT.hederaTokenManager.unfreeze,
             }),
             contract: freezableFacet,
             customError: 'AddressZero',

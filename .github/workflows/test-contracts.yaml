@@ -3,7 +3,13 @@ name: Test_Contracts
 on:
   pull_request:
     paths:
-      - "contracts/**"
+      - "contracts/contracts/**"
+      - "contracts/test/**"
+      - "contracts/scripts/**"
+      - "package*.json"
+      - "contracts/hardhat.config.ts"
+      - "contracts/tsconfig.json"
+      - "contracts/.solcover.js"
       - ".github/workflows/test-contracts.yaml"
   push:
     branches:
@@ -74,7 +80,7 @@ jobs:
   # ==========================================================================
   # Job 1: Execute smart contracts coverage (depends on test job)
   # ==========================================================================
-  # Runs the smart contracts coverage.
+  # Runs the smart contracts coverage in hardhat network.
   # ==========================================================================
   coverage:
     name: Coverage of Stablecoin Studio Contracts
@@ -124,7 +130,7 @@ jobs:
   # ==========================================================================
   # Job 2: Execute smart contracts tests (depends on build job)
   # ==========================================================================
-  # Runs the smart contracts coverage.
+  # Runs the smart contracts tests in hiero ledger Solo.
   # ==========================================================================
   tests:
     name: Test Stablecoin Studio Contracts

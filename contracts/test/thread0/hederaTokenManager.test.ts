@@ -371,8 +371,8 @@ describe('➡️ HederaTokenManager Tests', function () {
         tokenOwnerFacet = TokenOwnerFacet__factory.connect(address, operator)
     }
 
-    async function getAccountPublicKey(operatorSigner: Signer, isEdd25519 = false) {
-        if (isEdd25519) {
+    async function getAccountPublicKey(operatorSigner: Signer, isEd25519 = false) {
+        if (isEd25519) {
             const operatorWallet = operatorSigner as Wallet
             const ed25519PrivateKey = operatorWallet.privateKey
             const privateKey = PrivateKey.fromStringED25519(ed25519PrivateKey)

@@ -328,7 +328,7 @@ describe('➡️ BusinessLogicResolver Tests', () => {
             businessLogicResolver = businessLogicResolver.connect(nonOperator)
             await expectRevert({
                 txPromise: businessLogicResolver.addSelectorsToBlacklist(CONFIG_ID.stableCoin, blackListedSelectors, {
-                    gasLimit: GAS_LIMIT.businessLogicResolver.registerBusinessLogics,
+                    gasLimit: GAS_LIMIT.businessLogicResolver.addSelectorsToBlacklist,
                 }),
                 contract: businessLogicResolver,
                 customError: 'AccountHasNoRole',
@@ -348,7 +348,7 @@ describe('➡️ BusinessLogicResolver Tests', () => {
                     CONFIG_ID.stableCoin,
                     blackListedSelectors,
                     {
-                        gasLimit: GAS_LIMIT.businessLogicResolver.registerBusinessLogics,
+                        gasLimit: GAS_LIMIT.businessLogicResolver.removeSelectorsFromBlacklist,
                     }
                 ),
                 contract: businessLogicResolver,
