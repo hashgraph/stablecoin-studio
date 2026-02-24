@@ -3,7 +3,7 @@ import { SignerWithAddress } from '@nomicfoundation/hardhat-ethers/signers'
 import { ethers } from 'hardhat'
 import { IHRC__factory, PausableFacet, PausableFacet__factory, StableCoinTokenMock__factory } from '@contracts'
 import { DEFAULT_TOKEN, MESSAGES, ROLES, DeployFullInfrastructureCommand, ValidateTxResponseCommand } from '@scripts'
-import { deployStableCoinInTests, deployFullInfrastructureInTests, GAS_LIMIT } from '@test/shared'
+import { deployStableCoinInTests, deployFullInfrastructureInTests, expectRevert, GAS_LIMIT } from '@test/shared'
 
 describe('Pause Tests', function () {
     // Contracts
@@ -46,13 +46,14 @@ describe('Pause Tests', function () {
     it("An account without PAUSE role can't pause a token", async function () {
         pausableFacet = pausableFacet.connect(nonOperator)
 
-        await expect(
-            pausableFacet.pause({
+        await expectRevert({
+            txPromise: pausableFacet.pause({
                 gasLimit: GAS_LIMIT.hederaTokenManager.pause,
-            })
-        )
-            .to.be.revertedWithCustomError(pausableFacet, 'AccountHasNoRole')
-            .withArgs(nonOperator, ROLES.pause.hash)
+            }),
+            contract: pausableFacet,
+            customError: 'AccountHasNoRole',
+            args: [nonOperator, ROLES.pause.hash],
+        })
     })
 
     it("An account with PAUSE role can pause and unpause a token + An account without PAUSE role can't unpause a token", async function () {
@@ -76,13 +77,14 @@ describe('Pause Tests', function () {
             .withArgs(tokenAddress)
 
         pausableFacet = pausableFacet.connect(nonOperator)
-        await expect(
-            pausableFacet.unpause({
+        await expectRevert({
+            txPromise: pausableFacet.unpause({
                 gasLimit: GAS_LIMIT.hederaTokenManager.unpause,
-            })
-        )
-            .to.be.revertedWithCustomError(pausableFacet, 'AccountHasNoRole')
-            .withArgs(nonOperator, ROLES.pause.hash)
+            }),
+            contract: pausableFacet,
+            customError: 'AccountHasNoRole',
+            args: [nonOperator, ROLES.pause.hash],
+        })
 
         pausableFacet = pausableFacet.connect(operator)
         await expect(
