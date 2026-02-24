@@ -9,7 +9,7 @@ import {
     StableCoinTokenMock__factory,
 } from '@contracts'
 import { ADDRESS_ZERO, MESSAGES, ONE_TOKEN, ROLES, DeployFullInfrastructureCommand } from '@scripts'
-import { deployStableCoinInTests, deployFullInfrastructureInTests, GAS_LIMIT } from '@test/shared'
+import { deployStableCoinInTests, deployFullInfrastructureInTests, expectRevert, GAS_LIMIT } from '@test/shared'
 
 describe('➡️ KYC Tests', function () {
     const ACCOUNT_KYC_NOT_GRANTED_FOR_TOKEN = 176
@@ -56,13 +56,14 @@ describe('➡️ KYC Tests', function () {
     it("An account without KYC role can't grant kyc to an account for a token", async function () {
         kycFacet = kycFacet.connect(nonOperator)
 
-        await expect(
-            kycFacet.grantKyc(operator.address, {
+        await expectRevert({
+            txPromise: kycFacet.grantKyc(operator.address, {
                 gasLimit: GAS_LIMIT.hederaTokenManager.grantKyc,
-            })
-        )
-            .to.be.revertedWithCustomError(kycFacet, 'AccountHasNoRole')
-            .withArgs(nonOperator, ROLES.kyc.hash)
+            }),
+            contract: kycFacet,
+            customError: 'AccountHasNoRole',
+            args: [nonOperator, ROLES.kyc.hash],
+        })
     })
 
     it("An account with KYC role can grant and revoke kyc to an account for a token + An account without KYC role can't revoke kyc to an account for a token", async function () {
@@ -77,13 +78,14 @@ describe('➡️ KYC Tests', function () {
 
         // Should not be able to revoke KYC from an account without KYC role
         kycFacet = kycFacet.connect(nonOperator)
-        await expect(
-            kycFacet.revokeKyc(operator.address, {
+        await expectRevert({
+            txPromise: kycFacet.revokeKyc(operator.address, {
                 gasLimit: GAS_LIMIT.hederaTokenManager.revokeKyc,
-            })
-        )
-            .to.be.revertedWithCustomError(kycFacet, 'AccountHasNoRole')
-            .withArgs(nonOperator, ROLES.kyc.hash)
+            }),
+            contract: kycFacet,
+            customError: 'AccountHasNoRole',
+            args: [nonOperator, ROLES.kyc.hash],
+        })
 
         // Should be able to revoke KYC from an account with KYC role
         kycFacet = kycFacet.connect(operator)
@@ -96,13 +98,14 @@ describe('➡️ KYC Tests', function () {
             .withArgs(tokenAddress, operator.address)
 
         // Should NOT be able to mint more tokens
-        await expect(
-            cashInFacet.mint(operator.address, ONE_TOKEN, {
+        await expectRevert({
+            txPromise: cashInFacet.mint(operator.address, ONE_TOKEN, {
                 gasLimit: GAS_LIMIT.hederaTokenManager.mint,
-            })
-        )
-            .to.be.revertedWithCustomError(cashInFacet, 'ResponseCodeInvalid')
-            .withArgs(ACCOUNT_KYC_NOT_GRANTED_FOR_TOKEN)
+            }),
+            contract: cashInFacet,
+            customError: 'ResponseCodeInvalid',
+            args: [ACCOUNT_KYC_NOT_GRANTED_FOR_TOKEN],
+        })
 
         // Should be able to grant KYC to an account with KYC role
         await expect(
@@ -126,16 +129,20 @@ describe('➡️ KYC Tests', function () {
     it('An account with KYC role can`t grant and revoke kyc to the zero account for a token', async function () {
         kycFacet = kycFacet.connect(operator)
 
-        await expect(
-            kycFacet.grantKyc(ADDRESS_ZERO, {
+        await expectRevert({
+            txPromise: kycFacet.grantKyc(ADDRESS_ZERO, {
                 gasLimit: GAS_LIMIT.hederaTokenManager.grantKyc,
-            })
-        ).to.be.revertedWithCustomError(kycFacet, 'AddressZero')
+            }),
+            contract: kycFacet,
+            customError: 'AddressZero',
+        })
 
-        await expect(
-            kycFacet.revokeKyc(ADDRESS_ZERO, {
+        await expectRevert({
+            txPromise: kycFacet.revokeKyc(ADDRESS_ZERO, {
                 gasLimit: GAS_LIMIT.hederaTokenManager.revokeKyc,
-            })
-        ).to.be.revertedWithCustomError(kycFacet, 'AddressZero')
+            }),
+            contract: kycFacet,
+            customError: 'AddressZero',
+        })
     })
 })

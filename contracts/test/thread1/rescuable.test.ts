@@ -22,7 +22,7 @@ import {
     ROLES,
     ValidateTxResponseCommand,
 } from '@scripts'
-import { deployStableCoinInTests, deployFullInfrastructureInTests, GAS_LIMIT } from '@test/shared'
+import { deployStableCoinInTests, deployFullInfrastructureInTests, expectRevert, GAS_LIMIT } from '@test/shared'
 import { TransactionRequest } from 'ethers'
 
 describe('➡️ Rescue Tests', function () {
@@ -78,8 +78,6 @@ describe('➡️ Rescue Tests', function () {
 
     it('Account trying to reentrant rescue reverts', async () => {
         const amountToRescue = ONE_HBAR
-        // By https://docs.hedera.com/hedera/tutorials/smart-contracts/hscs-workshop/hardhat#tinybars-vs-weibars
-        const amountToRescueInEvm = amountToRescue / WEIBARS_PER_TINYBAR
 
         const Attacker = await ethers.getContractFactory('ReentrancyAttacker')
         const attacker = await Attacker.deploy(await rescuableFacet.getAddress(), amountToRescue)
@@ -93,9 +91,12 @@ describe('➡️ Rescue Tests', function () {
             .to.emit(rolesFacet, 'RoleGranted')
             .withArgs(ROLES.rescue.hash, attacker.getAddress(), operator.address)
 
-        await expect(attacker.attack())
-            .to.be.revertedWithCustomError(rescuableFacet, 'HBARRescueError')
-            .withArgs(ONE_HBAR)
+        await expectRevert({
+            txPromise: attacker.attack({ gasLimit: GAS_LIMIT.high }),
+            contract: rescuableFacet,
+            customError: 'HBARRescueError',
+            args: [ONE_HBAR],
+        })
     })
 
     it('Account with RESCUE role can rescue 10 tokens', async function () {
@@ -130,13 +131,14 @@ describe('➡️ Rescue Tests', function () {
     })
 
     it('Account with RESCUE role cannot rescue zero or less tokens', async function () {
-        await expect(
-            rescuableFacet.rescue(0, {
+        await expectRevert({
+            txPromise: rescuableFacet.rescue(0, {
                 gasLimit: GAS_LIMIT.hederaTokenManager.rescue,
-            })
-        )
-            .to.be.revertedWithCustomError(rescuableFacet, 'NegativeAmount')
-            .withArgs(0)
+            }),
+            contract: rescuableFacet,
+            customError: 'NegativeAmount',
+            args: [0],
+        })
     })
 
     it('Account with RESCUE role cannot rescue more tokens than the token owner balance', async function () {
@@ -145,24 +147,26 @@ describe('➡️ Rescue Tests', function () {
             gasLimit: GAS_LIMIT.hederaTokenManager.balanceOf,
         })
         // Rescue TokenOwnerBalance + 1 : fail
-        await expect(
-            rescuableFacet.rescue(TokenOwnerBalance + 1n, {
+        await expectRevert({
+            txPromise: rescuableFacet.rescue(TokenOwnerBalance + 1n, {
                 gasLimit: GAS_LIMIT.hederaTokenManager.rescue,
-            })
-        )
-            .to.be.revertedWithCustomError(rescuableFacet, 'GreaterThan')
-            .withArgs(TokenOwnerBalance + 1n, TokenOwnerBalance)
+            }),
+            contract: rescuableFacet,
+            customError: 'GreaterThan',
+            args: [TokenOwnerBalance + 1n, TokenOwnerBalance],
+        })
     })
 
     it('Account without RESCUE role cannot rescue tokens', async function () {
         rescuableFacet = rescuableFacet.connect(nonOperator)
-        await expect(
-            rescuableFacet.rescue(ONE_TOKEN, {
+        await expectRevert({
+            txPromise: rescuableFacet.rescue(ONE_TOKEN, {
                 gasLimit: GAS_LIMIT.hederaTokenManager.rescue,
-            })
-        )
-            .to.be.revertedWithCustomError(rescuableFacet, 'AccountHasNoRole')
-            .withArgs(nonOperator.address, ROLES.rescue.hash)
+            }),
+            contract: rescuableFacet,
+            customError: 'AccountHasNoRole',
+            args: [nonOperator.address, ROLES.rescue.hash],
+        })
     })
 
     it('Account with RESCUE role can rescue 1 HBAR', async function () {
@@ -186,7 +190,10 @@ describe('➡️ Rescue Tests', function () {
 
         // check new balances : success
         const finalTokenOwnerBalance = await ethers.provider.getBalance(stableCoinProxyAddress)
-        const expectedTokenOwnerBalance = initialTokenOwnerBalance - amountToRescueInEvm
+        const expectedTokenOwnerBalance =
+            network.name === 'hardhat'
+                ? initialTokenOwnerBalance - amountToRescueInEvm
+                : initialTokenOwnerBalance - amountToRescue
         expect(finalTokenOwnerBalance.toString()).to.equals(expectedTokenOwnerBalance.toString())
     })
 
@@ -195,24 +202,26 @@ describe('➡️ Rescue Tests', function () {
         const TokenOwnerBalance = await ethers.provider.getBalance(stableCoinProxyAddress)
 
         // Rescue TokenOwnerBalance + 1 : fail
-        await expect(
-            rescuableFacet.rescueHBAR(TokenOwnerBalance + 1n, {
+        await expectRevert({
+            txPromise: rescuableFacet.rescueHBAR(TokenOwnerBalance + 1n, {
                 gasLimit: GAS_LIMIT.hederaTokenManager.rescueHBAR,
-            })
-        )
-            .to.be.revertedWithCustomError(rescuableFacet, 'GreaterThan')
-            .withArgs(TokenOwnerBalance + 1n, TokenOwnerBalance)
+            }),
+            contract: rescuableFacet,
+            customError: 'GreaterThan',
+            args: [TokenOwnerBalance + 1n, TokenOwnerBalance],
+        })
     })
 
     it('Account without RESCUE role cannot rescue HBAR', async function () {
         // Account without rescue role, rescues HBAR : fail
         rescuableFacet = rescuableFacet.connect(nonOperator)
-        await expect(
-            rescuableFacet.rescueHBAR(ONE_TOKEN, {
+        await expectRevert({
+            txPromise: rescuableFacet.rescueHBAR(ONE_TOKEN, {
                 gasLimit: GAS_LIMIT.hederaTokenManager.rescueHBAR,
-            })
-        )
-            .to.be.revertedWithCustomError(rescuableFacet, 'AccountHasNoRole')
-            .withArgs(nonOperator.address, ROLES.rescue.hash)
+            }),
+            contract: rescuableFacet,
+            customError: 'AccountHasNoRole',
+            args: [nonOperator.address, ROLES.rescue.hash],
+        })
     })
 })

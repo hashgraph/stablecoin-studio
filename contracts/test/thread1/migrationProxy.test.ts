@@ -1,6 +1,6 @@
 import { SignerWithAddress } from '@nomicfoundation/hardhat-ethers/signers'
 import { expect } from 'chai'
-import { deployFullInfrastructureInTests, deployStableCoinInTests } from '@test/shared'
+import { deployFullInfrastructureInTests, expectRevert } from '@test/shared'
 import { MigrationProxy, MigrationProxy__factory } from '@contracts'
 import {
     deployContract,
@@ -58,10 +58,12 @@ describe('MigrationProxy tests', function () {
     })
 
     it('GIVEN an already initialized migration proxy WHEN trying to initialize again THEN transaction fails with AlreadyInitialized', async function () {
-        await expect(
-            migrationProxy.initializeV2Migration(ADDRESS_ZERO, NO_CONFIG_ID, 0, [], {
+        await expectRevert({
+            txPromise: migrationProxy.initializeV2Migration(ADDRESS_ZERO, NO_CONFIG_ID, 0, [], {
                 gasLimit: GAS_LIMIT.migrationProxy.initialize,
-            })
-        ).to.be.revertedWithCustomError(migrationProxy, 'ContractIsAlreadyInitialized')
+            }),
+            contract: migrationProxy,
+            customError: 'ContractIsAlreadyInitialized',
+        })
     })
 })

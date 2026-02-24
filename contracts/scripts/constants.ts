@@ -113,6 +113,7 @@ export const GAS_LIMIT = {
         decreaseSupplierAllowance: 100_000n,
         resetSupplierAllowance: 80_000n,
         updateReserveAddress: 80_000n,
+        updateUpdatedAtThreshold: 80_000n,
         // Read
         getMetadata: 80_000n,
         getRoles: 150_000n,
@@ -158,6 +159,7 @@ export const GAS_LIMIT = {
         setAdmin: 1_800_000n,
         setAmount: 60_000n,
         // Read
+        roundData: 60_000n,
         latestRoundData: 60_000n,
         decimals: 60_000n,
         description: 60_000n,
@@ -165,9 +167,12 @@ export const GAS_LIMIT = {
     },
     businessLogicResolver: {
         deploy: 9_000_000n,
-        getStaticResolverKey: 60_000,
-        registerBusinessLogics: 7_800_000,
-        createConfiguration: 15_000_000,
+        getVersionStatus: 60_000n,
+        getStaticResolverKey: 60_000n,
+        registerBusinessLogics: 7_800_000n,
+        createConfiguration: 15_000_000n,
+        addSelectorsToBlacklist: 150_000n,
+        removeSelectorsFromBlacklist: 150_000n,
     },
     migrationProxy: {
         deploy: 1_500_000n,
@@ -175,7 +180,10 @@ export const GAS_LIMIT = {
         upgrade: 200_000n,
     },
     diamondCutManager: {
-        createConfiguration: 140_000n,
+        createConfiguration: 8_000_000n,
+        createBatchConfiguration: 8_000_000n,
+        cancelBatchConfiguration: 140_000n,
+        checkResolverProxyConfigurationRegistered: 150_000n,
     },
     diamondFacet: {
         deploy: 3_500_000n,
@@ -185,10 +193,12 @@ export const GAS_LIMIT = {
     },
     hold: {
         facetDeploy: 6_000_000n,
-        createHoldByController: 150_000n,
-        executeHold: 1_000_000n,
+        createHold: 650_000n,
+        createHoldByController: 350_000n,
+        executeHold: 1_500_000n,
         releaseHold: 500_000n,
         reclaimHold: 400_000n,
+        getHoldFor: 150_000n,
     },
 }
 
