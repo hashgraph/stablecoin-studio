@@ -138,6 +138,35 @@ export class HederaWalletConnectTransactionAdapter extends BaseHederaTransaction
 
 		await this.initAdaptersAndProvider(currentNetwork);
 		await this.openPairingModal();
+
+		// Safety net: if eip155Provider is still null after pairing, it means
+		// patchInitProviders found no Hedera EVM accounts in the approved session —
+		// i.e. MetaMask is connected but has no Hedera EVM chain configured at all.
+		// eslint-disable-next-line @typescript-eslint/no-explicit-any
+		if (
+			this.isEvmSession() &&
+			!(this.hederaProvider as any)?.eip155Provider
+		) {
+			// eslint-disable-next-line @typescript-eslint/no-explicit-any
+			const accounts: string[] =
+				(this.hederaProvider as any)?.session?.namespaces?.eip155
+					?.accounts ?? [];
+			const allChains = [
+				...new Set(
+					accounts.map((acc) => acc.split(':').slice(0, 2).join(':')),
+				),
+			];
+			await this.stop();
+			throw new Error(
+				`MetaMask is not connected to a Hedera EVM network` +
+					(allChains.length
+						? ` (connected on: ${allChains.join(', ')})`
+						: '') +
+					`. Please add Hedera EVM Testnet (chainId 296) or Mainnet (chainId 295) to MetaMask, ` +
+					`switch to it, and try connecting again.`,
+			);
+		}
+
 		await this.resolveAndCacheAccount(currentNetwork);
 		this.subscribe();
 
@@ -602,6 +631,60 @@ export class HederaWalletConnectTransactionAdapter extends BaseHederaTransaction
 		return !this.hederaProvider?.session?.namespaces?.hedera;
 	}
 
+	/**
+	 * Patches `hederaProvider.initProviders` so that when MetaMask includes many
+	 * non-Hedera chains in its approved WalletConnect session (e.g. Ethereum mainnet,
+	 * Polygon, Base, …), the `EIP155Provider` constructor only sees the Hedera EVM
+	 * chains (chainIds 295 / 296).
+	 *
+	 * Background: `EIP155Provider.createHttpProvider` throws "No RPC url provided for
+	 * chainId: X" for any chain that is not in `HederaChainDefinition.EVM` and has no
+	 * entry in `rpcMap`. MetaMask v11+ includes ALL configured networks in the approved
+	 * session, so the plain `rpcMap: { "eip155:296": …, "eip155:295": … }` is not
+	 * enough. By filtering the session accounts to only Hedera EVM accounts before
+	 * `EIP155Provider` is constructed, we avoid the throw and allow `eip155Provider` to
+	 * be set correctly.
+	 *
+	 * The session accounts are restored immediately after the call so the rest of the
+	 * app continues to see the full account list.
+	 */
+	private patchInitProviders(): void {
+		if (!this.hederaProvider) return;
+
+		// eslint-disable-next-line @typescript-eslint/no-this-alias
+		const provider = this.hederaProvider;
+		const hederaEvmChains = new Set(['eip155:295', 'eip155:296']);
+		// eslint-disable-next-line @typescript-eslint/no-explicit-any
+		const orig = (provider as any).initProviders.bind(provider);
+
+		// eslint-disable-next-line @typescript-eslint/no-explicit-any
+		(provider as any).initProviders = function (this: any) {
+			const sessionEip155 = this.session?.namespaces?.eip155;
+
+			if (!sessionEip155?.accounts?.length) {
+				return orig();
+			}
+
+			const original = sessionEip155.accounts as string[];
+			const hederaOnly = original.filter((acc: string) => {
+				const [ns, chainId] = acc.split(':');
+				return hederaEvmChains.has(`${ns}:${chainId}`);
+			});
+
+			if (hederaOnly.length === 0) {
+				// No Hedera EVM accounts — let the original run so the error surfaces normally.
+				return orig();
+			}
+
+			sessionEip155.accounts = hederaOnly;
+			try {
+				return orig();
+			} finally {
+				sessionEip155.accounts = original; // always restore the full list
+			}
+		};
+	}
+
 	private async initAdaptersAndProvider(
 		currentNetwork: string,
 	): Promise<void> {
@@ -679,6 +762,10 @@ export class HederaWalletConnectTransactionAdapter extends BaseHederaTransaction
 						'eth_signTypedData_v4',
 						'eth_accounts',
 						'eth_chainId',
+						// Required so EIP155Provider.switchChain forwards these to MetaMask via
+						// WalletConnect when AppKit's "Switch network" flow is triggered.
+						'wallet_switchEthereumChain',
+						'wallet_addEthereumChain',
 					],
 					chains: eip155Chains,
 					events: ['chainChanged', 'accountsChanged'],
@@ -687,14 +774,15 @@ export class HederaWalletConnectTransactionAdapter extends BaseHederaTransaction
 							? rpcUrl
 							: 'https://testnet.hashio.io/api',
 						'eip155:295': isTestnet
-							? rpcUrl
-							: 'https://mainnet.hashio.io/api',
+							? 'https://mainnet.hashio.io/api'
+							: rpcUrl,
 					},
 				},
 			},
 		};
 
 		this.hederaProvider = await HederaProvider.init(providerOpts);
+		this.patchInitProviders();
 
 		this.appKit = createAppKit({
 			adapters: [this.hederaAdapter, eip155HederaAdapter],
