@@ -5,7 +5,10 @@ import { HederaId } from '../../../../../../domain/context/shared/HederaId.js';
 export class GrantUnlimitedSupplierRoleCommandResponse
 	implements CommandResponse
 {
-	constructor(public readonly payload: boolean) {}
+	constructor(
+		public readonly payload: boolean,
+		public readonly transactionId?: string,
+	) {}
 }
 
 export class GrantUnlimitedSupplierRoleCommand extends Command<GrantUnlimitedSupplierRoleCommandResponse> {

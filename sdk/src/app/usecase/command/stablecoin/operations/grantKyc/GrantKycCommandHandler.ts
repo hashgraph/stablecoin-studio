@@ -102,7 +102,7 @@ export class GrantKycCommandHandler
 
 		const res = await handler.grantKyc(capabilities, targetId);
 		return Promise.resolve(
-			new GrantKycCommandResponse(res.error === undefined),
+			new GrantKycCommandResponse(res.error === undefined, res.id),
 		);
 	}
 }

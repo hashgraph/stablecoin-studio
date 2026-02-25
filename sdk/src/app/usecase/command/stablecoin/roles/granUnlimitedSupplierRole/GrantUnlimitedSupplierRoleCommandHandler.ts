@@ -60,6 +60,7 @@ export class GrantUnlimitedSupplierRoleCommandHandler
 		return Promise.resolve(
 			new GrantUnlimitedSupplierRoleCommandResponse(
 				res.error === undefined,
+				res.id,
 			),
 		);
 	}

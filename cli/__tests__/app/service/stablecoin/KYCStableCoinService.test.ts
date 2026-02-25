@@ -18,7 +18,7 @@
  *
  */
 
-import { KYCRequest, StableCoin } from '@hashgraph/stablecoin-npm-sdk';
+import { KYCRequest, StableCoin, TransactionResult } from '@hashgraph/stablecoin-npm-sdk';
 import KYCStableCoinService from '../../../../src/app/service/stablecoin/KYCStableCoinService';
 import { utilsService } from '../../../../src/index.js';
 import Language from '../../../../src/domain/language/Language.js';
@@ -52,10 +52,10 @@ describe(`Testing KYCStableCoinService class`, () => {
   it('Should instance grantKYCToAccount', async () => {
     const GrantKYCMock = jest
       .spyOn(StableCoin, 'grantKyc')
-      .mockImplementation(async (request: KYCRequest): Promise<boolean> => {
+      .mockImplementation(async (request: KYCRequest): Promise<TransactionResult> => {
         expect(request.targetId).toEqual(account);
         expect(request.tokenId).toEqual(token);
-        return true;
+        return { success: true } as TransactionResult;
       });
 
     await service.grantKYCToAccount(request);
@@ -71,10 +71,10 @@ describe(`Testing KYCStableCoinService class`, () => {
   it('Should instance revokeKYCFromAccount', async () => {
     const RevokeKYCMock = jest
       .spyOn(StableCoin, 'revokeKyc')
-      .mockImplementation(async (request: KYCRequest): Promise<boolean> => {
+      .mockImplementation(async (request: KYCRequest): Promise<TransactionResult> => {
         expect(request.targetId).toEqual(account);
         expect(request.tokenId).toEqual(token);
-        return true;
+        return { success: true } as TransactionResult;
       });
 
     await service.revokeKYCFromAccount(request);

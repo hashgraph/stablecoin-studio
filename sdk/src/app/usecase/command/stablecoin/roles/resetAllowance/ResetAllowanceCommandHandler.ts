@@ -59,7 +59,7 @@ export class ResetAllowanceCommandHandler
 		);
 		// return Promise.resolve({ payload: res.response ?? false });
 		return Promise.resolve(
-			new ResetAllowanceCommandResponse(res.error === undefined),
+			new ResetAllowanceCommandResponse(res.error === undefined, res.id),
 		);
 	}
 }

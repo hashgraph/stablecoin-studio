@@ -21,6 +21,7 @@
 import {
   FreezeAccountRequest,
   StableCoin,
+  TransactionResult,
 } from '@hashgraph/stablecoin-npm-sdk';
 import FreezeStableCoinService from '../../../../src/app/service/stablecoin/FreezeStableCoinService';
 import { utilsService } from '../../../../src/index.js';
@@ -56,10 +57,10 @@ describe(`Testing FreezeStableCoinService class`, () => {
     const FreezeMock = jest
       .spyOn(StableCoin, 'freeze')
       .mockImplementation(
-        async (request: FreezeAccountRequest): Promise<boolean> => {
+        async (request: FreezeAccountRequest): Promise<TransactionResult> => {
           expect(request.targetId).toEqual(account);
           expect(request.tokenId).toEqual(token);
-          return true;
+          return { success: true } as TransactionResult;
         },
       );
 
@@ -77,10 +78,10 @@ describe(`Testing FreezeStableCoinService class`, () => {
     const UnFreezeMock = jest
       .spyOn(StableCoin, 'unFreeze')
       .mockImplementation(
-        async (request: FreezeAccountRequest): Promise<boolean> => {
+        async (request: FreezeAccountRequest): Promise<TransactionResult> => {
           expect(request.targetId).toEqual(account);
           expect(request.tokenId).toEqual(token);
-          return true;
+          return { success: true } as TransactionResult;
         },
       );
 

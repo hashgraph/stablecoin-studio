@@ -113,7 +113,7 @@ export class addFixedFeesCommandHandler
 		const res = await handler.updateCustomFees(capabilities, HcustomFee);
 
 		return Promise.resolve(
-			new addFixedFeesCommandResponse(res.error === undefined),
+			new addFixedFeesCommandResponse(res.error === undefined, res.id),
 		);
 	}
 }

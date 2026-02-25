@@ -65,7 +65,7 @@ export class UnFreezeCommandHandler
 		);
 		const res = await handler.unfreeze(capabilities, targetId, startDate);
 		return Promise.resolve(
-			new UnFreezeCommandResponse(res.error === undefined),
+			new UnFreezeCommandResponse(res.error === undefined, res.id),
 		);
 	}
 }
