@@ -24,7 +24,10 @@ import ContractId from '../../../../../../domain/context/contract/ContractId.js'
 import { HederaId } from '../../../../../../domain/context/shared/HederaId.js';
 
 export class UpdateReserveAddressCommandResponse implements CommandResponse {
-	constructor(public readonly payload: boolean) {}
+	constructor(
+		public readonly payload: boolean,
+		public readonly transactionId?: string,
+	) {}
 }
 
 export class UpdateReserveAddressCommand extends Command<UpdateReserveAddressCommandResponse> {

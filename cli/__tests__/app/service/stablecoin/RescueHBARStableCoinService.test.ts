@@ -18,7 +18,7 @@
  *
  */
 
-import { RescueHBARRequest, StableCoin } from '@hashgraph/stablecoin-npm-sdk';
+import { RescueHBARRequest, StableCoin, TransactionResult } from '@hashgraph/stablecoin-npm-sdk';
 import RescueHBARStableCoinService from '../../../../src/app/service/stablecoin/RescueHBARStableCoinService';
 import { utilsService } from '../../../../src/index.js';
 import Language from '../../../../src/domain/language/Language.js';
@@ -45,10 +45,10 @@ describe(`Testing RescueHBARStableCoinService class`, () => {
     const rescueHBARMock = jest
       .spyOn(StableCoin, 'rescueHBAR')
       .mockImplementation(
-        async (request: RescueHBARRequest): Promise<boolean> => {
+        async (request: RescueHBARRequest): Promise<TransactionResult> => {
           expect(request.tokenId).toEqual(token);
           expect(request.amount).toEqual(amount);
-          return false;
+          return { success: true } as TransactionResult;
         },
       );
 

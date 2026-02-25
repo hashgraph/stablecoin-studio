@@ -4,7 +4,10 @@ import { CustomFee } from '../../../../../../domain/context/fee/CustomFee.js';
 import { HederaId } from '../../../../../../domain/context/shared/HederaId.js';
 
 export class UpdateCustomFeesCommandResponse implements CommandResponse {
-	constructor(public readonly payload: boolean) {}
+	constructor(
+		public readonly payload: boolean,
+		public readonly transactionId?: string,
+	) {}
 }
 
 export class UpdateCustomFeesCommand extends Command<UpdateCustomFeesCommandResponse> {

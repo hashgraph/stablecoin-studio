@@ -5,7 +5,7 @@ import { HederaId } from '../../../../../../domain/context/shared/HederaId.js';
 export class DeleteCommandResponse implements CommandResponse {
 	constructor(
 		public readonly payload: boolean,
-		public readonly startDate?: string,
+		public readonly transactionId?: string,
 	) {}
 }
 

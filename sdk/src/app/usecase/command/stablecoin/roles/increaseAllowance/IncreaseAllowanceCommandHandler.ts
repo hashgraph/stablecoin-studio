@@ -67,7 +67,7 @@ export class IncreaseAllowanceCommandHandler
 		);
 		// return Promise.resolve({ payload: res.response });
 		return Promise.resolve(
-			new IncreaseAllowanceCommandResponse(res.error === undefined),
+			new IncreaseAllowanceCommandResponse(res.error === undefined, res.id),
 		);
 	}
 }

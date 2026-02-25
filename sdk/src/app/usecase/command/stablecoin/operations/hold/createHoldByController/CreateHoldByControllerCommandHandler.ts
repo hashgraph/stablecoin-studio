@@ -137,6 +137,7 @@ export class CreateHoldByControllerCommandHandler
 			new CreateHoldByControllerCommandResponse(
 				parseInt(holdId, 16),
 				res.error == undefined,
+				res.id,
 			),
 		);
 	}

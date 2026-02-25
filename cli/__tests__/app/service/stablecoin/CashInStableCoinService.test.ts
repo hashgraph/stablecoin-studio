@@ -18,7 +18,7 @@
  *
  */
 
-import { CashInRequest, StableCoin } from '@hashgraph/stablecoin-npm-sdk';
+import { CashInRequest, StableCoin, TransactionResult } from '@hashgraph/stablecoin-npm-sdk';
 import CashInStableCoinService from '../../../../src/app/service/stablecoin/CashInStableCoinService';
 import { utilsService } from '../../../../src/index.js';
 import Language from '../../../../src/domain/language/Language.js';
@@ -51,11 +51,11 @@ describe(`Testing CashInStableCoinService class`, () => {
   it('Should instance cashInStableCoin', async () => {
     const CashInMock = jest
       .spyOn(StableCoin, 'cashIn')
-      .mockImplementation(async (request: CashInRequest): Promise<boolean> => {
+      .mockImplementation(async (request: CashInRequest): Promise<TransactionResult> => {
         expect(request.targetId).toEqual(account);
         expect(request.tokenId).toEqual(token);
         expect(request.amount).toEqual(amount);
-        return true;
+        return { success: true } as TransactionResult;
       });
 
     await service.cashInStableCoin(request);

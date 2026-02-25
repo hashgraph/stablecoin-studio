@@ -47,7 +47,7 @@ export class UpdateReserveAmountCommandHandler
 			reserveAmount,
 		);
 		return Promise.resolve(
-			new UpdateReserveAmountCommandResponse(res.error === undefined),
+			new UpdateReserveAmountCommandResponse(res.error === undefined, res.id),
 		);
 	}
 }

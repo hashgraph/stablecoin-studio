@@ -135,6 +135,7 @@ export class CreateHoldCommandHandler
 			new CreateHoldCommandResponse(
 				parseInt(holdId, 16),
 				res.error == undefined,
+				res.id,
 			),
 		);
 	}

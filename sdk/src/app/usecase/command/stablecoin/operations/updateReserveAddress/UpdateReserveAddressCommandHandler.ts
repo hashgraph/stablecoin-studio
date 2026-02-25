@@ -59,7 +59,7 @@ export class UpdateReserveAddressCommandHandler
 			reserveAddress,
 		);
 		return Promise.resolve(
-			new UpdateReserveAddressCommandResponse(res.error === undefined),
+			new UpdateReserveAddressCommandResponse(res.error === undefined, res.id),
 		);
 	}
 }

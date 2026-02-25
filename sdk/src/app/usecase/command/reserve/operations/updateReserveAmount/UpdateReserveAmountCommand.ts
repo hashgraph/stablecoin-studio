@@ -24,7 +24,10 @@ import ContractId from '../../../../../../domain/context/contract/ContractId.js'
 import BigDecimal from '../../../../../../domain/context/shared/BigDecimal.js';
 
 export class UpdateReserveAmountCommandResponse implements CommandResponse {
-	constructor(public readonly payload: boolean) {}
+	constructor(
+		public readonly payload: boolean,
+		public readonly transactionId?: string,
+	) {}
 }
 
 export class UpdateReserveAmountCommand extends Command<UpdateReserveAmountCommandResponse> {

@@ -41,3 +41,5 @@ coverage/
 
 # Gas report
 gas-report.txt
+
+.tasks

@@ -18,7 +18,7 @@
  *
  */
 
-import { StableCoin, TransfersRequest } from '@hashgraph/stablecoin-npm-sdk';
+import { StableCoin, TransactionResult, TransfersRequest } from '@hashgraph/stablecoin-npm-sdk';
 import TransfersStableCoinService from '../../../../src/app/service/stablecoin/TransfersStableCoinService';
 import { utilsService } from '../../../../src/index.js';
 import Language from '../../../../src/domain/language/Language.js';
@@ -49,7 +49,7 @@ describe(`Testing TransfersStableCoinService class`, () => {
     const transferMock = jest
       .spyOn(StableCoin, 'transfers')
       .mockImplementation(
-        async (request: TransfersRequest): Promise<boolean> => {
+        async (request: TransfersRequest): Promise<TransactionResult> => {
           expect(request.tokenId).toEqual(token);
           expect(request.targetsId.length).toEqual(targetsId.length);
           expect(request.amounts.length).toEqual(amounts.length);
@@ -61,7 +61,7 @@ describe(`Testing TransfersStableCoinService class`, () => {
             expect(request.amounts[j]).toEqual(amounts[j]);
           }
 
-          return false;
+          return { success: true } as TransactionResult;
         },
       );
 

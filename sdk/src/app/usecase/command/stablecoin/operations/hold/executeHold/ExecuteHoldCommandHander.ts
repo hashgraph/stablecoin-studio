@@ -149,7 +149,7 @@ export class ExecuteHoldCommandHandler
 		);
 
 		return Promise.resolve(
-			new ExecuteHoldCommandResponse(res.error === undefined),
+			new ExecuteHoldCommandResponse(res.error === undefined, res.id),
 		);
 	}
 }

@@ -22,6 +22,7 @@ import {
   BigDecimal,
   CreateHoldByControllerRequest,
   CreateHoldRequest,
+  CreateHoldTransactionResult,
   ExecuteHoldRequest,
   GetHeldAmountForRequest,
   GetHoldCountForRequest,
@@ -31,6 +32,7 @@ import {
   ReclaimHoldRequest,
   ReleaseHoldRequest,
   StableCoin,
+  TransactionResult,
 } from '@hashgraph/stablecoin-npm-sdk';
 import HoldStableCoinService from '../../../../src/app/service/stablecoin/HoldStableCoinService';
 import { utilsService } from '../../../../src/index.js';
@@ -79,7 +81,7 @@ describe(`Testing HoldStableCoinService class`, () => {
       .mockImplementation(
         async (
           request: CreateHoldRequest,
-        ): Promise<{ holdId: number; payload: boolean }> => {
+        ): Promise<CreateHoldTransactionResult> => {
           expect(request.targetId).toEqual(holdDestination);
           expect(request.tokenId).toEqual(token);
           expect(request.escrow).toEqual(escrow);
@@ -87,8 +89,9 @@ describe(`Testing HoldStableCoinService class`, () => {
           expect(request.amount).toEqual(amount);
           return {
             holdId: 0,
-            payload: true,
-          };
+            success: true,
+            toJSON: () => ({}),
+          } as CreateHoldTransactionResult;
         },
       );
 
@@ -119,7 +122,7 @@ describe(`Testing HoldStableCoinService class`, () => {
       .mockImplementation(
         async (
           request: CreateHoldByControllerRequest,
-        ): Promise<{ holdId: number; payload: boolean }> => {
+        ): Promise<CreateHoldTransactionResult> => {
           expect(request.targetId).toEqual(holdDestination);
           expect(request.tokenId).toEqual(token);
           expect(request.escrow).toEqual(escrow);
@@ -128,8 +131,9 @@ describe(`Testing HoldStableCoinService class`, () => {
           expect(request.sourceId).toEqual(sourceId);
           return {
             holdId: 0,
-            payload: true,
-          };
+            success: true,
+            toJSON: () => ({}),
+          } as CreateHoldTransactionResult;
         },
       );
 
@@ -157,13 +161,13 @@ describe(`Testing HoldStableCoinService class`, () => {
     const executeHoldMock = jest
       .spyOn(StableCoin, 'executeHold')
       .mockImplementation(
-        async (request: ExecuteHoldRequest): Promise<boolean> => {
+        async (request: ExecuteHoldRequest): Promise<TransactionResult> => {
           expect(request.tokenId).toEqual(token);
           expect(request.targetId).toEqual(holdDestination);
           expect(request.sourceId).toEqual(sourceId);
           expect(request.amount).toEqual(amount);
           expect(request.holdId).toEqual(holdId);
-          return true;
+          return { success: true } as TransactionResult;
         },
       );
 
@@ -188,12 +192,12 @@ describe(`Testing HoldStableCoinService class`, () => {
     const releaseHoldMock = jest
       .spyOn(StableCoin, 'releaseHold')
       .mockImplementation(
-        async (request: ExecuteHoldRequest): Promise<boolean> => {
+        async (request: ExecuteHoldRequest): Promise<TransactionResult> => {
           expect(request.tokenId).toEqual(token);
           expect(request.sourceId).toEqual(sourceId);
           expect(request.amount).toEqual(amount);
           expect(request.holdId).toEqual(holdId);
-          return true;
+          return { success: true } as TransactionResult;
         },
       );
 
@@ -217,11 +221,11 @@ describe(`Testing HoldStableCoinService class`, () => {
     const reclaimHoldMock = jest
       .spyOn(StableCoin, 'reclaimHold')
       .mockImplementation(
-        async (request: ReclaimHoldRequest): Promise<boolean> => {
+        async (request: ReclaimHoldRequest): Promise<TransactionResult> => {
           expect(request.tokenId).toEqual(token);
           expect(request.sourceId).toEqual(sourceId);
           expect(request.holdId).toEqual(holdId);
-          return true;
+          return { success: true } as TransactionResult;
         },
       );
 

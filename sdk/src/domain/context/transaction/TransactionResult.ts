@@ -18,8 +18,21 @@
  *
  */
 
-import ConfigInfoViewModel from './ConfigInfoViewModel';
-import HoldViewModel from './HoldViewModel';
-import { TransactionResult } from '../../../domain/context/transaction/TransactionResult';
+export class TransactionResult {
+	constructor(
+		public readonly success: boolean,
+		public readonly transactionId?: string,
+	) {}
 
-export { ConfigInfoViewModel, HoldViewModel, TransactionResult };
+	valueOf(): boolean {
+		return this.success;
+	}
+
+	toString(): string {
+		return String(this.success);
+	}
+
+	toJSON(): { success: boolean; transactionId?: string } {
+		return { success: this.success, transactionId: this.transactionId };
+	}
+}

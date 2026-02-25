@@ -62,28 +62,29 @@ import { GrantMultiRolesCommand } from '../../app/usecase/command/stablecoin/rol
 import { RevokeMultiRolesCommand } from '../../app/usecase/command/stablecoin/roles/revokeMultiRoles/RevokeMultiRolesCommand.js';
 import GetAccountsWithRolesRequest from './request/GetAccountsWithRolesRequest.js';
 import { GetAccountsWithRolesQuery } from '../../app/usecase/query/stablecoin/roles/getAccountsWithRole/GetAccountsWithRolesQuery.js';
+import { TransactionResult } from '../../domain/context/transaction/TransactionResult.js';
 
 export { StableCoinRole, StableCoinRoleLabel, MAX_ACCOUNTS_ROLES };
 
 interface IRole {
 	hasRole(request: HasRoleRequest): Promise<boolean>;
-	grantRole(request: GrantRoleRequest): Promise<boolean>;
-	revokeRole(request: RevokeRoleRequest): Promise<boolean>;
-	grantMultiRoles(request: GrantMultiRolesRequest): Promise<boolean>;
-	revokeMultiRoles(request: RevokeMultiRolesRequest): Promise<boolean>;
+	grantRole(request: GrantRoleRequest): Promise<TransactionResult>;
+	revokeRole(request: RevokeRoleRequest): Promise<TransactionResult>;
+	grantMultiRoles(request: GrantMultiRolesRequest): Promise<TransactionResult>;
+	revokeMultiRoles(request: RevokeMultiRolesRequest): Promise<TransactionResult>;
 	getRoles(request: GetRolesRequest): Promise<string[]>;
 	getAccountsWithRole(
 		request: GetAccountsWithRolesRequest,
 	): Promise<string[]>;
 	//Supplier
 	getAllowance(request: GetSupplierAllowanceRequest): Promise<Balance>;
-	resetAllowance(request: ResetSupplierAllowanceRequest): Promise<boolean>;
+	resetAllowance(request: ResetSupplierAllowanceRequest): Promise<TransactionResult>;
 	increaseAllowance(
 		request: IncreaseSupplierAllowanceRequest,
-	): Promise<boolean>;
+	): Promise<TransactionResult>;
 	decreaseAllowance(
 		request: DecreaseSupplierAllowanceRequest,
-	): Promise<boolean>;
+	): Promise<TransactionResult>;
 	isLimited(request: CheckSupplierLimitRequest): Promise<boolean>;
 	isUnlimited(request: CheckSupplierLimitRequest): Promise<boolean>;
 }
@@ -112,73 +113,68 @@ class RoleInPort implements IRole {
 	}
 
 	@LogError
-	async grantRole(request: GrantRoleRequest): Promise<boolean> {
+	async grantRole(request: GrantRoleRequest): Promise<TransactionResult> {
 		const { tokenId, targetId, role, supplierType, amount } = request;
 		handleValidation('GrantRoleRequest', request);
 
 		if (role === StableCoinRole.CASHIN_ROLE) {
 			if (supplierType == 'limited') {
-				return (
-					await this.commandBus.execute(
-						new GrantSupplierRoleCommand(
-							HederaId.from(targetId),
-							HederaId.from(tokenId),
-							amount!,
-						),
-					)
-				).payload;
+				const response = await this.commandBus.execute(
+					new GrantSupplierRoleCommand(
+						HederaId.from(targetId),
+						HederaId.from(tokenId),
+						amount!,
+					),
+				);
+				return new TransactionResult(response.payload, response.transactionId);
 			} else {
-				return (
-					await this.commandBus.execute(
-						new GrantUnlimitedSupplierRoleCommand(
-							HederaId.from(targetId),
-							HederaId.from(tokenId),
-						),
-					)
-				).payload;
-			}
-		} else {
-			return (
-				await this.commandBus.execute(
-					new GrantRoleCommand(
-						role!,
+				const response = await this.commandBus.execute(
+					new GrantUnlimitedSupplierRoleCommand(
 						HederaId.from(targetId),
 						HederaId.from(tokenId),
 					),
-				)
-			).payload;
+				);
+				return new TransactionResult(response.payload, response.transactionId);
+			}
+		} else {
+			const response = await this.commandBus.execute(
+				new GrantRoleCommand(
+					role!,
+					HederaId.from(targetId),
+					HederaId.from(tokenId),
+				),
+			);
+			return new TransactionResult(response.payload, response.transactionId);
 		}
 	}
 
 	@LogError
-	async revokeRole(request: RevokeRoleRequest): Promise<boolean> {
+	async revokeRole(request: RevokeRoleRequest): Promise<TransactionResult> {
 		const { tokenId, targetId, role } = request;
 		handleValidation('HasRoleRequest', request);
 
 		if (role === StableCoinRole.CASHIN_ROLE) {
-			return (
-				await this.commandBus.execute(
-					new RevokeSupplierRoleCommand(
-						HederaId.from(targetId),
-						HederaId.from(tokenId),
-					),
-				)
-			).payload;
+			const response = await this.commandBus.execute(
+				new RevokeSupplierRoleCommand(
+					HederaId.from(targetId),
+					HederaId.from(tokenId),
+				),
+			);
+			return new TransactionResult(response.payload, response.transactionId);
 		} else {
-			return (
-				await this.commandBus.execute(
-					new RevokeRoleCommand(
-						role!,
-						HederaId.from(targetId),
-						HederaId.from(tokenId),
-					),
-				)
-			).payload;
+			const response = await this.commandBus.execute(
+				new RevokeRoleCommand(
+					role!,
+					HederaId.from(targetId),
+					HederaId.from(tokenId),
+				),
+			);
+			return new TransactionResult(response.payload, response.transactionId);
 		}
 	}
 
 	@LogError
-	async grantMultiRoles(request: GrantMultiRolesRequest): Promise<boolean> {
+	async grantMultiRoles(request: GrantMultiRolesRequest): Promise<TransactionResult> {
 		const { tokenId, targetsId, roles, amounts, startDate } = request;
 		handleValidation('GrantMultiRolesRequest', request);
 
@@ -187,21 +183,20 @@ class RoleInPort implements IRole {
 			targetsIdHederaIds.push(HederaId.from(targetId));
 		});
 
-		return (
-			await this.commandBus.execute(
-				new GrantMultiRolesCommand(
-					roles,
-					targetsIdHederaIds,
-					amounts ?? [],
-					HederaId.from(tokenId),
-					startDate,
-				),
-			)
-		).payload;
+		const response = await this.commandBus.execute(
+			new GrantMultiRolesCommand(
+				roles,
+				targetsIdHederaIds,
+				amounts ?? [],
+				HederaId.from(tokenId),
+				startDate,
+			),
+		);
+		return new TransactionResult(response.payload, response.transactionId);
 	}
 
 	@LogError
-	async revokeMultiRoles(request: RevokeMultiRolesRequest): Promise<boolean> {
+	async revokeMultiRoles(request: RevokeMultiRolesRequest): Promise<TransactionResult> {
 		const { tokenId, targetsId, roles, startDate } = request;
 		handleValidation('HasRoleRequest', request);
 
@@ -210,16 +205,15 @@ class RoleInPort implements IRole {
 			targetsIdHederaIds.push(HederaId.from(targetId));
 		});
 
-		return (
-			await this.commandBus.execute(
-				new RevokeMultiRolesCommand(
-					roles,
-					targetsIdHederaIds,
-					HederaId.from(tokenId),
-					startDate,
-				),
-			)
-		).payload;
+		const response = await this.commandBus.execute(
+			new RevokeMultiRolesCommand(
+				roles,
+				targetsIdHederaIds,
+				HederaId.from(tokenId),
+				startDate,
+			),
+		);
+		return new TransactionResult(response.payload, response.transactionId);
 	}
 
 	@LogError
@@ -267,57 +261,54 @@ class RoleInPort implements IRole {
 	@LogError
 	async resetAllowance(
 		request: ResetSupplierAllowanceRequest,
-	): Promise<boolean> {
+	): Promise<TransactionResult> {
 		const { tokenId, targetId, startDate } = request;
 		handleValidation('ResetSupplierAllowanceRequest', request);
 
-		return (
-			await this.commandBus.execute(
-				new ResetAllowanceCommand(
-					HederaId.from(targetId),
-					HederaId.from(tokenId),
-					startDate,
-				),
-			)
-		).payload;
+		const response = await this.commandBus.execute(
+			new ResetAllowanceCommand(
+				HederaId.from(targetId),
+				HederaId.from(tokenId),
+				startDate,
+			),
+		);
+		return new TransactionResult(response.payload, response.transactionId);
 	}
 
 	@LogError
 	async increaseAllowance(
 		request: IncreaseSupplierAllowanceRequest,
-	): Promise<boolean> {
+	): Promise<TransactionResult> {
 		const { tokenId, amount, targetId, startDate } = request;
 		handleValidation('IncreaseSupplierAllowanceRequest', request);
 
-		return (
-			await this.commandBus.execute(
-				new IncreaseAllowanceCommand(
-					amount,
-					HederaId.from(targetId),
-					HederaId.from(tokenId),
-					startDate,
-				),
-			)
-		).payload;
+		const response = await this.commandBus.execute(
+			new IncreaseAllowanceCommand(
+				amount,
+				HederaId.from(targetId),
+				HederaId.from(tokenId),
+				startDate,
+			),
+		);
+		return new TransactionResult(response.payload, response.transactionId);
 	}
 
 	@LogError
 	async decreaseAllowance(
 		request: DecreaseSupplierAllowanceRequest,
-	): Promise<boolean> {
+	): Promise<TransactionResult> {
 		const { tokenId, amount, targetId, startDate } = request;
 		handleValidation('DecreaseSupplierAllowanceRequest', request);
 
-		return (
-			await this.commandBus.execute(
-				new DecreaseAllowanceCommand(
-					amount,
-					HederaId.from(targetId),
-					HederaId.from(tokenId),
-					startDate,
-				),
-			)
-		).payload;
+		const response = await this.commandBus.execute(
+			new DecreaseAllowanceCommand(
+				amount,
+				HederaId.from(targetId),
+				HederaId.from(tokenId),
+				startDate,
+			),
+		);
+		return new TransactionResult(response.payload, response.transactionId);
 	}
 
 	@LogError

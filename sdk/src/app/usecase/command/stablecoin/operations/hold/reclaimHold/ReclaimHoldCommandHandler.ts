@@ -103,7 +103,7 @@ export class ReclaimHoldCommandHandler
 		const res = await handler.reclaimHold(capabilities, sourceId, holdId);
 
 		return Promise.resolve(
-			new ReclaimHoldCommandResponse(res.error === undefined),
+			new ReclaimHoldCommandResponse(res.error === undefined, res.id),
 		);
 	}
 }

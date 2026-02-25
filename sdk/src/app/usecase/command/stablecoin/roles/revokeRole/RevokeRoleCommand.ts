@@ -4,7 +4,10 @@ import { HederaId } from '../../../../../../domain/context/shared/HederaId.js';
 import { StableCoinRole } from '../../../../../../domain/context/stablecoin/StableCoinRole.js';
 
 export class RevokeRoleCommandResponse implements CommandResponse {
-	constructor(public readonly payload: boolean) {}
+	constructor(
+		public readonly payload: boolean,
+		public readonly transactionId?: string,
+	) {}
 }
 
 export class RevokeRoleCommand extends Command<RevokeRoleCommandResponse> {

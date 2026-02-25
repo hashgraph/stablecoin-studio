@@ -67,7 +67,7 @@ export class DecreaseAllowanceCommandHandler
 		);
 		// return Promise.resolve({ payload: res.response });
 		return Promise.resolve(
-			new DecreaseAllowanceCommandResponse(res.error === undefined),
+			new DecreaseAllowanceCommandResponse(res.error === undefined, res.id),
 		);
 	}
 }

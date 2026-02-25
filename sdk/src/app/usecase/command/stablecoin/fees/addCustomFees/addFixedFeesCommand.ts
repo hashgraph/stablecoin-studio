@@ -4,7 +4,10 @@ import BigDecimal from '../../../../../../domain/context/shared/BigDecimal.js';
 import { HederaId } from '../../../../../../domain/context/shared/HederaId.js';
 
 export class addFixedFeesCommandResponse implements CommandResponse {
-	constructor(public readonly payload: boolean) {}
+	constructor(
+		public readonly payload: boolean,
+		public readonly transactionId?: string,
+	) {}
 }
 
 export class addFixedFeesCommand extends Command<addFixedFeesCommandResponse> {

@@ -90,12 +90,14 @@ describe('🧪 Reserve test', () => {
 			}),
 		);
 
-		await ReserveDataFeed.updateReserveAmount(
+		const result = await ReserveDataFeed.updateReserveAmount(
 			new UpdateReserveAmountRequest({
 				reserveAddress: reserveAddress,
 				reserveAmount: '0',
 			}),
 		);
+		expect(result).toBeTruthy();
+		expect(result.transactionId).toBeTruthy();
 
 		const res = await ReserveDataFeed.getReserveAmount(
 			new GetReserveAmountRequest({
