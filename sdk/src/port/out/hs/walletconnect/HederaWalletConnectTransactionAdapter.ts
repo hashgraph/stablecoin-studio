@@ -774,8 +774,8 @@ export class HederaWalletConnectTransactionAdapter extends BaseHederaTransaction
 							? rpcUrl
 							: 'https://testnet.hashio.io/api',
 						'eip155:295': isTestnet
-							? 'https://mainnet.hashio.io/api'
-							: rpcUrl,
+							? rpcUrl
+							: 'https://mainnet.hashio.io/api', // Include some common non-Hedera chains to prevent "No RPC url provided for chainId: X" errors in MetaMask if those chains are in the approved session. The URLs won't actually be used since our patched initProviders filters to only Hedera EVM chains, but this keeps MetaMask happy.
 					},
 				},
 			},
