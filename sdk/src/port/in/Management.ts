@@ -37,7 +37,9 @@ import ConfigInfoViewModel from './response/ConfigInfoViewModel.js';
 import { TransactionResult } from '../../domain/context/transaction/TransactionResult.js';
 
 interface IManagementInPort {
-	updateConfigVersion(request: UpdateConfigVersionRequest): Promise<TransactionResult>;
+	updateConfigVersion(
+		request: UpdateConfigVersionRequest,
+	): Promise<TransactionResult>;
 	updateConfig(request: UpdateConfigRequest): Promise<TransactionResult>;
 
 	getConfigInfo(request: GetConfigInfoRequest): Promise<ConfigInfoViewModel>;
@@ -69,7 +71,9 @@ class ManagementInPort implements IManagementInPort {
 	}
 
 	@LogError
-	async updateConfig(request: UpdateConfigRequest): Promise<TransactionResult> {
+	async updateConfig(
+		request: UpdateConfigRequest,
+	): Promise<TransactionResult> {
 		const { configId, configVersion, tokenId } = request;
 		handleValidation('UpdateConfigRequest', request);
 
@@ -84,7 +88,9 @@ class ManagementInPort implements IManagementInPort {
 	}
 
 	@LogError
-	async updateResolver(request: UpdateResolverRequest): Promise<TransactionResult> {
+	async updateResolver(
+		request: UpdateResolverRequest,
+	): Promise<TransactionResult> {
 		const { configId, tokenId, resolver, configVersion } = request;
 		handleValidation('UpdateResolverRequest', request);
 

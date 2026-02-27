@@ -99,6 +99,8 @@ export class SignCommandHandler implements ICommandHandler<SignCommand> {
 			account.publicKey.key,
 		);
 
-		return Promise.resolve(new SignCommandResponse(true, command.transactionId));
+		return Promise.resolve(
+			new SignCommandResponse(true, command.transactionId),
+		);
 	}
 }

@@ -50,8 +50,12 @@ export { HBAR_DECIMALS, MAX_PERCENTAGE_DECIMALS, MAX_CUSTOM_FEES };
 
 interface ICustomFees {
 	addFixedFee(request: AddFixedFeeRequest): Promise<TransactionResult>;
-	addFractionalFee(request: AddFractionalFeeRequest): Promise<TransactionResult>;
-	updateCustomFees(request: UpdateCustomFeesRequest): Promise<TransactionResult>;
+	addFractionalFee(
+		request: AddFractionalFeeRequest,
+	): Promise<TransactionResult>;
+	updateCustomFees(
+		request: UpdateCustomFeesRequest,
+	): Promise<TransactionResult>;
 }
 
 class CustomFeesInPort implements ICustomFees {
@@ -86,7 +90,9 @@ class CustomFeesInPort implements ICustomFees {
 	}
 
 	@LogError
-	async addFractionalFee(request: AddFractionalFeeRequest): Promise<TransactionResult> {
+	async addFractionalFee(
+		request: AddFractionalFeeRequest,
+	): Promise<TransactionResult> {
 		const {
 			tokenId,
 			collectorId,
@@ -127,7 +133,9 @@ class CustomFeesInPort implements ICustomFees {
 	}
 
 	@LogError
-	async updateCustomFees(request: UpdateCustomFeesRequest): Promise<TransactionResult> {
+	async updateCustomFees(
+		request: UpdateCustomFeesRequest,
+	): Promise<TransactionResult> {
 		const { tokenId, customFees } = request;
 		handleValidation('UpdateCustomFeesRequest', request);
 

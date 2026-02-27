@@ -38,7 +38,9 @@ import { TransactionResult } from '../../domain/context/transaction/TransactionR
 
 interface IReserveDataFeedInPort {
 	getReserveAmount(request: GetReserveAmountRequest): Promise<Balance>;
-	updateReserveAmount(request: UpdateReserveAmountRequest): Promise<TransactionResult>;
+	updateReserveAmount(
+		request: UpdateReserveAmountRequest,
+	): Promise<TransactionResult>;
 }
 
 class ReserveDataFeedInPort implements IReserveDataFeedInPort {
@@ -75,10 +77,7 @@ class ReserveDataFeedInPort implements IReserveDataFeedInPort {
 		const response = await this.commandBus.execute(
 			new UpdateReserveAmountCommand(
 				new ContractId(reserveId),
-				BigDecimal.fromString(
-					request.reserveAmount,
-					RESERVE_DECIMALS,
-				),
+				BigDecimal.fromString(request.reserveAmount, RESERVE_DECIMALS),
 			),
 		);
 		return new TransactionResult(response.payload, response.transactionId);

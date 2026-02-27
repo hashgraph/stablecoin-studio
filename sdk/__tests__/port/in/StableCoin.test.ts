@@ -614,7 +614,6 @@ describe('🧪 Stablecoin test', () => {
 			nextHoldId,
 		);
 
-
 		expect(result).toBeTruthy();
 		expect(result.success).toBeTruthy();
 		expect(result.transactionId).toBeDefined();
