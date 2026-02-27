@@ -36,6 +36,8 @@ export class RemoveCommandHandler implements ICommandHandler<RemoveCommand> {
 
 		await this.backendAdapter.deleteTransaction(transactionId);
 
-		return Promise.resolve(new RemoveCommandResponse(true, command.transactionId));
+		return Promise.resolve(
+			new RemoveCommandResponse(true, command.transactionId),
+		);
 	}
 }

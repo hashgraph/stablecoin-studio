@@ -116,7 +116,10 @@ export class addFractionalFeesCommandHandler
 		const res = await handler.updateCustomFees(capabilities, HcustomFee);
 
 		return Promise.resolve(
-			new addFractionalFeesCommandResponse(res.error === undefined, res.id),
+			new addFractionalFeesCommandResponse(
+				res.error === undefined,
+				res.id,
+			),
 		);
 	}
 }

@@ -18,7 +18,11 @@
  *
  */
 
-import { StableCoin, TransactionResult, UpdateRequest } from '@hashgraph/stablecoin-npm-sdk';
+import {
+  StableCoin,
+  TransactionResult,
+  UpdateRequest,
+} from '@hashgraph/stablecoin-npm-sdk';
 import UpdateStableCoinService from '../../../../src/app/service/stablecoin/UpdateStableCoinService';
 import { utilsService } from '../../../../src/index.js';
 import Language from '../../../../src/domain/language/Language.js';
@@ -77,25 +81,27 @@ describe(`Testing UpdateStableCoinService class`, () => {
   it('Should instance update', async () => {
     const updateMock = jest
       .spyOn(StableCoin, 'update')
-      .mockImplementation(async (request: UpdateRequest): Promise<TransactionResult> => {
-        expect(request.tokenId).toEqual(token);
-        expect(request.name).toEqual(name);
-        expect(request.symbol).toEqual(symbol);
-        expect(request.autoRenewPeriod).toEqual(autoRenewPeriod);
-        expect(request.expirationTimestamp).toEqual(expirationTimestamp);
-        expect(request.metadata).toEqual(metadata);
-        expect(request.freezeKey.key).toEqual(freezeKey.key);
-        expect(request.freezeKey.type).toEqual(freezeKey.type);
-        expect(request.kycKey.key).toEqual(kycKey.key);
-        expect(request.kycKey.type).toEqual(kycKey.type);
-        expect(request.wipeKey.key).toEqual(wipeKey.key);
-        expect(request.wipeKey.type).toEqual(wipeKey.type);
-        expect(request.pauseKey.key).toEqual(pauseKey.key);
-        expect(request.pauseKey.type).toEqual(pauseKey.type);
-        expect(request.feeScheduleKey.key).toEqual(feeScheduleKey.key);
-        expect(request.feeScheduleKey.type).toEqual(feeScheduleKey.type);
-        return { success: true } as TransactionResult;
-      });
+      .mockImplementation(
+        async (request: UpdateRequest): Promise<TransactionResult> => {
+          expect(request.tokenId).toEqual(token);
+          expect(request.name).toEqual(name);
+          expect(request.symbol).toEqual(symbol);
+          expect(request.autoRenewPeriod).toEqual(autoRenewPeriod);
+          expect(request.expirationTimestamp).toEqual(expirationTimestamp);
+          expect(request.metadata).toEqual(metadata);
+          expect(request.freezeKey.key).toEqual(freezeKey.key);
+          expect(request.freezeKey.type).toEqual(freezeKey.type);
+          expect(request.kycKey.key).toEqual(kycKey.key);
+          expect(request.kycKey.type).toEqual(kycKey.type);
+          expect(request.wipeKey.key).toEqual(wipeKey.key);
+          expect(request.wipeKey.type).toEqual(wipeKey.type);
+          expect(request.pauseKey.key).toEqual(pauseKey.key);
+          expect(request.pauseKey.type).toEqual(pauseKey.type);
+          expect(request.feeScheduleKey.key).toEqual(feeScheduleKey.key);
+          expect(request.feeScheduleKey.type).toEqual(feeScheduleKey.type);
+          return { success: true } as TransactionResult;
+        },
+      );
 
     await service.update(request);
 

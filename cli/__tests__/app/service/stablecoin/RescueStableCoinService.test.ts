@@ -18,7 +18,11 @@
  *
  */
 
-import { RescueRequest, StableCoin, TransactionResult } from '@hashgraph/stablecoin-npm-sdk';
+import {
+  RescueRequest,
+  StableCoin,
+  TransactionResult,
+} from '@hashgraph/stablecoin-npm-sdk';
 import RescueStableCoinService from '../../../../src/app/service/stablecoin/RescueStableCoinService';
 import { utilsService } from '../../../../src/index.js';
 import Language from '../../../../src/domain/language/Language.js';
@@ -45,11 +49,13 @@ describe(`Testing RescueStableCoinService class`, () => {
   it('Should instance rescueStableCoin', async () => {
     const rescueMock = jest
       .spyOn(StableCoin, 'rescue')
-      .mockImplementation(async (request: RescueRequest): Promise<TransactionResult> => {
-        expect(request.tokenId).toEqual(token);
-        expect(request.amount).toEqual(amount);
-        return { success: true } as TransactionResult;
-      });
+      .mockImplementation(
+        async (request: RescueRequest): Promise<TransactionResult> => {
+          expect(request.tokenId).toEqual(token);
+          expect(request.amount).toEqual(amount);
+          return { success: true } as TransactionResult;
+        },
+      );
 
     await service.rescueStableCoin(request);
 

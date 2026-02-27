@@ -77,6 +77,8 @@ export class SubmitCommandHandler implements ICommandHandler<SubmitCommand> {
 		// remove from the backend
 		await this.backendAdapter.updateTransaction(transactionId, EXECUTED);
 
-		return Promise.resolve(new SubmitCommandResponse(true, command.transactionId));
+		return Promise.resolve(
+			new SubmitCommandResponse(true, command.transactionId),
+		);
 	}
 }

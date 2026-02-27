@@ -70,15 +70,21 @@ interface IRole {
 	hasRole(request: HasRoleRequest): Promise<boolean>;
 	grantRole(request: GrantRoleRequest): Promise<TransactionResult>;
 	revokeRole(request: RevokeRoleRequest): Promise<TransactionResult>;
-	grantMultiRoles(request: GrantMultiRolesRequest): Promise<TransactionResult>;
-	revokeMultiRoles(request: RevokeMultiRolesRequest): Promise<TransactionResult>;
+	grantMultiRoles(
+		request: GrantMultiRolesRequest,
+	): Promise<TransactionResult>;
+	revokeMultiRoles(
+		request: RevokeMultiRolesRequest,
+	): Promise<TransactionResult>;
 	getRoles(request: GetRolesRequest): Promise<string[]>;
 	getAccountsWithRole(
 		request: GetAccountsWithRolesRequest,
 	): Promise<string[]>;
 	//Supplier
 	getAllowance(request: GetSupplierAllowanceRequest): Promise<Balance>;
-	resetAllowance(request: ResetSupplierAllowanceRequest): Promise<TransactionResult>;
+	resetAllowance(
+		request: ResetSupplierAllowanceRequest,
+	): Promise<TransactionResult>;
 	increaseAllowance(
 		request: IncreaseSupplierAllowanceRequest,
 	): Promise<TransactionResult>;
@@ -126,7 +132,10 @@ class RoleInPort implements IRole {
 						amount!,
 					),
 				);
-				return new TransactionResult(response.payload, response.transactionId);
+				return new TransactionResult(
+					response.payload,
+					response.transactionId,
+				);
 			} else {
 				const response = await this.commandBus.execute(
 					new GrantUnlimitedSupplierRoleCommand(
@@ -134,7 +143,10 @@ class RoleInPort implements IRole {
 						HederaId.from(tokenId),
 					),
 				);
-				return new TransactionResult(response.payload, response.transactionId);
+				return new TransactionResult(
+					response.payload,
+					response.transactionId,
+				);
 			}
 		} else {
 			const response = await this.commandBus.execute(
@@ -144,7 +156,10 @@ class RoleInPort implements IRole {
 					HederaId.from(tokenId),
 				),
 			);
-			return new TransactionResult(response.payload, response.transactionId);
+			return new TransactionResult(
+				response.payload,
+				response.transactionId,
+			);
 		}
 	}
 
@@ -160,7 +175,10 @@ class RoleInPort implements IRole {
 					HederaId.from(tokenId),
 				),
 			);
-			return new TransactionResult(response.payload, response.transactionId);
+			return new TransactionResult(
+				response.payload,
+				response.transactionId,
+			);
 		} else {
 			const response = await this.commandBus.execute(
 				new RevokeRoleCommand(
@@ -169,12 +187,17 @@ class RoleInPort implements IRole {
 					HederaId.from(tokenId),
 				),
 			);
-			return new TransactionResult(response.payload, response.transactionId);
+			return new TransactionResult(
+				response.payload,
+				response.transactionId,
+			);
 		}
 	}
 
 	@LogError
-	async grantMultiRoles(request: GrantMultiRolesRequest): Promise<TransactionResult> {
+	async grantMultiRoles(
+		request: GrantMultiRolesRequest,
+	): Promise<TransactionResult> {
 		const { tokenId, targetsId, roles, amounts, startDate } = request;
 		handleValidation('GrantMultiRolesRequest', request);
 
@@ -196,7 +219,9 @@ class RoleInPort implements IRole {
 	}
 
 	@LogError
-	async revokeMultiRoles(request: RevokeMultiRolesRequest): Promise<TransactionResult> {
+	async revokeMultiRoles(
+		request: RevokeMultiRolesRequest,
+	): Promise<TransactionResult> {
 		const { tokenId, targetsId, roles, startDate } = request;
 		handleValidation('HasRoleRequest', request);
 

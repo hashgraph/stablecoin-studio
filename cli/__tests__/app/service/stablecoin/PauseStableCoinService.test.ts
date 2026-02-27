@@ -18,7 +18,11 @@
  *
  */
 
-import { PauseRequest, StableCoin, TransactionResult } from '@hashgraph/stablecoin-npm-sdk';
+import {
+  PauseRequest,
+  StableCoin,
+  TransactionResult,
+} from '@hashgraph/stablecoin-npm-sdk';
 import PauseStableCoinService from '../../../../src/app/service/stablecoin/PauseStableCoinService';
 import { utilsService } from '../../../../src/index.js';
 import Language from '../../../../src/domain/language/Language.js';
@@ -40,10 +44,12 @@ describe(`Testing PauseStableCoinService class`, () => {
   it('Should instance pauseStableCoin', async () => {
     const PauseMock = jest
       .spyOn(StableCoin, 'pause')
-      .mockImplementation(async (request: PauseRequest): Promise<TransactionResult> => {
-        expect(request.tokenId).toEqual(token);
-        return { success: true } as TransactionResult;
-      });
+      .mockImplementation(
+        async (request: PauseRequest): Promise<TransactionResult> => {
+          expect(request.tokenId).toEqual(token);
+          return { success: true } as TransactionResult;
+        },
+      );
 
     await service.pauseStableCoin(request);
 
@@ -58,10 +64,12 @@ describe(`Testing PauseStableCoinService class`, () => {
   it('Should instance unpauseStableCoin when granted', async () => {
     const UnpauseMock = jest
       .spyOn(StableCoin, 'unPause')
-      .mockImplementation(async (request: PauseRequest): Promise<TransactionResult> => {
-        expect(request.tokenId).toEqual(token);
-        return { success: true } as TransactionResult;
-      });
+      .mockImplementation(
+        async (request: PauseRequest): Promise<TransactionResult> => {
+          expect(request.tokenId).toEqual(token);
+          return { success: true } as TransactionResult;
+        },
+      );
 
     await service.unpauseStableCoin(request);
 
