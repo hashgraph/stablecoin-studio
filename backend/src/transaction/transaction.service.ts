@@ -44,7 +44,7 @@ import {
 } from '../common/exceptions/domain-exceptions';
 import { TransactionStatus } from './status.enum';
 import { Network } from './network.enum';
-import { Client, Transaction as TransactionSdk } from '@hashgraph/sdk';
+import { Client, Transaction as TransactionSdk } from '@hiero-ledger/sdk';
 
 @Injectable()
 export default class TransactionService {

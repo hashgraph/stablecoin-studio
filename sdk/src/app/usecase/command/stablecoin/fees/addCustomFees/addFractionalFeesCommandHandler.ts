@@ -32,7 +32,7 @@ import {
 	CustomFee as HCustomFee,
 	CustomFractionalFee as HCustomFractionalFee,
 	FeeAssessmentMethod,
-} from '@hashgraph/sdk';
+} from '@hiero-ledger/sdk';
 import { fromCustomFeesToHCustomFees } from '../../../../../../domain/context/fee/CustomFee.js';
 import { GetAccountTokenRelationshipQuery } from '../../../../query/account/tokenRelationship/GetAccountTokenRelationshipQuery.js';
 import { StableCoinNotAssociated } from '../../error/StableCoinNotAssociated.js';

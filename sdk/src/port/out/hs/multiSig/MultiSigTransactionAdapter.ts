@@ -26,7 +26,7 @@ import {
 	Timestamp,
 	Transaction,
 	TransactionId,
-} from '@hashgraph/sdk';
+} from '@hiero-ledger/sdk';
 import Account from '../../../../domain/context/account/Account.js';
 import TransactionResponse from '../../../../domain/context/transaction/TransactionResponse.js';
 import { lazyInject } from '../../../../core/decorator/LazyInjectDecorator.js';

@@ -27,7 +27,7 @@ import { BackendAdapter } from '../../../../../../port/out/backend/BackendAdapte
 import AccountService from '../../../../../service/AccountService.js';
 import TransactionService from '../../../../../service/TransactionService.js';
 import { SubmitCommand, SubmitCommandResponse } from './SubmitCommand.js';
-import { Transaction, PublicKey } from '@hashgraph/sdk';
+import { Transaction, PublicKey } from '@hiero-ledger/sdk';
 
 @CommandHandler(SubmitCommand)
 export class SubmitCommandHandler implements ICommandHandler<SubmitCommand> {

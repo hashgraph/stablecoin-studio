@@ -1,17 +1,21 @@
 import { expect } from 'chai'
 import { SignerWithAddress } from '@nomicfoundation/hardhat-ethers/signers'
 import { ethers } from 'hardhat'
-import { CustomFeesFacet, CustomFeesFacet__factory, IHederaTokenService, IHRC__factory } from '@contracts'
 import {
-    ADDRESS_ZERO,
-    delay,
-    deployFullInfrastructure,
-    DeployFullInfrastructureCommand,
-    MESSAGES,
-    validateTxResponse,
-    ValidateTxResponseCommand,
+    CustomFeesFacet,
+    CustomFeesFacet__factory,
+    IHederaTokenService,
+    IHRC__factory,
+    StableCoinTokenMock__factory,
+} from '@contracts'
+import {
+  ADDRESS_ZERO, MESSAGES,
+  ROLES,
+  delay,
+  DeployFullInfrastructureCommand,
+  ValidateTxResponseCommand
 } from '@scripts'
-import { deployStableCoinInTests, GAS_LIMIT } from '@test/shared'
+import { deployStableCoinInTests, deployFullInfrastructureInTests, GAS_LIMIT } from '@test/shared'
 
 describe('➡️ Custom Fees Tests', function () {
     // Contracts
@@ -37,7 +41,7 @@ describe('➡️ Custom Fees Tests', function () {
         console.info(MESSAGES.deploy.info.deployFullInfrastructureInTests)
         ;[operator, nonOperator] = await ethers.getSigners()
 
-        const { ...deployedContracts } = await deployFullInfrastructure(
+        const { ...deployedContracts } = await deployFullInfrastructureInTests(
             await DeployFullInfrastructureCommand.newInstance({
                 signer: operator,
                 useDeployed: false,
@@ -72,18 +76,21 @@ describe('➡️ Custom Fees Tests', function () {
             },
         ]
 
+        await StableCoinTokenMock__factory.connect(tokenAddress, operator).setStableCoinAddress(stableCoinProxyAddress)
+
         await setFacets(stableCoinProxyAddress)
     })
 
     it("An account without CUSTOM_FEES role can't update custom fees for a token", async function () {
-        const response = await customFeesFacet.updateTokenCustomFees(fixedFees, fractionalFees, {
-            gasLimit: GAS_LIMIT.hederaTokenManager.updateCustomFees,
-        })
+        customFeesFacet = customFeesFacet.connect(nonOperator)
+
         await expect(
-            validateTxResponse(
-                new ValidateTxResponseCommand({ txResponse: response, confirmationEvent: 'TokenCustomFeesUpdated' })
-            )
-        ).to.be.rejectedWith(Error)
+            customFeesFacet.updateTokenCustomFees(fixedFees, fractionalFees, {
+                gasLimit: GAS_LIMIT.hederaTokenManager.updateCustomFees,
+            })
+        )
+            .to.be.revertedWithCustomError(customFeesFacet, 'AccountHasNoRole')
+            .withArgs(nonOperator, ROLES.customFees.hash)
     })
 
     it('An account with CUSTOM_FEES role can update custom fees for a token and fees should be updated correctly', async function () {
@@ -91,23 +98,31 @@ describe('➡️ Custom Fees Tests', function () {
         const associateResponse = await IHRC__factory.connect(tokenAddress, nonOperator).associate({
             gasLimit: GAS_LIMIT.hederaTokenManager.associate,
         })
-        await validateTxResponse(
-            new ValidateTxResponseCommand({
-                txResponse: associateResponse,
-                errorMessage: MESSAGES.hederaTokenManager.error.associate,
-            })
-        )
+        await new ValidateTxResponseCommand({
+            txResponse: associateResponse,
+            errorMessage: MESSAGES.hederaTokenManager.error.associate,
+        }).execute()
+
         // Change fee collector to nonOperator
         await delay({ time: 1, unit: 'sec' })
         fixedFees[0].feeCollector = nonOperator.address
         fractionalFees[0].feeCollector = nonOperator.address
 
-        const response = await customFeesFacet.updateTokenCustomFees(fixedFees, fractionalFees, {
+        customFeesFacet = customFeesFacet.connect(operator)
+        await expect(
+            customFeesFacet.updateTokenCustomFees(fixedFees, fractionalFees, {
+                gasLimit: GAS_LIMIT.hederaTokenManager.updateCustomFees,
+            })
+        )
+            .to.emit(customFeesFacet, 'TokenCustomFeesUpdated')
+            .withArgs(operator.address, tokenAddress)
+
+        /*const response = await customFeesFacet.updateTokenCustomFees(fixedFees, fractionalFees, {
             gasLimit: GAS_LIMIT.hederaTokenManager.updateCustomFees,
         })
 
         await validateTxResponse(
             new ValidateTxResponseCommand({ txResponse: response, confirmationEvent: 'TokenCustomFeesUpdated' })
-        )
+        )*/
     })
 })
