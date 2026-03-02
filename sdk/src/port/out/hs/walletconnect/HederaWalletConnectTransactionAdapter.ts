@@ -245,6 +245,12 @@ export class HederaWalletConnectTransactionAdapter extends BaseHederaTransaction
 		LogService.logInfo('Signing transaction from HWC...');
 		this.ensureInitialized();
 
+		if (this.isEvmSession()) {
+			throw new SigningError(
+				'Multisig signing is not supported when connected with an EVM wallet via WalletConnect.',
+			);
+		}
+
 		if (!(message instanceof Transaction)) {
 			throw new SigningError(
 				'Hedera WalletConnect must sign a transaction not a string',
@@ -889,6 +895,7 @@ export class HederaWalletConnectTransactionAdapter extends BaseHederaTransaction
 				resolverId:
 					this.networkService.configuration.resolverAddress || '',
 			},
+			isEvmWallet: this.isEvmSession(),
 		};
 		this.eventService.emit(WalletEvents.walletPaired, eventData);
 	}
