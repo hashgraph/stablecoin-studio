@@ -115,6 +115,8 @@ import { GetHoldCountForQueryHandler } from '../app/usecase/query/stablecoin/hol
 import { GetBurnableAmountQueryHandler } from '../app/usecase/query/stablecoin/burn/getBurnableAmount/GetBurnableAmountQueryHandler.js';
 import { GetAccountAutoAssociationQueryHandler } from '../app/usecase/query/account/autoAssociation/GetAccountAutoAssociationQueryHandler';
 import { ClientTransactionAdapter } from '../port/out/hs/client/ClientTransactionAdapter.js';
+import { ExternalHederaTransactionAdapter } from '../port/out/hs/external/ExternalHederaTransactionAdapter.js';
+import { ExternalEVMTransactionAdapter } from '../port/out/hs/external/ExternalEVMTransactionAdapter.js';
 
 export const TOKENS = {
 	COMMAND_HANDLER: Symbol('CommandHandler'),
@@ -438,6 +440,14 @@ const TRANSACTION_HANDLER = [
 	{
 		token: TOKENS.TRANSACTION_HANDLER,
 		useClass: HederaWalletConnectTransactionAdapter,
+	},
+	{
+		token: TOKENS.TRANSACTION_HANDLER,
+		useClass: ExternalHederaTransactionAdapter,
+	},
+	{
+		token: TOKENS.TRANSACTION_HANDLER,
+		useClass: ExternalEVMTransactionAdapter,
 	},
 ];
 

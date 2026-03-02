@@ -45,17 +45,15 @@ import {
 	isRequestFixedFee,
 } from './request/BaseRequest.js';
 import { TransactionResult } from '../../domain/context/transaction/TransactionResult.js';
+import { SerializedTransactionData } from '../../domain/context/transaction/TransactionResponse.js';
+
 
 export { HBAR_DECIMALS, MAX_PERCENTAGE_DECIMALS, MAX_CUSTOM_FEES };
 
 interface ICustomFees {
-	addFixedFee(request: AddFixedFeeRequest): Promise<TransactionResult>;
-	addFractionalFee(
-		request: AddFractionalFeeRequest,
-	): Promise<TransactionResult>;
-	updateCustomFees(
-		request: UpdateCustomFeesRequest,
-	): Promise<TransactionResult>;
+	addFixedFee(request: AddFixedFeeRequest): Promise<TransactionResult | SerializedTransactionData>;
+	addFractionalFee(request: AddFractionalFeeRequest): Promise<TransactionResult | SerializedTransactionData>;
+	updateCustomFees(request: UpdateCustomFeesRequest): Promise<TransactionResult | SerializedTransactionData>;
 }
 
 class CustomFeesInPort implements ICustomFees {
@@ -66,7 +64,7 @@ class CustomFeesInPort implements ICustomFees {
 	) {}
 
 	@LogError
-	async addFixedFee(request: AddFixedFeeRequest): Promise<TransactionResult> {
+	async addFixedFee(request: AddFixedFeeRequest): Promise<TransactionResult | SerializedTransactionData> {
 		const {
 			tokenId,
 			collectorId,
@@ -86,13 +84,14 @@ class CustomFeesInPort implements ICustomFees {
 				collectorsExempt,
 			),
 		);
+		if (response.serializedTransactionData) {
+			return response.serializedTransactionData;
+		}
 		return new TransactionResult(response.payload, response.transactionId);
 	}
 
 	@LogError
-	async addFractionalFee(
-		request: AddFractionalFeeRequest,
-	): Promise<TransactionResult> {
+	async addFractionalFee(request: AddFractionalFeeRequest): Promise<TransactionResult | SerializedTransactionData> {
 		const {
 			tokenId,
 			collectorId,
@@ -129,13 +128,14 @@ class CustomFeesInPort implements ICustomFees {
 				collectorsExempt,
 			),
 		);
+		if (response.serializedTransactionData) {
+			return response.serializedTransactionData;
+		}
 		return new TransactionResult(response.payload, response.transactionId);
 	}
 
 	@LogError
-	async updateCustomFees(
-		request: UpdateCustomFeesRequest,
-	): Promise<TransactionResult> {
+	async updateCustomFees(request: UpdateCustomFeesRequest): Promise<TransactionResult | SerializedTransactionData> {
 		const { tokenId, customFees } = request;
 		handleValidation('UpdateCustomFeesRequest', request);
 
@@ -193,6 +193,9 @@ class CustomFeesInPort implements ICustomFees {
 				requestedCustomFee,
 			),
 		);
+		if (response.serializedTransactionData) {
+			return response.serializedTransactionData;
+		}
 		return new TransactionResult(response.payload, response.transactionId);
 	}
 

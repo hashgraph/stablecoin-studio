@@ -117,32 +117,19 @@ import GetHoldForRequest from './request/GetHoldForRequest.js';
 import GetHeldAmountForRequest from './request/GetHeldAmountForRequest.js';
 import GetHoldCountForRequest from './request/GetHoldCountForRequest.js';
 import GetHoldsIdForRequest from './request/GetHoldsIdForRequest.js';
-import {
-	CreateHoldCommand,
-	CreateHoldCommandResponse,
-} from '../../app/usecase/command/stablecoin/operations/hold/createHold/CreateHoldCommand.js';
-import {
-	ExecuteHoldCommand,
-	ExecuteHoldCommandResponse,
-} from '../../app/usecase/command/stablecoin/operations/hold/executeHold/ExecuteHoldCommand.js';
-import {
-	ReleaseHoldCommand,
-	ReleaseHoldCommandResponse,
-} from '../../app/usecase/command/stablecoin/operations/hold/releaseHold/ReleaseHoldCommand.js';
-import {
-	ReclaimHoldCommand,
-	ReclaimHoldCommandResponse,
-} from '../../app/usecase/command/stablecoin/operations/hold/reclaimHold/ReclaimHoldCommand.js';
+import { CreateHoldCommand, CreateHoldCommandResponse } from '../../app/usecase/command/stablecoin/operations/hold/createHold/CreateHoldCommand.js';
+import { ExecuteHoldCommand, ExecuteHoldCommandResponse } from '../../app/usecase/command/stablecoin/operations/hold/executeHold/ExecuteHoldCommand.js';
+import { ReleaseHoldCommand, ReleaseHoldCommandResponse } from '../../app/usecase/command/stablecoin/operations/hold/releaseHold/ReleaseHoldCommand.js';
+import { ReclaimHoldCommand, ReclaimHoldCommandResponse } from '../../app/usecase/command/stablecoin/operations/hold/reclaimHold/ReclaimHoldCommand.js';
 import { GetHoldForQuery } from '../../app/usecase/query/stablecoin/hold/getHoldFor/GetHoldForQuery.js';
 import HoldViewModel from '../../port/in/response/HoldViewModel.js';
 import { ONE_THOUSAND } from '../../core/Constants.js';
 import { GetHoldCountForQuery } from '../../app/usecase/query/stablecoin/hold/getHoldCountFor/GetHoldCountForQuery.js';
 import { GetHoldsIdForQuery } from '../../app/usecase/query/stablecoin/hold/getHoldsIdFor/GetHoldsIdForQuery.js';
 import { GetHeldAmountForQuery } from '../../app/usecase/query/stablecoin/hold/getHeldAmountFor/GetHeldAmountForQuery.js';
-import {
-	CreateHoldByControllerCommand,
-	CreateHoldByControllerCommandResponse,
-} from '../../app/usecase/command/stablecoin/operations/hold/createHoldByController/CreateHoldByControllerCommand.js';
+import { CreateHoldByControllerCommand, CreateHoldByControllerCommandResponse } from '../../app/usecase/command/stablecoin/operations/hold/createHoldByController/CreateHoldByControllerCommand.js';
+import { SerializedTransactionData } from '../../domain/context/transaction/TransactionResponse.js';
+
 
 export {
 	StableCoinViewModel,
@@ -157,9 +144,7 @@ export { StableCoinCapabilities, Capability, Access, Operation, Balance };
 export { TokenSupplyType };
 export { BigDecimal, HederaId, ContractId, EvmAddress, PublicKey };
 
-export type CreateHoldTransactionResult = {
-	holdId: number;
-} & TransactionResult;
+export type CreateHoldTransactionResult = ({ holdId: number } & TransactionResult) | SerializedTransactionData;
 
 interface IStableCoinInPort {
 	create(request: CreateRequest): Promise<{
@@ -167,20 +152,20 @@ interface IStableCoinInPort {
 		reserve: ReserveViewModel;
 	}>;
 	getInfo(request: GetStableCoinDetailsRequest): Promise<StableCoinViewModel>;
-	cashIn(request: CashInRequest): Promise<TransactionResult>;
-	burn(request: BurnRequest): Promise<TransactionResult>;
-	rescue(request: RescueRequest): Promise<TransactionResult>;
-	rescueHBAR(request: RescueHBARRequest): Promise<TransactionResult>;
-	wipe(request: WipeRequest): Promise<TransactionResult>;
-	associate(request: AssociateTokenRequest): Promise<TransactionResult>;
+	cashIn(request: CashInRequest): Promise<TransactionResult | SerializedTransactionData>;
+	burn(request: BurnRequest): Promise<TransactionResult | SerializedTransactionData>;
+	rescue(request: RescueRequest): Promise<TransactionResult | SerializedTransactionData>;
+	rescueHBAR(request: RescueHBARRequest): Promise<TransactionResult | SerializedTransactionData>;
+	wipe(request: WipeRequest): Promise<TransactionResult | SerializedTransactionData>;
+	associate(request: AssociateTokenRequest): Promise<TransactionResult | SerializedTransactionData>;
 	getBalanceOf(request: GetAccountBalanceRequest): Promise<Balance>;
 	getBalanceOfHBAR(request: GetAccountBalanceHBARRequest): Promise<Balance>;
 	capabilities(request: CapabilitiesRequest): Promise<StableCoinCapabilities>;
-	pause(request: PauseRequest): Promise<TransactionResult>;
-	unPause(request: PauseRequest): Promise<TransactionResult>;
-	delete(request: DeleteRequest): Promise<TransactionResult>;
-	freeze(request: FreezeAccountRequest): Promise<TransactionResult>;
-	unFreeze(request: FreezeAccountRequest): Promise<TransactionResult>;
+	pause(request: PauseRequest): Promise<TransactionResult | SerializedTransactionData>;
+	unPause(request: PauseRequest): Promise<TransactionResult | SerializedTransactionData>;
+	delete(request: DeleteRequest): Promise<TransactionResult | SerializedTransactionData>;
+	freeze(request: FreezeAccountRequest): Promise<TransactionResult | SerializedTransactionData>;
+	unFreeze(request: FreezeAccountRequest): Promise<TransactionResult | SerializedTransactionData>;
 	isAccountFrozen(request: FreezeAccountRequest): Promise<boolean>;
 	isAccountAssociated(
 		request: IsAccountAssociatedTokenRequest,
@@ -188,34 +173,24 @@ interface IStableCoinInPort {
 	getReserveAddress(request: GetReserveAddressRequest): Promise<string>;
 	updateReserveAddress(
 		request: UpdateReserveAddressRequest,
-	): Promise<TransactionResult>;
-	grantKyc(request: KYCRequest): Promise<TransactionResult>;
-	revokeKyc(request: KYCRequest): Promise<TransactionResult>;
+	): Promise<TransactionResult | SerializedTransactionData>;
+	grantKyc(request: KYCRequest): Promise<TransactionResult | SerializedTransactionData>;
+	revokeKyc(request: KYCRequest): Promise<TransactionResult | SerializedTransactionData>;
 	isAccountKYCGranted(request: KYCRequest): Promise<boolean>;
-	createHold(
-		request: CreateHoldRequest,
-	): Promise<CreateHoldTransactionResult>;
-	createHoldByController(
-		request: CreateHoldByControllerRequest,
-	): Promise<CreateHoldTransactionResult>;
-	executeHold(request: ExecuteHoldRequest): Promise<TransactionResult>;
-	releaseHold(request: ReleaseHoldRequest): Promise<TransactionResult>;
-	reclaimHold(request: ReclaimHoldRequest): Promise<TransactionResult>;
+	createHold(request: CreateHoldRequest,): Promise<CreateHoldTransactionResult>;
+	createHoldByController(request: CreateHoldByControllerRequest,): Promise<CreateHoldTransactionResult>;
+	executeHold(request: ExecuteHoldRequest): Promise<TransactionResult | SerializedTransactionData>;
+	releaseHold(request: ReleaseHoldRequest): Promise<TransactionResult | SerializedTransactionData>;
+	reclaimHold(request: ReclaimHoldRequest): Promise<TransactionResult | SerializedTransactionData>;
 	getHoldFor(request: GetHoldForRequest): Promise<HoldViewModel>;
 	getHeldAmountFor(request: GetHeldAmountForRequest): Promise<BigDecimal>;
 	getHoldCountFor(request: GetHoldCountForRequest): Promise<number>;
 	getHoldsIdFor(request: GetHoldsIdForRequest): Promise<number[]>;
-	transfers(request: TransfersRequest): Promise<TransactionResult>;
-	update(request: UpdateRequest): Promise<TransactionResult>;
-	signTransaction(
-		request: SignTransactionRequest,
-	): Promise<TransactionResult>;
-	submitTransaction(
-		request: SubmitTransactionRequest,
-	): Promise<TransactionResult>;
-	removeTransaction(
-		request: RemoveTransactionRequest,
-	): Promise<TransactionResult>;
+	transfers(request: TransfersRequest): Promise<TransactionResult | SerializedTransactionData>;
+	update(request: UpdateRequest): Promise<TransactionResult | SerializedTransactionData>;
+	signTransaction(request: SignTransactionRequest): Promise<TransactionResult>;
+	submitTransaction(request: SubmitTransactionRequest): Promise<TransactionResult>;
+	removeTransaction(request: RemoveTransactionRequest): Promise<TransactionResult>;
 	getTransactions(
 		request: GetTransactionsRequest,
 	): Promise<MultiSigTransactionsViewModel>;
@@ -387,7 +362,7 @@ class StableCoinInPort implements IStableCoinInPort {
 	}
 
 	@LogError
-	async cashIn(request: CashInRequest): Promise<TransactionResult> {
+	async cashIn(request: CashInRequest): Promise<TransactionResult | SerializedTransactionData> {
 		const { tokenId, amount, targetId, startDate } = request;
 		handleValidation('CashInRequest', request);
 
@@ -399,44 +374,60 @@ class StableCoinInPort implements IStableCoinInPort {
 				startDate,
 			),
 		);
+		if (response.serializedTransactionData) {
+			return response.serializedTransactionData;
+		}
 		return new TransactionResult(response.payload, response.transactionId);
 	}
 
 	@LogError
-	async burn(request: BurnRequest): Promise<TransactionResult> {
+	async burn(request: BurnRequest): Promise<TransactionResult | SerializedTransactionData> {
 		const { tokenId, amount, startDate } = request;
 		handleValidation('BurnRequest', request);
 
 		const response = await this.commandBus.execute(
 			new BurnCommand(amount, HederaId.from(tokenId), startDate),
 		);
+		if (response.serializedTransactionData) {
+			return response.serializedTransactionData;
+		}
 		return new TransactionResult(response.payload, response.transactionId);
 	}
 
 	@LogError
-	async rescue(request: RescueRequest): Promise<TransactionResult> {
+	async rescue(request: RescueRequest): Promise<TransactionResult | SerializedTransactionData> {
 		const { tokenId, amount, startDate } = request;
 		handleValidation('RescueRequest', request);
 
 		const response = await this.commandBus.execute(
 			new RescueCommand(amount, HederaId.from(tokenId), startDate),
 		);
+		if (response.serializedTransactionData) {
+			return response.serializedTransactionData;
+		}
 		return new TransactionResult(response.payload, response.transactionId);
 	}
 
 	@LogError
-	async rescueHBAR(request: RescueHBARRequest): Promise<TransactionResult> {
+	async rescueHBAR(request: RescueHBARRequest): Promise<TransactionResult | SerializedTransactionData> {
 		const { tokenId, amount, startDate } = request;
 		handleValidation('RescueHBARRequest', request);
 
 		const response = await this.commandBus.execute(
-			new RescueHBARCommand(amount, HederaId.from(tokenId), startDate),
+			new RescueHBARCommand(
+				amount,
+				HederaId.from(tokenId),
+				startDate,
+			),
 		);
+		if (response.serializedTransactionData) {
+			return response.serializedTransactionData;
+		}
 		return new TransactionResult(response.payload, response.transactionId);
 	}
 
 	@LogError
-	async wipe(request: WipeRequest): Promise<TransactionResult> {
+	async wipe(request: WipeRequest): Promise<TransactionResult | SerializedTransactionData> {
 		const { tokenId, amount, targetId, startDate } = request;
 		handleValidation('WipeRequest', request);
 
@@ -448,13 +439,14 @@ class StableCoinInPort implements IStableCoinInPort {
 				startDate,
 			),
 		);
+		if (response.serializedTransactionData) {
+			return response.serializedTransactionData;
+		}
 		return new TransactionResult(response.payload, response.transactionId);
 	}
 
 	@LogError
-	async associate(
-		request: AssociateTokenRequest,
-	): Promise<TransactionResult> {
+	async associate(request: AssociateTokenRequest): Promise<TransactionResult | SerializedTransactionData> {
 		const { tokenId, targetId } = request;
 		handleValidation('AssociateTokenRequest', request);
 
@@ -464,6 +456,9 @@ class StableCoinInPort implements IStableCoinInPort {
 				HederaId.from(tokenId),
 			),
 		);
+		if (response.serializedTransactionData) {
+			return response.serializedTransactionData;
+		}
 		return new TransactionResult(response.payload, response.transactionId);
 	}
 
@@ -515,40 +510,49 @@ class StableCoinInPort implements IStableCoinInPort {
 	}
 
 	@LogError
-	async pause(request: PauseRequest): Promise<TransactionResult> {
+	async pause(request: PauseRequest): Promise<TransactionResult | SerializedTransactionData> {
 		const { tokenId, startDate } = request;
 		handleValidation('PauseRequest', request);
 
 		const response = await this.commandBus.execute(
 			new PauseCommand(HederaId.from(tokenId), startDate),
 		);
+		if (response.serializedTransactionData) {
+			return response.serializedTransactionData;
+		}
 		return new TransactionResult(response.payload, response.transactionId);
 	}
 
 	@LogError
-	async unPause(request: PauseRequest): Promise<TransactionResult> {
+	async unPause(request: PauseRequest): Promise<TransactionResult | SerializedTransactionData> {
 		const { tokenId, startDate } = request;
 		handleValidation('PauseRequest', request);
 
 		const response = await this.commandBus.execute(
 			new UnPauseCommand(HederaId.from(tokenId), startDate),
 		);
+		if (response.serializedTransactionData) {
+			return response.serializedTransactionData;
+		}
 		return new TransactionResult(response.payload, response.transactionId);
 	}
 
 	@LogError
-	async delete(request: DeleteRequest): Promise<TransactionResult> {
+	async delete(request: DeleteRequest): Promise<TransactionResult | SerializedTransactionData> {
 		const { tokenId, startDate } = request;
 		handleValidation('DeleteRequest', request);
 
 		const response = await this.commandBus.execute(
 			new DeleteCommand(HederaId.from(tokenId), startDate),
 		);
+		if (response.serializedTransactionData) {
+			return response.serializedTransactionData;
+		}
 		return new TransactionResult(response.payload, response.transactionId);
 	}
 
 	@LogError
-	async freeze(request: FreezeAccountRequest): Promise<TransactionResult> {
+	async freeze(request: FreezeAccountRequest): Promise<TransactionResult | SerializedTransactionData> {
 		const { tokenId, targetId, startDate } = request;
 		handleValidation('FreezeAccountRequest', request);
 
@@ -559,11 +563,14 @@ class StableCoinInPort implements IStableCoinInPort {
 				startDate,
 			),
 		);
+		if (response.serializedTransactionData) {
+			return response.serializedTransactionData;
+		}
 		return new TransactionResult(response.payload, response.transactionId);
 	}
 
 	@LogError
-	async unFreeze(request: FreezeAccountRequest): Promise<TransactionResult> {
+	async unFreeze(request: FreezeAccountRequest): Promise<TransactionResult | SerializedTransactionData> {
 		const { tokenId, targetId, startDate } = request;
 		handleValidation('FreezeAccountRequest', request);
 
@@ -574,6 +581,9 @@ class StableCoinInPort implements IStableCoinInPort {
 				startDate,
 			),
 		);
+		if (response.serializedTransactionData) {
+			return response.serializedTransactionData;
+		}
 		return new TransactionResult(response.payload, response.transactionId);
 	}
 
@@ -595,7 +605,7 @@ class StableCoinInPort implements IStableCoinInPort {
 	}
 
 	@LogError
-	async grantKyc(request: KYCRequest): Promise<TransactionResult> {
+	async grantKyc(request: KYCRequest): Promise<TransactionResult | SerializedTransactionData> {
 		const { tokenId, targetId } = request;
 		handleValidation('KYCRequest', request);
 
@@ -605,11 +615,14 @@ class StableCoinInPort implements IStableCoinInPort {
 				HederaId.from(tokenId),
 			),
 		);
+		if (response.serializedTransactionData) {
+			return response.serializedTransactionData;
+		}
 		return new TransactionResult(response.payload, response.transactionId);
 	}
 
 	@LogError
-	async revokeKyc(request: KYCRequest): Promise<TransactionResult> {
+	async revokeKyc(request: KYCRequest): Promise<TransactionResult | SerializedTransactionData> {
 		const { tokenId, targetId } = request;
 		handleValidation('KYCRequest', request);
 
@@ -619,6 +632,9 @@ class StableCoinInPort implements IStableCoinInPort {
 				HederaId.from(tokenId),
 			),
 		);
+		if (response.serializedTransactionData) {
+			return response.serializedTransactionData;
+		}
 		return new TransactionResult(response.payload, response.transactionId);
 	}
 
@@ -673,7 +689,7 @@ class StableCoinInPort implements IStableCoinInPort {
 	@LogError
 	async updateReserveAddress(
 		request: UpdateReserveAddressRequest,
-	): Promise<TransactionResult> {
+	): Promise<TransactionResult | SerializedTransactionData> {
 		handleValidation('UpdateReserveAddressRequest', request);
 
 		const reserveAddressId: string = (
@@ -686,6 +702,9 @@ class StableCoinInPort implements IStableCoinInPort {
 				new ContractId(reserveAddressId),
 			),
 		);
+		if (response.serializedTransactionData) {
+			return response.serializedTransactionData;
+		}
 		return new TransactionResult(response.payload, response.transactionId);
 	}
 
@@ -704,11 +723,14 @@ class StableCoinInPort implements IStableCoinInPort {
 				targetId ? HederaId.from(targetId) : undefined,
 			),
 		);
+		if (response.serializedTransactionData) {
+			return response.serializedTransactionData;
+		}
 		return {
 			holdId: response.holdId,
 			success: response.payload,
 			transactionId: response.transactionId,
-		} as CreateHoldTransactionResult;
+		} as CreateHoldTransactionResult
 	}
 
 	@LogError
@@ -728,15 +750,18 @@ class StableCoinInPort implements IStableCoinInPort {
 				targetId ? HederaId.from(targetId) : undefined,
 			),
 		);
+		if (response.serializedTransactionData) {
+			return response.serializedTransactionData;
+		}
 		return {
 			holdId: response.holdId,
 			success: response.payload,
 			transactionId: response.transactionId,
-		} as CreateHoldTransactionResult;
+		} as CreateHoldTransactionResult
 	}
 
 	@LogError
-	async executeHold(request: ExecuteHoldRequest): Promise<TransactionResult> {
+	async executeHold(request: ExecuteHoldRequest): Promise<TransactionResult | SerializedTransactionData> {
 		handleValidation(ExecuteHoldRequest.name, request);
 		const { tokenId, targetId, amount, sourceId, holdId } = request;
 		const response = await this.commandBus.execute(
@@ -747,12 +772,15 @@ class StableCoinInPort implements IStableCoinInPort {
 				amount,
 				targetId ? HederaId.from(targetId) : undefined,
 			),
-		);
+		)
+		if (response.serializedTransactionData) {
+			return response.serializedTransactionData;
+		}
 		return new TransactionResult(response.payload, response.transactionId);
 	}
 
 	@LogError
-	async releaseHold(request: ReleaseHoldRequest): Promise<TransactionResult> {
+	async releaseHold(request: ReleaseHoldRequest): Promise<TransactionResult | SerializedTransactionData> {
 		handleValidation(ReleaseHoldRequest.name, request);
 		const { tokenId, amount, sourceId, holdId } = request;
 		const response = await this.commandBus.execute(
@@ -762,12 +790,15 @@ class StableCoinInPort implements IStableCoinInPort {
 				HederaId.from(sourceId),
 				amount,
 			),
-		);
+		)
+		if (response.serializedTransactionData) {
+			return response.serializedTransactionData;
+		}
 		return new TransactionResult(response.payload, response.transactionId);
 	}
 
 	@LogError
-	async reclaimHold(request: ReclaimHoldRequest): Promise<TransactionResult> {
+	async reclaimHold(request: ReclaimHoldRequest): Promise<TransactionResult | SerializedTransactionData> {
 		handleValidation(ReclaimHoldRequest.name, request);
 		const { tokenId, sourceId, holdId } = request;
 		const response = await this.commandBus.execute(
@@ -777,6 +808,9 @@ class StableCoinInPort implements IStableCoinInPort {
 				HederaId.from(sourceId),
 			),
 		);
+		if (response.serializedTransactionData) {
+			return response.serializedTransactionData;
+		}
 		return new TransactionResult(response.payload, response.transactionId);
 	}
 
@@ -862,7 +896,7 @@ class StableCoinInPort implements IStableCoinInPort {
 	}
 
 	@LogError
-	async transfers(request: TransfersRequest): Promise<TransactionResult> {
+	async transfers(request: TransfersRequest): Promise<TransactionResult | SerializedTransactionData> {
 		const { tokenId, targetsId, amounts, targetId } = request;
 
 		handleValidation('TransfersRequest', request);
@@ -880,11 +914,14 @@ class StableCoinInPort implements IStableCoinInPort {
 				HederaId.from(targetId),
 			),
 		);
+		if (response.serializedTransactionData) {
+			return response.serializedTransactionData;
+		}
 		return new TransactionResult(response.payload, response.transactionId);
 	}
 
 	@LogError
-	async update(request: UpdateRequest): Promise<TransactionResult> {
+	async update(request: UpdateRequest): Promise<TransactionResult | SerializedTransactionData> {
 		const {
 			tokenId,
 			name,
@@ -905,7 +942,9 @@ class StableCoinInPort implements IStableCoinInPort {
 				name,
 				symbol,
 				autoRenewPeriod ? Number(autoRenewPeriod) : undefined,
-				expirationTimestamp ? Number(expirationTimestamp) : undefined,
+				expirationTimestamp
+					? Number(expirationTimestamp)
+					: undefined,
 				kycKey
 					? new PublicKey({
 							key: kycKey.key,
@@ -939,34 +978,29 @@ class StableCoinInPort implements IStableCoinInPort {
 				metadata,
 			),
 		);
+		if (response.serializedTransactionData) {
+			return response.serializedTransactionData;
+		}
 		return new TransactionResult(response.payload, response.transactionId);
 	}
 
 	@LogError
-	async signTransaction(
-		request: SignTransactionRequest,
-	): Promise<TransactionResult> {
+	async signTransaction(request: SignTransactionRequest): Promise<TransactionResult> {
 		const { transactionId } = request;
 
 		handleValidation('SignTransactionRequest', request);
 
-		const response = await this.commandBus.execute(
-			new SignCommand(transactionId),
-		);
+		const response = await this.commandBus.execute(new SignCommand(transactionId));
 		return new TransactionResult(response.payload, response.transactionId);
 	}
 
 	@LogError
-	async submitTransaction(
-		request: SubmitTransactionRequest,
-	): Promise<TransactionResult> {
+	async submitTransaction(request: SubmitTransactionRequest): Promise<TransactionResult> {
 		const { transactionId } = request;
 
 		handleValidation('SubmitTransactionRequest', request);
 
-		const response = await this.commandBus.execute(
-			new SubmitCommand(transactionId),
-		);
+		const response = await this.commandBus.execute(new SubmitCommand(transactionId));
 		return new TransactionResult(response.payload, response.transactionId);
 	}
 
@@ -978,9 +1012,7 @@ class StableCoinInPort implements IStableCoinInPort {
 
 		handleValidation('RemoveTransactionRequest', request);
 
-		const response = await this.commandBus.execute(
-			new RemoveCommand(transactionId),
-		);
+		const response = await this.commandBus.execute(new RemoveCommand(transactionId));
 		return new TransactionResult(response.payload, response.transactionId);
 	}
 

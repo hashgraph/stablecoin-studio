@@ -63,34 +63,30 @@ import { RevokeMultiRolesCommand } from '../../app/usecase/command/stablecoin/ro
 import GetAccountsWithRolesRequest from './request/GetAccountsWithRolesRequest.js';
 import { GetAccountsWithRolesQuery } from '../../app/usecase/query/stablecoin/roles/getAccountsWithRole/GetAccountsWithRolesQuery.js';
 import { TransactionResult } from '../../domain/context/transaction/TransactionResult.js';
+import { SerializedTransactionData } from '../../domain/context/transaction/TransactionResponse.js';
+
 
 export { StableCoinRole, StableCoinRoleLabel, MAX_ACCOUNTS_ROLES };
 
 interface IRole {
 	hasRole(request: HasRoleRequest): Promise<boolean>;
-	grantRole(request: GrantRoleRequest): Promise<TransactionResult>;
-	revokeRole(request: RevokeRoleRequest): Promise<TransactionResult>;
-	grantMultiRoles(
-		request: GrantMultiRolesRequest,
-	): Promise<TransactionResult>;
-	revokeMultiRoles(
-		request: RevokeMultiRolesRequest,
-	): Promise<TransactionResult>;
+	grantRole(request: GrantRoleRequest): Promise<TransactionResult | SerializedTransactionData>;
+	revokeRole(request: RevokeRoleRequest): Promise<TransactionResult | SerializedTransactionData>;
+	grantMultiRoles(request: GrantMultiRolesRequest): Promise<TransactionResult | SerializedTransactionData>;
+	revokeMultiRoles(request: RevokeMultiRolesRequest): Promise<TransactionResult | SerializedTransactionData>;
 	getRoles(request: GetRolesRequest): Promise<string[]>;
 	getAccountsWithRole(
 		request: GetAccountsWithRolesRequest,
 	): Promise<string[]>;
 	//Supplier
 	getAllowance(request: GetSupplierAllowanceRequest): Promise<Balance>;
-	resetAllowance(
-		request: ResetSupplierAllowanceRequest,
-	): Promise<TransactionResult>;
+	resetAllowance(request: ResetSupplierAllowanceRequest): Promise<TransactionResult | SerializedTransactionData>;
 	increaseAllowance(
 		request: IncreaseSupplierAllowanceRequest,
-	): Promise<TransactionResult>;
+	): Promise<TransactionResult | SerializedTransactionData>;
 	decreaseAllowance(
 		request: DecreaseSupplierAllowanceRequest,
-	): Promise<TransactionResult>;
+	): Promise<TransactionResult | SerializedTransactionData>;
 	isLimited(request: CheckSupplierLimitRequest): Promise<boolean>;
 	isUnlimited(request: CheckSupplierLimitRequest): Promise<boolean>;
 }
@@ -119,7 +115,7 @@ class RoleInPort implements IRole {
 	}
 
 	@LogError
-	async grantRole(request: GrantRoleRequest): Promise<TransactionResult> {
+	async grantRole(request: GrantRoleRequest): Promise<TransactionResult | SerializedTransactionData> {
 		const { tokenId, targetId, role, supplierType, amount } = request;
 		handleValidation('GrantRoleRequest', request);
 
@@ -132,10 +128,10 @@ class RoleInPort implements IRole {
 						amount!,
 					),
 				);
-				return new TransactionResult(
-					response.payload,
-					response.transactionId,
-				);
+				if (response.serializedTransactionData) {
+			return response.serializedTransactionData;
+		}
+		return new TransactionResult(response.payload, response.transactionId);
 			} else {
 				const response = await this.commandBus.execute(
 					new GrantUnlimitedSupplierRoleCommand(
@@ -143,10 +139,10 @@ class RoleInPort implements IRole {
 						HederaId.from(tokenId),
 					),
 				);
-				return new TransactionResult(
-					response.payload,
-					response.transactionId,
-				);
+				if (response.serializedTransactionData) {
+			return response.serializedTransactionData;
+		}
+		return new TransactionResult(response.payload, response.transactionId);
 			}
 		} else {
 			const response = await this.commandBus.execute(
@@ -156,15 +152,15 @@ class RoleInPort implements IRole {
 					HederaId.from(tokenId),
 				),
 			);
-			return new TransactionResult(
-				response.payload,
-				response.transactionId,
-			);
+			if (response.serializedTransactionData) {
+			return response.serializedTransactionData;
+		}
+		return new TransactionResult(response.payload, response.transactionId);
 		}
 	}
 
 	@LogError
-	async revokeRole(request: RevokeRoleRequest): Promise<TransactionResult> {
+	async revokeRole(request: RevokeRoleRequest): Promise<TransactionResult | SerializedTransactionData> {
 		const { tokenId, targetId, role } = request;
 		handleValidation('HasRoleRequest', request);
 
@@ -175,10 +171,10 @@ class RoleInPort implements IRole {
 					HederaId.from(tokenId),
 				),
 			);
-			return new TransactionResult(
-				response.payload,
-				response.transactionId,
-			);
+			if (response.serializedTransactionData) {
+			return response.serializedTransactionData;
+		}
+		return new TransactionResult(response.payload, response.transactionId);
 		} else {
 			const response = await this.commandBus.execute(
 				new RevokeRoleCommand(
@@ -187,17 +183,15 @@ class RoleInPort implements IRole {
 					HederaId.from(tokenId),
 				),
 			);
-			return new TransactionResult(
-				response.payload,
-				response.transactionId,
-			);
+			if (response.serializedTransactionData) {
+			return response.serializedTransactionData;
+		}
+		return new TransactionResult(response.payload, response.transactionId);
 		}
 	}
 
 	@LogError
-	async grantMultiRoles(
-		request: GrantMultiRolesRequest,
-	): Promise<TransactionResult> {
+	async grantMultiRoles(request: GrantMultiRolesRequest): Promise<TransactionResult | SerializedTransactionData> {
 		const { tokenId, targetsId, roles, amounts, startDate } = request;
 		handleValidation('GrantMultiRolesRequest', request);
 
@@ -215,13 +209,14 @@ class RoleInPort implements IRole {
 				startDate,
 			),
 		);
+		if (response.serializedTransactionData) {
+			return response.serializedTransactionData;
+		}
 		return new TransactionResult(response.payload, response.transactionId);
 	}
 
 	@LogError
-	async revokeMultiRoles(
-		request: RevokeMultiRolesRequest,
-	): Promise<TransactionResult> {
+	async revokeMultiRoles(request: RevokeMultiRolesRequest): Promise<TransactionResult | SerializedTransactionData> {
 		const { tokenId, targetsId, roles, startDate } = request;
 		handleValidation('HasRoleRequest', request);
 
@@ -238,6 +233,9 @@ class RoleInPort implements IRole {
 				startDate,
 			),
 		);
+		if (response.serializedTransactionData) {
+			return response.serializedTransactionData;
+		}
 		return new TransactionResult(response.payload, response.transactionId);
 	}
 
@@ -286,7 +284,7 @@ class RoleInPort implements IRole {
 	@LogError
 	async resetAllowance(
 		request: ResetSupplierAllowanceRequest,
-	): Promise<TransactionResult> {
+	): Promise<TransactionResult | SerializedTransactionData> {
 		const { tokenId, targetId, startDate } = request;
 		handleValidation('ResetSupplierAllowanceRequest', request);
 
@@ -297,13 +295,16 @@ class RoleInPort implements IRole {
 				startDate,
 			),
 		);
+		if (response.serializedTransactionData) {
+			return response.serializedTransactionData;
+		}
 		return new TransactionResult(response.payload, response.transactionId);
 	}
 
 	@LogError
 	async increaseAllowance(
 		request: IncreaseSupplierAllowanceRequest,
-	): Promise<TransactionResult> {
+	): Promise<TransactionResult | SerializedTransactionData> {
 		const { tokenId, amount, targetId, startDate } = request;
 		handleValidation('IncreaseSupplierAllowanceRequest', request);
 
@@ -315,13 +316,16 @@ class RoleInPort implements IRole {
 				startDate,
 			),
 		);
+		if (response.serializedTransactionData) {
+			return response.serializedTransactionData;
+		}
 		return new TransactionResult(response.payload, response.transactionId);
 	}
 
 	@LogError
 	async decreaseAllowance(
 		request: DecreaseSupplierAllowanceRequest,
-	): Promise<TransactionResult> {
+	): Promise<TransactionResult | SerializedTransactionData> {
 		const { tokenId, amount, targetId, startDate } = request;
 		handleValidation('DecreaseSupplierAllowanceRequest', request);
 
@@ -333,6 +337,9 @@ class RoleInPort implements IRole {
 				startDate,
 			),
 		);
+		if (response.serializedTransactionData) {
+			return response.serializedTransactionData;
+		}
 		return new TransactionResult(response.payload, response.transactionId);
 	}
 

@@ -90,7 +90,7 @@ export class RevokeKycCommandHandler
 
 		const res = await handler.revokeKyc(capabilities, targetId);
 		return Promise.resolve(
-			new RevokeKycCommandResponse(res.error === undefined, res.id),
+			new RevokeKycCommandResponse(res.error === undefined, res.id, res.serializedTransactionData),
 		);
 	}
 }

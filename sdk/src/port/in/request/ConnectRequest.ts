@@ -72,6 +72,10 @@ export type CustodialSettings =
 	| FireblocksConfigRequest
 	| AWSKMSConfigRequest;
 
+export interface ExternalWalletSettings {
+	validStartOffsetMinutes?: number;
+}
+
 export default class ConnectRequest
 	extends ValidatedRequest<ConnectRequest>
 	implements BaseRequest
@@ -85,6 +89,7 @@ export default class ConnectRequest
 	custodialWalletSettings?: CustodialSettings;
 	consensusNodes?: ConsensusNode[];
 	hwcSettings?: HWCRequestSettings;
+	externalWalletSettings?: ExternalWalletSettings;
 
 	constructor({
 		account,
@@ -95,6 +100,7 @@ export default class ConnectRequest
 		custodialWalletSettings,
 		consensusNodes,
 		hwcSettings,
+		externalWalletSettings,
 	}: {
 		account?: RequestAccount;
 		network: Environment;
@@ -104,6 +110,7 @@ export default class ConnectRequest
 		custodialWalletSettings?: CustodialSettings;
 		consensusNodes?: ConsensusNode[];
 		hwcSettings?: HWCRequestSettings;
+		externalWalletSettings?: ExternalWalletSettings;
 	}) {
 		super({
 			account: Validation.checkAccount(),
@@ -117,5 +124,6 @@ export default class ConnectRequest
 		this.custodialWalletSettings = custodialWalletSettings;
 		this.consensusNodes = consensusNodes;
 		this.hwcSettings = hwcSettings;
+		this.externalWalletSettings = externalWalletSettings;
 	}
 }

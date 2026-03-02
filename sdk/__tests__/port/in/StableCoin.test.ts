@@ -27,7 +27,6 @@ import {
 	Account,
 	Balance,
 	BigDecimal,
-	CreateHoldTransactionResult,
 	HBAR_DECIMALS,
 	HederaId,
 	LoggerTransports,
@@ -94,8 +93,6 @@ import Injectable from '../../../src/core/Injectable.js';
 import { CONFIG_SC, DEFAULT_VERSION } from '../../../src/core/Constants.js';
 import { Time } from '../../../src/core/Time.js';
 import HoldViewModel from '../../../src/port/in/response/HoldViewModel.js';
-import { CreateHoldCommandResponse } from 'app/usecase/command/stablecoin/operations/hold/createHold/CreateHoldCommand.js';
-
 const initialSupply = parseInt(INITIAL_SUPPLY);
 const maxSupply = parseInt(MAX_SUPPLY);
 const configId = CONFIG_SC;
@@ -659,7 +656,7 @@ describe('🧪 Stablecoin test', () => {
 				sourceId,
 				targetId,
 			}),
-		);
+		) as { holdId: number } & TransactionResult;
 
 		const holderBalance = await StableCoin.getBalanceOf(
 			new GetAccountBalanceRequest({
@@ -727,7 +724,7 @@ describe('🧪 Stablecoin test', () => {
 				amount,
 				sourceId: CLIENT_ACCOUNT_ED25519.id.toString(),
 			}),
-		);
+		) as TransactionResult;
 
 		const targetBalance = await StableCoin.getBalanceOf(
 			new GetAccountBalanceRequest({
@@ -781,7 +778,7 @@ describe('🧪 Stablecoin test', () => {
 				amount,
 				sourceId: CLIENT_ACCOUNT_ED25519.id.toString(),
 			}),
-		);
+		) as TransactionResult;
 
 		const holderBalance = await StableCoin.getBalanceOf(
 			new GetAccountBalanceRequest({
@@ -836,7 +833,7 @@ describe('🧪 Stablecoin test', () => {
 				tokenId: stableCoin?.tokenId?.toString() ?? '0.0.0',
 				sourceId: CLIENT_ACCOUNT_ED25519.id.toString(),
 			}),
-		);
+		) as TransactionResult;
 
 		const holderBalance = await StableCoin.getBalanceOf(
 			new GetAccountBalanceRequest({
@@ -886,7 +883,7 @@ describe('🧪 Stablecoin test', () => {
 				amount: burnAmount.toString(),
 				tokenId: stableCoin?.tokenId?.toString() ?? '0.0.0',
 			}),
-		);
+		) as TransactionResult;
 
 		const finalAmount = await StableCoin.getBalanceOf(
 			new GetAccountBalanceRequest({
@@ -925,7 +922,7 @@ describe('🧪 Stablecoin test', () => {
 				tokenId: stableCoin?.tokenId?.toString() ?? '0.0.0',
 				targetId: CLIENT_ACCOUNT_ED25519.id.toString(),
 			}),
-		);
+		) as TransactionResult;
 
 		const finalAmount = await StableCoin.getBalanceOf(
 			new GetAccountBalanceRequest({
@@ -963,7 +960,7 @@ describe('🧪 Stablecoin test', () => {
 				amount: rescueAmount.toString(),
 				tokenId: stableCoin?.tokenId?.toString() ?? '0.0.0',
 			}),
-		);
+		) as TransactionResult;
 
 		const finalAmount = await StableCoin.getBalanceOf(
 			new GetAccountBalanceRequest({
@@ -999,7 +996,7 @@ describe('🧪 Stablecoin test', () => {
 				amount: rescueAmount.toString(),
 				tokenId: stableCoin?.tokenId?.toString() ?? '0.0.0',
 			}),
-		);
+		) as TransactionResult;
 
 		const finalAmount = await StableCoin.getBalanceOfHBAR(
 			new GetAccountBalanceHBARRequest({
@@ -1035,7 +1032,7 @@ describe('🧪 Stablecoin test', () => {
 				tokenId: stableCoin?.tokenId?.toString() ?? '0.0.0',
 				targetId: CLIENT_ACCOUNT_ED25519.id.toString(),
 			}),
-		);
+		) as TransactionResult;
 
 		const finalAmount = await StableCoin.getBalanceOf(
 			new GetAccountBalanceRequest({
@@ -1087,7 +1084,7 @@ describe('🧪 Stablecoin test', () => {
 				targetId: CLIENT_ACCOUNT_ED25519.id.toString(),
 				tokenId: stableCoin?.tokenId?.toString() ?? '0.0.0',
 			}),
-		);
+		) as TransactionResult;
 
 		const Frozen = await StableCoin.isAccountFrozen(
 			new FreezeAccountRequest({
@@ -1101,7 +1098,7 @@ describe('🧪 Stablecoin test', () => {
 				targetId: CLIENT_ACCOUNT_ED25519.id.toString(),
 				tokenId: stableCoin?.tokenId?.toString() ?? '0.0.0',
 			}),
-		);
+		) as TransactionResult;
 
 		const notFrozen_2 = await StableCoin.isAccountFrozen(
 			new FreezeAccountRequest({
@@ -1136,7 +1133,7 @@ describe('🧪 Stablecoin test', () => {
 				targetId: CLIENT_ACCOUNT_ED25519.id.toString(),
 				tokenId: stableCoin?.tokenId?.toString() ?? '0.0.0',
 			}),
-		);
+		) as TransactionResult;
 
 		const kycNOK = await StableCoin.isAccountKYCGranted(
 			new KYCRequest({
@@ -1150,7 +1147,7 @@ describe('🧪 Stablecoin test', () => {
 				targetId: CLIENT_ACCOUNT_ED25519.id.toString(),
 				tokenId: stableCoin?.tokenId?.toString() ?? '0.0.0',
 			}),
-		);
+		) as TransactionResult;
 
 		const kycOK_2 = await StableCoin.isAccountKYCGranted(
 			new KYCRequest({
@@ -1177,13 +1174,13 @@ describe('🧪 Stablecoin test', () => {
 			new PauseRequest({
 				tokenId: stableCoin?.tokenId?.toString() ?? '0.0.0',
 			}),
-		);
+		) as TransactionResult;
 
 		const result_unpasue = await StableCoin.unPause(
 			new PauseRequest({
 				tokenId: stableCoin?.tokenId?.toString() ?? '0.0.0',
 			}),
-		);
+		) as TransactionResult;
 
 		expect(result_pause).toBeTruthy();
 		expect(result_pause.success).toBeTruthy();
@@ -1212,7 +1209,7 @@ describe('🧪 Stablecoin test', () => {
 				tokenId: stableCoin?.tokenId?.toString() ?? '0.0.0',
 				reserveAddress: newReserveAddress,
 			}),
-		);
+		) as TransactionResult;
 		expect(result).toBeTruthy();
 		expect(result.success).toBeTruthy();
 		expect(result.transactionId).toBeTruthy();
@@ -1262,7 +1259,7 @@ describe('🧪 Stablecoin test', () => {
 				feeScheduleKey: stableCoin.feeScheduleKey,
 				metadata: metadata,
 			}),
-		);
+		) as TransactionResult;
 
 		expect(result).toBeTruthy();
 		expect(result.success).toBeTruthy();
@@ -1331,7 +1328,7 @@ describe('🧪 Stablecoin test', () => {
 		escrow: string,
 		expirationDate: string,
 		targetId: string,
-	): Promise<CreateHoldTransactionResult> {
+	): Promise<{ holdId: number } & TransactionResult> {
 		await StableCoin.create(requestSC);
 		await StableCoin.cashIn(
 			new CashInRequest({
@@ -1348,7 +1345,7 @@ describe('🧪 Stablecoin test', () => {
 				expirationDate,
 				targetId,
 			}),
-		);
+		) as { holdId: number } & TransactionResult;
 	}
 
 	async function removeHold(

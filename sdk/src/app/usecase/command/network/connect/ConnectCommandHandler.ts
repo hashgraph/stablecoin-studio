@@ -20,7 +20,10 @@
 
 import { ICommandHandler } from '../../../../../core/command/CommandHandler.js';
 import { CommandHandler } from '../../../../../core/decorator/CommandHandlerDecorator.js';
+import { SupportedWallets } from '../../../../../domain/context/network/Wallet.js';
 import TransactionService from '../../../../service/TransactionService.js';
+import { ExternalHederaTransactionAdapter } from '../../../../../port/out/hs/external/ExternalHederaTransactionAdapter.js';
+import { ExternalEVMTransactionAdapter } from '../../../../../port/out/hs/external/ExternalEVMTransactionAdapter.js';
 import { ConnectCommand, ConnectCommandResponse } from './ConnectCommand.js';
 
 @CommandHandler(ConnectCommand)
@@ -32,11 +35,28 @@ export class ConnectCommandHandler implements ICommandHandler<ConnectCommand> {
 		const input =
 			command.custodialSettings === undefined
 				? command.hWCSettings === undefined
-					? command.account
+					? command.account!
 					: command.hWCSettings
 				: command.custodialSettings;
 
-		const registration = await handler.register(input);
+		if (
+			command.wallet === SupportedWallets.EXTERNAL_HEDERA &&
+			handler instanceof ExternalHederaTransactionAdapter
+		) {
+			handler.setExternalWalletSettings(
+				command.externalWalletSettings?.validStartOffsetMinutes,
+			);
+		} else if (
+			command.wallet === SupportedWallets.EXTERNAL_EVM &&
+			handler instanceof ExternalEVMTransactionAdapter
+		) {
+			handler.setExternalWalletSettings(
+				command.externalWalletSettings?.validStartOffsetMinutes,
+			);
+		}
+
+		// eslint-disable-next-line @typescript-eslint/no-explicit-any
+		const registration = await handler.register(input as any);
 
 		return Promise.resolve(
 			new ConnectCommandResponse(registration, command.wallet),

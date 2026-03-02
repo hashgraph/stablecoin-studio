@@ -108,7 +108,7 @@ export class RescueCommandHandler implements ICommandHandler<RescueCommand> {
 		}
 		const res = await handler.rescue(capabilities, amountBd, startDate);
 		return Promise.resolve(
-			new RescueCommandResponse(res.error === undefined, res.id),
+			new RescueCommandResponse(res.error === undefined, res.id, res.serializedTransactionData),
 		);
 	}
 }

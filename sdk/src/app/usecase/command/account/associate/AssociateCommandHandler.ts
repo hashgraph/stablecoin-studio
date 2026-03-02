@@ -62,7 +62,7 @@ export class AssociateCommandHandler
 		const res = await handler.associateToken(tokenId, targetId);
 
 		return Promise.resolve(
-			new AssociateCommandResponse(res.error === undefined, res.id),
+			new AssociateCommandResponse(res.error === undefined, res.id, res.serializedTransactionData),
 		);
 	}
 }

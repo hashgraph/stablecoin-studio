@@ -35,12 +35,12 @@ import { QueryBus } from '../../core/query/QueryBus.js';
 import { LogError } from '../../core/decorator/LogErrorDecorator.js';
 import { MirrorNodeAdapter } from '../../port/out/mirror/MirrorNodeAdapter.js';
 import { TransactionResult } from '../../domain/context/transaction/TransactionResult.js';
+import { SerializedTransactionData } from '../../domain/context/transaction/TransactionResponse.js';
+
 
 interface IReserveDataFeedInPort {
 	getReserveAmount(request: GetReserveAmountRequest): Promise<Balance>;
-	updateReserveAmount(
-		request: UpdateReserveAmountRequest,
-	): Promise<TransactionResult>;
+	updateReserveAmount(request: UpdateReserveAmountRequest): Promise<TransactionResult | SerializedTransactionData>;
 }
 
 class ReserveDataFeedInPort implements IReserveDataFeedInPort {
@@ -68,7 +68,7 @@ class ReserveDataFeedInPort implements IReserveDataFeedInPort {
 	@LogError
 	async updateReserveAmount(
 		request: UpdateReserveAmountRequest,
-	): Promise<TransactionResult> {
+	): Promise<TransactionResult | SerializedTransactionData> {
 		handleValidation('UpdateReserveAmountRequest', request);
 
 		const reserveId: string = (
@@ -77,9 +77,15 @@ class ReserveDataFeedInPort implements IReserveDataFeedInPort {
 		const response = await this.commandBus.execute(
 			new UpdateReserveAmountCommand(
 				new ContractId(reserveId),
-				BigDecimal.fromString(request.reserveAmount, RESERVE_DECIMALS),
+				BigDecimal.fromString(
+					request.reserveAmount,
+					RESERVE_DECIMALS,
+				),
 			),
 		);
+		if (response.serializedTransactionData) {
+			return response.serializedTransactionData;
+		}
 		return new TransactionResult(response.payload, response.transactionId);
 	}
 }

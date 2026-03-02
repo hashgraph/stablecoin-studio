@@ -49,6 +49,7 @@ import {
 import Injectable from '../../../src/core/Injectable';
 import { Time } from '../../../src/core/Time';
 import { CONFIG_SC, DEFAULT_VERSION } from '../../../src/core/Constants';
+import { TransactionResult } from '../../../src/domain/context/transaction/TransactionResult.js';
 
 const initialSupply = 1000;
 const configId = CONFIG_SC;
@@ -139,7 +140,7 @@ describe('🧪 AWSKMSTransactionAdapter test', () => {
 				targetId: AWS_KMS_SETTINGS.hederaAccountId,
 				tokenId: stableCoinHTS?.tokenId?.toString() ?? '0.0.0',
 			}),
-		);
+		) as TransactionResult;
 		expect(result).toBeTruthy();
 		expect(result.success).toBeTruthy();
 		expect(result.transactionId).toBeTruthy();

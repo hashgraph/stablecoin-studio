@@ -20,6 +20,17 @@
 
 import { Response } from './Response.js';
 
+export interface TransactionMetadata {
+	transactionType: string;
+	description: string;
+	requiredSigners: string[];
+}
+
+export interface SerializedTransactionData {
+	serializedTransaction: string;
+	metadata: TransactionMetadata;
+}
+
 export default class TransactionResponse<
 	T extends Response = Response,
 	X extends Error = Error,
@@ -28,5 +39,6 @@ export default class TransactionResponse<
 		public readonly id?: string,
 		public response?: T,
 		public readonly error?: X,
+		public readonly serializedTransactionData?: SerializedTransactionData,
 	) {}
 }

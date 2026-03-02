@@ -61,7 +61,7 @@ export class UpdateResolverCommandHandler
 		);
 
 		return Promise.resolve(
-			new UpdateResolverCommandResponse(res.error === undefined, res.id),
+			new UpdateResolverCommandResponse(res.error === undefined, res.id, res.serializedTransactionData),
 		);
 	}
 }

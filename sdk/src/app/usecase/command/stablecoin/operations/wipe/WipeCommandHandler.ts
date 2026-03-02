@@ -86,7 +86,7 @@ export class WipeCommandHandler implements ICommandHandler<WipeCommand> {
 			startDate,
 		);
 		return Promise.resolve(
-			new WipeCommandResponse(res.error === undefined, res.id),
+			new WipeCommandResponse(res.error === undefined, res.id, res.serializedTransactionData),
 		);
 	}
 }

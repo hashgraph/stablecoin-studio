@@ -50,6 +50,7 @@ import {
 import Injectable from '../../../src/core/Injectable';
 import { Time } from '../../../src/core/Time';
 import { CONFIG_SC, DEFAULT_VERSION } from '../../../src/core/Constants';
+import { TransactionResult } from '../../../src/domain/context/transaction/TransactionResult.js';
 
 const initialSupply = 1000;
 const apiSecretKey = FIREBLOCKS_SETTINGS.apiSecretKeyPath;
@@ -143,7 +144,7 @@ describe('🧪 FireblocksTransactionAdapter test', () => {
 				targetId: FIREBLOCKS_SETTINGS.hederaAccountId,
 				tokenId: stableCoinHTS?.tokenId?.toString() ?? '0.0.0',
 			}),
-		);
+		) as TransactionResult;
 		expect(result).toBeTruthy();
 		expect(result.success).toBeTruthy();
 		expect(result.transactionId).toBeTruthy();

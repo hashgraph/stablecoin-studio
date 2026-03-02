@@ -35,15 +35,15 @@ import { UpdateConfigCommand } from '../../app/usecase/command/stablecoin/manage
 import { GetConfigInfoQuery } from '../../app/usecase/query/stablecoin/management/getConfigInfo/GetConfigInfoQuery.js';
 import ConfigInfoViewModel from './response/ConfigInfoViewModel.js';
 import { TransactionResult } from '../../domain/context/transaction/TransactionResult.js';
+import { SerializedTransactionData } from '../../domain/context/transaction/TransactionResponse.js';
+
 
 interface IManagementInPort {
-	updateConfigVersion(
-		request: UpdateConfigVersionRequest,
-	): Promise<TransactionResult>;
-	updateConfig(request: UpdateConfigRequest): Promise<TransactionResult>;
+	updateConfigVersion(request: UpdateConfigVersionRequest): Promise<TransactionResult | SerializedTransactionData>;
+	updateConfig(request: UpdateConfigRequest): Promise<TransactionResult | SerializedTransactionData>;
 
 	getConfigInfo(request: GetConfigInfoRequest): Promise<ConfigInfoViewModel>;
-	updateResolver(request: UpdateResolverRequest): Promise<TransactionResult>;
+	updateResolver(request: UpdateResolverRequest): Promise<TransactionResult | SerializedTransactionData>;
 }
 
 class ManagementInPort implements IManagementInPort {
@@ -57,7 +57,7 @@ class ManagementInPort implements IManagementInPort {
 	@LogError
 	async updateConfigVersion(
 		request: UpdateConfigVersionRequest,
-	): Promise<TransactionResult> {
+	): Promise<TransactionResult | SerializedTransactionData> {
 		const { configVersion, tokenId } = request;
 		handleValidation('UpdateConfigVersionRequest', request);
 
@@ -67,13 +67,14 @@ class ManagementInPort implements IManagementInPort {
 				configVersion,
 			),
 		);
+		if (response.serializedTransactionData) {
+			return response.serializedTransactionData;
+		}
 		return new TransactionResult(response.payload, response.transactionId);
 	}
 
 	@LogError
-	async updateConfig(
-		request: UpdateConfigRequest,
-	): Promise<TransactionResult> {
+	async updateConfig(request: UpdateConfigRequest): Promise<TransactionResult | SerializedTransactionData> {
 		const { configId, configVersion, tokenId } = request;
 		handleValidation('UpdateConfigRequest', request);
 
@@ -84,13 +85,14 @@ class ManagementInPort implements IManagementInPort {
 				configVersion,
 			),
 		);
+		if (response.serializedTransactionData) {
+			return response.serializedTransactionData;
+		}
 		return new TransactionResult(response.payload, response.transactionId);
 	}
 
 	@LogError
-	async updateResolver(
-		request: UpdateResolverRequest,
-	): Promise<TransactionResult> {
+	async updateResolver(request: UpdateResolverRequest): Promise<TransactionResult | SerializedTransactionData> {
 		const { configId, tokenId, resolver, configVersion } = request;
 		handleValidation('UpdateResolverRequest', request);
 
@@ -102,6 +104,9 @@ class ManagementInPort implements IManagementInPort {
 				new ContractId(resolver),
 			),
 		);
+		if (response.serializedTransactionData) {
+			return response.serializedTransactionData;
+		}
 		return new TransactionResult(response.payload, response.transactionId);
 	}
 
