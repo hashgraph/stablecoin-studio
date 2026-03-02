@@ -105,6 +105,7 @@ describe('🧪 [ADAPTER] ClientTransactionAdapter with ECDSA accounts', () => {
 			amount: amount.toString(),
 		});
 		const result = await Fees.addFixedFee(fixedFee) as TransactionResult;
+		
 		expect(result).toBeTruthy();
 		expect(result.success).toBeTruthy();
 		expect(result.transactionId).toBeTruthy();
