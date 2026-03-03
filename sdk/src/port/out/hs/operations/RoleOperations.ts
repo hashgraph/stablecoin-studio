@@ -33,6 +33,7 @@ import {
 	GRANT_ROLES_GAS,
 	REVOKE_ROLES_GAS,
 	MAX_ROLES_GAS,
+	UINT256_MAX,
 } from '../../../../core/Constants';
 import { StableCoinRole } from '../../../../domain/context/stablecoin/StableCoinRole';
 import type { TransactionExecutor } from '../TransactionExecutor';
@@ -122,7 +123,12 @@ export class RoleOperations {
 			const accounts: string[] = [];
 			for (const id of targetsId)
 				accounts.push(await this.evmResolver.resolve(id));
-			const amountsFormatted = amounts.map((a) => a.toBigInt());
+			const amountsFormatted: bigint[] = [];
+			amounts.forEach((amount) => {
+				if (amount.isGreaterThan(BigDecimal.fromString('0')))
+					amountsFormatted.push(amount.toBigInt());
+				else amountsFormatted.push(UINT256_MAX);
+			});
 
 			const contractId = coin.coin.proxyAddress?.value;
 			const evmAddress = coin.coin.evmProxyAddress?.value;
