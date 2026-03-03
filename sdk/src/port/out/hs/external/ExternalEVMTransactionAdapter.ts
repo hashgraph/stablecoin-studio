@@ -93,21 +93,35 @@ export class ExternalEVMTransactionAdapter extends BaseHederaTransactionAdapter 
 			if (!tx.functionParameters)
 				throw new Error('Function parameters are missing');
 
-			const contractInfo =
-				await this.mirrorNodeAdapter.getContractInfo(
-					contractId.toString(),
-				);
-			if (!contractInfo.evmAddress) {
-				throw new Error(
-					`EVM address not found for contract ${contractId}`,
-				);
+			// Try to get EVM address from mirror node; fall back to long-zero computation
+			// for HTS tokens (not stored in the /contracts mirror node endpoint).
+			let toAddress: string | undefined;
+			try {
+				const contractInfo =
+					await this.mirrorNodeAdapter.getContractInfo(
+						contractId.toString(),
+					);
+				toAddress = contractInfo.evmAddress;
+			} catch {
+				// Not a deployed contract (e.g., HTS token) — compute long-zero EVM address
+			}
+			if (!toAddress) {
+				const parts = contractId.toString().split('.');
+				if (parts.length === 3) {
+					const num = parseInt(parts[2], 10);
+					toAddress = '0x' + num.toString(16).padStart(40, '0');
+				} else {
+					throw new Error(
+						`Cannot determine EVM address for contract ${contractId}`,
+					);
+				}
 			}
 
 			const chainId =
 				HEDERA_CHAIN_IDS[this.networkService.environment] ?? 296;
 
 			const evmTx = {
-				to: contractInfo.evmAddress,
+				to: toAddress,
 				data:
 					'0x' +
 					Buffer.from(tx.functionParameters).toString('hex'),
@@ -123,7 +137,7 @@ export class ExternalEVMTransactionAdapter extends BaseHederaTransactionAdapter 
 
 			const metadata: TransactionMetadata = {
 				transactionType: 'EVM Contract Call',
-				description: `Contract call to ${contractInfo.evmAddress}`,
+				description: `Contract call to ${toAddress}`,
 				requiredSigners: [this.account.id.toString()],
 			};
 
