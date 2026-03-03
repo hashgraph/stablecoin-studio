@@ -40,15 +40,15 @@ jobs:
     timeout-minutes: 10
     steps:
       - name: Harden Runner
-        uses: step-security/harden-runner@v2
+        uses: step-security/harden-runner@5ef0c079ce82195b2a36a210272d6b661572d83e # v2.14.2
         with:
           egress-policy: audit
 
       - name: Checkout code
-        uses: actions/checkout@v4
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
 
       - name: Setup Node.js
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4.4.0
         with:
           node-version: "22"
 
@@ -56,7 +56,7 @@ jobs:
         run: npm ci
 
       - name: Save dependencies to cache
-        uses: actions/cache/save@v4
+        uses: actions/cache/save@0057852bfaa89a56745cba8c7296529d2fc39830 # v4.3.0
         with:
           path: |
             node_modules
@@ -69,7 +69,7 @@ jobs:
           npm run build:contracts          
 
       - name: Save Hardhat artifacts
-        uses: actions/cache/save@v4
+        uses: actions/cache/save@0057852bfaa89a56745cba8c7296529d2fc39830 # v4.3.0
         with:
           path: |
             contracts/artifacts
@@ -104,7 +104,7 @@ jobs:
           cache: npm
 
       - name: Restore dependencies from cache
-        uses: actions/cache/restore@v4
+        uses: actions/cache/restore@0057852bfaa89a56745cba8c7296529d2fc39830 # v4.3.0
         with:
           path: |
             node_modules
@@ -114,7 +114,7 @@ jobs:
           fail-on-cache-miss: true
 
       - name: Restore build artifacts from cache
-        uses: actions/cache/restore@v4
+        uses: actions/cache/restore@0057852bfaa89a56745cba8c7296529d2fc39830 # v4.3.0
         with:
           path: |
             contracts/artifacts
@@ -166,7 +166,7 @@ jobs:
           fi
 
       - name: Restore dependencies from cache
-        uses: actions/cache/restore@v4
+        uses: actions/cache/restore@0057852bfaa89a56745cba8c7296529d2fc39830 # v4.3.0
         with:
           path: |
             node_modules
@@ -176,7 +176,7 @@ jobs:
           fail-on-cache-miss: true
 
       - name: Restore build artifacts from cache
-        uses: actions/cache/restore@v4
+        uses: actions/cache/restore@0057852bfaa89a56745cba8c7296529d2fc39830 # v4.3.0
         with:
           path: |
             contracts/artifacts
