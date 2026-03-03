@@ -54,6 +54,7 @@ export interface WalletFoundEvent extends WalletBaseEvent {
 export interface WalletPairedEvent extends WalletBaseEvent {
 	data: InitializationData;
 	network: NetworkData;
+	isEvmWallet?: boolean;
 }
 export interface WalletConnectionStatusChangedEvent extends WalletBaseEvent {
 	status: ConnectionState;

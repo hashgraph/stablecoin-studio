@@ -145,7 +145,6 @@ import {
 	EnvironmentFactory,
 	Factories,
 } from '../../../domain/context/factory/Factories.js';
-import Hex from '../../../core/Hex.js';
 import { keccak256 } from 'ethereum-cryptography/keccak';
 import {
 	fromHCustomFeeToSCFee,
@@ -2093,20 +2092,10 @@ export default class RPCTransactionAdapter extends TransactionAdapter {
 		}
 	}
 
-	async sign(message: string): Promise<string> {
-		if (typeof (this.signerOrProvider as any).signMessage !== 'function') {
-			throw new Error('RPC instance is not a Signer.');
-		}
-		const bytesToSign = Hex.toUint8Array(message);
-		const bytesToSignHash = this.calcKeccak256(bytesToSign);
-		const bytesToSignHashHex = '0x' + Hex.fromUint8Array(bytesToSignHash);
-
-		const signature = await this.web3Provider.send('eth_sign', [
-			this.account.evmAddress,
-			bytesToSignHashHex,
-		]);
-
-		return signature.toString().slice(0, 130);
+	async sign(_message: string): Promise<string> {
+		throw new Error(
+			'Multisig signing is not supported for MetaMask (EVM) wallets.',
+		);
 	}
 
 	calcKeccak256(message: Uint8Array): Buffer {

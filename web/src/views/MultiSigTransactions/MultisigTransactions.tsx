@@ -32,7 +32,11 @@ import { useTranslation } from 'react-i18next';
 import MultiSigTransactionModal from './components/MultiSigTransactionModal';
 import SDKService from '../../services/SDKService';
 import { useSelector } from 'react-redux';
-import { LAST_WALLET_SELECTED, SELECTED_WALLET_ACCOUNT_INFO } from '../../store/slices/walletSlice';
+import {
+	IS_EVM_WALLET,
+	LAST_WALLET_SELECTED,
+	SELECTED_WALLET_ACCOUNT_INFO,
+} from '../../store/slices/walletSlice';
 import { MultisigTransactionStatusColors, MultisigTransactionStatus } from '../../constant';
 
 // @ts-ignore
@@ -40,6 +44,7 @@ const MultiSigTransactions = () => {
 	const { isOpen, onOpen, onClose } = useDisclosure();
 	const selectedWallet = useSelector(LAST_WALLET_SELECTED);
 	const wallet: AccountViewModel = useSelector(SELECTED_WALLET_ACCOUNT_INFO);
+	const isEvmWallet = useSelector(IS_EVM_WALLET);
 	const publicKey = wallet.publicKey?.key;
 
 	const {
@@ -88,6 +93,7 @@ const MultiSigTransactions = () => {
 	};
 
 	const canSignTransaction = (transaction: MultiSigTransactionViewModel) => {
+		if (isEvmWallet) return false;
 		return (
 			publicKey &&
 			transaction.key_list.includes(publicKey) &&

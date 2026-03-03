@@ -55,6 +55,7 @@ export interface InitialStateProps {
 	selectedMirrors?: IMirrorRPCNode[];
 	rpcList?: IMirrorRPCNode[];
 	selectedRPCs?: IMirrorRPCNode[];
+	isEvmWallet?: boolean;
 }
 
 export const initialState: InitialStateProps = {
@@ -90,6 +91,7 @@ export const initialState: InitialStateProps = {
 	selectedMirrors: [],
 	rpcList: [],
 	selectedRPCs: [],
+	isEvmWallet: false,
 };
 
 export const getStableCoinList = createAsyncThunk(
@@ -244,6 +246,9 @@ export const walletSlice = createSlice({
 			state.selectedRPCs = action.payload;
 			localStorage.setItem(SELECTED_RPC_LS, JSON.stringify(action.payload));
 		},
+		setIsEvmWallet: (state, action) => {
+			state.isEvmWallet = action.payload;
+		},
 		clearData: (state) => {
 			state.data = initialState.data;
 			state.lastWallet = undefined;
@@ -258,6 +263,7 @@ export const walletSlice = createSlice({
 			state.factoryId = initialState.factoryId;
 			state.resolverId = initialState.resolverId;
 			state.selectingStableCoin = initialState.selectingStableCoin;
+			state.isEvmWallet = initialState.isEvmWallet;
 		},
 		setRoles: (state, action) => {
 			state.roles = action.payload;
@@ -358,5 +364,7 @@ export const SELECTED_RPCS = (state: RootState) => {
 		return JSON.parse(rpcs);
 	} else return state.wallet.selectedRPCs;
 };
+
+export const IS_EVM_WALLET = (state: RootState) => state.wallet.isEvmWallet ?? false;
 
 export const walletActions = walletSlice.actions;
