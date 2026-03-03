@@ -182,6 +182,7 @@ export class ExternalEVMTransactionAdapter extends BaseHederaTransactionAdapter 
 		);
 		this.account = account;
 		this.account.publicKey = accountMirror.publicKey;
+		this.account.evmAddress = accountMirror.accountEvmAddress;
 
 		const eventData: WalletPairedEvent = {
 			wallet: SupportedWallets.EXTERNAL_EVM,
