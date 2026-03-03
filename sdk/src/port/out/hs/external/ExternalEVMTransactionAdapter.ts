@@ -177,12 +177,20 @@ export class ExternalEVMTransactionAdapter extends BaseHederaTransactionAdapter 
 	async register(account: Account): Promise<InitializationData> {
 		Injectable.registerTransactionHandler(this);
 
+		LogService.logTrace('ExternalEVMTransactionAdapter: Getting account info for', account.id.toString());
 		const accountMirror = await this.mirrorNodeAdapter.getAccountInfo(
 			account.id,
 		);
+		LogService.logTrace('ExternalEVMTransactionAdapter: accountMirror =', accountMirror);
+
 		this.account = account;
 		this.account.publicKey = accountMirror.publicKey;
 		this.account.evmAddress = accountMirror.accountEvmAddress;
+
+		LogService.logTrace(
+			'ExternalEVMTransactionAdapter: Account evmAddress set to: ',
+			this.account.evmAddress,
+		);
 
 		const eventData: WalletPairedEvent = {
 			wallet: SupportedWallets.EXTERNAL_EVM,
