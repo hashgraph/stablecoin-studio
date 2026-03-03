@@ -2,7 +2,7 @@ import { Flex } from '@chakra-ui/react';
 import { useTranslation } from 'react-i18next';
 import { NamedRoutes } from '../../Router/NamedRoutes';
 import SidebarOption from './SidebarOption';
-import { SELECTED_WALLET_COIN } from '../../store/slices/walletSlice';
+import { IS_EVM_WALLET, SELECTED_WALLET_COIN } from '../../store/slices/walletSlice';
 import { useSelector } from 'react-redux';
 
 interface optionsProps {
@@ -16,6 +16,7 @@ interface optionsProps {
 const Sidebar = () => {
 	const { t } = useTranslation('global');
 	const selectedStableCoin = useSelector(SELECTED_WALLET_COIN);
+	const isEvmWallet = useSelector(IS_EVM_WALLET);
 	const isMultiSigBackendConfigured =
 		!!process.env.REACT_APP_BACKEND_URL && process.env.REACT_APP_BACKEND_URL.trim() !== '';
 
@@ -52,7 +53,7 @@ const Sidebar = () => {
 			icon: 'File',
 			title: t('sidebar.multiSigTransactions'),
 			route: NamedRoutes.MultiSigTransactions,
-			isHidden: !isMultiSigBackendConfigured,
+			isHidden: !isMultiSigBackendConfigured || isEvmWallet,
 		},
 		{
 			icon: 'GearSix',
