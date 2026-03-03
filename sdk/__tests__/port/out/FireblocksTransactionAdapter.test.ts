@@ -130,7 +130,8 @@ describe('🧪 FireblocksTransactionAdapter test', () => {
 			configVersion: configVersion,
 		});
 
-		stableCoinHTS = (await StableCoin.create(requesCreateStableCoin)).coin;
+		const createResult = await StableCoin.create(requesCreateStableCoin);
+		stableCoinHTS = (createResult as { coin: StableCoinViewModel }).coin;
 		await Time.delay(5, 'seconds');
 	}, 80_000);
 

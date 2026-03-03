@@ -147,7 +147,7 @@ export { BigDecimal, HederaId, ContractId, EvmAddress, PublicKey };
 export type CreateHoldTransactionResult = ({ holdId: number } & TransactionResult) | SerializedTransactionData;
 
 interface IStableCoinInPort {
-	create(request: CreateRequest): Promise<{
+	create(request: CreateRequest): Promise<SerializedTransactionData | {
 		coin: StableCoinViewModel;
 		reserve: ReserveViewModel;
 	}>;
@@ -213,7 +213,7 @@ class StableCoinInPort implements IStableCoinInPort {
 		),
 	) {}
 	@LogError
-	async create(req: CreateRequest): Promise<{
+	async create(req: CreateRequest): Promise<SerializedTransactionData | {
 		coin: StableCoinViewModel;
 		reserve: ReserveViewModel;
 	}> {
@@ -331,6 +331,10 @@ class StableCoinInPort implements IStableCoinInPort {
 				reserveConfigId,
 			),
 		);
+
+		if (createResponse.serializedTransactionData) {
+			return createResponse.serializedTransactionData;
+		}
 
 		return {
 			coin:
