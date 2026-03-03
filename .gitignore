@@ -33,6 +33,20 @@ coverage/
 # Miscellaneous
 .DS_Store
 
+# Docusaurus (docs)
+.docusaurus
+.cache-loader
+
+# Local env files
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+# Yarn logs
+yarn-debug.log*
+yarn-error.log*
+
 # Old files
 .old/
 
