@@ -68,16 +68,16 @@ npx hardhat migrateStableCoinToV2 \
 
 ### Post-Migration: Update Client Configuration
 
-**Web DApp** — Update `web/.env`:
+**Web DApp** — Update `apps/web/.env`:
 
 ```env
 REACT_APP_FACTORIES='[{"Environment":"testnet","STABLE_COIN_FACTORY_ADDRESS":"0.0.XXXX"}]'
 REACT_APP_RESOLVERS='[{"Environment":"testnet","STABLE_COIN_RESOLVER_ADDRESS":"0.0.XXXX"}]'
 ```
 
-Find the factory address under "Stable Coin Factory Facet Proxy" and the resolver address under "Business Logic Resolver Proxy" in `contracts/contractAddresses_v2.txt`. Convert hex addresses to Hedera IDs using [HashScan](https://hashscan.io).
+Find the factory address under "Stable Coin Factory Facet Proxy" and the resolver address under "Business Logic Resolver Proxy" in `packages/contracts/contractAddresses_v2.txt`. Convert hex addresses to Hedera IDs using [HashScan](https://hashscan.io).
 
-**CLI** — Update `cli/hsca-config.yaml`:
+**CLI** — Update `apps/cli/hsca-config.yaml`:
 
 ```yaml
 factories:
@@ -152,7 +152,7 @@ npx hardhat rollbackSCToVersion \
 
 When the Hedera testnet is reset, all deployed contracts are lost. To restore functionality:
 
-1. Deploy new infrastructure: `cd contracts && npx hardhat deployAll --network testnet`
+1. Deploy new infrastructure: `cd packages/contracts && npx hardhat deployAll --network testnet`
 2. Update factory addresses in:
    - SDK `.env`
    - CLI `hsca-config.yaml`

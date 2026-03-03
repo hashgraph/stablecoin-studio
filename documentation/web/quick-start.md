@@ -18,7 +18,7 @@ sidebar_position: 2
 ## Installation
 
 ```bash
-cd stablecoin-studio/web
+cd stablecoin-studio/apps/web
 npm install
 ```
 

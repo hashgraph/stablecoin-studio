@@ -78,11 +78,7 @@
     "webpack": "5.104.1"
   },
   "workspaces": [
-    "backend",
-    "contracts",
-    "sdk",
-    "cli",
-    "web",
-    "docs"
+    "packages/*",
+    "apps/*"
   ]
 }

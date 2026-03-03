@@ -37,7 +37,7 @@ Check that the calling account has the required role for the operation. Most fac
 
 ### Contract Size Exceeds Limit
 
-Run `npm run size` in the `contracts/` directory to check contract sizes. If a facet exceeds the 24 KiB limit, consider splitting it into smaller facets.
+Run `npm run size` in the `packages/contracts/` directory to check contract sizes. If a facet exceeds the 24 KiB limit, consider splitting it into smaller facets.
 
 ---
 
@@ -105,7 +105,7 @@ The CLI looks for `hsca-config.yaml` in the current directory. If it cannot find
 
 ### Blank Page After Build
 
-Check that `REACT_APP_FACTORIES` and `REACT_APP_RESOLVERS` are set in `web/.env`. These must be valid JSON arrays with factory and resolver addresses for your target network.
+Check that `REACT_APP_FACTORIES` and `REACT_APP_RESOLVERS` are set in `apps/web/.env`. These must be valid JSON arrays with factory and resolver addresses for your target network.
 
 ### Wallet Connection Fails
 

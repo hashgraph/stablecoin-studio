@@ -44,22 +44,24 @@ This monorepo is structured with **npm workspaces** and is designed for scalabil
 ## Monorepo Structure
 
 ```
-├── contracts/              # Solidity smart contracts (Hardhat)
-│   ├── contracts/
-│   │   ├── extensions/     # Facets (Burn, CashIn, Freeze, KYC, Pause, Rescue, Reserve, Roles, Wipe, Hold)
-│   │   ├── resolver/       # BusinessLogicResolver and ResolverProxy
-│   │   └── Interfaces/     # Contract interfaces
-│   └── test/
-├── sdk/                    # TypeScript SDK (Hexagonal Architecture + DDD + CQS)
-│   └── src/
-│       ├── domain/         # Domain entities and business logic
-│       ├── app/            # Application layer (commands, queries, handlers)
-│       ├── port/           # Inbound/outbound ports
-│       └── core/           # Infrastructure and cross-cutting concerns
-├── backend/                # NestJS REST API for multisignature transactions
-├── cli/                    # Command-line interface for stablecoin operations
-├── web/                    # React DApp for stablecoin management
-├── docs/                   # Documentation site (Docusaurus)
+├── packages/
+│   ├── contracts/              # Solidity smart contracts (Hardhat)
+│   │   ├── contracts/
+│   │   │   ├── extensions/     # Facets (Burn, CashIn, Freeze, KYC, Pause, Rescue, Reserve, Roles, Wipe, Hold)
+│   │   │   ├── resolver/       # BusinessLogicResolver and ResolverProxy
+│   │   │   └── Interfaces/     # Contract interfaces
+│   │   └── test/
+│   └── sdk/                    # TypeScript SDK (Hexagonal Architecture + DDD + CQS)
+│       └── src/
+│           ├── domain/         # Domain entities and business logic
+│           ├── app/            # Application layer (commands, queries, handlers)
+│           ├── port/           # Inbound/outbound ports
+│           └── core/           # Infrastructure and cross-cutting concerns
+├── apps/
+│   ├── backend/                # NestJS REST API for multisignature transactions
+│   ├── cli/                    # Command-line interface for stablecoin operations
+│   ├── web/                    # React DApp for stablecoin management
+│   └── docs/                   # Documentation site (Docusaurus)
 ├── documentation/          # Technical documentation content
 │   ├── gettingStarted/     # Setup and onboarding guides
 │   ├── sdk/                # SDK documentation
@@ -192,17 +194,17 @@ npm run build:backend      # Independent
 
 Each module has its own `.env` configuration. Sample files are provided:
 
-- **Contracts**: `contracts/.env` (test account credentials) — use `contracts/.env.sample`
-- **CLI**: `cli/hsca-config.yaml` — use `cli/hsca-config.sample.yaml`
-- **Web**: `web/.env` (factory addresses, mirror node, RPC endpoints)
-- **Backend**: `backend/.env` (database, port configuration)
+- **Contracts**: `packages/contracts/.env` (test account credentials) — use `packages/contracts/.env.sample`
+- **CLI**: `apps/cli/hsca-config.yaml` — use `apps/cli/hsca-config.sample.yaml`
+- **Web**: `apps/web/.env` (factory addresses, mirror node, RPC endpoints)
+- **Backend**: `apps/backend/.env` (database, port configuration)
 
 ## Development Workflows
 
 ### Smart Contracts
 
 ```bash
-cd contracts
+cd packages/contracts
 npm run compile            # Compile changed contracts
 npm run compile:force      # Force recompile all
 npm test                   # Run all tests
@@ -212,7 +214,7 @@ npm run test:parallel      # Run tests in parallel
 ### SDK
 
 ```bash
-cd sdk
+cd packages/sdk
 npm run build              # Build SDK
 npm test                   # Run tests
 npm run test:watch         # Watch mode
@@ -221,7 +223,7 @@ npm run test:watch         # Watch mode
 ### CLI
 
 ```bash
-cd cli
+cd apps/cli
 npm run build              # Build CLI
 npm start                  # Start CLI
 npm run start:wizard       # Start in wizard mode
@@ -230,7 +232,7 @@ npm run start:wizard       # Start in wizard mode
 ### Web DApp
 
 ```bash
-cd web
+cd apps/web
 npm run build              # Build web app
 npm start                  # Start dev server on http://localhost:3000
 ```
@@ -238,7 +240,7 @@ npm start                  # Start dev server on http://localhost:3000
 ### Backend
 
 ```bash
-cd backend
+cd apps/backend
 npm run build              # Build backend
 npm run start:dev          # Development mode with watch
 npm run start:debug        # Debug mode
