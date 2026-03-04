@@ -220,7 +220,10 @@ async function createStablecoin(accountId) {
         pauseKey: { key: 'null', type: 'null' },
         feeScheduleKey: { key: 'null', type: 'null' },
         supplyType: stablecoin_npm_sdk_1.TokenSupplyType.INFINITE,
-        createReserve: false,
+        createReserve: true,
+        reserveInitialAmount: '10000',
+        reserveConfigId: '0x0000000000000000000000000000000000000000000000000000000000000003',
+        reserveConfigVersion: 1,
         updatedAtThreshold: '0',
         grantKYCToOriginalSender: true,
         burnRoleAccount: accountId,
@@ -238,10 +241,13 @@ async function createStablecoin(accountId) {
         configVersion: 1,
     })));
     const tokenId = createResult.coin.tokenId ?? '';
+    const reserveAddress = createResult.reserve.proxyAddress ?? '';
     if (!tokenId)
         throw new Error('Token creation failed – tokenId missing');
     console.log(`  ✓ Token created: ${tokenId}`);
-    return tokenId;
+    if (reserveAddress)
+        console.log(`  ✓ Reserve created: ${reserveAddress}`);
+    return { tokenId, reserveAddress };
 }
 async function setupToken(tokenId, accountId) {
     console.log('\n[Setup] Associating token + granting KYC...');
@@ -321,6 +327,7 @@ const main = async () => {
     }));
     // ── Step 1: Connect CLIENT + setup token ──────────────────────────────
     let tokenId = process.env.TOKEN_ID ?? '';
+    let reserveAddress = '';
     if (!tokenId) {
         await stablecoin_npm_sdk_1.Network.connect(new stablecoin_npm_sdk_1.ConnectRequest({
             account: {
@@ -333,7 +340,9 @@ const main = async () => {
             wallet: stablecoin_npm_sdk_1.SupportedWallets.CLIENT,
         }));
         console.log('[1] Connected with CLIENT wallet');
-        tokenId = await createStablecoin(accountId);
+        const result = await createStablecoin(accountId);
+        tokenId = result.tokenId;
+        reserveAddress = result.reserveAddress;
         await setupToken(tokenId, accountId);
     }
     else {
@@ -486,10 +495,15 @@ const main = async () => {
     console.log('  ○ SKIP  Needs proxy contract address for HBAR funding (not token HTS address)');
     // ── Category 8: Reserve operations ───────────────────────────────────
     await runEVMTest('updateReserveAddress (set to 0.0.0)', () => stablecoin_npm_sdk_1.StableCoin.updateReserveAddress(new stablecoin_npm_sdk_1.UpdateReserveAddressRequest({ tokenId, reserveAddress: '0.0.0' })), provider, ecdsaPrivateKey);
-    // updateReserveAmount - Skip if no reserve created (needs actual reserve contract)
-    console.log('\n  ▶ updateReserveAmount (no reserve created)...');
-    testResults.push({ name: 'updateReserveAmount (no reserve created)', status: 'SKIP' });
-    console.log('  ○ SKIP  No reserve was created for this token');
+    // updateReserveAmount - Test if reserve was created
+    if (reserveAddress) {
+        await runEVMTest('updateReserveAmount (update to 1000)', () => stablecoin_npm_sdk_1.ReserveDataFeed.updateReserveAmount(new stablecoin_npm_sdk_1.UpdateReserveAmountRequest({ reserveAddress, reserveAmount: '1000' })), provider, ecdsaPrivateKey);
+    }
+    else {
+        console.log('\n  ▶ updateReserveAmount (no reserve created)...');
+        testResults.push({ name: 'updateReserveAmount (no reserve created)', status: 'SKIP' });
+        console.log('  ○ SKIP  No reserve was created for this token');
+    }
     // ── Category 9: Hold operations ───────────────────────────────────────
     const expirationDate = Math.floor(Date.now() / 1000 + 3600).toString(); // 1h from now
     // createHold → then releaseHold

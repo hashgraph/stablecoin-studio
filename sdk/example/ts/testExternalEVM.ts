@@ -75,6 +75,7 @@ import {
 	UpdateConfigVersionRequest,
 	UpdateResolverRequest,
 	UpdateReserveAddressRequest,
+	UpdateReserveAmountRequest,
 	CreateHoldRequest,
 	CreateHoldByControllerRequest,
 	ExecuteHoldRequest,
@@ -88,6 +89,7 @@ import {
 	Role,
 	Management,
 	Fees,
+	ReserveDataFeed,
 	SerializedTransactionData,
 	AssociateTokenRequest,
 	StableCoinRole,
@@ -284,7 +286,7 @@ async function runEVMTest(
 
 // ─── Setup helpers (CLIENT wallet) ───────────────────────────────────────────
 
-async function createStablecoin(accountId: string): Promise<string> {
+async function createStablecoin(accountId: string): Promise<{ tokenId: string; reserveAddress: string }> {
 	console.log('\n[Setup] Creating stablecoin...');
 	const createResult = (await StableCoin.create(
 		new CreateRequest({
@@ -298,7 +300,10 @@ async function createStablecoin(accountId: string): Promise<string> {
 			pauseKey: { key: 'null', type: 'null' },
 			feeScheduleKey: { key: 'null', type: 'null' },
 			supplyType: TokenSupplyType.INFINITE,
-			createReserve: false,
+			createReserve: true,
+			reserveInitialAmount: '10000',
+			reserveConfigId: '0x0000000000000000000000000000000000000000000000000000000000000003',
+			reserveConfigVersion: 1,
 			updatedAtThreshold: '0',
 			grantKYCToOriginalSender: true,
 			burnRoleAccount: accountId,
@@ -317,9 +322,11 @@ async function createStablecoin(accountId: string): Promise<string> {
 		}),
 	)) as { coin: any; reserve: any };
 	const tokenId = (createResult.coin as { tokenId?: string }).tokenId ?? '';
+	const reserveAddress = (createResult.reserve as { proxyAddress?: string }).proxyAddress ?? '';
 	if (!tokenId) throw new Error('Token creation failed – tokenId missing');
 	console.log(`  ✓ Token created: ${tokenId}`);
-	return tokenId;
+	if (reserveAddress) console.log(`  ✓ Reserve created: ${reserveAddress}`);
+	return { tokenId, reserveAddress };
 }
 
 async function setupToken(tokenId: string, accountId: string): Promise<void> {
@@ -439,6 +446,7 @@ const main = async () => {
 
 	// ── Step 1: Connect CLIENT + setup token ──────────────────────────────
 	let tokenId = process.env.TOKEN_ID ?? '';
+	let reserveAddress = '';
 
 	if (!tokenId) {
 		await Network.connect(
@@ -454,7 +462,9 @@ const main = async () => {
 			}),
 		);
 		console.log('[1] Connected with CLIENT wallet');
-		tokenId = await createStablecoin(accountId);
+		const result = await createStablecoin(accountId);
+		tokenId = result.tokenId;
+		reserveAddress = result.reserveAddress;
 		await setupToken(tokenId, accountId);
 	} else {
 		console.log(`\n[1] Using existing token: ${tokenId}`);
@@ -756,10 +766,18 @@ const main = async () => {
 		provider, ecdsaPrivateKey,
 	);
 
-	// updateReserveAmount - Skip if no reserve created (needs actual reserve contract)
-	console.log('\n  ▶ updateReserveAmount (no reserve created)...');
-	testResults.push({ name: 'updateReserveAmount (no reserve created)', status: 'SKIP' });
-	console.log('  ○ SKIP  No reserve was created for this token');
+	// updateReserveAmount - Test if reserve was created
+	if (reserveAddress) {
+		await runEVMTest(
+			'updateReserveAmount (update to 1000)',
+			() => ReserveDataFeed.updateReserveAmount(new UpdateReserveAmountRequest({ reserveAddress, reserveAmount: '1000' })),
+			provider, ecdsaPrivateKey,
+		);
+	} else {
+		console.log('\n  ▶ updateReserveAmount (no reserve created)...');
+		testResults.push({ name: 'updateReserveAmount (no reserve created)', status: 'SKIP' });
+		console.log('  ○ SKIP  No reserve was created for this token');
+	}
 
 	// ── Category 9: Hold operations ───────────────────────────────────────
 
