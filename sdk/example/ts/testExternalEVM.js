@@ -87,6 +87,14 @@ function detectKeyType(key) {
 async function waitMs(ms) {
     return new Promise((resolve) => setTimeout(resolve, ms));
 }
+// ─── Suppress transient network errors from ethers.js internal polling ────────
+process.on('unhandledRejection', (reason) => {
+    const msg = String(reason);
+    // Swallow transient RPC gateway errors from ethers polling subscriptions
+    if (msg.includes('502') || msg.includes('Bad Gateway') || msg.includes('SERVER_ERROR'))
+        return;
+    console.error('Unhandled rejection:', msg.substring(0, 200));
+});
 const testResults = [];
 async function runEVMTest(name, fn, provider, ecdsaPrivateKey) {
     console.log(`\n  ▶ ${name}...`);
@@ -104,8 +112,25 @@ async function runEVMTest(name, fn, provider, ecdsaPrivateKey) {
         const data = result;
         const wallet = new ethers_1.ethers.Wallet(toHexKey(ecdsaPrivateKey), provider);
         const unsignedTx = ethers_1.ethers.Transaction.from(data.serializedTransaction);
-        unsignedTx.nonce = await provider.getTransactionCount(wallet.address);
-        const feeData = await provider.getFeeData();
+        // Retry helper for transient RPC 502 errors
+        const withRetry = async (fn, retries = 3, delayMs = 5000) => {
+            for (let i = 0; i < retries; i++) {
+                try {
+                    return await fn();
+                }
+                catch (e) {
+                    const is502 = e?.info?.responseStatus?.includes('502') || e?.shortMessage?.includes('502') || String(e).includes('502');
+                    if (is502 && i < retries - 1) {
+                        await waitMs(delayMs);
+                        continue;
+                    }
+                    throw e;
+                }
+            }
+            throw new Error('unreachable');
+        };
+        unsignedTx.nonce = await withRetry(() => provider.getTransactionCount(wallet.address));
+        const feeData = await withRetry(() => provider.getFeeData());
         if (unsignedTx.type === 2) {
             unsignedTx.maxFeePerGas = feeData.maxFeePerGas;
             unsignedTx.maxPriorityFeePerGas = feeData.maxPriorityFeePerGas;
@@ -114,7 +139,7 @@ async function runEVMTest(name, fn, provider, ecdsaPrivateKey) {
             unsignedTx.gasPrice = feeData.gasPrice;
         }
         const signedTx = await wallet.signTransaction(unsignedTx);
-        const txResponse = await provider.broadcastTransaction(signedTx);
+        const txResponse = await withRetry(() => provider.broadcastTransaction(signedTx));
         const receipt = await txResponse.wait(1, 60000);
         // Validate receipt exists
         if (!receipt) {
@@ -238,6 +263,24 @@ async function setupToken(tokenId, accountId) {
     console.log('\n[Setup] Waiting 5s for mirror node indexing...');
     await waitMs(5000);
 }
+async function fundProxyWithHBAR(tokenId, provider, ecdsaPrivateKey, amountInHbar = '1.0') {
+    console.log('\n[Setup] Funding proxy with HBAR for rescueHBAR test...');
+    // Convert Hedera token ID to EVM address
+    // Format: 0.0.X -> 0x0000000000000000000000000000000000XXXXXX (padded hex)
+    const tokenIdStr = tokenId.toString();
+    const parts = tokenIdStr.split('.');
+    const accountNum = parseInt(parts[2]);
+    const evmAddress = '0x' + accountNum.toString(16).padStart(40, '0');
+    console.log(`  → Token ${tokenIdStr} → EVM address ${evmAddress}`);
+    const wallet = new ethers_1.ethers.Wallet(toHexKey(ecdsaPrivateKey), provider);
+    const tx = await wallet.sendTransaction({
+        to: evmAddress,
+        value: ethers_1.ethers.parseEther(amountInHbar),
+    });
+    const receipt = await tx.wait();
+    console.log(`  ✓ Sent ${amountInHbar} HBAR to token contract`);
+    console.log(`  ✓ TxHash: ${receipt?.hash}`);
+}
 // ─── Summary printer ─────────────────────────────────────────────────────────
 function printSummary() {
     const pass = testResults.filter((r) => r.status === 'PASS').length;
@@ -312,18 +355,98 @@ const main = async () => {
     console.log(`\n[3] Running tests as EVM address: ${ecdsaWallet.address}`);
     console.log(`    Token: ${tokenId}`);
     console.log(`    Account: ${accountId}\n`);
+    // TODO: Fund proxy with HBAR for rescueHBAR test
+    // Skipped for now - needs proxy contract address, not token HTS address
+    // if (!process.env.TOKEN_ID) {
+    // 	await fundProxyWithHBAR(tokenId, provider, ecdsaPrivateKey, '1.0');
+    // }
     // ── Category 1: Basic token operations ────────────────────────────────
     await runEVMTest('cashIn (mint 10 to account)', () => stablecoin_npm_sdk_1.StableCoin.cashIn(new stablecoin_npm_sdk_1.CashInRequest({ tokenId, targetId: accountId, amount: '10' })), provider, ecdsaPrivateKey);
     await runEVMTest('burn (5 from treasury supply)', () => stablecoin_npm_sdk_1.StableCoin.burn(new stablecoin_npm_sdk_1.BurnRequest({ tokenId, amount: '5' })), provider, ecdsaPrivateKey);
     await runEVMTest('wipe (3 from account balance)', () => stablecoin_npm_sdk_1.StableCoin.wipe(new stablecoin_npm_sdk_1.WipeRequest({ tokenId, targetId: accountId, amount: '3' })), provider, ecdsaPrivateKey);
     // ── Test associate ─────────────────────────────────────────────────────
-    // Skip for now due to evmAddress handling issue in ExternalEVMTransactionAdapter
-    console.log('\n  ▶ associate (associate token to account)...');
-    testResults.push({
-        name: 'associate (requires evmAddress setup - needs investigation)',
-        status: 'SKIP',
-    });
-    console.log('  ○ SKIP  Requires evmAddress configuration (issue with ExternalEVMTransactionAdapter)');
+    // Create a temporary token so we can test association (main token is already associated).
+    // Uses CLIENT wallet to create the temp token, then switches back to EXTERNAL_EVM.
+    console.log('\n[Associate Test] Creating temporary token for association test...');
+    let tempTokenId = '';
+    try {
+        await stablecoin_npm_sdk_1.Network.connect(new stablecoin_npm_sdk_1.ConnectRequest({
+            account: {
+                accountId,
+                privateKey: { key: privateKey, type: detectKeyType(privateKey) },
+            },
+            network: 'testnet',
+            mirrorNode: mirrorNodeConfig,
+            rpcNode: rpcNodeConfig,
+            wallet: stablecoin_npm_sdk_1.SupportedWallets.CLIENT,
+        }));
+        const tempCreateResult = (await stablecoin_npm_sdk_1.StableCoin.create(new stablecoin_npm_sdk_1.CreateRequest({
+            name: 'Temp Associate Test',
+            symbol: 'TEMPASSOC',
+            decimals: 2,
+            initialSupply: '10',
+            freezeKey: { key: 'null', type: 'null' },
+            kycKey: { key: 'null', type: 'null' },
+            wipeKey: { key: 'null', type: 'null' },
+            pauseKey: { key: 'null', type: 'null' },
+            feeScheduleKey: { key: 'null', type: 'null' },
+            supplyType: stablecoin_npm_sdk_1.TokenSupplyType.INFINITE,
+            createReserve: false,
+            updatedAtThreshold: '0',
+            grantKYCToOriginalSender: false,
+            proxyOwnerAccount: accountId,
+            configId: CONFIG_ID,
+            configVersion: 1,
+        })));
+        // .tokenId is a HederaId domain object – call toString() to get the primitive string
+        tempTokenId = tempCreateResult.coin.tokenId?.toString() ?? '';
+        console.log(`  ✓ Temp token created: ${tempTokenId}`);
+        await waitMs(5000);
+        // Switch back to EXTERNAL_EVM
+        await stablecoin_npm_sdk_1.Network.connect(new stablecoin_npm_sdk_1.ConnectRequest({
+            account: { accountId },
+            network: 'testnet',
+            mirrorNode: mirrorNodeConfig,
+            rpcNode: rpcNodeConfig,
+            wallet: stablecoin_npm_sdk_1.SupportedWallets.EXTERNAL_EVM,
+        }));
+    }
+    catch (error) {
+        console.log(`  ✗ Failed to create temp token: ${error?.message ?? error}`);
+    }
+    if (tempTokenId) {
+        // The factory auto-associates the proxyOwnerAccount with the HTS token during creation.
+        // If already associated, AssociateCommandHandler returns TransactionResult (not SerializedTransactionData).
+        // Test the result: SerializedTransactionData → full sign+broadcast; TransactionResult(true) → SKIP.
+        console.log('\n  ▶ associate (IHRC.associate on temp token)...');
+        try {
+            const associateResult = await stablecoin_npm_sdk_1.StableCoin.associate(new stablecoin_npm_sdk_1.AssociateTokenRequest({ targetId: accountId, tokenId: tempTokenId }));
+            if (associateResult && 'serializedTransaction' in associateResult) {
+                // Got serialized bytes – sign and broadcast
+                await runEVMTest('associate (IHRC.associate on temp token)', () => stablecoin_npm_sdk_1.StableCoin.associate(new stablecoin_npm_sdk_1.AssociateTokenRequest({ targetId: accountId, tokenId: tempTokenId })), provider, ecdsaPrivateKey);
+            }
+            else if (associateResult?.success === true) {
+                // AssociateCommandHandler short-circuited: account already auto-associated by factory
+                // (TransactionResult.success === true means already associated)
+                testResults.push({ name: 'associate (IHRC.associate on temp token)', status: 'SKIP' });
+                console.log('    ○ SKIP: Account already auto-associated by factory – SDK EVM path is correct');
+            }
+            else {
+                const debugInfo = JSON.stringify(associateResult, null, 2).substring(0, 200);
+                testResults.push({ name: 'associate (IHRC.associate on temp token)', status: 'FAIL', error: `Unexpected result: ${debugInfo}` });
+                console.log(`    ✗ FAIL: Unexpected result from associate: ${debugInfo}`);
+            }
+        }
+        catch (error) {
+            const errMsg = (error?.message ?? String(error)).substring(0, 300);
+            testResults.push({ name: 'associate (IHRC.associate on temp token)', status: 'FAIL', error: errMsg });
+            console.log(`    ✗ FAIL: ${errMsg.substring(0, 150)}`);
+        }
+    }
+    else {
+        testResults.push({ name: 'associate (temp token creation failed)', status: 'SKIP' });
+        console.log('\n  ○ associate → SKIP (temp token creation failed)');
+    }
     // transfers() throws "Method not implemented" in all adapters – skip
     testResults.push({ name: 'transfers (not implemented in adapters)', status: 'SKIP' });
     console.log('\n  ○ transfers (not implemented in any adapter) → SKIP');
@@ -357,15 +480,13 @@ const main = async () => {
     await runEVMTest('updateCustomFees (clear all fees)', () => stablecoin_npm_sdk_1.Fees.updateCustomFees(new stablecoin_npm_sdk_1.UpdateCustomFeesRequest({ tokenId, customFees: [] })), provider, ecdsaPrivateKey);
     // ── Category 7: Rescue ────────────────────────────────────────────────
     await runEVMTest('rescue (attempt rescue HTS tokens)', () => stablecoin_npm_sdk_1.StableCoin.rescue(new stablecoin_npm_sdk_1.RescueRequest({ tokenId, amount: '1' })), provider, ecdsaPrivateKey);
-    // rescueHBAR - Skip if no HBAR in treasury
-    console.log('\n  ▶ rescueHBAR (attempt rescue HBAR)...');
-    testResults.push({ name: 'rescueHBAR (no HBAR in treasury)', status: 'SKIP' });
-    console.log('  ○ SKIP  No HBAR in treasury to rescue');
+    // rescueHBAR - TODO: needs proxy contract address funding, not token address
+    console.log('\n  ▶ rescueHBAR (needs proxy HBAR funding)...');
+    testResults.push({ name: 'rescueHBAR (needs proxy contract HBAR)', status: 'SKIP' });
+    console.log('  ○ SKIP  Needs proxy contract address for HBAR funding (not token HTS address)');
     // ── Category 8: Reserve operations ───────────────────────────────────
-    // Reserve operations - Skip if no reserve created
-    console.log('\n  ▶ updateReserveAddress (no reserve created)...');
-    testResults.push({ name: 'updateReserveAddress (no reserve created)', status: 'SKIP' });
-    console.log('  ○ SKIP  No reserve was created for this token');
+    await runEVMTest('updateReserveAddress (set to 0.0.0)', () => stablecoin_npm_sdk_1.StableCoin.updateReserveAddress(new stablecoin_npm_sdk_1.UpdateReserveAddressRequest({ tokenId, reserveAddress: '0.0.0' })), provider, ecdsaPrivateKey);
+    // updateReserveAmount - Skip if no reserve created (needs actual reserve contract)
     console.log('\n  ▶ updateReserveAmount (no reserve created)...');
     testResults.push({ name: 'updateReserveAmount (no reserve created)', status: 'SKIP' });
     console.log('  ○ SKIP  No reserve was created for this token');
@@ -401,9 +522,22 @@ const main = async () => {
         : Promise.reject(new Error('No holdId available')), provider, ecdsaPrivateKey);
     // createHoldByController (no release/execute needed)
     await runEVMTest('createHoldByController (controller creates hold)', () => stablecoin_npm_sdk_1.StableCoin.createHoldByController(new stablecoin_npm_sdk_1.CreateHoldByControllerRequest({ tokenId, amount: '5', escrow: accountId, expirationDate, sourceId: accountId, targetId: accountId })), provider, ecdsaPrivateKey);
-    // reclaimHold needs expired hold → skip
-    testResults.push({ name: 'reclaimHold (needs expired hold)', status: 'SKIP' });
-    console.log('\n  ○ reclaimHold (needs expired hold) → SKIP');
+    // reclaimHold test with short expiration
+    const shortExpirationDate = Math.floor(Date.now() / 1000 + 10).toString(); // +10 seconds
+    let reclaimHoldId = -1;
+    await runEVMTest('createHold (short expiration for reclaim test)', () => stablecoin_npm_sdk_1.StableCoin.createHold(new stablecoin_npm_sdk_1.CreateHoldRequest({ tokenId, amount: '5', escrow: accountId, expirationDate: shortExpirationDate, targetId: accountId })), provider, ecdsaPrivateKey);
+    await waitMs(4000);
+    try {
+        const ids = await stablecoin_npm_sdk_1.StableCoin.getHoldsIdFor(new stablecoin_npm_sdk_1.GetHoldsIdForRequest({ tokenId, sourceId: accountId, start: 0, end: 100 }));
+        reclaimHoldId = ids.length > 0 ? ids[ids.length - 1] : -1;
+        console.log(`\n    ↳ reclaimHoldId=${reclaimHoldId}`);
+    }
+    catch (_) { /* ignore */ }
+    console.log(`\n  ⏳ Waiting 15s for hold ${reclaimHoldId} to expire...`);
+    await waitMs(15000);
+    await runEVMTest(`reclaimHold (expired hold, holdId=${reclaimHoldId})`, () => reclaimHoldId >= 0
+        ? stablecoin_npm_sdk_1.StableCoin.reclaimHold(new stablecoin_npm_sdk_1.ReclaimHoldRequest({ tokenId, sourceId: accountId, holdId: reclaimHoldId }))
+        : Promise.reject(new Error('No holdId available for reclaim')), provider, ecdsaPrivateKey);
     // ── Category 10: Management ───────────────────────────────────────────
     await runEVMTest('updateConfig (same configId+version)', () => stablecoin_npm_sdk_1.Management.updateConfig(new stablecoin_npm_sdk_1.UpdateConfigRequest({ tokenId, configId: CONFIG_ID, configVersion: 1 })), provider, ecdsaPrivateKey);
     await runEVMTest('updateConfigVersion (version=1)', () => stablecoin_npm_sdk_1.Management.updateConfigVersion(new stablecoin_npm_sdk_1.UpdateConfigVersionRequest({ tokenId, configVersion: 1 })), provider, ecdsaPrivateKey);

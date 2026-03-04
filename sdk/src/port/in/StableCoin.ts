@@ -696,9 +696,15 @@ class StableCoinInPort implements IStableCoinInPort {
 	): Promise<TransactionResult | SerializedTransactionData> {
 		handleValidation('UpdateReserveAddressRequest', request);
 
-		const reserveAddressId: string = (
-			await this.mirrorNode.getContractInfo(request.reserveAddress)
-		).id;
+		// Handle special case: '0.0.0' (zero address) - don't query mirror node
+		let reserveAddressId: string;
+		if (request.reserveAddress === '0.0.0') {
+			reserveAddressId = '0.0.0';
+		} else {
+			reserveAddressId = (
+				await this.mirrorNode.getContractInfo(request.reserveAddress)
+			).id;
+		}
 
 		const response = await this.commandBus.execute(
 			new UpdateReserveAddressCommand(

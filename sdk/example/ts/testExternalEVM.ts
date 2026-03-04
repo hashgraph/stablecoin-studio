@@ -59,6 +59,7 @@ import {
 	DeleteRequest,
 	KYCRequest,
 	RescueRequest,
+	RescueHBARRequest,
 	UpdateRequest,
 	GrantRoleRequest,
 	RevokeRoleRequest,
@@ -73,6 +74,7 @@ import {
 	UpdateConfigRequest,
 	UpdateConfigVersionRequest,
 	UpdateResolverRequest,
+	UpdateReserveAddressRequest,
 	CreateHoldRequest,
 	CreateHoldByControllerRequest,
 	ExecuteHoldRequest,
@@ -353,6 +355,33 @@ async function setupToken(tokenId: string, accountId: string): Promise<void> {
 	await waitMs(5000);
 }
 
+async function fundProxyWithHBAR(
+	tokenId: string,
+	provider: ethers.JsonRpcProvider,
+	ecdsaPrivateKey: string,
+	amountInHbar: string = '1.0',
+): Promise<void> {
+	console.log('\n[Setup] Funding proxy with HBAR for rescueHBAR test...');
+
+	// Convert Hedera token ID to EVM address
+	// Format: 0.0.X -> 0x0000000000000000000000000000000000XXXXXX (padded hex)
+	const tokenIdStr = tokenId.toString();
+	const parts = tokenIdStr.split('.');
+	const accountNum = parseInt(parts[2]);
+	const evmAddress = '0x' + accountNum.toString(16).padStart(40, '0');
+
+	console.log(`  → Token ${tokenIdStr} → EVM address ${evmAddress}`);
+
+	const wallet = new ethers.Wallet(toHexKey(ecdsaPrivateKey), provider);
+	const tx = await wallet.sendTransaction({
+		to: evmAddress,
+		value: ethers.parseEther(amountInHbar),
+	});
+	const receipt = await tx.wait();
+	console.log(`  ✓ Sent ${amountInHbar} HBAR to token contract`);
+	console.log(`  ✓ TxHash: ${receipt?.hash}`);
+}
+
 // ─── Summary printer ─────────────────────────────────────────────────────────
 
 function printSummary(): void {
@@ -450,6 +479,12 @@ const main = async () => {
 	console.log(`\n[3] Running tests as EVM address: ${ecdsaWallet.address}`);
 	console.log(`    Token: ${tokenId}`);
 	console.log(`    Account: ${accountId}\n`);
+
+	// TODO: Fund proxy with HBAR for rescueHBAR test
+	// Skipped for now - needs proxy contract address, not token HTS address
+	// if (!process.env.TOKEN_ID) {
+	// 	await fundProxyWithHBAR(tokenId, provider, ecdsaPrivateKey, '1.0');
+	// }
 
 	// ── Category 1: Basic token operations ────────────────────────────────
 
@@ -708,18 +743,20 @@ const main = async () => {
 		provider, ecdsaPrivateKey,
 	);
 
-	// rescueHBAR - Skip if no HBAR in treasury
-	console.log('\n  ▶ rescueHBAR (attempt rescue HBAR)...');
-	testResults.push({ name: 'rescueHBAR (no HBAR in treasury)', status: 'SKIP' });
-	console.log('  ○ SKIP  No HBAR in treasury to rescue');
+	// rescueHBAR - TODO: needs proxy contract address funding, not token address
+	console.log('\n  ▶ rescueHBAR (needs proxy HBAR funding)...');
+	testResults.push({ name: 'rescueHBAR (needs proxy contract HBAR)', status: 'SKIP' });
+	console.log('  ○ SKIP  Needs proxy contract address for HBAR funding (not token HTS address)');
 
 	// ── Category 8: Reserve operations ───────────────────────────────────
 
-	// Reserve operations - Skip if no reserve created
-	console.log('\n  ▶ updateReserveAddress (no reserve created)...');
-	testResults.push({ name: 'updateReserveAddress (no reserve created)', status: 'SKIP' });
-	console.log('  ○ SKIP  No reserve was created for this token');
+	await runEVMTest(
+		'updateReserveAddress (set to 0.0.0)',
+		() => StableCoin.updateReserveAddress(new UpdateReserveAddressRequest({ tokenId, reserveAddress: '0.0.0' })),
+		provider, ecdsaPrivateKey,
+	);
 
+	// updateReserveAmount - Skip if no reserve created (needs actual reserve contract)
 	console.log('\n  ▶ updateReserveAmount (no reserve created)...');
 	testResults.push({ name: 'updateReserveAmount (no reserve created)', status: 'SKIP' });
 	console.log('  ○ SKIP  No reserve was created for this token');
@@ -791,9 +828,37 @@ const main = async () => {
 		provider, ecdsaPrivateKey,
 	);
 
-	// reclaimHold needs expired hold → skip
-	testResults.push({ name: 'reclaimHold (needs expired hold)', status: 'SKIP' });
-	console.log('\n  ○ reclaimHold (needs expired hold) → SKIP');
+	// reclaimHold test with short expiration
+	const shortExpirationDate = Math.floor(Date.now() / 1000 + 10).toString(); // +10 seconds
+	let reclaimHoldId = -1;
+
+	await runEVMTest(
+		'createHold (short expiration for reclaim test)',
+		() => StableCoin.createHold(
+			new CreateHoldRequest({ tokenId, amount: '5', escrow: accountId, expirationDate: shortExpirationDate, targetId: accountId }),
+		),
+		provider, ecdsaPrivateKey,
+	);
+
+	await waitMs(4000);
+	try {
+		const ids = await StableCoin.getHoldsIdFor(
+			new GetHoldsIdForRequest({ tokenId, sourceId: accountId, start: 0, end: 100 }),
+		);
+		reclaimHoldId = ids.length > 0 ? (ids[ids.length - 1] as number) : -1;
+		console.log(`\n    ↳ reclaimHoldId=${reclaimHoldId}`);
+	} catch (_) { /* ignore */ }
+
+	console.log(`\n  ⏳ Waiting 15s for hold ${reclaimHoldId} to expire...`);
+	await waitMs(15000);
+
+	await runEVMTest(
+		`reclaimHold (expired hold, holdId=${reclaimHoldId})`,
+		() => reclaimHoldId >= 0
+			? StableCoin.reclaimHold(new ReclaimHoldRequest({ tokenId, sourceId: accountId, holdId: reclaimHoldId }))
+			: Promise.reject(new Error('No holdId available for reclaim')),
+		provider, ecdsaPrivateKey,
+	);
 
 	// ── Category 10: Management ───────────────────────────────────────────
 
