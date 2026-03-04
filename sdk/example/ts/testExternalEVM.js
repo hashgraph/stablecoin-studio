@@ -242,12 +242,15 @@ async function createStablecoin(accountId) {
     })));
     const tokenId = createResult.coin.tokenId ?? '';
     const reserveAddress = createResult.reserve.proxyAddress ?? '';
+    const proxyAddress = createResult.coin.proxyAddress?.toString() ?? '';
     if (!tokenId)
         throw new Error('Token creation failed – tokenId missing');
     console.log(`  ✓ Token created: ${tokenId}`);
     if (reserveAddress)
         console.log(`  ✓ Reserve created: ${reserveAddress}`);
-    return { tokenId, reserveAddress };
+    if (proxyAddress)
+        console.log(`  ✓ Proxy address: ${proxyAddress}`);
+    return { tokenId, reserveAddress, proxyAddress };
 }
 async function setupToken(tokenId, accountId) {
     console.log('\n[Setup] Associating token + granting KYC...');
@@ -269,22 +272,22 @@ async function setupToken(tokenId, accountId) {
     console.log('\n[Setup] Waiting 5s for mirror node indexing...');
     await waitMs(5000);
 }
-async function fundProxyWithHBAR(tokenId, provider, ecdsaPrivateKey, amountInHbar = '1.0') {
-    console.log('\n[Setup] Funding proxy with HBAR for rescueHBAR test...');
-    // Convert Hedera token ID to EVM address
+async function fundProxyWithHBAR(proxyAddress, provider, ecdsaPrivateKey, amountInHbar = '1.0') {
+    console.log('\n[Setup] Funding proxy contract with HBAR for rescueHBAR test...');
+    // Convert Hedera contract ID to EVM address
     // Format: 0.0.X -> 0x0000000000000000000000000000000000XXXXXX (padded hex)
-    const tokenIdStr = tokenId.toString();
-    const parts = tokenIdStr.split('.');
+    const proxyIdStr = proxyAddress.toString();
+    const parts = proxyIdStr.split('.');
     const accountNum = parseInt(parts[2]);
     const evmAddress = '0x' + accountNum.toString(16).padStart(40, '0');
-    console.log(`  → Token ${tokenIdStr} → EVM address ${evmAddress}`);
+    console.log(`  → Proxy ${proxyIdStr} → EVM address ${evmAddress}`);
     const wallet = new ethers_1.ethers.Wallet(toHexKey(ecdsaPrivateKey), provider);
     const tx = await wallet.sendTransaction({
         to: evmAddress,
         value: ethers_1.ethers.parseEther(amountInHbar),
     });
     const receipt = await tx.wait();
-    console.log(`  ✓ Sent ${amountInHbar} HBAR to token contract`);
+    console.log(`  ✓ Sent ${amountInHbar} HBAR to proxy contract`);
     console.log(`  ✓ TxHash: ${receipt?.hash}`);
 }
 // ─── Summary printer ─────────────────────────────────────────────────────────
@@ -328,6 +331,7 @@ const main = async () => {
     // ── Step 1: Connect CLIENT + setup token ──────────────────────────────
     let tokenId = process.env.TOKEN_ID ?? '';
     let reserveAddress = '';
+    let proxyAddress = '';
     if (!tokenId) {
         await stablecoin_npm_sdk_1.Network.connect(new stablecoin_npm_sdk_1.ConnectRequest({
             account: {
@@ -343,7 +347,13 @@ const main = async () => {
         const result = await createStablecoin(accountId);
         tokenId = result.tokenId;
         reserveAddress = result.reserveAddress;
+        proxyAddress = result.proxyAddress;
         await setupToken(tokenId, accountId);
+        // Fund proxy with HBAR for rescueHBAR test
+        if (proxyAddress) {
+            const tempProvider = new ethers_1.ethers.JsonRpcProvider(TESTNET_RPC_URL);
+            await fundProxyWithHBAR(proxyAddress, tempProvider, privateKey, '0.5');
+        }
     }
     else {
         console.log(`\n[1] Using existing token: ${tokenId}`);
@@ -489,10 +499,15 @@ const main = async () => {
     await runEVMTest('updateCustomFees (clear all fees)', () => stablecoin_npm_sdk_1.Fees.updateCustomFees(new stablecoin_npm_sdk_1.UpdateCustomFeesRequest({ tokenId, customFees: [] })), provider, ecdsaPrivateKey);
     // ── Category 7: Rescue ────────────────────────────────────────────────
     await runEVMTest('rescue (attempt rescue HTS tokens)', () => stablecoin_npm_sdk_1.StableCoin.rescue(new stablecoin_npm_sdk_1.RescueRequest({ tokenId, amount: '1' })), provider, ecdsaPrivateKey);
-    // rescueHBAR - TODO: needs proxy contract address funding, not token address
-    console.log('\n  ▶ rescueHBAR (needs proxy HBAR funding)...');
-    testResults.push({ name: 'rescueHBAR (needs proxy contract HBAR)', status: 'SKIP' });
-    console.log('  ○ SKIP  Needs proxy contract address for HBAR funding (not token HTS address)');
+    // rescueHBAR - Test if proxy was funded with HBAR
+    if (proxyAddress) {
+        await runEVMTest('rescueHBAR (rescue 0.1 HBAR from proxy)', () => stablecoin_npm_sdk_1.StableCoin.rescueHBAR(new stablecoin_npm_sdk_1.RescueHBARRequest({ tokenId, amount: '0.1' })), provider, ecdsaPrivateKey);
+    }
+    else {
+        console.log('\n  ▶ rescueHBAR (no proxy address available)...');
+        testResults.push({ name: 'rescueHBAR (no proxy address)', status: 'SKIP' });
+        console.log('  ○ SKIP  No proxy address available for this token');
+    }
     // ── Category 8: Reserve operations ───────────────────────────────────
     await runEVMTest('updateReserveAddress (set to 0.0.0)', () => stablecoin_npm_sdk_1.StableCoin.updateReserveAddress(new stablecoin_npm_sdk_1.UpdateReserveAddressRequest({ tokenId, reserveAddress: '0.0.0' })), provider, ecdsaPrivateKey);
     // updateReserveAmount - Test if reserve was created
