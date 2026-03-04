@@ -3,16 +3,16 @@ name: Test_Web
 on:
   pull_request:
     paths:
-      - "web/src/**"
+      - "apps/web/src/**"
       - "package*.json"
-      - "web/tsconfig*.json"
+      - "apps/web/tsconfig*.json"
   push:
     branches:
       - main
     paths:
-      - "web/src/**"
+      - "apps/web/src/**"
       - "package*.json"
-      - "web/tsconfig*.json"
+      - "apps/web/tsconfig*.json"
   # env:
   # NODE_VERSION: "20.17.0" # Fixed version for better stability
 jobs:

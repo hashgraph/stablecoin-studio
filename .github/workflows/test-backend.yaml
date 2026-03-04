@@ -3,17 +3,17 @@ name: Test_Backend
 on:
   pull_request:
     paths:
-      - "backend/src/**"
-      - "backend/test/**"
-      - "backend/tsconfig*.json"
+      - "apps/backend/src/**"
+      - "apps/backend/test/**"
+      - "apps/backend/tsconfig*.json"
       - "package*.json"
   push:
     branches:
       - main
     paths:
-      - "backend/src/**"
-      - "backend/test/**"
-      - "backend/tsconfig*.json"
+      - "apps/backend/src/**"
+      - "apps/backend/test/**"
+      - "apps/backend/tsconfig*.json"
       - "package*.json"
 # env:
 # NODE_VERSION: "20.17.0" # Fixed version for better stability
