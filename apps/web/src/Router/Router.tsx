@@ -35,7 +35,13 @@ import {
 import ImportedTokenCreation from '../views/ImportedToken/ImportedTokenCreation';
 import DangerZoneOperations from '../views/Operations/DangerZone';
 import type { EventParameter, WalletEvent } from '@hashgraph/stablecoin-npm-sdk';
-import { Account, ConnectionState, LoggerTransports, SDK } from '@hashgraph/stablecoin-npm-sdk';
+import {
+	Account,
+	ConnectionState,
+	LoggerTransports,
+	SDK,
+	SupportedWallets,
+} from '@hashgraph/stablecoin-npm-sdk';
 import StableCoinProof from '../views/StableCoinProof';
 import FeesManagement from '../views/FeesManagement';
 import GrantKycOperation from '../views/Operations/GrantKyc';
@@ -105,6 +111,13 @@ const Router = () => {
 						event.data.account.id !== Account.NullHederaAccount.id,
 					),
 				);
+			if (event.wallet === SupportedWallets.METAMASK) {
+				dispatch(walletActions.setIsEvmWallet(true));
+			} else if (event.wallet === SupportedWallets.HWALLETCONNECT) {
+				dispatch(walletActions.setIsEvmWallet(event.isEvmWallet ?? false));
+			} else {
+				dispatch(walletActions.setIsEvmWallet(false));
+			}
 		});
 	};
 
