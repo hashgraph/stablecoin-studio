@@ -37,8 +37,7 @@ import {
 	StableCoin,
 	StableCoinRole,
 	StableCoinViewModel,
-	TokenSupplyType,
-	TransactionResult,
+	TokenSupplyType
 } from '../../../src/index.js';
 import {
 	BurnRequest,
@@ -87,6 +86,7 @@ import {
 	RESOLVER_ADDRESS,
 	CLIENT_ACCOUNT_ECDSA,
 } from '../../config.js';
+import { TransactionResult } from '../../../src/domain/context/transaction/TransactionResult.js';
 import { MirrorNode } from '../../../src/domain/context/network/MirrorNode.js';
 import { JsonRpcRelay } from '../../../src/domain/context/network/JsonRpcRelay.js';
 import BackendEndpoint from '../../../src/domain/context/network/BackendEndpoint.js';
@@ -94,7 +94,6 @@ import Injectable from '../../../src/core/Injectable.js';
 import { CONFIG_SC, DEFAULT_VERSION } from '../../../src/core/Constants.js';
 import { Time } from '../../../src/core/Time.js';
 import HoldViewModel from '../../../src/port/in/response/HoldViewModel.js';
-import { CreateHoldCommandResponse } from 'app/usecase/command/stablecoin/operations/hold/createHold/CreateHoldCommand.js';
 
 const initialSupply = parseInt(INITIAL_SUPPLY);
 const maxSupply = parseInt(MAX_SUPPLY);
@@ -1218,7 +1217,9 @@ describe('🧪 Stablecoin test', () => {
 		expect(result.transactionId).toBeTruthy();
 	}
 
-	async function updateToken(stableCoin: StableCoinViewModel) {
+	async function updateToken(
+		stableCoin: StableCoinViewModel
+	): Promise<TransactionResult> {
 		const name = 'New Token Name';
 		const symbol = 'New Token Symbol';
 		const autoRenewPeriod = 30 * 24 * 3600;
