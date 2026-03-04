@@ -253,9 +253,9 @@ npm run test:e2e           # End-to-end tests
 Run tests for individual modules:
 
 ```bash
-npm test --workspace=contracts     # Smart contract tests
-npm test --workspace=sdk           # SDK tests
-npm test --workspace=backend       # Backend unit tests
+npm test --workspace=packages/contracts     # Smart contract tests
+npm test --workspace=packages/sdk           # SDK tests
+npm test --workspace=apps/backend       # Backend unit tests
 ```
 
 ### Code Quality Standards

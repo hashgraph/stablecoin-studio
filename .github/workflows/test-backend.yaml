@@ -47,10 +47,10 @@ jobs:
         run: npm ci
 
       - name: Build Backend
-        run: npm run build --workspace=backend
+        run: npm run build --workspace=apps/backend
 
       - name: Run Backend Tests
-        run: npm run test:ci --workspace=backend
+        run: npm run test:ci --workspace=apps/backend
 
       - name: Clear Cache
-        run: npm run clear-cache --workspace=backend
+        run: npm run clear-cache --workspace=apps/backend

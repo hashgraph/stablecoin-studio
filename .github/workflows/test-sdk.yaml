@@ -65,7 +65,7 @@ jobs:
       # * Specific steps for the SDK
 
       - name: Run SDK Tests
-        run: npm run test:ci --workspace=sdk
+        run: npm run test:ci --workspace=packages/sdk
 
       - name: Clear Cache
-        run: npm run clear-cache --workspace=sdk
+        run: npm run clear-cache --workspace=packages/sdk

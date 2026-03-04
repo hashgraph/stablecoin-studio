@@ -241,7 +241,7 @@ jobs:
       - name: Run tests
         if: steps.docker-check.outputs.available == 'true' && steps.solo.outcome == 'success'
         run: |
-          npm run test --workspace=contracts -- --network local
+          npm run test --workspace=packages/contracts -- --network local
 
       - name: Stop Hiero Solo Network
         if: always() && steps.docker-check.outputs.available == 'true'

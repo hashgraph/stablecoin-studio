@@ -46,7 +46,7 @@ jobs:
 
       # * Specific steps for the Web
       - name: Run tests Web
-        run: npm run test:ci --workspace=web
+        run: npm run test:ci --workspace=apps/web
 
       - name: Clear Cache
-        run: npm run clear:cache --workspace=web
+        run: npm run clear:cache --workspace=apps/web
