@@ -3,17 +3,17 @@ name: Test_Backend
 on:
   pull_request:
     paths:
-      - "backend/src/**"
-      - "backend/test/**"
-      - "backend/tsconfig*.json"
+      - "apps/backend/src/**"
+      - "apps/backend/test/**"
+      - "apps/backend/tsconfig*.json"
       - "package*.json"
   push:
     branches:
       - main
     paths:
-      - "backend/src/**"
-      - "backend/test/**"
-      - "backend/tsconfig*.json"
+      - "apps/backend/src/**"
+      - "apps/backend/test/**"
+      - "apps/backend/tsconfig*.json"
       - "package*.json"
 # env:
 # NODE_VERSION: "20.17.0" # Fixed version for better stability
@@ -47,10 +47,10 @@ jobs:
         run: npm ci
 
       - name: Build Backend
-        run: npm run build --workspace=backend
+        run: npm run build --workspace=apps/backend
 
       - name: Run Backend Tests
-        run: npm run test:ci --workspace=backend
+        run: npm run test:ci --workspace=apps/backend
 
       - name: Clear Cache
-        run: npm run clear-cache --workspace=backend
+        run: npm run clear-cache --workspace=apps/backend

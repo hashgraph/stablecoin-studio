@@ -137,8 +137,13 @@
 			"<rootDir>/src/test/setupTests.tsx"
 		],
 		"moduleNameMapper": {
+			"^react$": "<rootDir>/node_modules/react",
+			"^react/jsx-runtime$": "<rootDir>/node_modules/react/jsx-runtime",
+			"^react/jsx-dev-runtime$": "<rootDir>/node_modules/react/jsx-dev-runtime",
+			"^react-dom$": "<rootDir>/node_modules/react-dom",
+			"^react-dom/(.*)$": "<rootDir>/node_modules/react-dom/$1",
 			"^(\\.{1,2}/.*)\\.(m)?js$": "$1",
-			"axios": "<rootDir>/../node_modules/axios/dist/node/axios.cjs",
+			"axios": "<rootDir>/../../node_modules/axios/dist/node/axios.cjs",
 			"blade": "<rootDir>/src/mocks/blade-sdk-mock.js",
 			"hedera-wallet-connect": "<rootDir>/src/mocks/hedera-wallet-connect-sdk-mock.js",
 			"fireblocks-sdk": "<rootDir>/src/mocks/fireblocks-sdk-mock.js",

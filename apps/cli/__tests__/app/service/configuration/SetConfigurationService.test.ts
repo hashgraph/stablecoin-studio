@@ -28,7 +28,7 @@ import {
 import { IConfiguration } from '../../../../src/domain/configuration/interfaces/IConfiguration.js';
 import Language from '../../../../src/domain/language/Language.js';
 import { AccountType } from '../../../../src/domain/configuration/interfaces/AccountType';
-import { KeyType } from '../../../../../sdk/build/cjs/src/domain/context/account/KeyProps.js';
+import { KeyType } from '../../../../../../packages/sdk/build/cjs/src/domain/context/account/KeyProps.js';
 import fs from 'fs-extra';
 
 const language: Language = new Language();

@@ -12,7 +12,6 @@ npm install @hashgraph/stablecoin-npm-sdk
 
 - [**🏗️ Architecture & Design**](./architecture.md): Deep dive into connections via RPC, Mirror Nodes, and gRPC.
 - [**🚀 Getting Started & Usage**](./usage.md): Code examples for initialization, minting, burning, and transfers.
-- [**🧭 API Overview**](./api-overview.md): Reference for methods and role enums.
 
 ## 🤝 Contributing
 
