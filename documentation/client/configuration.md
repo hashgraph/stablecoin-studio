@@ -17,7 +17,7 @@ npm run start:wizard
 
 ## 🛠 Manual YAML Parameters
 
-If you prefer to bypass the wizard, you must manually create a `hsca-config.yaml` file (using this [sample file (hsca-config.sample.yaml)](../../cli/hsca-config.sample.yaml) as a template).
+If you prefer to bypass the wizard, you must manually create a `hsca-config.yaml` file (using this [sample file (hsca-config.sample.yaml)](../../apps/cli/hsca-config.sample.yaml) as a template).
 
 ```bash
   cd path/to/cli/

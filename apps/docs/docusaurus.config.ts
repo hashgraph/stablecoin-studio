@@ -53,7 +53,7 @@ const config: Config = {
       "@docusaurus/plugin-content-docs",
       {
         id: "default",
-        path: "../documentation",
+        path: "../../documentation",
         routeBasePath: "scs",
         sidebarPath: "./sidebars.ts",
         editUrl: "https://github.com/hashgraph/stablecoin-studio/tree/main/",
@@ -63,7 +63,7 @@ const config: Config = {
       "@docusaurus/plugin-content-docs",
       {
         id: "references",
-        path: "../documentation-references",
+        path: "../../documentation-references",
         routeBasePath: "references",
         sidebarPath: "./sidebarsReferences.ts",
         editUrl: "https://github.com/hashgraph/stablecoin-studio/tree/main/",

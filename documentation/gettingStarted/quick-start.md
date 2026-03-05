@@ -63,7 +63,7 @@ npm run build:web
 The Web DApp is the recommended way to interact with Stablecoin Studio. Before starting it, configure the environment:
 
 ```bash
-cd web
+cd apps/web
 cp .env.example .env
 ```
 

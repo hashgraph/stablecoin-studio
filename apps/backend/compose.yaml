@@ -2,16 +2,16 @@ services:
   # Uses base image from node and maps local needed files to the container
   backend:
     build:
-      context: ..
-      dockerfile: backend/Dockerfile
+      context: ../..
+      dockerfile: apps/backend/Dockerfile
       target: development
     container_name: ${CONTAINER_BACK_NAME} # This is the name of the container
     image: multisig-back:latest # This is the name of the image that will be created
     restart: unless-stopped
     volumes:
-      - ..:/app
+      - ../..:/app
       - log:/var/lib/logs
-    working_dir: /app/backend
+    working_dir: /app/apps/backend
     ports:
       - '${SERVER_PORT}:${SERVER_PORT}'
     networks:
@@ -26,7 +26,7 @@ services:
       - DB_PASSWORD=${DB_PASSWORD}
     depends_on:
       - ${CONTAINER_DB_NAME}
-    command: node ../node_modules/.bin/nest start --watch
+    command: node ../../node_modules/.bin/nest start --watch
 
   db:
     image: postgres:14.11-alpine3.19

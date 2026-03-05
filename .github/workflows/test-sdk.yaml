@@ -3,22 +3,22 @@ name: Test_SDK
 on:
   pull_request:
     paths:
-      - "sdk/src/**"
-      - "sdk/test/**"
-      - "sdk/scripts/**"
+      - "packages/sdk/src/**"
+      - "packages/sdk/test/**"
+      - "packages/sdk/scripts/**"
       - "package*.json"
-      - "sdk/tsconfig*.json"
-      - "sdk/jest.config.js"
+      - "packages/sdk/tsconfig*.json"
+      - "packages/sdk/jest.config.js"
   push:
     branches:
       - main
     paths:
-      - "sdk/src/**"
-      - "sdk/test/**"
-      - "sdk/scripts/**"
+      - "packages/sdk/src/**"
+      - "packages/sdk/test/**"
+      - "packages/sdk/scripts/**"
       - "package*.json"
-      - "sdk/tsconfig*.json"
-      - "sdk/jest.config.js"
+      - "packages/sdk/tsconfig*.json"
+      - "packages/sdk/jest.config.js"
 env:
   RPC_NODE_BASE_URL: "https://296.rpc.thirdweb.com"
 
@@ -65,7 +65,7 @@ jobs:
       # * Specific steps for the SDK
 
       - name: Run SDK Tests
-        run: npm run test:ci --workspace=sdk
+        run: npm run test:ci --workspace=packages/sdk
 
       - name: Clear Cache
-        run: npm run clear-cache --workspace=sdk
+        run: npm run clear-cache --workspace=packages/sdk

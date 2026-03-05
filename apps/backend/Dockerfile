@@ -21,10 +21,10 @@ COPY --chown=node:node package*.json ./
 RUN npm ci
 
 # Copy backend source code
-COPY --chown=node:node backend ./backend
+COPY --chown=node:node apps/backend ./apps/backend
 
 # Set working directory to backend
-WORKDIR /app/backend
+WORKDIR /app/apps/backend
 
 # Set Docker as a non-root user
 USER node
@@ -51,10 +51,10 @@ COPY --chown=node:node package*.json ./
 RUN npm ci
 
 # Copy backend source code
-COPY --chown=node:node backend ./backend
+COPY --chown=node:node apps/backend ./apps/backend
 
 # Set working directory to backend
-WORKDIR /app/backend
+WORKDIR /app/apps/backend
 
 # Generate the production build. The build script runs "nest build" to compile the application.
 RUN npm run build
@@ -82,7 +82,7 @@ ENV NODE_ENV production
 # RUN adduser --system --uid 1001 node
 
 # Copy only the necessary files from backend build
-COPY --chown=node:node --from=build /app/backend/dist dist
+COPY --chown=node:node --from=build /app/apps/backend/dist dist
 COPY --chown=node:node --from=build /app/node_modules node_modules
 
 # Set Docker as non-root user
