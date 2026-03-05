@@ -411,11 +411,15 @@ export async function runTestSuite(
 			).tokenId?.toString() ?? '';
 		console.log(`  ✓ Temp token created: ${tempTokenId}`);
 		await waitMs(5000);
-		await connectExternal(accountId, signer.wallet);
 	} catch (error: any) {
 		console.log(
 			`  ✗ Failed to create temp token: ${error?.message ?? error}`,
 		);
+	} finally {
+		// Always reconnect to the external wallet regardless of whether the
+		// temp token creation succeeded or failed, so subsequent tests run
+		// with the correct adapter.
+		await connectExternal(accountId, signer.wallet);
 	}
 
 	if (tempTokenId) {
