@@ -356,27 +356,27 @@ export async function runTestSuite(
 	await signer.run(
 		'cashIn (mint 10 to account)',
 		() =>
-			StableCoin.cashIn(
+			StableCoin.buildCashIn(
 				new CashInRequest({ tokenId, targetId: accountId, amount: '10' }),
 			),
 	);
 
 	await signer.run(
 		'burn (5 from treasury supply)',
-		() => StableCoin.burn(new BurnRequest({ tokenId, amount: '5' })),
+		() => StableCoin.buildBurn(new BurnRequest({ tokenId, amount: '5' })),
 	);
 
 	await signer.run(
 		'wipe (3 from account balance)',
 		() =>
-			StableCoin.wipe(
+			StableCoin.buildWipe(
 				new WipeRequest({ tokenId, targetId: accountId, amount: '3' }),
 			),
 	);
 
 	// ── Associate test ─────────────────────────────────────────────────────
 	// The main token is already associated. Create a temp token via CLIENT
-	// wallet so we can test the associate() flow on a fresh token.
+	// wallet so we can test the buildAssociate() flow on a fresh token.
 	console.log(
 		'\n[Associate Test] Creating temporary token for association test...',
 	);
@@ -419,51 +419,16 @@ export async function runTestSuite(
 	}
 
 	if (tempTokenId) {
-		// Probe first: if the factory already auto-associated the account,
-		// AssociateCommandHandler returns TransactionResult (not serialized bytes).
-		console.log('\n  ▶ associate...');
-		try {
-			const associateResult = await StableCoin.associate(
-				new AssociateTokenRequest({
-					targetId: accountId,
-					tokenId: tempTokenId,
-				}),
-			);
-			if (associateResult && 'serializedTransaction' in associateResult) {
-				// Serialized bytes returned – sign and submit via the signer
-				await signer.run(
-					'associate',
-					() =>
-						StableCoin.associate(
-							new AssociateTokenRequest({
-								targetId: accountId,
-								tokenId: tempTokenId,
-							}),
-						),
-				);
-			} else if ((associateResult as any)?.success === true) {
-				// Already auto-associated by the factory
-				testResults.push({ name: 'associate', status: 'SKIP' });
-				console.log(
-					'    ○ SKIP: Account already auto-associated by factory',
-				);
-			} else {
-				const debugInfo = JSON.stringify(associateResult, null, 2).substring(
-					0,
-					200,
-				);
-				testResults.push({
-					name: 'associate',
-					status: 'FAIL',
-					detail: `Unexpected result: ${debugInfo}`,
-				});
-				console.log(`    ✗ FAIL: Unexpected result: ${debugInfo}`);
-			}
-		} catch (error: any) {
-			const errMsg = (error?.message ?? String(error)).substring(0, 300);
-			testResults.push({ name: 'associate', status: 'FAIL', detail: errMsg });
-			console.log(`    ✗ FAIL: ${errMsg.substring(0, 150)}`);
-		}
+		await signer.run(
+			'associate',
+			() =>
+				StableCoin.buildAssociate(
+					new AssociateTokenRequest({
+						targetId: accountId,
+						tokenId: tempTokenId,
+					}),
+				),
+		);
 	} else {
 		testResults.push({ name: 'associate', status: 'SKIP' });
 		console.log('\n  ○ associate → SKIP (temp token creation failed)');
@@ -481,7 +446,7 @@ export async function runTestSuite(
 	await signer.run(
 		'freeze (freeze account)',
 		() =>
-			StableCoin.freeze(
+			StableCoin.buildFreeze(
 				new FreezeAccountRequest({ tokenId, targetId: accountId }),
 			),
 	);
@@ -489,7 +454,7 @@ export async function runTestSuite(
 	await signer.run(
 		'unFreeze (unfreeze account)',
 		() =>
-			StableCoin.unFreeze(
+			StableCoin.buildUnFreeze(
 				new FreezeAccountRequest({ tokenId, targetId: accountId }),
 			),
 	);
@@ -497,7 +462,7 @@ export async function runTestSuite(
 	await signer.run(
 		'revokeKyc (revoke KYC from account)',
 		() =>
-			StableCoin.revokeKyc(new KYCRequest({ tokenId, targetId: accountId })),
+			StableCoin.buildRevokeKyc(new KYCRequest({ tokenId, targetId: accountId })),
 	);
 
 	// Wait for mirror node to index revokeKyc before granting again.
@@ -508,17 +473,17 @@ export async function runTestSuite(
 	await signer.run(
 		'grantKyc (re-grant KYC to account)',
 		() =>
-			StableCoin.grantKyc(new KYCRequest({ tokenId, targetId: accountId })),
+			StableCoin.buildGrantKyc(new KYCRequest({ tokenId, targetId: accountId })),
 	);
 
 	await signer.run(
 		'pause (pause token)',
-		() => StableCoin.pause(new PauseRequest({ tokenId })),
+		() => StableCoin.buildPause(new PauseRequest({ tokenId })),
 	);
 
 	await signer.run(
 		'unPause (unpause token)',
-		() => StableCoin.unPause(new PauseRequest({ tokenId })),
+		() => StableCoin.buildUnPause(new PauseRequest({ tokenId })),
 	);
 
 	// ── Category 3: Token update ───────────────────────────────────────────
@@ -526,7 +491,7 @@ export async function runTestSuite(
 	await signer.run(
 		'update (rename token)',
 		() =>
-			StableCoin.update(
+			StableCoin.buildUpdate(
 				new UpdateRequest({
 					tokenId,
 					name: 'External Updated',
@@ -540,7 +505,7 @@ export async function runTestSuite(
 	await signer.run(
 		'revokeRole (revoke BURN_ROLE)',
 		() =>
-			Role.revokeRole(
+			Role.buildRevokeRole(
 				new RevokeRoleRequest({
 					tokenId,
 					targetId: accountId,
@@ -552,7 +517,7 @@ export async function runTestSuite(
 	await signer.run(
 		'grantRole (grant BURN_ROLE)',
 		() =>
-			Role.grantRole(
+			Role.buildGrantRole(
 				new GrantRoleRequest({
 					tokenId,
 					targetId: accountId,
@@ -564,7 +529,7 @@ export async function runTestSuite(
 	await signer.run(
 		'revokeMultiRoles (revoke FREEZE_ROLE)',
 		() =>
-			Role.revokeMultiRoles(
+			Role.buildRevokeMultiRoles(
 				new RevokeMultiRolesRequest({
 					tokenId,
 					targetsId: [accountId],
@@ -576,7 +541,7 @@ export async function runTestSuite(
 	await signer.run(
 		'grantMultiRoles (grant FREEZE_ROLE)',
 		() =>
-			Role.grantMultiRoles(
+			Role.buildGrantMultiRoles(
 				new GrantMultiRolesRequest({
 					tokenId,
 					targetsId: [accountId],
@@ -591,7 +556,7 @@ export async function runTestSuite(
 	await signer.run(
 		'revokeRole CASHIN_ROLE (prep: remove unlimited)',
 		() =>
-			Role.revokeRole(
+			Role.buildRevokeRole(
 				new RevokeRoleRequest({
 					tokenId,
 					targetId: accountId,
@@ -603,7 +568,7 @@ export async function runTestSuite(
 	await signer.run(
 		'grantRole CASHIN_ROLE limited (100)',
 		() =>
-			Role.grantRole(
+			Role.buildGrantRole(
 				new GrantRoleRequest({
 					tokenId,
 					targetId: accountId,
@@ -617,7 +582,7 @@ export async function runTestSuite(
 	await signer.run(
 		'increaseAllowance (+50)',
 		() =>
-			Role.increaseAllowance(
+			Role.buildIncreaseAllowance(
 				new IncreaseSupplierAllowanceRequest({
 					tokenId,
 					targetId: accountId,
@@ -629,7 +594,7 @@ export async function runTestSuite(
 	await signer.run(
 		'decreaseAllowance (-25)',
 		() =>
-			Role.decreaseAllowance(
+			Role.buildDecreaseAllowance(
 				new DecreaseSupplierAllowanceRequest({
 					tokenId,
 					targetId: accountId,
@@ -641,7 +606,7 @@ export async function runTestSuite(
 	await signer.run(
 		'resetAllowance',
 		() =>
-			Role.resetAllowance(
+			Role.buildResetAllowance(
 				new ResetSupplierAllowanceRequest({ tokenId, targetId: accountId }),
 			),
 	);
@@ -649,7 +614,7 @@ export async function runTestSuite(
 	await signer.run(
 		'grantRole CASHIN_ROLE unlimited (restore)',
 		() =>
-			Role.grantRole(
+			Role.buildGrantRole(
 				new GrantRoleRequest({
 					tokenId,
 					targetId: accountId,
@@ -665,7 +630,7 @@ export async function runTestSuite(
 		'addFixedFee (HBAR-denominated, 0.01 HBAR)',
 		// tokenIdCollected '0.0.0' → HederaId.NULL → isNull()=true → HBAR fee
 		() =>
-			Fees.addFixedFee(
+			Fees.buildAddFixedFee(
 				new AddFixedFeeRequest({
 					tokenId,
 					collectorId: accountId,
@@ -680,7 +645,7 @@ export async function runTestSuite(
 	await signer.run(
 		'addFractionalFee (1% fee)',
 		() =>
-			Fees.addFractionalFee(
+			Fees.buildAddFractionalFee(
 				new AddFractionalFeeRequest({
 					tokenId,
 					collectorId: accountId,
@@ -697,7 +662,7 @@ export async function runTestSuite(
 	await signer.run(
 		'updateCustomFees (clear all fees)',
 		() =>
-			Fees.updateCustomFees(
+			Fees.buildUpdateCustomFees(
 				new UpdateCustomFeesRequest({ tokenId, customFees: [] }),
 			),
 	);
@@ -706,14 +671,14 @@ export async function runTestSuite(
 
 	await signer.run(
 		'rescue (attempt rescue HTS tokens)',
-		() => StableCoin.rescue(new RescueRequest({ tokenId, amount: '1' })),
+		() => StableCoin.buildRescue(new RescueRequest({ tokenId, amount: '1' })),
 	);
 
 	await signer.run(
 		'rescueHBAR (rescue 0.1 HBAR from proxy)',
 		() =>
 			proxyAddress
-				? StableCoin.rescueHBAR(
+				? StableCoin.buildRescueHBAR(
 						new RescueHBARRequest({ tokenId, amount: '0.1' }),
 					)
 				: Promise.reject(
@@ -722,12 +687,12 @@ export async function runTestSuite(
 	);
 
 	// ── Category 8: Reserve operations ───────────────────────────────────
-	// updateReserveAddress('0.0.0') clears the reserve without a mirror node query.
+	// buildUpdateReserveAddress('0.0.0') clears the reserve without a mirror node query.
 
 	await signer.run(
 		'updateReserveAddress (set to 0.0.0)',
 		() =>
-			StableCoin.updateReserveAddress(
+			StableCoin.buildUpdateReserveAddress(
 				new UpdateReserveAddressRequest({
 					tokenId,
 					reserveAddress: '0.0.0',
@@ -739,7 +704,7 @@ export async function runTestSuite(
 		'updateReserveAmount (set to 1000)',
 		() =>
 			reserveAddress
-				? ReserveDataFeed.updateReserveAmount(
+				? ReserveDataFeed.buildUpdateReserveAmount(
 						new UpdateReserveAmountRequest({
 							reserveAddress,
 							reserveAmount: '1000',
@@ -761,7 +726,7 @@ export async function runTestSuite(
 	await signer.run(
 		'createHold (hold 5 tokens, escrow=self)',
 		() =>
-			StableCoin.createHold(
+			StableCoin.buildCreateHold(
 				new CreateHoldRequest({
 					tokenId,
 					amount: '5',
@@ -791,7 +756,7 @@ export async function runTestSuite(
 		`releaseHold (holdId=${holdId1})`,
 		() =>
 			holdId1 >= 0
-				? StableCoin.releaseHold(
+				? StableCoin.buildReleaseHold(
 						new ReleaseHoldRequest({
 							tokenId,
 							sourceId: accountId,
@@ -809,7 +774,7 @@ export async function runTestSuite(
 	await signer.run(
 		'createHold (hold 5 tokens for executeHold)',
 		() =>
-			StableCoin.createHold(
+			StableCoin.buildCreateHold(
 				new CreateHoldRequest({
 					tokenId,
 					amount: '5',
@@ -839,7 +804,7 @@ export async function runTestSuite(
 		`executeHold (holdId=${holdId2})`,
 		() =>
 			holdId2 >= 0
-				? StableCoin.executeHold(
+				? StableCoin.buildExecuteHold(
 						new ExecuteHoldRequest({
 							tokenId,
 							sourceId: accountId,
@@ -855,7 +820,7 @@ export async function runTestSuite(
 	await signer.run(
 		'createHoldByController (controller creates hold)',
 		() =>
-			StableCoin.createHoldByController(
+			StableCoin.buildCreateHoldByController(
 				new CreateHoldByControllerRequest({
 					tokenId,
 					amount: '5',
@@ -874,7 +839,7 @@ export async function runTestSuite(
 	await signer.run(
 		'createHold (short expiration for reclaim test)',
 		() =>
-			StableCoin.createHold(
+			StableCoin.buildCreateHold(
 				new CreateHoldRequest({
 					tokenId,
 					amount: '5',
@@ -907,7 +872,7 @@ export async function runTestSuite(
 		`reclaimHold (expired hold, holdId=${reclaimHoldId})`,
 		() =>
 			reclaimHoldId >= 0
-				? StableCoin.reclaimHold(
+				? StableCoin.buildReclaimHold(
 						new ReclaimHoldRequest({
 							tokenId,
 							sourceId: accountId,
@@ -922,7 +887,7 @@ export async function runTestSuite(
 	await signer.run(
 		'updateConfig (same configId+version)',
 		() =>
-			Management.updateConfig(
+			Management.buildUpdateConfig(
 				new UpdateConfigRequest({
 					tokenId,
 					configId: CONFIG_ID,
@@ -934,7 +899,7 @@ export async function runTestSuite(
 	await signer.run(
 		'updateConfigVersion (version=1)',
 		() =>
-			Management.updateConfigVersion(
+			Management.buildUpdateConfigVersion(
 				new UpdateConfigVersionRequest({ tokenId, configVersion: 1 }),
 			),
 	);
@@ -942,7 +907,7 @@ export async function runTestSuite(
 	await signer.run(
 		'updateResolver (same resolver)',
 		() =>
-			Management.updateResolver(
+			Management.buildUpdateResolver(
 				new UpdateResolverRequest({
 					tokenId,
 					configId: CONFIG_ID,
@@ -956,6 +921,6 @@ export async function runTestSuite(
 
 	await signer.run(
 		'delete (permanent – runs last)',
-		() => StableCoin.delete(new DeleteRequest({ tokenId })),
+		() => StableCoin.buildDelete(new DeleteRequest({ tokenId })),
 	);
 }

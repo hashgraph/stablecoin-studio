@@ -39,11 +39,13 @@ import { SerializedTransactionData } from '../../domain/context/transaction/Tran
 
 
 interface IManagementInPort {
-	updateConfigVersion(request: UpdateConfigVersionRequest): Promise<TransactionResult | SerializedTransactionData>;
-	updateConfig(request: UpdateConfigRequest): Promise<TransactionResult | SerializedTransactionData>;
-
+	updateConfigVersion(request: UpdateConfigVersionRequest): Promise<TransactionResult>;
+	buildUpdateConfigVersion(request: UpdateConfigVersionRequest): Promise<SerializedTransactionData>;
+	updateConfig(request: UpdateConfigRequest): Promise<TransactionResult>;
+	buildUpdateConfig(request: UpdateConfigRequest): Promise<SerializedTransactionData>;
 	getConfigInfo(request: GetConfigInfoRequest): Promise<ConfigInfoViewModel>;
-	updateResolver(request: UpdateResolverRequest): Promise<TransactionResult | SerializedTransactionData>;
+	updateResolver(request: UpdateResolverRequest): Promise<TransactionResult>;
+	buildUpdateResolver(request: UpdateResolverRequest): Promise<SerializedTransactionData>;
 }
 
 class ManagementInPort implements IManagementInPort {
@@ -57,7 +59,7 @@ class ManagementInPort implements IManagementInPort {
 	@LogError
 	async updateConfigVersion(
 		request: UpdateConfigVersionRequest,
-	): Promise<TransactionResult | SerializedTransactionData> {
+	): Promise<TransactionResult> {
 		const { configVersion, tokenId } = request;
 		handleValidation('UpdateConfigVersionRequest', request);
 
@@ -67,14 +69,27 @@ class ManagementInPort implements IManagementInPort {
 				configVersion,
 			),
 		);
-		if (response.serializedTransactionData) {
-			return response.serializedTransactionData;
-		}
 		return new TransactionResult(response.payload, response.transactionId);
 	}
 
 	@LogError
-	async updateConfig(request: UpdateConfigRequest): Promise<TransactionResult | SerializedTransactionData> {
+	async buildUpdateConfigVersion(
+		request: UpdateConfigVersionRequest,
+	): Promise<SerializedTransactionData> {
+		const { configVersion, tokenId } = request;
+		handleValidation('UpdateConfigVersionRequest', request);
+
+		const response = await this.commandBus.execute(
+			new UpdateConfigVersionCommand(
+				HederaId.from(tokenId),
+				configVersion,
+			),
+		);
+		return response.serializedTransactionData!;
+	}
+
+	@LogError
+	async updateConfig(request: UpdateConfigRequest): Promise<TransactionResult> {
 		const { configId, configVersion, tokenId } = request;
 		handleValidation('UpdateConfigRequest', request);
 
@@ -85,14 +100,26 @@ class ManagementInPort implements IManagementInPort {
 				configVersion,
 			),
 		);
-		if (response.serializedTransactionData) {
-			return response.serializedTransactionData;
-		}
 		return new TransactionResult(response.payload, response.transactionId);
 	}
 
 	@LogError
-	async updateResolver(request: UpdateResolverRequest): Promise<TransactionResult | SerializedTransactionData> {
+	async buildUpdateConfig(request: UpdateConfigRequest): Promise<SerializedTransactionData> {
+		const { configId, configVersion, tokenId } = request;
+		handleValidation('UpdateConfigRequest', request);
+
+		const response = await this.commandBus.execute(
+			new UpdateConfigCommand(
+				HederaId.from(tokenId),
+				configId,
+				configVersion,
+			),
+		);
+		return response.serializedTransactionData!;
+	}
+
+	@LogError
+	async updateResolver(request: UpdateResolverRequest): Promise<TransactionResult> {
 		const { configId, tokenId, resolver, configVersion } = request;
 		handleValidation('UpdateResolverRequest', request);
 
@@ -104,10 +131,23 @@ class ManagementInPort implements IManagementInPort {
 				new ContractId(resolver),
 			),
 		);
-		if (response.serializedTransactionData) {
-			return response.serializedTransactionData;
-		}
 		return new TransactionResult(response.payload, response.transactionId);
+	}
+
+	@LogError
+	async buildUpdateResolver(request: UpdateResolverRequest): Promise<SerializedTransactionData> {
+		const { configId, tokenId, resolver, configVersion } = request;
+		handleValidation('UpdateResolverRequest', request);
+
+		const response = await this.commandBus.execute(
+			new UpdateResolverCommand(
+				HederaId.from(tokenId),
+				configVersion,
+				configId,
+				new ContractId(resolver),
+			),
+		);
+		return response.serializedTransactionData!;
 	}
 
 	@LogError

@@ -40,7 +40,8 @@ import { SerializedTransactionData } from '../../domain/context/transaction/Tran
 
 interface IReserveDataFeedInPort {
 	getReserveAmount(request: GetReserveAmountRequest): Promise<Balance>;
-	updateReserveAmount(request: UpdateReserveAmountRequest): Promise<TransactionResult | SerializedTransactionData>;
+	updateReserveAmount(request: UpdateReserveAmountRequest): Promise<TransactionResult>;
+	buildUpdateReserveAmount(request: UpdateReserveAmountRequest): Promise<SerializedTransactionData>;
 }
 
 class ReserveDataFeedInPort implements IReserveDataFeedInPort {
@@ -68,7 +69,7 @@ class ReserveDataFeedInPort implements IReserveDataFeedInPort {
 	@LogError
 	async updateReserveAmount(
 		request: UpdateReserveAmountRequest,
-	): Promise<TransactionResult | SerializedTransactionData> {
+	): Promise<TransactionResult> {
 		handleValidation('UpdateReserveAmountRequest', request);
 
 		const reserveId: string = (
@@ -83,10 +84,28 @@ class ReserveDataFeedInPort implements IReserveDataFeedInPort {
 				),
 			),
 		);
-		if (response.serializedTransactionData) {
-			return response.serializedTransactionData;
-		}
 		return new TransactionResult(response.payload, response.transactionId);
+	}
+
+	@LogError
+	async buildUpdateReserveAmount(
+		request: UpdateReserveAmountRequest,
+	): Promise<SerializedTransactionData> {
+		handleValidation('UpdateReserveAmountRequest', request);
+
+		const reserveId: string = (
+			await this.mirrorNode.getContractInfo(request.reserveAddress)
+		).id;
+		const response = await this.commandBus.execute(
+			new UpdateReserveAmountCommand(
+				new ContractId(reserveId),
+				BigDecimal.fromString(
+					request.reserveAmount,
+					RESERVE_DECIMALS,
+				),
+			),
+		);
+		return response.serializedTransactionData!;
 	}
 }
 

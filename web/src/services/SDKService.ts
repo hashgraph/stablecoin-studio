@@ -37,6 +37,7 @@ import type {
 	ReserveViewModel,
 	ResetSupplierAllowanceRequest,
 	RevokeMultiRolesRequest,
+	SerializedTransactionData,
 	StableCoinCapabilities,
 	StableCoinListViewModel,
 	StableCoinViewModel,
@@ -477,7 +478,11 @@ export class SDKService {
 
 	public static async createStableCoin(
 		createRequest: CreateRequest,
-	): Promise<{ coin: StableCoinViewModel; reserve: ReserveViewModel } | null> {
+	): Promise<
+		| { coin: StableCoinViewModel; reserve: ReserveViewModel }
+		| SerializedTransactionData
+		| null
+	> {
 		return await StableCoin.create(createRequest);
 	}
 

@@ -51,9 +51,12 @@ import { SerializedTransactionData } from '../../domain/context/transaction/Tran
 export { HBAR_DECIMALS, MAX_PERCENTAGE_DECIMALS, MAX_CUSTOM_FEES };
 
 interface ICustomFees {
-	addFixedFee(request: AddFixedFeeRequest): Promise<TransactionResult | SerializedTransactionData>;
-	addFractionalFee(request: AddFractionalFeeRequest): Promise<TransactionResult | SerializedTransactionData>;
-	updateCustomFees(request: UpdateCustomFeesRequest): Promise<TransactionResult | SerializedTransactionData>;
+	addFixedFee(request: AddFixedFeeRequest): Promise<TransactionResult>;
+	buildAddFixedFee(request: AddFixedFeeRequest): Promise<SerializedTransactionData>;
+	addFractionalFee(request: AddFractionalFeeRequest): Promise<TransactionResult>;
+	buildAddFractionalFee(request: AddFractionalFeeRequest): Promise<SerializedTransactionData>;
+	updateCustomFees(request: UpdateCustomFeesRequest): Promise<TransactionResult>;
+	buildUpdateCustomFees(request: UpdateCustomFeesRequest): Promise<SerializedTransactionData>;
 }
 
 class CustomFeesInPort implements ICustomFees {
@@ -64,7 +67,7 @@ class CustomFeesInPort implements ICustomFees {
 	) {}
 
 	@LogError
-	async addFixedFee(request: AddFixedFeeRequest): Promise<TransactionResult | SerializedTransactionData> {
+	async addFixedFee(request: AddFixedFeeRequest): Promise<TransactionResult> {
 		const {
 			tokenId,
 			collectorId,
@@ -84,14 +87,35 @@ class CustomFeesInPort implements ICustomFees {
 				collectorsExempt,
 			),
 		);
-		if (response.serializedTransactionData) {
-			return response.serializedTransactionData;
-		}
 		return new TransactionResult(response.payload, response.transactionId);
 	}
 
 	@LogError
-	async addFractionalFee(request: AddFractionalFeeRequest): Promise<TransactionResult | SerializedTransactionData> {
+	async buildAddFixedFee(request: AddFixedFeeRequest): Promise<SerializedTransactionData> {
+		const {
+			tokenId,
+			collectorId,
+			tokenIdCollected,
+			amount,
+			decimals,
+			collectorsExempt,
+		} = request;
+		handleValidation('AddFixedFeeRequest', request);
+
+		const response = await this.commandBus.execute(
+			new addFixedFeesCommand(
+				HederaId.from(tokenId),
+				HederaId.from(collectorId),
+				HederaId.from(tokenIdCollected),
+				BigDecimal.fromString(amount, decimals),
+				collectorsExempt,
+			),
+		);
+		return response.serializedTransactionData!;
+	}
+
+	@LogError
+	async addFractionalFee(request: AddFractionalFeeRequest): Promise<TransactionResult> {
 		const {
 			tokenId,
 			collectorId,
@@ -128,14 +152,52 @@ class CustomFeesInPort implements ICustomFees {
 				collectorsExempt,
 			),
 		);
-		if (response.serializedTransactionData) {
-			return response.serializedTransactionData;
-		}
 		return new TransactionResult(response.payload, response.transactionId);
 	}
 
 	@LogError
-	async updateCustomFees(request: UpdateCustomFeesRequest): Promise<TransactionResult | SerializedTransactionData> {
+	async buildAddFractionalFee(request: AddFractionalFeeRequest): Promise<SerializedTransactionData> {
+		const {
+			tokenId,
+			collectorId,
+			percentage,
+			amountNumerator,
+			amountDenominator,
+			min,
+			max,
+			decimals,
+			collectorsExempt,
+			net,
+		} = request;
+		handleValidation('AddFractionalFeeRequest', request);
+
+		let _amountNumerator = amountNumerator ?? '';
+		let _amountDenominator = amountDenominator ?? '';
+		const _min = min ?? '0';
+		const _max = max ?? '0';
+
+		if (_amountNumerator === '') {
+			[_amountNumerator, _amountDenominator] =
+				this.getFractionFromPercentage(percentage ?? '');
+		}
+
+		const response = await this.commandBus.execute(
+			new addFractionalFeesCommand(
+				HederaId.from(tokenId),
+				HederaId.from(collectorId),
+				parseInt(_amountNumerator),
+				parseInt(_amountDenominator),
+				BigDecimal.fromString(_min, decimals),
+				BigDecimal.fromString(_max, decimals),
+				net,
+				collectorsExempt,
+			),
+		);
+		return response.serializedTransactionData!;
+	}
+
+	@LogError
+	async updateCustomFees(request: UpdateCustomFeesRequest): Promise<TransactionResult> {
 		const { tokenId, customFees } = request;
 		handleValidation('UpdateCustomFeesRequest', request);
 
@@ -193,10 +255,69 @@ class CustomFeesInPort implements ICustomFees {
 				requestedCustomFee,
 			),
 		);
-		if (response.serializedTransactionData) {
-			return response.serializedTransactionData;
-		}
 		return new TransactionResult(response.payload, response.transactionId);
+	}
+
+	@LogError
+	async buildUpdateCustomFees(request: UpdateCustomFeesRequest): Promise<SerializedTransactionData> {
+		const { tokenId, customFees } = request;
+		handleValidation('UpdateCustomFeesRequest', request);
+
+		const requestedCustomFee: CustomFee[] = [];
+
+		customFees.forEach((customFee) => {
+			if (isRequestFixedFee(customFee)) {
+				requestedCustomFee.push(
+					new FixedFee(
+						HederaId.from(customFee.collectorId),
+						BigDecimal.fromString(
+							customFee.amount,
+							customFee.decimals,
+						),
+						HederaId.from(customFee.tokenIdCollected),
+						customFee.collectorsExempt,
+					),
+				);
+			} else if (isRequestFractionalFee(customFee)) {
+				let _amountNumerator = customFee.amountNumerator ?? '';
+				let _amountDenominator = customFee.amountDenominator ?? '';
+
+				if (_amountNumerator === '') {
+					[_amountNumerator, _amountDenominator] =
+						this.getFractionFromPercentage(customFee.percentage);
+				}
+
+				requestedCustomFee.push(
+					new FractionalFee(
+						HederaId.from(customFee.collectorId),
+						parseInt(_amountNumerator),
+						parseInt(_amountDenominator),
+						customFee.min
+							? BigDecimal.fromString(
+									customFee.min,
+									customFee.decimals,
+							  )
+							: undefined,
+						customFee.max
+							? BigDecimal.fromString(
+									customFee.max,
+									customFee.decimals,
+							  )
+							: undefined,
+						customFee.net,
+						customFee.collectorsExempt,
+					),
+				);
+			}
+		});
+
+		const response = await this.commandBus.execute(
+			new UpdateCustomFeesCommand(
+				HederaId.from(tokenId),
+				requestedCustomFee,
+			),
+		);
+		return response.serializedTransactionData!;
 	}
 
 	getFractionFromPercentage(percentage: string): string[] {
