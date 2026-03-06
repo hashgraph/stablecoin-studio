@@ -32,9 +32,9 @@ export default class PrivateKey implements KeyProps {
 		const { key, type } = props;
 		this.type = this.validateType(type);
 		this.key = key;
-		this.publicKey = PublicKey.fromHederaKey(
-			this.toHashgraphKey().publicKey,
-		);
+		this.publicKey = key
+			? PublicKey.fromHederaKey(this.toHashgraphKey().publicKey)
+			: PublicKey.NULL;
 	}
 
 	// eslint-disable-next-line @typescript-eslint/no-unused-vars

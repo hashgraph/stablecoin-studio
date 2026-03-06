@@ -16,7 +16,8 @@ export class HederaId {
 	}
 
 	static from(value?: string): HederaId {
-		return new HederaId(value ?? '');
+		if (!value) return HederaId.NULL;
+		return new HederaId(value);
 	}
 
 	toHederaAddress(): AccountId {
