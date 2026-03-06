@@ -16,19 +16,19 @@ runs:
 
     - name: Build Contracts
       shell: sh
-      run: npm run build --workspace=contracts
+      run: npm run build --workspace=packages/contracts
 
     - name: Build SDK
       if: ${{ inputs.module == 'sdk' || inputs.module == 'cli' || inputs.module == 'web' }}
       shell: sh
-      run: npm run build --workspace=sdk
+      run: npm run build --workspace=packages/sdk
 
     - name: Build CLI
       if: ${{ inputs.module == 'cli' }}
       shell: sh
-      run: npm run build --workspace=cli
+      run: npm run build --workspace=apps/cli
 
     - name: Build Web
       if: ${{ inputs.module == 'web' }}
       shell: sh
-      run: npm run build --workspace=web
+      run: npm run build --workspace=apps/web
