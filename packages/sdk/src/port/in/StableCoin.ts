@@ -378,7 +378,9 @@ class StableCoinInPort implements IStableCoinInPort {
 	@LogError
 	async buildCreate(req: CreateRequest): Promise<SerializedTransactionData> {
 		handleValidation('CreateRequest', req);
-		return (await this._executeCreateCommand(req)).serializedTransactionData!;
+		const res = await this._executeCreateCommand(req);
+		if (!res.serializedTransactionData) throw new Error('Expected serialized transaction data but none was returned');
+		return res.serializedTransactionData;
 	}
 
 	@LogError
@@ -424,7 +426,8 @@ class StableCoinInPort implements IStableCoinInPort {
 				startDate,
 			),
 		);
-		return response.serializedTransactionData!;
+		if (!response.serializedTransactionData) throw new Error("Expected serialized transaction data but none was returned");
+		return response.serializedTransactionData;
 	}
 
 	@LogError
@@ -446,7 +449,8 @@ class StableCoinInPort implements IStableCoinInPort {
 		const response = await this.commandBus.execute(
 			new BurnCommand(amount, HederaId.from(tokenId), startDate),
 		);
-		return response.serializedTransactionData!;
+		if (!response.serializedTransactionData) throw new Error("Expected serialized transaction data but none was returned");
+		return response.serializedTransactionData;
 	}
 
 	@LogError
@@ -468,7 +472,8 @@ class StableCoinInPort implements IStableCoinInPort {
 		const response = await this.commandBus.execute(
 			new RescueCommand(amount, HederaId.from(tokenId), startDate),
 		);
-		return response.serializedTransactionData!;
+		if (!response.serializedTransactionData) throw new Error("Expected serialized transaction data but none was returned");
+		return response.serializedTransactionData;
 	}
 
 	@LogError
@@ -498,7 +503,8 @@ class StableCoinInPort implements IStableCoinInPort {
 				startDate,
 			),
 		);
-		return response.serializedTransactionData!;
+		if (!response.serializedTransactionData) throw new Error("Expected serialized transaction data but none was returned");
+		return response.serializedTransactionData;
 	}
 
 	@LogError
@@ -530,7 +536,8 @@ class StableCoinInPort implements IStableCoinInPort {
 				startDate,
 			),
 		);
-		return response.serializedTransactionData!;
+		if (!response.serializedTransactionData) throw new Error("Expected serialized transaction data but none was returned");
+		return response.serializedTransactionData;
 	}
 
 	@LogError
@@ -558,7 +565,8 @@ class StableCoinInPort implements IStableCoinInPort {
 				HederaId.from(tokenId),
 			),
 		);
-		return response.serializedTransactionData!;
+		if (!response.serializedTransactionData) throw new Error("Expected serialized transaction data but none was returned");
+		return response.serializedTransactionData;
 	}
 
 	@LogError
@@ -627,7 +635,8 @@ class StableCoinInPort implements IStableCoinInPort {
 		const response = await this.commandBus.execute(
 			new PauseCommand(HederaId.from(tokenId), startDate),
 		);
-		return response.serializedTransactionData!;
+		if (!response.serializedTransactionData) throw new Error("Expected serialized transaction data but none was returned");
+		return response.serializedTransactionData;
 	}
 
 	@LogError
@@ -649,7 +658,8 @@ class StableCoinInPort implements IStableCoinInPort {
 		const response = await this.commandBus.execute(
 			new UnPauseCommand(HederaId.from(tokenId), startDate),
 		);
-		return response.serializedTransactionData!;
+		if (!response.serializedTransactionData) throw new Error("Expected serialized transaction data but none was returned");
+		return response.serializedTransactionData;
 	}
 
 	@LogError
@@ -671,7 +681,8 @@ class StableCoinInPort implements IStableCoinInPort {
 		const response = await this.commandBus.execute(
 			new DeleteCommand(HederaId.from(tokenId), startDate),
 		);
-		return response.serializedTransactionData!;
+		if (!response.serializedTransactionData) throw new Error("Expected serialized transaction data but none was returned");
+		return response.serializedTransactionData;
 	}
 
 	@LogError
@@ -701,7 +712,8 @@ class StableCoinInPort implements IStableCoinInPort {
 				startDate,
 			),
 		);
-		return response.serializedTransactionData!;
+		if (!response.serializedTransactionData) throw new Error("Expected serialized transaction data but none was returned");
+		return response.serializedTransactionData;
 	}
 
 	@LogError
@@ -731,7 +743,8 @@ class StableCoinInPort implements IStableCoinInPort {
 				startDate,
 			),
 		);
-		return response.serializedTransactionData!;
+		if (!response.serializedTransactionData) throw new Error("Expected serialized transaction data but none was returned");
+		return response.serializedTransactionData;
 	}
 
 	@LogError
@@ -776,7 +789,8 @@ class StableCoinInPort implements IStableCoinInPort {
 				HederaId.from(tokenId),
 			),
 		);
-		return response.serializedTransactionData!;
+		if (!response.serializedTransactionData) throw new Error("Expected serialized transaction data but none was returned");
+		return response.serializedTransactionData;
 	}
 
 	@LogError
@@ -804,7 +818,8 @@ class StableCoinInPort implements IStableCoinInPort {
 				HederaId.from(tokenId),
 			),
 		);
-		return response.serializedTransactionData!;
+		if (!response.serializedTransactionData) throw new Error("Expected serialized transaction data but none was returned");
+		return response.serializedTransactionData;
 	}
 
 	@LogError
@@ -901,7 +916,8 @@ class StableCoinInPort implements IStableCoinInPort {
 				new ContractId(reserveAddressId),
 			),
 		);
-		return response.serializedTransactionData!;
+		if (!response.serializedTransactionData) throw new Error("Expected serialized transaction data but none was returned");
+		return response.serializedTransactionData;
 	}
 
 	@LogError
@@ -941,7 +957,8 @@ class StableCoinInPort implements IStableCoinInPort {
 				targetId ? HederaId.from(targetId) : undefined,
 			),
 		);
-		return response.serializedTransactionData!;
+		if (!response.serializedTransactionData) throw new Error("Expected serialized transaction data but none was returned");
+		return response.serializedTransactionData;
 	}
 
 	@LogError
@@ -985,7 +1002,8 @@ class StableCoinInPort implements IStableCoinInPort {
 				targetId ? HederaId.from(targetId) : undefined,
 			),
 		);
-		return response.serializedTransactionData!;
+		if (!response.serializedTransactionData) throw new Error("Expected serialized transaction data but none was returned");
+		return response.serializedTransactionData;
 	}
 
 	@LogError
@@ -1017,7 +1035,8 @@ class StableCoinInPort implements IStableCoinInPort {
 				targetId ? HederaId.from(targetId) : undefined,
 			),
 		);
-		return response.serializedTransactionData!;
+		if (!response.serializedTransactionData) throw new Error("Expected serialized transaction data but none was returned");
+		return response.serializedTransactionData;
 	}
 
 	@LogError
@@ -1047,7 +1066,8 @@ class StableCoinInPort implements IStableCoinInPort {
 				amount,
 			),
 		);
-		return response.serializedTransactionData!;
+		if (!response.serializedTransactionData) throw new Error("Expected serialized transaction data but none was returned");
+		return response.serializedTransactionData;
 	}
 
 	@LogError
@@ -1075,7 +1095,8 @@ class StableCoinInPort implements IStableCoinInPort {
 				HederaId.from(sourceId),
 			),
 		);
-		return response.serializedTransactionData!;
+		if (!response.serializedTransactionData) throw new Error("Expected serialized transaction data but none was returned");
+		return response.serializedTransactionData;
 	}
 
 	@LogError
@@ -1200,7 +1221,8 @@ class StableCoinInPort implements IStableCoinInPort {
 				HederaId.from(targetId),
 			),
 		);
-		return response.serializedTransactionData!;
+		if (!response.serializedTransactionData) throw new Error("Expected serialized transaction data but none was returned");
+		return response.serializedTransactionData;
 	}
 
 	@LogError
@@ -1322,7 +1344,8 @@ class StableCoinInPort implements IStableCoinInPort {
 				metadata,
 			),
 		);
-		return response.serializedTransactionData!;
+		if (!response.serializedTransactionData) throw new Error("Expected serialized transaction data but none was returned");
+		return response.serializedTransactionData;
 	}
 
 	@LogError

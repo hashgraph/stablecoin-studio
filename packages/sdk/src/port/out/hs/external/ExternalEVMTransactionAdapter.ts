@@ -48,7 +48,7 @@ const HEDERA_CHAIN_IDS: Record<string, number> = {
 
 @singleton()
 export class ExternalEVMTransactionAdapter extends BaseHederaTransactionAdapter {
-	public account: Account;
+	private account: Account;
 
 	constructor(
 		@lazyInject(EventService)
@@ -108,7 +108,7 @@ export class ExternalEVMTransactionAdapter extends BaseHederaTransactionAdapter 
 			if (!toAddress) {
 				const parts = contractId.toString().split('.');
 				if (parts.length === 3) {
-					const num = parseInt(parts[2], 10);
+					const num = BigInt(parts[2]);
 					toAddress = '0x' + num.toString(16).padStart(40, '0');
 				} else {
 					throw new Error(

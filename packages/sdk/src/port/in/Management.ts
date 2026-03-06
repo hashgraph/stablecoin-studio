@@ -85,7 +85,8 @@ class ManagementInPort implements IManagementInPort {
 				configVersion,
 			),
 		);
-		return response.serializedTransactionData!;
+		if (!response.serializedTransactionData) throw new Error("Expected serialized transaction data but none was returned");
+		return response.serializedTransactionData;
 	}
 
 	@LogError
@@ -115,7 +116,8 @@ class ManagementInPort implements IManagementInPort {
 				configVersion,
 			),
 		);
-		return response.serializedTransactionData!;
+		if (!response.serializedTransactionData) throw new Error("Expected serialized transaction data but none was returned");
+		return response.serializedTransactionData;
 	}
 
 	@LogError
@@ -147,7 +149,8 @@ class ManagementInPort implements IManagementInPort {
 				new ContractId(resolver),
 			),
 		);
-		return response.serializedTransactionData!;
+		if (!response.serializedTransactionData) throw new Error("Expected serialized transaction data but none was returned");
+		return response.serializedTransactionData;
 	}
 
 	@LogError

@@ -25,11 +25,12 @@ import TransactionService from '../../../../service/TransactionService.js';
 import { ExternalHederaTransactionAdapter } from '../../../../../port/out/hs/external/ExternalHederaTransactionAdapter.js';
 import { ExternalEVMTransactionAdapter } from '../../../../../port/out/hs/external/ExternalEVMTransactionAdapter.js';
 import { ConnectCommand, ConnectCommandResponse } from './ConnectCommand.js';
+import LogService from '../../../../service/LogService.js';
 
 @CommandHandler(ConnectCommand)
 export class ConnectCommandHandler implements ICommandHandler<ConnectCommand> {
 	async execute(command: ConnectCommand): Promise<ConnectCommandResponse> {
-		console.log('ConnectCommand Handler' + command.wallet);
+		LogService.logTrace('ConnectCommandHandler: wallet=', command.wallet);
 		const handler = TransactionService.getHandlerClass(command.wallet);
 
 		const input =
@@ -55,6 +56,10 @@ export class ConnectCommandHandler implements ICommandHandler<ConnectCommand> {
 			);
 		}
 
+		// TypeScript resolves handler.register() to the narrowest override
+		// (e.g. ExternalHederaTransactionAdapter accepts only Account), so a
+		// full-union cast triggers a type error. Runtime behaviour is correct:
+		// each adapter validates its own input internally.
 		// eslint-disable-next-line @typescript-eslint/no-explicit-any
 		const registration = await handler.register(input as any);
 

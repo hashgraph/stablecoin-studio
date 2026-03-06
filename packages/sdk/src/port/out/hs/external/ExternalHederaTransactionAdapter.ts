@@ -47,7 +47,7 @@ import EventService from '../../../../app/service/event/EventService.js';
 
 @singleton()
 export class ExternalHederaTransactionAdapter extends BaseHederaTransactionAdapter {
-	public account: Account;
+	private account: Account;
 	private validStartOffsetMinutes = 0;
 
 	constructor(

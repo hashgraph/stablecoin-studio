@@ -105,7 +105,8 @@ class ReserveDataFeedInPort implements IReserveDataFeedInPort {
 				),
 			),
 		);
-		return response.serializedTransactionData!;
+		if (!response.serializedTransactionData) throw new Error("Expected serialized transaction data but none was returned");
+		return response.serializedTransactionData;
 	}
 }
 

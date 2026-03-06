@@ -58,8 +58,10 @@ process.on('unhandledRejection', (reason: unknown) => {
 		msg.includes('502') ||
 		msg.includes('Bad Gateway') ||
 		msg.includes('SERVER_ERROR')
-	)
+	) {
+		console.warn('[suppressed transient RPC error]', msg.substring(0, 200));
 		return;
+	}
 	console.error('Unhandled rejection:', msg.substring(0, 200));
 });
 

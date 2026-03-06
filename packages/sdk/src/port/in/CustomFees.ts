@@ -111,7 +111,8 @@ class CustomFeesInPort implements ICustomFees {
 				collectorsExempt,
 			),
 		);
-		return response.serializedTransactionData!;
+		if (!response.serializedTransactionData) throw new Error("Expected serialized transaction data but none was returned");
+		return response.serializedTransactionData;
 	}
 
 	@LogError
@@ -193,7 +194,8 @@ class CustomFeesInPort implements ICustomFees {
 				collectorsExempt,
 			),
 		);
-		return response.serializedTransactionData!;
+		if (!response.serializedTransactionData) throw new Error("Expected serialized transaction data but none was returned");
+		return response.serializedTransactionData;
 	}
 
 	@LogError
@@ -317,7 +319,8 @@ class CustomFeesInPort implements ICustomFees {
 				requestedCustomFee,
 			),
 		);
-		return response.serializedTransactionData!;
+		if (!response.serializedTransactionData) throw new Error("Expected serialized transaction data but none was returned");
+		return response.serializedTransactionData;
 	}
 
 	getFractionFromPercentage(percentage: string): string[] {
@@ -331,9 +334,7 @@ class CustomFeesInPort implements ICustomFees {
 			percentage,
 			MAX_PERCENTAGE_DECIMALS,
 		);
-		const amountNumerator = Math.round(
-			numerator.toUnsafeFloat() * exponential,
-		).toString();
+		const amountNumerator = numerator.toBigInt().toString();
 
 		fraction.push(amountNumerator);
 		fraction.push(amountDenominator);

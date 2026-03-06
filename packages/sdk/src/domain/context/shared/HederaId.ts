@@ -1,6 +1,9 @@
 import { AccountId } from '@hiero-ledger/sdk';
 import { InvalidIdFormat } from './error/InvalidIdFormat.js';
 
+// Note: the optional checksum group (?:-([a-z]{5}))? is accepted by the regex
+// but is intentionally not validated. If checksum validation is required in the
+// future, parse capture group 4 and compare against the expected checksum.
 const HEDERA_FORMAT_ID_REGEX =
 	/^(0|(?:[1-9]\d*))\.(0|(?:[1-9]\d*))\.(0|(?:[1-9]\d*))(?:-([a-z]{5}))?$/;
 
@@ -29,6 +32,6 @@ export class HederaId {
 	}
 
 	isNull(): boolean {
-		return this.value == '0.0.0';
+		return this.value === '0.0.0';
 	}
 }

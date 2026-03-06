@@ -207,10 +207,6 @@ const COMMAND_HANDLERS = [
 	},
 	{
 		token: TOKENS.COMMAND_HANDLER,
-		useClass: CreateHoldCommandHandler,
-	},
-	{
-		token: TOKENS.COMMAND_HANDLER,
 		useClass: CreateHoldByControllerCommandHandler,
 	},
 	{
@@ -545,6 +541,8 @@ export default class Injectable {
 			adapters.push(Injectable.resolve(ClientTransactionAdapter));
 		}
 		adapters.push(Injectable.resolve(MultiSigTransactionAdapter));
+		adapters.push(Injectable.resolve(ExternalHederaTransactionAdapter));
+		adapters.push(Injectable.resolve(ExternalEVMTransactionAdapter));
 		return adapters;
 	}
 

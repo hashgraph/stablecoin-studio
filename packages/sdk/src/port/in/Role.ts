@@ -131,7 +131,7 @@ class RoleInPort implements IRole {
 		handleValidation('GrantRoleRequest', request);
 
 		if (role === StableCoinRole.CASHIN_ROLE) {
-			if (supplierType == 'limited') {
+			if (supplierType === 'limited') {
 				const response = await this.commandBus.execute(
 					new GrantSupplierRoleCommand(
 						HederaId.from(targetId),
@@ -167,7 +167,7 @@ class RoleInPort implements IRole {
 		handleValidation('GrantRoleRequest', request);
 
 		if (role === StableCoinRole.CASHIN_ROLE) {
-			if (supplierType == 'limited') {
+			if (supplierType === 'limited') {
 				const response = await this.commandBus.execute(
 					new GrantSupplierRoleCommand(
 						HederaId.from(targetId),
@@ -175,7 +175,8 @@ class RoleInPort implements IRole {
 						amount!,
 					),
 				);
-				return response.serializedTransactionData!;
+				if (!response.serializedTransactionData) throw new Error("Expected serialized transaction data but none was returned");
+				return response.serializedTransactionData;
 			} else {
 				const response = await this.commandBus.execute(
 					new GrantUnlimitedSupplierRoleCommand(
@@ -183,7 +184,8 @@ class RoleInPort implements IRole {
 						HederaId.from(tokenId),
 					),
 				);
-				return response.serializedTransactionData!;
+				if (!response.serializedTransactionData) throw new Error("Expected serialized transaction data but none was returned");
+				return response.serializedTransactionData;
 			}
 		} else {
 			const response = await this.commandBus.execute(
@@ -193,14 +195,15 @@ class RoleInPort implements IRole {
 					HederaId.from(tokenId),
 				),
 			);
-			return response.serializedTransactionData!;
+			if (!response.serializedTransactionData) throw new Error("Expected serialized transaction data but none was returned");
+			return response.serializedTransactionData;
 		}
 	}
 
 	@LogError
 	async revokeRole(request: RevokeRoleRequest): Promise<TransactionResult> {
 		const { tokenId, targetId, role } = request;
-		handleValidation('HasRoleRequest', request);
+		handleValidation('RevokeRoleRequest', request);
 
 		if (role === StableCoinRole.CASHIN_ROLE) {
 			const response = await this.commandBus.execute(
@@ -225,7 +228,7 @@ class RoleInPort implements IRole {
 	@LogError
 	async buildRevokeRole(request: RevokeRoleRequest): Promise<SerializedTransactionData> {
 		const { tokenId, targetId, role } = request;
-		handleValidation('HasRoleRequest', request);
+		handleValidation('RevokeRoleRequest', request);
 
 		if (role === StableCoinRole.CASHIN_ROLE) {
 			const response = await this.commandBus.execute(
@@ -234,7 +237,8 @@ class RoleInPort implements IRole {
 					HederaId.from(tokenId),
 				),
 			);
-			return response.serializedTransactionData!;
+			if (!response.serializedTransactionData) throw new Error("Expected serialized transaction data but none was returned");
+			return response.serializedTransactionData;
 		} else {
 			const response = await this.commandBus.execute(
 				new RevokeRoleCommand(
@@ -243,7 +247,8 @@ class RoleInPort implements IRole {
 					HederaId.from(tokenId),
 				),
 			);
-			return response.serializedTransactionData!;
+			if (!response.serializedTransactionData) throw new Error("Expected serialized transaction data but none was returned");
+			return response.serializedTransactionData;
 		}
 	}
 
@@ -288,13 +293,14 @@ class RoleInPort implements IRole {
 				startDate,
 			),
 		);
-		return response.serializedTransactionData!;
+		if (!response.serializedTransactionData) throw new Error("Expected serialized transaction data but none was returned");
+		return response.serializedTransactionData;
 	}
 
 	@LogError
 	async revokeMultiRoles(request: RevokeMultiRolesRequest): Promise<TransactionResult> {
 		const { tokenId, targetsId, roles, startDate } = request;
-		handleValidation('HasRoleRequest', request);
+		handleValidation('RevokeMultiRolesRequest', request);
 
 		const targetsIdHederaIds: HederaId[] = [];
 		targetsId.forEach((targetId) => {
@@ -315,7 +321,7 @@ class RoleInPort implements IRole {
 	@LogError
 	async buildRevokeMultiRoles(request: RevokeMultiRolesRequest): Promise<SerializedTransactionData> {
 		const { tokenId, targetsId, roles, startDate } = request;
-		handleValidation('HasRoleRequest', request);
+		handleValidation('RevokeMultiRolesRequest', request);
 
 		const targetsIdHederaIds: HederaId[] = [];
 		targetsId.forEach((targetId) => {
@@ -330,7 +336,8 @@ class RoleInPort implements IRole {
 				startDate,
 			),
 		);
-		return response.serializedTransactionData!;
+		if (!response.serializedTransactionData) throw new Error("Expected serialized transaction data but none was returned");
+		return response.serializedTransactionData;
 	}
 
 	@LogError
@@ -407,7 +414,8 @@ class RoleInPort implements IRole {
 				startDate,
 			),
 		);
-		return response.serializedTransactionData!;
+		if (!response.serializedTransactionData) throw new Error("Expected serialized transaction data but none was returned");
+		return response.serializedTransactionData;
 	}
 
 	@LogError
@@ -443,7 +451,8 @@ class RoleInPort implements IRole {
 				startDate,
 			),
 		);
-		return response.serializedTransactionData!;
+		if (!response.serializedTransactionData) throw new Error("Expected serialized transaction data but none was returned");
+		return response.serializedTransactionData;
 	}
 
 	@LogError
@@ -479,7 +488,8 @@ class RoleInPort implements IRole {
 				startDate,
 			),
 		);
-		return response.serializedTransactionData!;
+		if (!response.serializedTransactionData) throw new Error("Expected serialized transaction data but none was returned");
+		return response.serializedTransactionData;
 	}
 
 	@LogError
