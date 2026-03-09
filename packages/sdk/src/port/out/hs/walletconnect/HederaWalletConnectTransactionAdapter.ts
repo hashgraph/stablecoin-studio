@@ -75,9 +75,12 @@ export class HederaWalletConnectTransactionAdapter extends BaseHederaTransaction
 	protected network!: Environment;
 	protected projectId = '';
 	protected hederaAdapter: InstanceType<typeof HederaAdapter> | undefined;
+	protected eip155Adapter: InstanceType<typeof HederaAdapter> | undefined;
 	// eslint-disable-next-line @typescript-eslint/no-explicit-any
 	protected appKit: any;
 	protected hederaProvider: InstanceType<typeof HederaProvider> | undefined;
+	// eslint-disable-next-line @typescript-eslint/no-explicit-any
+	protected injectedEip155Provider: any | undefined;
 	protected dappMetadata: {
 		name: string;
 		description: string;
@@ -139,38 +142,87 @@ export class HederaWalletConnectTransactionAdapter extends BaseHederaTransaction
 		await this.initAdaptersAndProvider(currentNetwork);
 		await this.openPairingModal();
 
-		// Safety net: if eip155Provider is still null after pairing, it means
-		// patchInitProviders found no Hedera EVM accounts in the approved session —
-		// i.e. MetaMask is connected but has no Hedera EVM chain configured at all.
-		// eslint-disable-next-line @typescript-eslint/no-explicit-any
-		if (
-			this.isEvmSession() &&
-			!(this.hederaProvider as any)?.eip155Provider
-		) {
+		// ── Path A: WalletConnect session ──────────────────────────────────────
+		if (this.hederaProvider?.session) {
+			// Safety net: eip155 WC session but eip155Provider not initialised
+			// means MetaMask approved WC but has no Hedera EVM chain configured.
 			// eslint-disable-next-line @typescript-eslint/no-explicit-any
-			const accounts: string[] =
-				(this.hederaProvider as any)?.session?.namespaces?.eip155
-					?.accounts ?? [];
-			const allChains = [
-				...new Set(
-					accounts.map((acc) => acc.split(':').slice(0, 2).join(':')),
-				),
-			];
-			await this.stop();
-			throw new Error(
-				`MetaMask is not connected to a Hedera EVM network` +
-					(allChains.length
-						? ` (connected on: ${allChains.join(', ')})`
-						: '') +
-					`. Please add Hedera EVM Testnet (chainId 296) or Mainnet (chainId 295) to MetaMask, ` +
-					`switch to it, and try connecting again.`,
-			);
+			if (
+				this.isEvmSession() &&
+				!(this.hederaProvider as any)?.eip155Provider
+			) {
+				// eslint-disable-next-line @typescript-eslint/no-explicit-any
+				const accounts: string[] =
+					(this.hederaProvider as any)?.session?.namespaces?.eip155
+						?.accounts ?? [];
+				const allChains = [
+					...new Set(
+						accounts.map((acc) =>
+							acc.split(':').slice(0, 2).join(':'),
+						),
+					),
+				];
+				await this.stop();
+				throw new Error(
+					`MetaMask is not connected to a Hedera EVM network` +
+						(allChains.length
+							? ` (connected on: ${allChains.join(', ')})`
+							: '') +
+						`. Please add Hedera EVM Testnet (chainId 296) or Mainnet (chainId 295) to MetaMask, ` +
+						`switch to it, and try connecting again.`,
+				);
+			}
+
+			await this.resolveAndCacheAccount(currentNetwork);
+			this.subscribe();
+			return currentNetwork;
 		}
 
-		await this.resolveAndCacheAccount(currentNetwork);
-		this.subscribe();
+		// ── Path B: EIP-1193 injected provider (MetaMask browser extension) ────
+		// The new HWC connects MetaMask directly via EIP-6963/EIP-1193 without
+		// creating a WalletConnect session. Detect this by checking whether the
+		// eip155 HederaAdapter recorded an active injected provider.
+		// eslint-disable-next-line @typescript-eslint/no-explicit-any
+		const injected = (this.eip155Adapter as any)?.activeInjectedProvider;
+		if (injected) {
+			this.injectedEip155Provider = injected;
+			await this.resolveAndCacheAccountFromInjected(currentNetwork);
+			this.subscribeInjected();
+			return currentNetwork;
+		}
 
-		return currentNetwork;
+		// ── Path C: Nothing connected (user cancelled) ─────────────────────────
+		await this.stop();
+		throw new Error(
+			'No wallet was connected. Please open the modal and select a wallet to continue.',
+		);
+	}
+
+	/** Subscribe to injected (EIP-1193) provider events */
+	public subscribeInjected(): void {
+		if (!this.injectedEip155Provider) return;
+
+		// eslint-disable-next-line @typescript-eslint/no-explicit-any
+		const provider = this.injectedEip155Provider as any;
+
+		const onAccountsChanged = async (accounts: string[]) => {
+			if (!accounts || accounts.length === 0) {
+				await this.stop();
+			}
+		};
+		const onChainChanged = async (chainIdHex: string) => {
+			const chainId = parseInt(chainIdHex, 16);
+			const hederaChainId = this.isTestnet() ? 296 : 295;
+			if (chainId !== hederaChainId) {
+				LogService.logInfo(
+					`[HWC Injected] Chain changed to ${chainId}, disconnecting`,
+				);
+				await this.stop();
+			}
+		};
+
+		provider.on?.('accountsChanged', onAccountsChanged);
+		provider.on?.('chainChanged', onChainChanged);
 	}
 
 	/** Subscribe to provider + appkit events */
@@ -209,8 +261,10 @@ export class HederaWalletConnectTransactionAdapter extends BaseHederaTransaction
 			await this.hederaProvider?.disconnect();
 			await this.appKit?.disconnect();
 			this.hederaAdapter = undefined;
+			this.eip155Adapter = undefined;
 			this.appKit = undefined;
 			this.hederaProvider = undefined;
+			this.injectedEip155Provider = undefined;
 
 			this.eventService.emit(WalletEvents.walletDisconnect, {
 				wallet: SupportedWallets.HWALLETCONNECT,
@@ -457,6 +511,53 @@ export class HederaWalletConnectTransactionAdapter extends BaseHederaTransaction
 				throw new Error('Account EVM address is not set');
 
 			const data = iface.encodeFunctionData(functionName, params);
+
+			// ── EIP-1193 injected provider path (MetaMask browser extension) ────
+			// Send eth_sendTransaction directly on the injected provider using
+			// the same request shape as the WalletConnect path below.
+			if (this.injectedEip155Provider) {
+				// eslint-disable-next-line @typescript-eslint/no-explicit-any
+				const ethers6 = ethers as any;
+				const txParams: Record<string, string> = {
+					from: this.account.evmAddress,
+					to: proxyAddress,
+					data,
+					gas: ethers6.toBeHex(gasLimit),
+				};
+
+				if (payableAmountHbar) {
+					txParams.value = ethers6.toBeHex(
+						ethers6.parseEther(payableAmountHbar),
+					);
+				}
+
+				// eslint-disable-next-line @typescript-eslint/no-explicit-any
+				const txHash = await (
+					this.injectedEip155Provider as any
+				).request({
+					method: 'eth_sendTransaction',
+					params: [txParams],
+				});
+				const provider = this.rpcProvider();
+				const receipt = await provider.waitForTransaction(
+					txHash as string,
+				);
+
+				/* eslint-disable @typescript-eslint/no-explicit-any */
+				const responsePayload = {
+					hash: txHash,
+					wait: () => Promise.resolve(receipt),
+				} as any;
+				/* eslint-enable @typescript-eslint/no-explicit-any */
+
+				return RPCTransactionResponseAdapter.manageResponse(
+					responsePayload,
+					this.networkService.environment,
+					responseOptions,
+				);
+			}
+
+			// ── WalletConnect EVM session path ───────────────────────────────────
 			const chainRef = this.currentEvmChainRef();
 
 			const txParams: Record<string, string> = {
@@ -634,6 +735,8 @@ export class HederaWalletConnectTransactionAdapter extends BaseHederaTransaction
 	}
 
 	private isEvmSession(): boolean {
+		// EIP-1193 injected path (MetaMask extension, no WC session) is also EVM
+		if (this.injectedEip155Provider) return true;
 		return !this.hederaProvider?.session?.namespaces?.hedera;
 	}
 
@@ -727,6 +830,8 @@ export class HederaWalletConnectTransactionAdapter extends BaseHederaTransaction
 			networks: evmNetworks,
 			namespace: 'eip155',
 		});
+		// Store so connectWalletConnect can detect EIP-1193 (MetaMask extension) connections
+		this.eip155Adapter = eip155HederaAdapter;
 
 		const eip155Chains = isTestnet
 			? ['eip155:296', 'eip155:295']
@@ -792,7 +897,8 @@ export class HederaWalletConnectTransactionAdapter extends BaseHederaTransaction
 
 		this.appKit = createAppKit({
 			adapters: [this.hederaAdapter, eip155HederaAdapter],
-			universalProvider: this.hederaProvider,
+			// eslint-disable-next-line @typescript-eslint/no-explicit-any
+			universalProvider: this.hederaProvider as any,
 			projectId: this.projectId,
 			metadata: this.dappMetadata,
 			networks: [
@@ -801,6 +907,12 @@ export class HederaWalletConnectTransactionAdapter extends BaseHederaTransaction
 				HederaChainDefinition.EVM.Testnet,
 				HederaChainDefinition.EVM.Mainnet,
 			],
+			// Disable auto-reconnect: prevents AppKit from calling eth_requestAccounts
+			// automatically when it detects a previously-connected MetaMask (io.metamask)
+			// in its localStorage state. Without this, MetaMask's popup fires as soon as
+			// the AppKit modal opens, before the user has clicked any wallet button.
+			// Users who click MetaMask explicitly still connect correctly via connectInjected().
+			enableReconnect: false,
 			features: {
 				analytics: true,
 				socials: false,
@@ -835,6 +947,69 @@ export class HederaWalletConnectTransactionAdapter extends BaseHederaTransaction
 		});
 
 		await new Promise((r) => setTimeout(r, 300)); // let provider settle
+	}
+
+	/**
+	 * Resolve and cache the Hedera account when MetaMask connected via EIP-1193
+	 * (browser extension, no WalletConnect session).
+	 * Reads the EVM address from the injected provider then looks it up in Mirror Node.
+	 */
+	private async resolveAndCacheAccountFromInjected(
+		currentNetwork: string,
+	): Promise<void> {
+		if (!this.injectedEip155Provider)
+			throw new Error('No injected EIP-1193 provider available');
+
+		// eslint-disable-next-line @typescript-eslint/no-explicit-any
+		const accounts = (await (this.injectedEip155Provider as any).request({
+			method: 'eth_accounts',
+		})) as string[];
+
+		if (!accounts || accounts.length === 0)
+			throw new Error('No accounts returned from MetaMask');
+
+		const evmAddress = accounts[0];
+		LogService.logInfo(
+			`[WalletConnect Injected] EVM address from MetaMask: ${evmAddress}`,
+		);
+
+		let accountMirror: AccountViewModel;
+		try {
+			accountMirror =
+				await this.mirrorNodeAdapter.getAccountInfo(evmAddress);
+		} catch (error) {
+			throw new Error(
+				`No Hedera account found for EVM address ${evmAddress} on ${currentNetwork}. ` +
+					`Make sure your MetaMask account has a linked Hedera account on this network.`,
+			);
+		}
+
+		if (!accountMirror?.id)
+			throw new Error(
+				`No valid Hedera account for EVM address ${evmAddress} on ${currentNetwork}`,
+			);
+
+		this.account = new Account({
+			id: accountMirror.id,
+			publicKey: accountMirror.publicKey,
+			evmAddress: accountMirror.accountEvmAddress || evmAddress,
+		});
+		this.network = currentNetwork;
+
+		const eventData: WalletPairedEvent = {
+			wallet: SupportedWallets.HWALLETCONNECT,
+			data: { account: this.account, pairing: '', topic: '' },
+			network: {
+				name: this.network,
+				recognized: true,
+				factoryId:
+					this.networkService.configuration?.factoryAddress || '',
+				resolverId:
+					this.networkService.configuration.resolverAddress || '',
+			},
+			isEvmWallet: true,
+		};
+		this.eventService.emit(WalletEvents.walletPaired, eventData);
 	}
 
 	private async resolveAndCacheAccount(

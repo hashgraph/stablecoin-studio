@@ -1489,8 +1489,13 @@ export default class RPCTransactionAdapter extends TransactionAdapter {
 						);
 
 					pair && (await this.pairWallet());
-					this.web3Provider = new ethers.BrowserProvider(ethereum);
-					this.signerOrProvider = await this.web3Provider.getSigner();
+					// Only create BrowserProvider and request a signer (which
+					// internally calls eth_requestAccounts) when actually pairing.
+					// Detection-only calls (pair=false) must not show any popup.
+					if (pair) {
+						this.web3Provider = new ethers.BrowserProvider(ethereum);
+						this.signerOrProvider = await this.web3Provider.getSigner();
+					}
 				} else {
 					throw new WalletConnectError('Metamask was not found!');
 				}
