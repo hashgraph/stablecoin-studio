@@ -19,6 +19,7 @@
  */
 
 import Injectable from '../../core/Injectable.js';
+import { EmptyResponse } from '../../app/service/error/EmptyResponse.js';
 import ContractId from '../../domain/context/contract/ContractId.js';
 import GetConfigInfoRequest from './request/GetConfigInfoRequest';
 import UpdateConfigRequest from './request/UpdateConfigRequest';
@@ -85,7 +86,7 @@ class ManagementInPort implements IManagementInPort {
 				configVersion,
 			),
 		);
-		if (!response.serializedTransactionData) throw new Error("Expected serialized transaction data but none was returned");
+		if (!response.serializedTransactionData) throw new EmptyResponse("buildTransaction");
 		return response.serializedTransactionData;
 	}
 
@@ -116,7 +117,7 @@ class ManagementInPort implements IManagementInPort {
 				configVersion,
 			),
 		);
-		if (!response.serializedTransactionData) throw new Error("Expected serialized transaction data but none was returned");
+		if (!response.serializedTransactionData) throw new EmptyResponse("buildTransaction");
 		return response.serializedTransactionData;
 	}
 
@@ -149,7 +150,7 @@ class ManagementInPort implements IManagementInPort {
 				new ContractId(resolver),
 			),
 		);
-		if (!response.serializedTransactionData) throw new Error("Expected serialized transaction data but none was returned");
+		if (!response.serializedTransactionData) throw new EmptyResponse("buildTransaction");
 		return response.serializedTransactionData;
 	}
 

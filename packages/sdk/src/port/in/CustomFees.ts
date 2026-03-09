@@ -20,6 +20,7 @@
 
 import { CommandBus } from '../../core/command/CommandBus.js';
 import Injectable from '../../core/Injectable.js';
+import { EmptyResponse } from '../../app/service/error/EmptyResponse.js';
 import {
 	AddFixedFeeRequest,
 	AddFractionalFeeRequest,
@@ -111,7 +112,7 @@ class CustomFeesInPort implements ICustomFees {
 				collectorsExempt,
 			),
 		);
-		if (!response.serializedTransactionData) throw new Error("Expected serialized transaction data but none was returned");
+		if (!response.serializedTransactionData) throw new EmptyResponse("buildTransaction");
 		return response.serializedTransactionData;
 	}
 
@@ -194,7 +195,7 @@ class CustomFeesInPort implements ICustomFees {
 				collectorsExempt,
 			),
 		);
-		if (!response.serializedTransactionData) throw new Error("Expected serialized transaction data but none was returned");
+		if (!response.serializedTransactionData) throw new EmptyResponse("buildTransaction");
 		return response.serializedTransactionData;
 	}
 
@@ -319,7 +320,7 @@ class CustomFeesInPort implements ICustomFees {
 				requestedCustomFee,
 			),
 		);
-		if (!response.serializedTransactionData) throw new Error("Expected serialized transaction data but none was returned");
+		if (!response.serializedTransactionData) throw new EmptyResponse("buildTransaction");
 		return response.serializedTransactionData;
 	}
 

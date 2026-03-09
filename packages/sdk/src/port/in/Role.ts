@@ -21,6 +21,7 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
 import Injectable from '../../core/Injectable.js';
+import { EmptyResponse } from '../../app/service/error/EmptyResponse.js';
 import { QueryBus } from '../../core/query/QueryBus.js';
 import { CommandBus } from '../../core/command/CommandBus.js';
 import {
@@ -175,7 +176,7 @@ class RoleInPort implements IRole {
 						amount!,
 					),
 				);
-				if (!response.serializedTransactionData) throw new Error("Expected serialized transaction data but none was returned");
+				if (!response.serializedTransactionData) throw new EmptyResponse("buildTransaction");
 				return response.serializedTransactionData;
 			} else {
 				const response = await this.commandBus.execute(
@@ -184,7 +185,7 @@ class RoleInPort implements IRole {
 						HederaId.from(tokenId),
 					),
 				);
-				if (!response.serializedTransactionData) throw new Error("Expected serialized transaction data but none was returned");
+				if (!response.serializedTransactionData) throw new EmptyResponse("buildTransaction");
 				return response.serializedTransactionData;
 			}
 		} else {
@@ -195,7 +196,7 @@ class RoleInPort implements IRole {
 					HederaId.from(tokenId),
 				),
 			);
-			if (!response.serializedTransactionData) throw new Error("Expected serialized transaction data but none was returned");
+			if (!response.serializedTransactionData) throw new EmptyResponse("buildTransaction");
 			return response.serializedTransactionData;
 		}
 	}
@@ -237,7 +238,7 @@ class RoleInPort implements IRole {
 					HederaId.from(tokenId),
 				),
 			);
-			if (!response.serializedTransactionData) throw new Error("Expected serialized transaction data but none was returned");
+			if (!response.serializedTransactionData) throw new EmptyResponse("buildTransaction");
 			return response.serializedTransactionData;
 		} else {
 			const response = await this.commandBus.execute(
@@ -247,7 +248,7 @@ class RoleInPort implements IRole {
 					HederaId.from(tokenId),
 				),
 			);
-			if (!response.serializedTransactionData) throw new Error("Expected serialized transaction data but none was returned");
+			if (!response.serializedTransactionData) throw new EmptyResponse("buildTransaction");
 			return response.serializedTransactionData;
 		}
 	}
@@ -293,7 +294,7 @@ class RoleInPort implements IRole {
 				startDate,
 			),
 		);
-		if (!response.serializedTransactionData) throw new Error("Expected serialized transaction data but none was returned");
+		if (!response.serializedTransactionData) throw new EmptyResponse("buildTransaction");
 		return response.serializedTransactionData;
 	}
 
@@ -336,7 +337,7 @@ class RoleInPort implements IRole {
 				startDate,
 			),
 		);
-		if (!response.serializedTransactionData) throw new Error("Expected serialized transaction data but none was returned");
+		if (!response.serializedTransactionData) throw new EmptyResponse("buildTransaction");
 		return response.serializedTransactionData;
 	}
 
@@ -414,7 +415,7 @@ class RoleInPort implements IRole {
 				startDate,
 			),
 		);
-		if (!response.serializedTransactionData) throw new Error("Expected serialized transaction data but none was returned");
+		if (!response.serializedTransactionData) throw new EmptyResponse("buildTransaction");
 		return response.serializedTransactionData;
 	}
 
@@ -451,7 +452,7 @@ class RoleInPort implements IRole {
 				startDate,
 			),
 		);
-		if (!response.serializedTransactionData) throw new Error("Expected serialized transaction data but none was returned");
+		if (!response.serializedTransactionData) throw new EmptyResponse("buildTransaction");
 		return response.serializedTransactionData;
 	}
 
@@ -488,7 +489,7 @@ class RoleInPort implements IRole {
 				startDate,
 			),
 		);
-		if (!response.serializedTransactionData) throw new Error("Expected serialized transaction data but none was returned");
+		if (!response.serializedTransactionData) throw new EmptyResponse("buildTransaction");
 		return response.serializedTransactionData;
 	}
 

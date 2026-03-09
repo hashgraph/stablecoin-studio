@@ -20,6 +20,7 @@
 
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import Injectable from '../../core/Injectable.js';
+import { EmptyResponse } from '../../app/service/error/EmptyResponse.js';
 import BigDecimal from '../../domain/context/shared/BigDecimal.js';
 import ContractId from '../../domain/context/contract/ContractId.js';
 import { CommandBus } from '../../core/command/CommandBus.js';
@@ -105,7 +106,7 @@ class ReserveDataFeedInPort implements IReserveDataFeedInPort {
 				),
 			),
 		);
-		if (!response.serializedTransactionData) throw new Error("Expected serialized transaction data but none was returned");
+		if (!response.serializedTransactionData) throw new EmptyResponse("buildTransaction");
 		return response.serializedTransactionData;
 	}
 }
