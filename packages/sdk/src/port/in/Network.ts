@@ -253,6 +253,7 @@ class NetworkInPort implements INetworkInPort {
 				account,
 				custodialSettings,
 				hwcSettings,
+				req.externalWalletSettings,
 			),
 		);
 		return res.payload;

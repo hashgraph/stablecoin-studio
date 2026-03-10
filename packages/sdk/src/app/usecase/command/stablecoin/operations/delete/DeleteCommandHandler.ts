@@ -47,7 +47,7 @@ export class DeleteCommandHandler implements ICommandHandler<DeleteCommand> {
 		);
 		const res = await handler.delete(capabilities, startDate);
 		return Promise.resolve(
-			new DeleteCommandResponse(res.error === undefined, res.id),
+			new DeleteCommandResponse(res.error === undefined, res.id, res.serializedTransactionData),
 		);
 	}
 }

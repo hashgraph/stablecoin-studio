@@ -50,3 +50,7 @@ export * from './Common.js';
 export * from './ReserveDataFeed.js';
 export * from './CustomFees.js';
 export * from './Management.js';
+export type {
+	SerializedTransactionData,
+	TransactionMetadata,
+} from '../../domain/context/transaction/TransactionResponse.js';

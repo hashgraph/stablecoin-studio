@@ -38,6 +38,9 @@ export class EvmAddressResolver {
 
 	async resolve(parameter: ContractId | HederaId | string): Promise<string> {
 		if (parameter instanceof ContractId) {
+			if (parameter.value == HederaId.NULL.value) {
+				return EVM_ZERO_ADDRESS;
+			}
 			return (
 				await this.getMirrorNode().getContractInfo(parameter.toString())
 			).evmAddress.toString();

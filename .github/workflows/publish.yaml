@@ -57,7 +57,7 @@ jobs:
 
       - name: Install Contracts
         run: npm ci
-        working-directory: contracts
+        working-directory: packages/contracts
 
       # * Build contracts
       - name: Build Contracts

@@ -13,6 +13,8 @@
 		"mint": "npm run build && node build/mint.js",
 		"wipe": "npm run build && node build/wipe.js",
 		"roles": "npm run build && node build/role.js",
+		"test-external-evm": "npm run build && node build/testExternalEVM.js",
+		"test-external-hedera": "npm run build && node build/testExternalHedera.js",
 		"test": "echo \"Error: no test specified\" && exit 1"
 	},
 	"keywords": [],

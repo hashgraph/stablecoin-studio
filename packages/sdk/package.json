@@ -67,7 +67,9 @@
 		"format:imports": "npx format-imports ./src",
 		"pre-commit": "npm run lint && npm run prettier",
 		"prettierCheck": "prettier --config .prettierrc --check",
-		"prepack": "npm run build"
+		"prepack": "npm run build",
+		"test-external-evm": "ts-node --project example/ts/tsconfig.json example/ts/testExternalEVM.ts",
+		"test-external-hedera": "ts-node --project example/ts/tsconfig.json example/ts/testExternalHedera.ts"
 	},
 	"license": "Apache-2.0",
 	"repository": "https://github.com/hashgraph/stablecoin-studio",

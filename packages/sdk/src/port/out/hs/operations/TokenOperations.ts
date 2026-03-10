@@ -28,7 +28,6 @@ import {
 } from '@hiero-ledger/sdk';
 import { UINT256_MAX } from '../../../../core/Constants';
 import { ethers } from 'ethers';
-import CheckEvmAddress from '../../../../core/checks/evmaddress/CheckEvmAddress';
 import TransactionResponse from '../../../../domain/context/transaction/TransactionResponse';
 import StableCoinCapabilities from '../../../../domain/context/stablecoin/StableCoinCapabilities';
 import { HederaId } from '../../../../domain/context/shared/HederaId';
@@ -239,13 +238,11 @@ export class TokenOperations {
 
 			// Check if EVM operations are supported and account has EVM address
 			if (this.executor.supportsEvmOperations() && account.evmAddress) {
-				// EVM path - use IHRC.associate on the token contract
-				const tokenEvm = CheckEvmAddress.toEvmAddress(
-					tokenId.toHederaAddress().toSolidityAddress(),
-				);
-
+				// EVM path - use IHRC.associate on the token contract.
+				// Pass the Hedera ID format so ContractId.fromString() succeeds.
+				// ExternalEVMTransactionAdapter resolves the EVM address via getContractInfo().
 				return await this.executor.executeContractCall(
-					tokenEvm,
+					tokenId.toString(),
 					new ethers.Interface(IHRC__factory.abi),
 					'associate',
 					[],

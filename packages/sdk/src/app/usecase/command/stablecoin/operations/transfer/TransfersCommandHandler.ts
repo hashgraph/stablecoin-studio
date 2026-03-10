@@ -156,7 +156,7 @@ export class TransfersCommandHandler
 			targetId,
 		);
 		return Promise.resolve(
-			new TransfersCommandResponse(res.error === undefined, res.id),
+			new TransfersCommandResponse(res.error === undefined, res.id, res.serializedTransactionData),
 		);
 	}
 }

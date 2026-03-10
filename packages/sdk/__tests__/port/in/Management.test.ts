@@ -46,6 +46,7 @@ import { JsonRpcRelay } from '../../../src/domain/context/network/JsonRpcRelay.j
 import { CommandBus } from '../../../src/core/command/CommandBus.js';
 import { ConnectCommand } from '../../../src/app/usecase/command/network/connect/ConnectCommand.js';
 import ConfigInfoViewModel from '../../../src/port/in/response/ConfigInfoViewModel.js';
+import { TransactionResult } from '../../../src/domain/context/transaction/TransactionResult.js';
 
 const mirrorNode: MirrorNode = {
 	name: MIRROR_NODE.name,
@@ -95,7 +96,7 @@ describe('🧪 Management test', () => {
 			tokenId,
 			resolver,
 		});
-		const res = await Management.updateResolver(request);
+		const res = await Management.updateResolver(request) as TransactionResult;
 		const configInfo = await Management.getConfigInfo(
 			new GetConfigInfoRequest({
 				tokenId,
@@ -113,7 +114,7 @@ describe('🧪 Management test', () => {
 			configVersion: newConfigVersion,
 			tokenId,
 		});
-		const res = await Management.updateConfigVersion(request);
+		const res = await Management.updateConfigVersion(request) as TransactionResult;
 		const configInfo = await Management.getConfigInfo(
 			new GetConfigInfoRequest({
 				tokenId,
@@ -134,7 +135,7 @@ describe('🧪 Management test', () => {
 			configVersion: configVersion,
 			tokenId,
 		});
-		const res = await Management.updateConfig(request);
+		const res = await Management.updateConfig(request) as TransactionResult;
 		const configInfo = await Management.getConfigInfo(
 			new GetConfigInfoRequest({
 				tokenId,

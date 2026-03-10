@@ -114,7 +114,7 @@ const main = async () => {
 	});
 
 	// Create the stablecoin and log the result
-	const stableCoin = await StableCoin.create(request);
+	const stableCoin = (await StableCoin.create(request)) as { coin: any; reserve: any };
 	console.log('StableCoin created:', stableCoin);
 
 	// Associate the stablecoin with the account

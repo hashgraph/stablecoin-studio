@@ -194,7 +194,7 @@ export class CashInCommandHandler implements ICommandHandler<CashInCommand> {
 			startDate,
 		);
 		return Promise.resolve(
-			new CashInCommandResponse(res.error === undefined, res.id),
+			new CashInCommandResponse(res.error === undefined, res.id, res.serializedTransactionData),
 		);
 	}
 }

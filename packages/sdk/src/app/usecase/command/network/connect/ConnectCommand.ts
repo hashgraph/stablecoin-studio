@@ -8,6 +8,7 @@ import DfnsSettings from 'domain/context/custodialwalletsettings/DfnsSettings.js
 import FireblocksSettings from 'domain/context/custodialwalletsettings/FireblocksSettings.js';
 import AWSKMSSettings from '../../../../../domain/context/custodialwalletsettings/AWSKMSSettings';
 import HWCSettings from '../../../../../domain/context/hwalletconnectsettings/HWCSettings.js';
+import { ExternalWalletSettings } from '../../../../../port/in/request/ConnectRequest.js';
 
 export class ConnectCommandResponse implements CommandResponse {
 	constructor(
@@ -26,6 +27,7 @@ export class ConnectCommand extends Command<ConnectCommandResponse> {
 			| FireblocksSettings
 			| AWSKMSSettings,
 		public readonly hWCSettings?: HWCSettings,
+		public readonly externalWalletSettings?: ExternalWalletSettings,
 	) {
 		super();
 	}

@@ -29,6 +29,8 @@ export enum SupportedWallets {
 	MULTISIG = 'MultiSig',
 	AWSKMS = 'AWSKMS',
 	HWALLETCONNECT = 'HederaWalletConnect',
+	EXTERNAL_HEDERA = 'ExternalHedera',
+	EXTERNAL_EVM = 'ExternalEVM',
 }
 
 export default interface Wallet {

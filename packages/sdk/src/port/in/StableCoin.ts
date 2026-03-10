@@ -20,6 +20,7 @@
 
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import Injectable from '../../core/Injectable.js';
+import { EmptyResponse } from '../../app/service/error/EmptyResponse.js';
 import CreateRequest from './request/CreateRequest.js';
 import CashInRequest from './request/CashInRequest.js';
 import GetStableCoinDetailsRequest from './request/GetStableCoinDetailsRequest.js';
@@ -117,32 +118,19 @@ import GetHoldForRequest from './request/GetHoldForRequest.js';
 import GetHeldAmountForRequest from './request/GetHeldAmountForRequest.js';
 import GetHoldCountForRequest from './request/GetHoldCountForRequest.js';
 import GetHoldsIdForRequest from './request/GetHoldsIdForRequest.js';
-import {
-	CreateHoldCommand,
-	CreateHoldCommandResponse,
-} from '../../app/usecase/command/stablecoin/operations/hold/createHold/CreateHoldCommand.js';
-import {
-	ExecuteHoldCommand,
-	ExecuteHoldCommandResponse,
-} from '../../app/usecase/command/stablecoin/operations/hold/executeHold/ExecuteHoldCommand.js';
-import {
-	ReleaseHoldCommand,
-	ReleaseHoldCommandResponse,
-} from '../../app/usecase/command/stablecoin/operations/hold/releaseHold/ReleaseHoldCommand.js';
-import {
-	ReclaimHoldCommand,
-	ReclaimHoldCommandResponse,
-} from '../../app/usecase/command/stablecoin/operations/hold/reclaimHold/ReclaimHoldCommand.js';
+import { CreateHoldCommand, CreateHoldCommandResponse } from '../../app/usecase/command/stablecoin/operations/hold/createHold/CreateHoldCommand.js';
+import { ExecuteHoldCommand, ExecuteHoldCommandResponse } from '../../app/usecase/command/stablecoin/operations/hold/executeHold/ExecuteHoldCommand.js';
+import { ReleaseHoldCommand, ReleaseHoldCommandResponse } from '../../app/usecase/command/stablecoin/operations/hold/releaseHold/ReleaseHoldCommand.js';
+import { ReclaimHoldCommand, ReclaimHoldCommandResponse } from '../../app/usecase/command/stablecoin/operations/hold/reclaimHold/ReclaimHoldCommand.js';
 import { GetHoldForQuery } from '../../app/usecase/query/stablecoin/hold/getHoldFor/GetHoldForQuery.js';
 import HoldViewModel from '../../port/in/response/HoldViewModel.js';
 import { ONE_THOUSAND } from '../../core/Constants.js';
 import { GetHoldCountForQuery } from '../../app/usecase/query/stablecoin/hold/getHoldCountFor/GetHoldCountForQuery.js';
 import { GetHoldsIdForQuery } from '../../app/usecase/query/stablecoin/hold/getHoldsIdFor/GetHoldsIdForQuery.js';
 import { GetHeldAmountForQuery } from '../../app/usecase/query/stablecoin/hold/getHeldAmountFor/GetHeldAmountForQuery.js';
-import {
-	CreateHoldByControllerCommand,
-	CreateHoldByControllerCommandResponse,
-} from '../../app/usecase/command/stablecoin/operations/hold/createHoldByController/CreateHoldByControllerCommand.js';
+import { CreateHoldByControllerCommand, CreateHoldByControllerCommandResponse } from '../../app/usecase/command/stablecoin/operations/hold/createHoldByController/CreateHoldByControllerCommand.js';
+import { SerializedTransactionData } from '../../domain/context/transaction/TransactionResponse.js';
+
 
 export {
 	StableCoinViewModel,
@@ -157,30 +145,40 @@ export { StableCoinCapabilities, Capability, Access, Operation, Balance };
 export { TokenSupplyType };
 export { BigDecimal, HederaId, ContractId, EvmAddress, PublicKey };
 
-export type CreateHoldTransactionResult = {
-	holdId: number;
-} & TransactionResult;
+export type CreateHoldTransactionResult = { holdId: number } & TransactionResult;
 
 interface IStableCoinInPort {
 	create(request: CreateRequest): Promise<{
 		coin: StableCoinViewModel;
 		reserve: ReserveViewModel;
 	}>;
+	buildCreate(request: CreateRequest): Promise<SerializedTransactionData>;
 	getInfo(request: GetStableCoinDetailsRequest): Promise<StableCoinViewModel>;
 	cashIn(request: CashInRequest): Promise<TransactionResult>;
+	buildCashIn(request: CashInRequest): Promise<SerializedTransactionData>;
 	burn(request: BurnRequest): Promise<TransactionResult>;
+	buildBurn(request: BurnRequest): Promise<SerializedTransactionData>;
 	rescue(request: RescueRequest): Promise<TransactionResult>;
+	buildRescue(request: RescueRequest): Promise<SerializedTransactionData>;
 	rescueHBAR(request: RescueHBARRequest): Promise<TransactionResult>;
+	buildRescueHBAR(request: RescueHBARRequest): Promise<SerializedTransactionData>;
 	wipe(request: WipeRequest): Promise<TransactionResult>;
+	buildWipe(request: WipeRequest): Promise<SerializedTransactionData>;
 	associate(request: AssociateTokenRequest): Promise<TransactionResult>;
+	buildAssociate(request: AssociateTokenRequest): Promise<SerializedTransactionData>;
 	getBalanceOf(request: GetAccountBalanceRequest): Promise<Balance>;
 	getBalanceOfHBAR(request: GetAccountBalanceHBARRequest): Promise<Balance>;
 	capabilities(request: CapabilitiesRequest): Promise<StableCoinCapabilities>;
 	pause(request: PauseRequest): Promise<TransactionResult>;
+	buildPause(request: PauseRequest): Promise<SerializedTransactionData>;
 	unPause(request: PauseRequest): Promise<TransactionResult>;
+	buildUnPause(request: PauseRequest): Promise<SerializedTransactionData>;
 	delete(request: DeleteRequest): Promise<TransactionResult>;
+	buildDelete(request: DeleteRequest): Promise<SerializedTransactionData>;
 	freeze(request: FreezeAccountRequest): Promise<TransactionResult>;
+	buildFreeze(request: FreezeAccountRequest): Promise<SerializedTransactionData>;
 	unFreeze(request: FreezeAccountRequest): Promise<TransactionResult>;
+	buildUnFreeze(request: FreezeAccountRequest): Promise<SerializedTransactionData>;
 	isAccountFrozen(request: FreezeAccountRequest): Promise<boolean>;
 	isAccountAssociated(
 		request: IsAccountAssociatedTokenRequest,
@@ -189,33 +187,35 @@ interface IStableCoinInPort {
 	updateReserveAddress(
 		request: UpdateReserveAddressRequest,
 	): Promise<TransactionResult>;
+	buildUpdateReserveAddress(
+		request: UpdateReserveAddressRequest,
+	): Promise<SerializedTransactionData>;
 	grantKyc(request: KYCRequest): Promise<TransactionResult>;
+	buildGrantKyc(request: KYCRequest): Promise<SerializedTransactionData>;
 	revokeKyc(request: KYCRequest): Promise<TransactionResult>;
+	buildRevokeKyc(request: KYCRequest): Promise<SerializedTransactionData>;
 	isAccountKYCGranted(request: KYCRequest): Promise<boolean>;
-	createHold(
-		request: CreateHoldRequest,
-	): Promise<CreateHoldTransactionResult>;
-	createHoldByController(
-		request: CreateHoldByControllerRequest,
-	): Promise<CreateHoldTransactionResult>;
+	createHold(request: CreateHoldRequest): Promise<CreateHoldTransactionResult>;
+	buildCreateHold(request: CreateHoldRequest): Promise<SerializedTransactionData>;
+	createHoldByController(request: CreateHoldByControllerRequest): Promise<CreateHoldTransactionResult>;
+	buildCreateHoldByController(request: CreateHoldByControllerRequest): Promise<SerializedTransactionData>;
 	executeHold(request: ExecuteHoldRequest): Promise<TransactionResult>;
+	buildExecuteHold(request: ExecuteHoldRequest): Promise<SerializedTransactionData>;
 	releaseHold(request: ReleaseHoldRequest): Promise<TransactionResult>;
+	buildReleaseHold(request: ReleaseHoldRequest): Promise<SerializedTransactionData>;
 	reclaimHold(request: ReclaimHoldRequest): Promise<TransactionResult>;
+	buildReclaimHold(request: ReclaimHoldRequest): Promise<SerializedTransactionData>;
 	getHoldFor(request: GetHoldForRequest): Promise<HoldViewModel>;
 	getHeldAmountFor(request: GetHeldAmountForRequest): Promise<BigDecimal>;
 	getHoldCountFor(request: GetHoldCountForRequest): Promise<number>;
 	getHoldsIdFor(request: GetHoldsIdForRequest): Promise<number[]>;
 	transfers(request: TransfersRequest): Promise<TransactionResult>;
+	buildTransfers(request: TransfersRequest): Promise<SerializedTransactionData>;
 	update(request: UpdateRequest): Promise<TransactionResult>;
-	signTransaction(
-		request: SignTransactionRequest,
-	): Promise<TransactionResult>;
-	submitTransaction(
-		request: SubmitTransactionRequest,
-	): Promise<TransactionResult>;
-	removeTransaction(
-		request: RemoveTransactionRequest,
-	): Promise<TransactionResult>;
+	buildUpdate(request: UpdateRequest): Promise<SerializedTransactionData>;
+	signTransaction(request: SignTransactionRequest): Promise<TransactionResult>;
+	submitTransaction(request: SubmitTransactionRequest): Promise<TransactionResult>;
+	removeTransaction(request: RemoveTransactionRequest): Promise<TransactionResult>;
 	getTransactions(
 		request: GetTransactionsRequest,
 	): Promise<MultiSigTransactionsViewModel>;
@@ -237,12 +237,8 @@ class StableCoinInPort implements IStableCoinInPort {
 			MirrorNodeAdapter,
 		),
 	) {}
-	@LogError
-	async create(req: CreateRequest): Promise<{
-		coin: StableCoinViewModel;
-		reserve: ReserveViewModel;
-	}> {
-		handleValidation('CreateRequest', req);
+
+	private async _executeCreateCommand(req: CreateRequest) {
 		const {
 			reserveAddress,
 			updatedAtThreshold,
@@ -333,7 +329,7 @@ class StableCoinInPort implements IStableCoinInPort {
 			? (await this.mirrorNode.getContractInfo(reserveAddress)).id
 			: undefined;
 
-		const createResponse = await this.commandBus.execute(
+		return await this.commandBus.execute(
 			new CreateCommand(
 				coin,
 				createReserve,
@@ -356,7 +352,15 @@ class StableCoinInPort implements IStableCoinInPort {
 				reserveConfigId,
 			),
 		);
+	}
 
+	@LogError
+	async create(req: CreateRequest): Promise<{
+		coin: StableCoinViewModel;
+		reserve: ReserveViewModel;
+	}> {
+		handleValidation('CreateRequest', req);
+		const createResponse = await this._executeCreateCommand(req);
 		return {
 			coin:
 				createResponse.tokenId.toString() !== ContractId.NULL.toString()
@@ -370,6 +374,14 @@ class StableCoinInPort implements IStableCoinInPort {
 				proxyAddress: createResponse.reserveProxy,
 			},
 		};
+	}
+
+	@LogError
+	async buildCreate(req: CreateRequest): Promise<SerializedTransactionData> {
+		handleValidation('CreateRequest', req);
+		const res = await this._executeCreateCommand(req);
+		if (!res.serializedTransactionData) throw new EmptyResponse('buildCreate');
+		return res.serializedTransactionData;
 	}
 
 	@LogError
@@ -403,6 +415,23 @@ class StableCoinInPort implements IStableCoinInPort {
 	}
 
 	@LogError
+	async buildCashIn(request: CashInRequest): Promise<SerializedTransactionData> {
+		const { tokenId, amount, targetId, startDate } = request;
+		handleValidation('CashInRequest', request);
+
+		const response = await this.commandBus.execute(
+			new CashInCommand(
+				amount,
+				HederaId.from(targetId),
+				HederaId.from(tokenId),
+				startDate,
+			),
+		);
+		if (!response.serializedTransactionData) throw new EmptyResponse("buildTransaction");
+		return response.serializedTransactionData;
+	}
+
+	@LogError
 	async burn(request: BurnRequest): Promise<TransactionResult> {
 		const { tokenId, amount, startDate } = request;
 		handleValidation('BurnRequest', request);
@@ -411,6 +440,18 @@ class StableCoinInPort implements IStableCoinInPort {
 			new BurnCommand(amount, HederaId.from(tokenId), startDate),
 		);
 		return new TransactionResult(response.payload, response.transactionId);
+	}
+
+	@LogError
+	async buildBurn(request: BurnRequest): Promise<SerializedTransactionData> {
+		const { tokenId, amount, startDate } = request;
+		handleValidation('BurnRequest', request);
+
+		const response = await this.commandBus.execute(
+			new BurnCommand(amount, HederaId.from(tokenId), startDate),
+		);
+		if (!response.serializedTransactionData) throw new EmptyResponse("buildTransaction");
+		return response.serializedTransactionData;
 	}
 
 	@LogError
@@ -425,14 +466,46 @@ class StableCoinInPort implements IStableCoinInPort {
 	}
 
 	@LogError
+	async buildRescue(request: RescueRequest): Promise<SerializedTransactionData> {
+		const { tokenId, amount, startDate } = request;
+		handleValidation('RescueRequest', request);
+
+		const response = await this.commandBus.execute(
+			new RescueCommand(amount, HederaId.from(tokenId), startDate),
+		);
+		if (!response.serializedTransactionData) throw new EmptyResponse("buildTransaction");
+		return response.serializedTransactionData;
+	}
+
+	@LogError
 	async rescueHBAR(request: RescueHBARRequest): Promise<TransactionResult> {
 		const { tokenId, amount, startDate } = request;
 		handleValidation('RescueHBARRequest', request);
 
 		const response = await this.commandBus.execute(
-			new RescueHBARCommand(amount, HederaId.from(tokenId), startDate),
+			new RescueHBARCommand(
+				amount,
+				HederaId.from(tokenId),
+				startDate,
+			),
 		);
 		return new TransactionResult(response.payload, response.transactionId);
+	}
+
+	@LogError
+	async buildRescueHBAR(request: RescueHBARRequest): Promise<SerializedTransactionData> {
+		const { tokenId, amount, startDate } = request;
+		handleValidation('RescueHBARRequest', request);
+
+		const response = await this.commandBus.execute(
+			new RescueHBARCommand(
+				amount,
+				HederaId.from(tokenId),
+				startDate,
+			),
+		);
+		if (!response.serializedTransactionData) throw new EmptyResponse("buildTransaction");
+		return response.serializedTransactionData;
 	}
 
 	@LogError
@@ -452,9 +525,24 @@ class StableCoinInPort implements IStableCoinInPort {
 	}
 
 	@LogError
-	async associate(
-		request: AssociateTokenRequest,
-	): Promise<TransactionResult> {
+	async buildWipe(request: WipeRequest): Promise<SerializedTransactionData> {
+		const { tokenId, amount, targetId, startDate } = request;
+		handleValidation('WipeRequest', request);
+
+		const response = await this.commandBus.execute(
+			new WipeCommand(
+				amount,
+				HederaId.from(targetId),
+				HederaId.from(tokenId),
+				startDate,
+			),
+		);
+		if (!response.serializedTransactionData) throw new EmptyResponse("buildTransaction");
+		return response.serializedTransactionData;
+	}
+
+	@LogError
+	async associate(request: AssociateTokenRequest): Promise<TransactionResult> {
 		const { tokenId, targetId } = request;
 		handleValidation('AssociateTokenRequest', request);
 
@@ -465,6 +553,21 @@ class StableCoinInPort implements IStableCoinInPort {
 			),
 		);
 		return new TransactionResult(response.payload, response.transactionId);
+	}
+
+	@LogError
+	async buildAssociate(request: AssociateTokenRequest): Promise<SerializedTransactionData> {
+		const { tokenId, targetId } = request;
+		handleValidation('AssociateTokenRequest', request);
+
+		const response = await this.commandBus.execute(
+			new AssociateCommand(
+				HederaId.from(targetId),
+				HederaId.from(tokenId),
+			),
+		);
+		if (!response.serializedTransactionData) throw new EmptyResponse("buildTransaction");
+		return response.serializedTransactionData;
 	}
 
 	@LogError
@@ -526,6 +629,18 @@ class StableCoinInPort implements IStableCoinInPort {
 	}
 
 	@LogError
+	async buildPause(request: PauseRequest): Promise<SerializedTransactionData> {
+		const { tokenId, startDate } = request;
+		handleValidation('PauseRequest', request);
+
+		const response = await this.commandBus.execute(
+			new PauseCommand(HederaId.from(tokenId), startDate),
+		);
+		if (!response.serializedTransactionData) throw new EmptyResponse("buildTransaction");
+		return response.serializedTransactionData;
+	}
+
+	@LogError
 	async unPause(request: PauseRequest): Promise<TransactionResult> {
 		const { tokenId, startDate } = request;
 		handleValidation('PauseRequest', request);
@@ -537,6 +652,18 @@ class StableCoinInPort implements IStableCoinInPort {
 	}
 
 	@LogError
+	async buildUnPause(request: PauseRequest): Promise<SerializedTransactionData> {
+		const { tokenId, startDate } = request;
+		handleValidation('PauseRequest', request);
+
+		const response = await this.commandBus.execute(
+			new UnPauseCommand(HederaId.from(tokenId), startDate),
+		);
+		if (!response.serializedTransactionData) throw new EmptyResponse("buildTransaction");
+		return response.serializedTransactionData;
+	}
+
+	@LogError
 	async delete(request: DeleteRequest): Promise<TransactionResult> {
 		const { tokenId, startDate } = request;
 		handleValidation('DeleteRequest', request);
@@ -545,6 +672,18 @@ class StableCoinInPort implements IStableCoinInPort {
 			new DeleteCommand(HederaId.from(tokenId), startDate),
 		);
 		return new TransactionResult(response.payload, response.transactionId);
+	}
+
+	@LogError
+	async buildDelete(request: DeleteRequest): Promise<SerializedTransactionData> {
+		const { tokenId, startDate } = request;
+		handleValidation('DeleteRequest', request);
+
+		const response = await this.commandBus.execute(
+			new DeleteCommand(HederaId.from(tokenId), startDate),
+		);
+		if (!response.serializedTransactionData) throw new EmptyResponse("buildTransaction");
+		return response.serializedTransactionData;
 	}
 
 	@LogError
@@ -563,6 +702,22 @@ class StableCoinInPort implements IStableCoinInPort {
 	}
 
 	@LogError
+	async buildFreeze(request: FreezeAccountRequest): Promise<SerializedTransactionData> {
+		const { tokenId, targetId, startDate } = request;
+		handleValidation('FreezeAccountRequest', request);
+
+		const response = await this.commandBus.execute(
+			new FreezeCommand(
+				HederaId.from(targetId),
+				HederaId.from(tokenId),
+				startDate,
+			),
+		);
+		if (!response.serializedTransactionData) throw new EmptyResponse("buildTransaction");
+		return response.serializedTransactionData;
+	}
+
+	@LogError
 	async unFreeze(request: FreezeAccountRequest): Promise<TransactionResult> {
 		const { tokenId, targetId, startDate } = request;
 		handleValidation('FreezeAccountRequest', request);
@@ -575,6 +730,22 @@ class StableCoinInPort implements IStableCoinInPort {
 			),
 		);
 		return new TransactionResult(response.payload, response.transactionId);
+	}
+
+	@LogError
+	async buildUnFreeze(request: FreezeAccountRequest): Promise<SerializedTransactionData> {
+		const { tokenId, targetId, startDate } = request;
+		handleValidation('FreezeAccountRequest', request);
+
+		const response = await this.commandBus.execute(
+			new UnFreezeCommand(
+				HederaId.from(targetId),
+				HederaId.from(tokenId),
+				startDate,
+			),
+		);
+		if (!response.serializedTransactionData) throw new EmptyResponse("buildTransaction");
+		return response.serializedTransactionData;
 	}
 
 	@LogError
@@ -609,6 +780,21 @@ class StableCoinInPort implements IStableCoinInPort {
 	}
 
 	@LogError
+	async buildGrantKyc(request: KYCRequest): Promise<SerializedTransactionData> {
+		const { tokenId, targetId } = request;
+		handleValidation('KYCRequest', request);
+
+		const response = await this.commandBus.execute(
+			new GrantKycCommand(
+				HederaId.from(targetId),
+				HederaId.from(tokenId),
+			),
+		);
+		if (!response.serializedTransactionData) throw new EmptyResponse("buildTransaction");
+		return response.serializedTransactionData;
+	}
+
+	@LogError
 	async revokeKyc(request: KYCRequest): Promise<TransactionResult> {
 		const { tokenId, targetId } = request;
 		handleValidation('KYCRequest', request);
@@ -620,6 +806,21 @@ class StableCoinInPort implements IStableCoinInPort {
 			),
 		);
 		return new TransactionResult(response.payload, response.transactionId);
+	}
+
+	@LogError
+	async buildRevokeKyc(request: KYCRequest): Promise<SerializedTransactionData> {
+		const { tokenId, targetId } = request;
+		handleValidation('KYCRequest', request);
+
+		const response = await this.commandBus.execute(
+			new RevokeKycCommand(
+				HederaId.from(targetId),
+				HederaId.from(tokenId),
+			),
+		);
+		if (!response.serializedTransactionData) throw new EmptyResponse("buildTransaction");
+		return response.serializedTransactionData;
 	}
 
 	@LogError
@@ -676,9 +877,15 @@ class StableCoinInPort implements IStableCoinInPort {
 	): Promise<TransactionResult> {
 		handleValidation('UpdateReserveAddressRequest', request);
 
-		const reserveAddressId: string = (
-			await this.mirrorNode.getContractInfo(request.reserveAddress)
-		).id;
+		// Handle special case: '0.0.0' (zero address) - don't query mirror node
+		let reserveAddressId: string;
+		if (request.reserveAddress === '0.0.0') {
+			reserveAddressId = '0.0.0';
+		} else {
+			reserveAddressId = (
+				await this.mirrorNode.getContractInfo(request.reserveAddress)
+			).id;
+		}
 
 		const response = await this.commandBus.execute(
 			new UpdateReserveAddressCommand(
@@ -687,6 +894,31 @@ class StableCoinInPort implements IStableCoinInPort {
 			),
 		);
 		return new TransactionResult(response.payload, response.transactionId);
+	}
+
+	@LogError
+	async buildUpdateReserveAddress(
+		request: UpdateReserveAddressRequest,
+	): Promise<SerializedTransactionData> {
+		handleValidation('UpdateReserveAddressRequest', request);
+
+		let reserveAddressId: string;
+		if (request.reserveAddress === '0.0.0') {
+			reserveAddressId = '0.0.0';
+		} else {
+			reserveAddressId = (
+				await this.mirrorNode.getContractInfo(request.reserveAddress)
+			).id;
+		}
+
+		const response = await this.commandBus.execute(
+			new UpdateReserveAddressCommand(
+				HederaId.from(request.tokenId),
+				new ContractId(reserveAddressId),
+			),
+		);
+		if (!response.serializedTransactionData) throw new EmptyResponse("buildTransaction");
+		return response.serializedTransactionData;
 	}
 
 	@LogError
@@ -709,6 +941,25 @@ class StableCoinInPort implements IStableCoinInPort {
 			success: response.payload,
 			transactionId: response.transactionId,
 		} as CreateHoldTransactionResult;
+	}
+
+	@LogError
+	async buildCreateHold(
+		request: CreateHoldRequest,
+	): Promise<SerializedTransactionData> {
+		handleValidation(CreateHoldRequest.name, request);
+		const { tokenId, targetId, amount, expirationDate, escrow } = request;
+		const response = await this.commandBus.execute(
+			new CreateHoldCommand(
+				HederaId.from(tokenId),
+				amount,
+				HederaId.from(escrow),
+				expirationDate,
+				targetId ? HederaId.from(targetId) : undefined,
+			),
+		);
+		if (!response.serializedTransactionData) throw new EmptyResponse("buildTransaction");
+		return response.serializedTransactionData;
 	}
 
 	@LogError
@@ -736,6 +987,27 @@ class StableCoinInPort implements IStableCoinInPort {
 	}
 
 	@LogError
+	async buildCreateHoldByController(
+		request: CreateHoldByControllerRequest,
+	): Promise<SerializedTransactionData> {
+		handleValidation(CreateHoldByControllerRequest.name, request);
+		const { tokenId, targetId, sourceId, amount, expirationDate, escrow } =
+			request;
+		const response = await this.commandBus.execute(
+			new CreateHoldByControllerCommand(
+				HederaId.from(tokenId),
+				HederaId.from(sourceId),
+				amount,
+				HederaId.from(escrow),
+				expirationDate,
+				targetId ? HederaId.from(targetId) : undefined,
+			),
+		);
+		if (!response.serializedTransactionData) throw new EmptyResponse("buildTransaction");
+		return response.serializedTransactionData;
+	}
+
+	@LogError
 	async executeHold(request: ExecuteHoldRequest): Promise<TransactionResult> {
 		handleValidation(ExecuteHoldRequest.name, request);
 		const { tokenId, targetId, amount, sourceId, holdId } = request;
@@ -749,6 +1021,23 @@ class StableCoinInPort implements IStableCoinInPort {
 			),
 		);
 		return new TransactionResult(response.payload, response.transactionId);
+	}
+
+	@LogError
+	async buildExecuteHold(request: ExecuteHoldRequest): Promise<SerializedTransactionData> {
+		handleValidation(ExecuteHoldRequest.name, request);
+		const { tokenId, targetId, amount, sourceId, holdId } = request;
+		const response = await this.commandBus.execute(
+			new ExecuteHoldCommand(
+				HederaId.from(tokenId),
+				holdId,
+				HederaId.from(sourceId),
+				amount,
+				targetId ? HederaId.from(targetId) : undefined,
+			),
+		);
+		if (!response.serializedTransactionData) throw new EmptyResponse("buildTransaction");
+		return response.serializedTransactionData;
 	}
 
 	@LogError
@@ -767,6 +1056,22 @@ class StableCoinInPort implements IStableCoinInPort {
 	}
 
 	@LogError
+	async buildReleaseHold(request: ReleaseHoldRequest): Promise<SerializedTransactionData> {
+		handleValidation(ReleaseHoldRequest.name, request);
+		const { tokenId, amount, sourceId, holdId } = request;
+		const response = await this.commandBus.execute(
+			new ReleaseHoldCommand(
+				HederaId.from(tokenId),
+				holdId,
+				HederaId.from(sourceId),
+				amount,
+			),
+		);
+		if (!response.serializedTransactionData) throw new EmptyResponse("buildTransaction");
+		return response.serializedTransactionData;
+	}
+
+	@LogError
 	async reclaimHold(request: ReclaimHoldRequest): Promise<TransactionResult> {
 		handleValidation(ReclaimHoldRequest.name, request);
 		const { tokenId, sourceId, holdId } = request;
@@ -778,6 +1083,21 @@ class StableCoinInPort implements IStableCoinInPort {
 			),
 		);
 		return new TransactionResult(response.payload, response.transactionId);
+	}
+
+	@LogError
+	async buildReclaimHold(request: ReclaimHoldRequest): Promise<SerializedTransactionData> {
+		handleValidation(ReclaimHoldRequest.name, request);
+		const { tokenId, sourceId, holdId } = request;
+		const response = await this.commandBus.execute(
+			new ReclaimHoldCommand(
+				HederaId.from(tokenId),
+				holdId,
+				HederaId.from(sourceId),
+			),
+		);
+		if (!response.serializedTransactionData) throw new EmptyResponse("buildTransaction");
+		return response.serializedTransactionData;
 	}
 
 	@LogError
@@ -884,6 +1204,29 @@ class StableCoinInPort implements IStableCoinInPort {
 	}
 
 	@LogError
+	async buildTransfers(request: TransfersRequest): Promise<SerializedTransactionData> {
+		const { tokenId, targetsId, amounts, targetId } = request;
+
+		handleValidation('TransfersRequest', request);
+
+		const targetsIdHederaIds: HederaId[] = [];
+		targetsId.forEach((targetId) => {
+			targetsIdHederaIds.push(HederaId.from(targetId));
+		});
+
+		const response = await this.commandBus.execute(
+			new TransfersCommand(
+				amounts,
+				targetsIdHederaIds,
+				HederaId.from(tokenId),
+				HederaId.from(targetId),
+			),
+		);
+		if (!response.serializedTransactionData) throw new EmptyResponse("buildTransaction");
+		return response.serializedTransactionData;
+	}
+
+	@LogError
 	async update(request: UpdateRequest): Promise<TransactionResult> {
 		const {
 			tokenId,
@@ -905,7 +1248,9 @@ class StableCoinInPort implements IStableCoinInPort {
 				name,
 				symbol,
 				autoRenewPeriod ? Number(autoRenewPeriod) : undefined,
-				expirationTimestamp ? Number(expirationTimestamp) : undefined,
+				expirationTimestamp
+					? Number(expirationTimestamp)
+					: undefined,
 				kycKey
 					? new PublicKey({
 							key: kycKey.key,
@@ -943,30 +1288,84 @@ class StableCoinInPort implements IStableCoinInPort {
 	}
 
 	@LogError
-	async signTransaction(
-		request: SignTransactionRequest,
-	): Promise<TransactionResult> {
+	async buildUpdate(request: UpdateRequest): Promise<SerializedTransactionData> {
+		const {
+			tokenId,
+			name,
+			symbol,
+			autoRenewPeriod,
+			expirationTimestamp,
+			kycKey,
+			freezeKey,
+			feeScheduleKey,
+			pauseKey,
+			wipeKey,
+			metadata,
+		} = request;
+		handleValidation('UpdateRequest', request);
+		const response = await this.commandBus.execute(
+			new UpdateCommand(
+				HederaId.from(tokenId),
+				name,
+				symbol,
+				autoRenewPeriod ? Number(autoRenewPeriod) : undefined,
+				expirationTimestamp
+					? Number(expirationTimestamp)
+					: undefined,
+				kycKey
+					? new PublicKey({
+							key: kycKey.key,
+							type: kycKey.type,
+					  })
+					: undefined,
+				freezeKey
+					? new PublicKey({
+							key: freezeKey.key,
+							type: freezeKey.type,
+					  })
+					: undefined,
+				feeScheduleKey
+					? new PublicKey({
+							key: feeScheduleKey.key,
+							type: feeScheduleKey.type,
+					  })
+					: undefined,
+				pauseKey
+					? new PublicKey({
+							key: pauseKey.key,
+							type: pauseKey.type,
+					  })
+					: undefined,
+				wipeKey
+					? new PublicKey({
+							key: wipeKey.key,
+							type: wipeKey.type,
+					  })
+					: undefined,
+				metadata,
+			),
+		);
+		if (!response.serializedTransactionData) throw new EmptyResponse("buildTransaction");
+		return response.serializedTransactionData;
+	}
+
+	@LogError
+	async signTransaction(request: SignTransactionRequest): Promise<TransactionResult> {
 		const { transactionId } = request;
 
 		handleValidation('SignTransactionRequest', request);
 
-		const response = await this.commandBus.execute(
-			new SignCommand(transactionId),
-		);
+		const response = await this.commandBus.execute(new SignCommand(transactionId));
 		return new TransactionResult(response.payload, response.transactionId);
 	}
 
 	@LogError
-	async submitTransaction(
-		request: SubmitTransactionRequest,
-	): Promise<TransactionResult> {
+	async submitTransaction(request: SubmitTransactionRequest): Promise<TransactionResult> {
 		const { transactionId } = request;
 
 		handleValidation('SubmitTransactionRequest', request);
 
-		const response = await this.commandBus.execute(
-			new SubmitCommand(transactionId),
-		);
+		const response = await this.commandBus.execute(new SubmitCommand(transactionId));
 		return new TransactionResult(response.payload, response.transactionId);
 	}
 
@@ -978,9 +1377,7 @@ class StableCoinInPort implements IStableCoinInPort {
 
 		handleValidation('RemoveTransactionRequest', request);
 
-		const response = await this.commandBus.execute(
-			new RemoveCommand(transactionId),
-		);
+		const response = await this.commandBus.execute(new RemoveCommand(transactionId));
 		return new TransactionResult(response.payload, response.transactionId);
 	}
 

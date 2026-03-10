@@ -47,7 +47,9 @@ export default class HoldStableCoinService extends Service {
   public async createHold(req: CreateHoldRequest): Promise<void> {
     let holdId: number;
     await utilsService.showSpinner(
-      StableCoin.createHold(req).then((response) => (holdId = response.holdId)),
+      StableCoin.createHold(req).then(
+        (response) => (holdId = 'holdId' in response ? response.holdId : 0),
+      ),
       {
         text: language.getText('state.loading'),
         successText: language.getText('state.loadCompleted') + '\n',
@@ -68,7 +70,7 @@ export default class HoldStableCoinService extends Service {
     let holdId: number;
     await utilsService.showSpinner(
       StableCoin.createHoldByController(req).then(
-        (response) => (holdId = response.holdId),
+        (response) => (holdId = 'holdId' in response ? response.holdId : 0),
       ),
       {
         text: language.getText('state.loading'),

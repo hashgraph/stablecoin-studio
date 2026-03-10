@@ -40,6 +40,7 @@ import {
 	RESOLVER_ADDRESS,
 } from '../../config.js';
 import Injectable from '../../../src/core/Injectable.js';
+import { TransactionResult } from '../../../src/domain/context/transaction/TransactionResult.js';
 
 describe('🧪 Reserve test', () => {
 	const stableCoinSC = {
@@ -95,7 +96,7 @@ describe('🧪 Reserve test', () => {
 				reserveAddress: reserveAddress,
 				reserveAmount: '0',
 			}),
-		);
+		) as TransactionResult;
 		expect(result).toBeTruthy();
 		expect(result.transactionId).toBeTruthy();
 

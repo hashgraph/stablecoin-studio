@@ -50,6 +50,7 @@ import {
 import Injectable from '../../../src/core/Injectable';
 import { Time } from '../../../src/core/Time';
 import { CONFIG_SC, DEFAULT_VERSION } from '../../../src/core/Constants';
+import { TransactionResult } from '../../../src/domain/context/transaction/TransactionResult.js';
 
 const initialSupply = 1000;
 const configId = CONFIG_SC;
@@ -131,7 +132,8 @@ describe('🧪 DFNSTransactionAdapter test', () => {
 			configVersion: configVersion,
 		});
 
-		stableCoinHTS = (await StableCoin.create(requestCreateStableCoin)).coin;
+		const createResult = await StableCoin.create(requestCreateStableCoin);
+		stableCoinHTS = (createResult as { coin: StableCoinViewModel }).coin;
 
 		await Time.delay(5, 'seconds');
 	}, 60_000);
@@ -146,7 +148,7 @@ describe('🧪 DFNSTransactionAdapter test', () => {
 				targetId: DFNS_SETTINGS.hederaAccountId,
 				tokenId: stableCoinHTS?.tokenId?.toString() ?? '0.0.0',
 			}),
-		);
+		) as TransactionResult;
 		expect(result).toBeTruthy();
 		expect(result.success).toBeTruthy();
 		expect(result.transactionId).toBeTruthy();

@@ -24,20 +24,24 @@ import ContractId from '../../../../../domain/context/contract/ContractId.js';
 import { StableCoinProps } from '../../../../../domain/context/stablecoin/StableCoin.js';
 import BigDecimal from '../../../../../domain/context/shared/BigDecimal.js';
 import { HederaId } from '../../../../../domain/context/shared/HederaId.js';
+import { SerializedTransactionData } from '../../../../../domain/context/transaction/TransactionResponse.js';
 
 export class CreateCommandResponse implements CommandResponse {
 	public readonly tokenId: ContractId;
 	public readonly stableCoinProxy: ContractId;
 	public readonly reserveProxy: ContractId;
+	public readonly serializedTransactionData?: SerializedTransactionData;
 
 	constructor(
 		tokenId: ContractId,
 		stableCoinProxy: ContractId,
 		reserveProxy: ContractId,
+		serializedTransactionData?: SerializedTransactionData,
 	) {
 		this.tokenId = tokenId;
 		this.reserveProxy = reserveProxy;
 		this.stableCoinProxy = stableCoinProxy;
+		this.serializedTransactionData = serializedTransactionData;
 	}
 }
 

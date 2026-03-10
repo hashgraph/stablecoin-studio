@@ -53,6 +53,7 @@ import { MirrorNode } from '../../../src/domain/context/network/MirrorNode.js';
 import { JsonRpcRelay } from '../../../src/domain/context/network/JsonRpcRelay.js';
 import { CommandBus } from '../../../src/core/command/CommandBus.js';
 import { ConnectCommand } from '../../../src/app/usecase/command/network/connect/ConnectCommand.js';
+import { TransactionResult } from '../../../src/domain/context/transaction/TransactionResult.js';
 
 const mirrorNode: MirrorNode = {
 	name: MIRROR_NODE.name,
@@ -103,7 +104,8 @@ describe('🧪 [ADAPTER] ClientTransactionAdapter with ECDSA accounts', () => {
 			decimals: stableCoinCapabilitiesHTS.coin.decimals,
 			amount: amount.toString(),
 		});
-		const result = await Fees.addFixedFee(fixedFee);
+		const result = await Fees.addFixedFee(fixedFee) as TransactionResult;
+		
 		expect(result).toBeTruthy();
 		expect(result.success).toBeTruthy();
 		expect(result.transactionId).toBeTruthy();
@@ -137,7 +139,7 @@ describe('🧪 [ADAPTER] ClientTransactionAdapter with ECDSA accounts', () => {
 			net: net,
 		});
 
-		const result = await Fees.addFractionalFee(FractionalFee);
+		const result = await Fees.addFractionalFee(FractionalFee) as TransactionResult;
 		expect(result).toBeTruthy();
 		expect(result.success).toBeTruthy();
 		expect(result.transactionId).toBeTruthy();
@@ -172,7 +174,7 @@ describe('🧪 [ADAPTER] ClientTransactionAdapter with ECDSA accounts', () => {
 			net: net,
 		});
 
-		const result = await Fees.addFractionalFee(FractionalFee);
+		const result = await Fees.addFractionalFee(FractionalFee) as TransactionResult;
 		expect(result).toBeTruthy();
 		expect(result.success).toBeTruthy();
 		expect(result.transactionId).toBeTruthy();
@@ -241,7 +243,7 @@ describe('🧪 [ADAPTER] ClientTransactionAdapter with ECDSA accounts', () => {
 			tokenId: stableCoinCapabilitiesHTS.coin.tokenId!.toString(),
 		});
 
-		const result = await Fees.updateCustomFees(newFees);
+		const result = await Fees.updateCustomFees(newFees) as TransactionResult;
 		expect(result).toBeTruthy();
 		expect(result.success).toBeTruthy();
 		expect(result.transactionId).toBeTruthy();
