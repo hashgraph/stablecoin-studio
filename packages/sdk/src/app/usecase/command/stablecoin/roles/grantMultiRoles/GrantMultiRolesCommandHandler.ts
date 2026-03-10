@@ -86,7 +86,7 @@ export class GrantMultiRolesCommandHandler
 		);
 
 		return Promise.resolve(
-			new GrantMultiRolesCommandResponse(res.error === undefined, res.id),
+			new GrantMultiRolesCommandResponse(res.error === undefined, res.id, res.serializedTransactionData),
 		);
 	}
 }

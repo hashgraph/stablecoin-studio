@@ -60,7 +60,7 @@ export class UpdateConfigCommandHandler
 		);
 
 		return Promise.resolve(
-			new UpdateConfigCommandResponse(res.error === undefined, res.id),
+			new UpdateConfigCommandResponse(res.error === undefined, res.id, res.serializedTransactionData),
 		);
 	}
 }

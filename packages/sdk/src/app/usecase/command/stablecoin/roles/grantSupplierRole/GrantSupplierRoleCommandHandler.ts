@@ -60,10 +60,7 @@ export class GrantSupplierRoleCommandHandler
 		);
 		// return Promise.resolve({ payload: res.response });
 		return Promise.resolve(
-			new GrantSupplierRoleCommandResponse(
-				res.error === undefined,
-				res.id,
-			),
+			new GrantSupplierRoleCommandResponse(res.error === undefined, res.id, res.serializedTransactionData),
 		);
 	}
 }

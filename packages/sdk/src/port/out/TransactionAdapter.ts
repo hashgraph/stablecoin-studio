@@ -71,7 +71,14 @@ interface ITransactionAdapter {
 		reserveInitialAmount?: BigDecimal,
 	): Promise<TransactionResponse>;
 	init(): Promise<Environment>;
-	register(account?: Account): Promise<InitializationData>;
+	register(
+		input?:
+			| Account
+			| FireblocksSettings
+			| DfnsSettings
+			| AWSKMSSettings
+			| HWCSettings,
+	): Promise<InitializationData>;
 	stop(): Promise<boolean>;
 	associateToken(
 		tokenId: HederaId,

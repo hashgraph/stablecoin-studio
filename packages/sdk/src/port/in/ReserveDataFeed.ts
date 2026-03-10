@@ -20,6 +20,7 @@
 
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import Injectable from '../../core/Injectable.js';
+import { EmptyResponse } from '../../app/service/error/EmptyResponse.js';
 import BigDecimal from '../../domain/context/shared/BigDecimal.js';
 import ContractId from '../../domain/context/contract/ContractId.js';
 import { CommandBus } from '../../core/command/CommandBus.js';
@@ -35,12 +36,13 @@ import { QueryBus } from '../../core/query/QueryBus.js';
 import { LogError } from '../../core/decorator/LogErrorDecorator.js';
 import { MirrorNodeAdapter } from '../../port/out/mirror/MirrorNodeAdapter.js';
 import { TransactionResult } from '../../domain/context/transaction/TransactionResult.js';
+import { SerializedTransactionData } from '../../domain/context/transaction/TransactionResponse.js';
+
 
 interface IReserveDataFeedInPort {
 	getReserveAmount(request: GetReserveAmountRequest): Promise<Balance>;
-	updateReserveAmount(
-		request: UpdateReserveAmountRequest,
-	): Promise<TransactionResult>;
+	updateReserveAmount(request: UpdateReserveAmountRequest): Promise<TransactionResult>;
+	buildUpdateReserveAmount(request: UpdateReserveAmountRequest): Promise<SerializedTransactionData>;
 }
 
 class ReserveDataFeedInPort implements IReserveDataFeedInPort {
@@ -77,10 +79,35 @@ class ReserveDataFeedInPort implements IReserveDataFeedInPort {
 		const response = await this.commandBus.execute(
 			new UpdateReserveAmountCommand(
 				new ContractId(reserveId),
-				BigDecimal.fromString(request.reserveAmount, RESERVE_DECIMALS),
+				BigDecimal.fromString(
+					request.reserveAmount,
+					RESERVE_DECIMALS,
+				),
 			),
 		);
 		return new TransactionResult(response.payload, response.transactionId);
+	}
+
+	@LogError
+	async buildUpdateReserveAmount(
+		request: UpdateReserveAmountRequest,
+	): Promise<SerializedTransactionData> {
+		handleValidation('UpdateReserveAmountRequest', request);
+
+		const reserveId: string = (
+			await this.mirrorNode.getContractInfo(request.reserveAddress)
+		).id;
+		const response = await this.commandBus.execute(
+			new UpdateReserveAmountCommand(
+				new ContractId(reserveId),
+				BigDecimal.fromString(
+					request.reserveAmount,
+					RESERVE_DECIMALS,
+				),
+			),
+		);
+		if (!response.serializedTransactionData) throw new EmptyResponse("buildTransaction");
+		return response.serializedTransactionData;
 	}
 }
 

@@ -22,11 +22,13 @@ import { Command } from '../../../../../../core/command/Command.js';
 import { CommandResponse } from '../../../../../../core/command/CommandResponse.js';
 import ContractId from '../../../../../../domain/context/contract/ContractId.js';
 import BigDecimal from '../../../../../../domain/context/shared/BigDecimal.js';
+import { SerializedTransactionData } from '../../../../../../domain/context/transaction/TransactionResponse.js';
 
 export class UpdateReserveAmountCommandResponse implements CommandResponse {
 	constructor(
 		public readonly payload: boolean,
 		public readonly transactionId?: string,
+		public readonly serializedTransactionData?: SerializedTransactionData,
 	) {}
 }
 

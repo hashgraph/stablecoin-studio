@@ -175,6 +175,15 @@ export class CreateCommandHandler implements ICommandHandler<CreateCommand> {
 			reserveConfigVersion,
 		);
 
+		if (this.transactionService.isExternalWallet()) {
+			return new CreateCommandResponse(
+				new ContractId('0.0.0'),
+				new ContractId('0.0.0'),
+				new ContractId('0.0.0'),
+				res.serializedTransactionData,
+			);
+		}
+
 		if (!res.id)
 			throw new Error('Create Command Handler response id empty');
 

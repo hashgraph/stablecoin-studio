@@ -61,6 +61,7 @@ export class GrantUnlimitedSupplierRoleCommandHandler
 			new GrantUnlimitedSupplierRoleCommandResponse(
 				res.error === undefined,
 				res.id,
+				res.serializedTransactionData,
 			),
 		);
 	}

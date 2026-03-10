@@ -60,6 +60,8 @@ import { Response } from '../../domain/context/transaction/Response';
 import { EmptyResponse } from './error/EmptyResponse.js';
 import { InvalidResponse } from '../../port/out/mirror/error/InvalidResponse.js';
 import { ClientTransactionAdapter } from '../../port/out/hs/client/ClientTransactionAdapter.js';
+import { ExternalHederaTransactionAdapter } from '../../port/out/hs/external/ExternalHederaTransactionAdapter.js';
+import { ExternalEVMTransactionAdapter } from '../../port/out/hs/external/ExternalEVMTransactionAdapter.js';
 
 export const EVM_ADDRESS_REGEX = /0x[a-fA-F0-9]{40}$/;
 
@@ -107,9 +109,21 @@ export default class TransactionService extends Service {
 				);
 			case SupportedWallets.AWSKMS:
 				return Injectable.resolve(AWSKMSTransactionAdapter);
+			case SupportedWallets.EXTERNAL_HEDERA:
+				return Injectable.resolve(ExternalHederaTransactionAdapter);
+			case SupportedWallets.EXTERNAL_EVM:
+				return Injectable.resolve(ExternalEVMTransactionAdapter);
 			default:
 				return Injectable.resolve(ClientTransactionAdapter);
 		}
+	}
+
+	isExternalWallet(): boolean {
+		const handler = this.getHandler();
+		return (
+			handler instanceof ExternalHederaTransactionAdapter ||
+			handler instanceof ExternalEVMTransactionAdapter
+		);
 	}
 
 	static async getDescription(

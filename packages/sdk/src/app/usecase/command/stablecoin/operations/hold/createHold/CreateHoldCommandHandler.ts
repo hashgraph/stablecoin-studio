@@ -123,6 +123,15 @@ export class CreateHoldCommandHandler
 			targetId,
 		);
 
+		if (this.transactionService.isExternalWallet()) {
+			return new CreateHoldCommandResponse(
+				0,
+				false,
+				res.id,
+				res.serializedTransactionData,
+			);
+		}
+
 		const holdId = await this.transactionService.getTransactionResult({
 			res,
 			result: res.response?.holdId,
@@ -136,6 +145,7 @@ export class CreateHoldCommandHandler
 				parseInt(holdId, 16),
 				res.error == undefined,
 				res.id,
+				res.serializedTransactionData,
 			),
 		);
 	}

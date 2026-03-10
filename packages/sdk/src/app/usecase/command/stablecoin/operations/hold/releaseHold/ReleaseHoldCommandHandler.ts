@@ -119,7 +119,7 @@ export class ReleaseHoldCommandHandler
 		);
 
 		return Promise.resolve(
-			new ReleaseHoldCommandResponse(res.error === undefined, res.id),
+			new ReleaseHoldCommandResponse(res.error === undefined, res.id, res.serializedTransactionData),
 		);
 	}
 }
