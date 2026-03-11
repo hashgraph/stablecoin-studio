@@ -72,7 +72,7 @@ export class UpdateCommandHandler implements ICommandHandler<UpdateCommand> {
 		);
 
 		return Promise.resolve(
-			new UpdateCommandResponse(res.error === undefined),
+			new UpdateCommandResponse(res.error === undefined, res.id),
 		);
 	}
 }

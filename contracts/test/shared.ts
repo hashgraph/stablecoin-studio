@@ -1,5 +1,6 @@
 import { ethers, network } from 'hardhat'
-import { computeAddress, Wallet } from 'ethers'
+import { expect } from 'chai'
+import { computeAddress, Wallet, TransactionResponse } from 'ethers'
 import {
     DEFAULT_TOKEN,
     deployStableCoin,
@@ -12,6 +13,8 @@ import {
     DeployFullInfrastructureCommand,
     DeployFullInfrastructureResult,
     HEDERA_PRECOMPILED_ADDRESS,
+    validateTxResponse,
+    ValidateTxResponseCommand,
 } from '@scripts'
 import { SignerWithAddress } from '@nomicfoundation/hardhat-ethers/signers'
 import { IHederaTokenManager } from '@contracts'
@@ -34,20 +37,20 @@ export const DEFAULT_UPDATE_TOKEN_STRUCT = {
 let deployedResult: DeployStableCoinResult | undefined
 
 export async function deployFullInfrastructureInTests(
-    command: DeployFullInfrastructureCommand
+    command: DeployFullInfrastructureCommand,
+    anyAccountBalance = 0
 ): Promise<DeployFullInfrastructureResult> {
-
-    if (network.name == 'hardhat') {
-      // * Deploy precompiled mock
-      await _deployPrecompiledMock()
+    if (network.name === 'hardhat') {
+        // * Deploy precompiled mock
+        await deployPrecompiledMock(anyAccountBalance)
     }
 
     return await deployFullInfrastructure(command)
 }
 
-async function _deployPrecompiledMock() {
+export async function deployPrecompiledMock(anyAccountBalance = 0) {
     const PrecompiledMock = await ethers.getContractFactory('PrecompiledMock')
-    const precompiledMock = await PrecompiledMock.deploy()
+    const precompiledMock = await PrecompiledMock.deploy(anyAccountBalance)
     const runtimeBytecode = await ethers.provider.getCode(await precompiledMock.getAddress())
     await ethers.provider.send('hardhat_setCode', [HEDERA_PRECOMPILED_ADDRESS, runtimeBytecode])
     const mockPrecompiled = await ethers.getContractAt('PrecompiledMock', HEDERA_PRECOMPILED_ADDRESS)
@@ -117,4 +120,36 @@ export function randomAccountAddressList(length = 3): string[] {
         addresses.push(computeAddress(Wallet.createRandom().privateKey))
     }
     return addresses
+}
+
+type RevertAssertionParams = {
+    txPromise: Promise<any>
+    contract: any
+    customError: string
+    args?: any[]
+}
+
+export async function expectRevert({ txPromise, contract, customError, args = [] }: RevertAssertionParams) {
+    if (network.name === 'hardhat') {
+        // Hardhat supports custom error decoding
+        const assertion = expect(txPromise).to.be.revertedWithCustomError(contract, customError)
+
+        if (args.length > 0) {
+            await assertion.withArgs(...args)
+        } else {
+            await assertion
+        }
+        return
+    }
+
+    // Hedera path (local / testnet / previewnet)
+    try {
+        const txResponse = await txPromise
+
+        // If we got here, it's a transaction → validate receipt
+        await expect(validateTxResponse(new ValidateTxResponseCommand({ txResponse }))).to.be.rejectedWith(Error)
+    } catch (err) {
+        // If it threw immediately → call revert (view/pure/static)
+        expect(err).to.be.instanceOf(Error)
+    }
 }

@@ -148,6 +148,7 @@ export default class CreateRequest extends ValidatedRequest<CreateRequest> {
 		feeScheduleKey,
 		stableCoinFactory,
 		reserveAddress,
+		updatedAtThreshold,
 		reserveInitialAmount,
 		reserveConfigId,
 		reserveConfigVersion,
@@ -183,6 +184,7 @@ export default class CreateRequest extends ValidatedRequest<CreateRequest> {
 		supplyType?: TokenSupplyType;
 		stableCoinFactory?: string;
 		reserveAddress?: string;
+		updatedAtThreshold?: string;
 		reserveInitialAmount?: string;
 		reserveConfigId?: string;
 		reserveConfigVersion?: number;
@@ -371,6 +373,7 @@ export default class CreateRequest extends ValidatedRequest<CreateRequest> {
 		this.supplyType = supplyType;
 		this.stableCoinFactory = stableCoinFactory;
 		this.reserveAddress = reserveAddress;
+		this.updatedAtThreshold = updatedAtThreshold;
 		this.reserveInitialAmount = reserveInitialAmount;
 		this.reserveConfigId = reserveConfigId;
 		this.reserveConfigVersion = reserveConfigVersion;

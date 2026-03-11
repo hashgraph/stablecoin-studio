@@ -2,8 +2,15 @@ import { expect } from 'chai'
 import { SignerWithAddress } from '@nomicfoundation/hardhat-ethers/signers'
 import { ethers } from 'hardhat'
 import { RolesFacet, RolesFacet__factory } from '@contracts'
-import { ADDRESS_ZERO, DeployFullInfrastructureCommand, MESSAGES, ROLES, ValidateTxResponseCommand } from '@scripts'
-import { deployStableCoinInTests, deployFullInfrastructureInTests, GAS_LIMIT } from '@test/shared'
+import {
+    ADDRESS_ZERO,
+    DeployFullInfrastructureCommand,
+    MESSAGES,
+    ROLES,
+    delay,
+    ValidateTxResponseCommand,
+} from '@scripts'
+import { deployStableCoinInTests, deployFullInfrastructureInTests, GAS_LIMIT, expectRevert } from '@test/shared'
 import { ContractTransactionResponse } from 'ethers'
 
 describe('➡️ Roles Tests', function () {
@@ -50,13 +57,14 @@ describe('➡️ Roles Tests', function () {
 
         // Non Admin grants burn role : fail
         rolesFacet = rolesFacet.connect(nonOperator)
-        await expect(
-            rolesFacet.grantRole(ROLES.burn.hash, operator.address, {
+        await expectRevert({
+            txPromise: rolesFacet.grantRole(ROLES.burn.hash, operator.address, {
                 gasLimit: GAS_LIMIT.hederaTokenManager.grantRole,
-            })
-        )
-            .to.be.revertedWithCustomError(rolesFacet, 'AccountHasNoRole')
-            .withArgs(nonOperator, ROLES.defaultAdmin.hash)
+            }),
+            contract: rolesFacet,
+            customError: 'AccountHasNoRole',
+            args: [nonOperator, ROLES.defaultAdmin.hash],
+        })
 
         // Non operator stil has not burn role
         expect(
@@ -93,10 +101,13 @@ describe('➡️ Roles Tests', function () {
     })
 
     it('Granting role to account 0 fails', async function () {
-        await expect(rolesFacet.grantRole(ROLES.burn.hash, ADDRESS_ZERO)).to.be.revertedWithCustomError(
-            rolesFacet,
-            'AddressZero'
-        )
+        await expectRevert({
+            txPromise: rolesFacet.grantRole(ROLES.burn.hash, ADDRESS_ZERO, {
+                gasLimit: GAS_LIMIT.hederaTokenManager.grantRole,
+            }),
+            contract: rolesFacet,
+            customError: 'AddressZero',
+        })
     })
 
     it('Non Admin account can not revoke role from an account', async function () {
@@ -109,15 +120,16 @@ describe('➡️ Roles Tests', function () {
 
         // Non Admin revokes burn role : fail
         rolesFacet = rolesFacet.connect(nonOperator)
-        await expect(
-            rolesFacet.revokeRole(ROLES.burn.hash, nonOperator.address, {
+        await expectRevert({
+            txPromise: rolesFacet.revokeRole(ROLES.burn.hash, nonOperator.address, {
                 gasLimit: GAS_LIMIT.hederaTokenManager.revokeRole,
-            })
-        )
-            .to.be.revertedWithCustomError(rolesFacet, 'AccountHasNoRole')
-            .withArgs(nonOperator, ROLES.defaultAdmin.hash)
+            }),
+            contract: rolesFacet,
+            customError: 'AccountHasNoRole',
+            args: [nonOperator, ROLES.defaultAdmin.hash],
+        })
 
-        // Non operator stil has burn role
+        // Non operator still has burn role
         expect(
             await rolesFacet.hasRole(ROLES.burn.hash, nonOperator, {
                 gasLimit: GAS_LIMIT.hederaTokenManager.hasRole,
@@ -143,9 +155,35 @@ describe('➡️ Roles Tests', function () {
             .to.emit(rolesFacet, 'RoleRevoked')
             .withArgs(ROLES.burn.hash, nonOperator.address, operator.address)
 
+        await delay({ time: 1000, unit: 'ms' })
+
         // Non operator has not burn role
         expect(
             await rolesFacet.hasRole(ROLES.burn.hash, nonOperator, {
+                gasLimit: GAS_LIMIT.hederaTokenManager.hasRole,
+            })
+        ).to.equal(false)
+    })
+
+    it('Admin account can not revoke a role from an account not granted the role', async function () {
+        // Non operator has burn role
+        expect(
+            await rolesFacet.hasRole(ROLES.wipe.hash, nonOperator, {
+                gasLimit: GAS_LIMIT.hederaTokenManager.hasRole,
+            })
+        ).to.equal(false)
+
+        // Admin revokes wipe role : success
+        rolesFacet = rolesFacet.connect(operator)
+        await expect(
+            rolesFacet.revokeRole(ROLES.wipe.hash, nonOperator.address, {
+                gasLimit: GAS_LIMIT.hederaTokenManager.revokeRole,
+            })
+        ).to.not.emit(rolesFacet, 'RoleRevoked')
+
+        // Non operator has not wipe role
+        expect(
+            await rolesFacet.hasRole(ROLES.wipe.hash, nonOperator, {
                 gasLimit: GAS_LIMIT.hederaTokenManager.hasRole,
             })
         ).to.equal(false)
@@ -163,11 +201,13 @@ describe('➡️ Roles Tests', function () {
             })
         }
 
-        await expect(
-            rolesFacet.revokeRole(ROLES.defaultAdmin.hash, Admins[Length - 1], {
+        await expectRevert({
+            txPromise: rolesFacet.revokeRole(ROLES.defaultAdmin.hash, Admins[Length - 1], {
                 gasLimit: GAS_LIMIT.hederaTokenManager.revokeRole,
-            })
-        ).to.be.revertedWithCustomError(rolesFacet, 'NoAdminsLeft')
+            }),
+            contract: rolesFacet,
+            customError: 'NoAdminsLeft',
+        })
     })
     // * Initial State again
 
@@ -247,33 +287,43 @@ describe('➡️ Roles Tests', function () {
             switch (rol.toUpperCase()) {
                 case ROLES.defaultAdmin.hash.toUpperCase():
                     expect(rol.toUpperCase()).to.equals(ROLES.defaultAdmin.hash.toUpperCase())
+                    expect(await rolesFacet.getNumberOfAccountsWithRole(rol.toUpperCase())).to.eq(2)
                     break
                 case ROLES.cashin.hash.toUpperCase():
                     expect(rol.toUpperCase()).to.equals(ROLES.cashin.hash.toUpperCase())
+                    expect(await rolesFacet.getNumberOfAccountsWithRole(rol.toUpperCase())).to.eq(2)
                     break
                 case ROLES.burn.hash.toUpperCase():
                     expect(rol.toUpperCase()).to.equals(ROLES.burn.hash.toUpperCase())
+                    expect(await rolesFacet.getNumberOfAccountsWithRole(rol.toUpperCase())).to.eq(2)
                     break
                 case ROLES.delete.hash.toUpperCase():
                     expect(rol.toUpperCase()).to.equals(ROLES.delete.hash.toUpperCase())
+                    expect(await rolesFacet.getNumberOfAccountsWithRole(rol.toUpperCase())).to.eq(2)
                     break
                 case ROLES.freeze.hash.toUpperCase():
                     expect(rol.toUpperCase()).to.equals(ROLES.freeze.hash.toUpperCase())
+                    expect(await rolesFacet.getNumberOfAccountsWithRole(rol.toUpperCase())).to.eq(2)
                     break
                 case ROLES.pause.hash.toUpperCase():
                     expect(rol.toUpperCase()).to.equals(ROLES.pause.hash.toUpperCase())
+                    expect(await rolesFacet.getNumberOfAccountsWithRole(rol.toUpperCase())).to.eq(2)
                     break
                 case ROLES.rescue.hash.toUpperCase():
                     expect(rol.toUpperCase()).to.equals(ROLES.rescue.hash.toUpperCase())
+                    expect(await rolesFacet.getNumberOfAccountsWithRole(rol.toUpperCase())).to.eq(2)
                     break
                 case ROLES.wipe.hash.toUpperCase():
                     expect(rol.toUpperCase()).to.equals(ROLES.wipe.hash.toUpperCase())
+                    expect(await rolesFacet.getNumberOfAccountsWithRole(rol.toUpperCase())).to.eq(2)
                     break
                 case ROLES.kyc.hash.toUpperCase():
                     expect(rol.toUpperCase()).to.equals(ROLES.kyc.hash.toUpperCase())
+                    expect(await rolesFacet.getNumberOfAccountsWithRole(rol.toUpperCase())).to.eq(2)
                     break
                 case ROLES.customFees.hash.toUpperCase():
                     expect(rol.toUpperCase()).to.equals(ROLES.customFees.hash.toUpperCase())
+                    expect(await rolesFacet.getNumberOfAccountsWithRole(rol.toUpperCase())).to.eq(2)
                     break
                 default:
                     expect(rol.toUpperCase()).to.equals(ROLES.withoutRole.hash.toUpperCase())
@@ -339,6 +389,17 @@ describe('➡️ Roles Tests', function () {
                 confirmationEvent: 'RoleRevoked',
             }).execute()
         }
+
+        expect(await rolesFacet.getNumberOfAccountsWithRole(ROLES.defaultAdmin.hash)).to.eq(1)
+        expect(await rolesFacet.getNumberOfAccountsWithRole(ROLES.cashin.hash)).to.eq(1)
+        expect(await rolesFacet.getNumberOfAccountsWithRole(ROLES.burn.hash)).to.eq(1)
+        expect(await rolesFacet.getNumberOfAccountsWithRole(ROLES.delete.hash)).to.eq(1)
+        expect(await rolesFacet.getNumberOfAccountsWithRole(ROLES.freeze.hash)).to.eq(1)
+        expect(await rolesFacet.getNumberOfAccountsWithRole(ROLES.pause.hash)).to.eq(1)
+        expect(await rolesFacet.getNumberOfAccountsWithRole(ROLES.rescue.hash)).to.eq(1)
+        expect(await rolesFacet.getNumberOfAccountsWithRole(ROLES.wipe.hash)).to.eq(1)
+        expect(await rolesFacet.getNumberOfAccountsWithRole(ROLES.kyc.hash)).to.eq(1)
+        expect(await rolesFacet.getNumberOfAccountsWithRole(ROLES.customFees.hash)).to.eq(1)
 
         // Check roles
         const rolesAfterRevoke = await rolesFacet.getRoles(nonOperator, {

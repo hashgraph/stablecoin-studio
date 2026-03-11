@@ -78,7 +78,10 @@ export class RevokeMultiRolesCommandHandler
 
 		// return Promise.resolve({ payload: res.response ?? false });
 		return Promise.resolve(
-			new RevokeMultiRolesCommandResponse(res.error === undefined),
+			new RevokeMultiRolesCommandResponse(
+				res.error === undefined,
+				res.id,
+			),
 		);
 	}
 }

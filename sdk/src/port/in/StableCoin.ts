@@ -61,6 +61,7 @@ import {
 } from '../../domain/context/stablecoin/Capability.js';
 import { TokenSupplyType } from '../../domain/context/stablecoin/TokenSupply.js';
 import Account from '../../domain/context/account/Account.js';
+import { TransactionResult } from '../../domain/context/transaction/TransactionResult.js';
 import { BurnCommand } from '../../app/usecase/command/stablecoin/operations/burn/BurnCommand.js';
 import { RescueCommand } from '../../app/usecase/command/stablecoin/operations/rescue/RescueCommand.js';
 import { RescueHBARCommand } from '../../app/usecase/command/stablecoin/operations/rescueHBAR/RescueHBARCommand.js';
@@ -116,17 +117,32 @@ import GetHoldForRequest from './request/GetHoldForRequest.js';
 import GetHeldAmountForRequest from './request/GetHeldAmountForRequest.js';
 import GetHoldCountForRequest from './request/GetHoldCountForRequest.js';
 import GetHoldsIdForRequest from './request/GetHoldsIdForRequest.js';
-import { CreateHoldCommand } from '../../app/usecase/command/stablecoin/operations/hold/createHold/CreateHoldCommand.js';
-import { ExecuteHoldCommand } from '../../app/usecase/command/stablecoin/operations/hold/executeHold/ExecuteHoldCommand.js';
-import { ReleaseHoldCommand } from '../../app/usecase/command/stablecoin/operations/hold/releaseHold/ReleaseHoldCommand.js';
-import { ReclaimHoldCommand } from '../../app/usecase/command/stablecoin/operations/hold/reclaimHold/ReclaimHoldCommand.js';
+import {
+	CreateHoldCommand,
+	CreateHoldCommandResponse,
+} from '../../app/usecase/command/stablecoin/operations/hold/createHold/CreateHoldCommand.js';
+import {
+	ExecuteHoldCommand,
+	ExecuteHoldCommandResponse,
+} from '../../app/usecase/command/stablecoin/operations/hold/executeHold/ExecuteHoldCommand.js';
+import {
+	ReleaseHoldCommand,
+	ReleaseHoldCommandResponse,
+} from '../../app/usecase/command/stablecoin/operations/hold/releaseHold/ReleaseHoldCommand.js';
+import {
+	ReclaimHoldCommand,
+	ReclaimHoldCommandResponse,
+} from '../../app/usecase/command/stablecoin/operations/hold/reclaimHold/ReclaimHoldCommand.js';
 import { GetHoldForQuery } from '../../app/usecase/query/stablecoin/hold/getHoldFor/GetHoldForQuery.js';
 import HoldViewModel from '../../port/in/response/HoldViewModel.js';
 import { ONE_THOUSAND } from '../../core/Constants.js';
 import { GetHoldCountForQuery } from '../../app/usecase/query/stablecoin/hold/getHoldCountFor/GetHoldCountForQuery.js';
 import { GetHoldsIdForQuery } from '../../app/usecase/query/stablecoin/hold/getHoldsIdFor/GetHoldsIdForQuery.js';
 import { GetHeldAmountForQuery } from '../../app/usecase/query/stablecoin/hold/getHeldAmountFor/GetHeldAmountForQuery.js';
-import { CreateHoldByControllerCommand } from '../../app/usecase/command/stablecoin/operations/hold/createHoldByController/CreateHoldByControllerCommand.js';
+import {
+	CreateHoldByControllerCommand,
+	CreateHoldByControllerCommandResponse,
+} from '../../app/usecase/command/stablecoin/operations/hold/createHoldByController/CreateHoldByControllerCommand.js';
 
 export {
 	StableCoinViewModel,
@@ -141,26 +157,30 @@ export { StableCoinCapabilities, Capability, Access, Operation, Balance };
 export { TokenSupplyType };
 export { BigDecimal, HederaId, ContractId, EvmAddress, PublicKey };
 
+export type CreateHoldTransactionResult = {
+	holdId: number;
+} & TransactionResult;
+
 interface IStableCoinInPort {
 	create(request: CreateRequest): Promise<{
 		coin: StableCoinViewModel;
 		reserve: ReserveViewModel;
 	}>;
 	getInfo(request: GetStableCoinDetailsRequest): Promise<StableCoinViewModel>;
-	cashIn(request: CashInRequest): Promise<boolean>;
-	burn(request: BurnRequest): Promise<boolean>;
-	rescue(request: RescueRequest): Promise<boolean>;
-	rescueHBAR(request: RescueHBARRequest): Promise<boolean>;
-	wipe(request: WipeRequest): Promise<boolean>;
-	associate(request: AssociateTokenRequest): Promise<boolean>;
+	cashIn(request: CashInRequest): Promise<TransactionResult>;
+	burn(request: BurnRequest): Promise<TransactionResult>;
+	rescue(request: RescueRequest): Promise<TransactionResult>;
+	rescueHBAR(request: RescueHBARRequest): Promise<TransactionResult>;
+	wipe(request: WipeRequest): Promise<TransactionResult>;
+	associate(request: AssociateTokenRequest): Promise<TransactionResult>;
 	getBalanceOf(request: GetAccountBalanceRequest): Promise<Balance>;
 	getBalanceOfHBAR(request: GetAccountBalanceHBARRequest): Promise<Balance>;
 	capabilities(request: CapabilitiesRequest): Promise<StableCoinCapabilities>;
-	pause(request: PauseRequest): Promise<boolean>;
-	unPause(request: PauseRequest): Promise<boolean>;
-	delete(request: DeleteRequest): Promise<boolean>;
-	freeze(request: FreezeAccountRequest): Promise<boolean>;
-	unFreeze(request: FreezeAccountRequest): Promise<boolean>;
+	pause(request: PauseRequest): Promise<TransactionResult>;
+	unPause(request: PauseRequest): Promise<TransactionResult>;
+	delete(request: DeleteRequest): Promise<TransactionResult>;
+	freeze(request: FreezeAccountRequest): Promise<TransactionResult>;
+	unFreeze(request: FreezeAccountRequest): Promise<TransactionResult>;
 	isAccountFrozen(request: FreezeAccountRequest): Promise<boolean>;
 	isAccountAssociated(
 		request: IsAccountAssociatedTokenRequest,
@@ -168,28 +188,34 @@ interface IStableCoinInPort {
 	getReserveAddress(request: GetReserveAddressRequest): Promise<string>;
 	updateReserveAddress(
 		request: UpdateReserveAddressRequest,
-	): Promise<boolean>;
-	grantKyc(request: KYCRequest): Promise<boolean>;
-	revokeKyc(request: KYCRequest): Promise<boolean>;
+	): Promise<TransactionResult>;
+	grantKyc(request: KYCRequest): Promise<TransactionResult>;
+	revokeKyc(request: KYCRequest): Promise<TransactionResult>;
 	isAccountKYCGranted(request: KYCRequest): Promise<boolean>;
 	createHold(
 		request: CreateHoldRequest,
-	): Promise<{ holdId: number; payload: boolean }>;
+	): Promise<CreateHoldTransactionResult>;
 	createHoldByController(
 		request: CreateHoldByControllerRequest,
-	): Promise<{ holdId: number; payload: boolean }>;
-	executeHold(request: ExecuteHoldRequest): Promise<boolean>;
-	releaseHold(request: ReleaseHoldRequest): Promise<boolean>;
-	reclaimHold(request: ReclaimHoldRequest): Promise<boolean>;
+	): Promise<CreateHoldTransactionResult>;
+	executeHold(request: ExecuteHoldRequest): Promise<TransactionResult>;
+	releaseHold(request: ReleaseHoldRequest): Promise<TransactionResult>;
+	reclaimHold(request: ReclaimHoldRequest): Promise<TransactionResult>;
 	getHoldFor(request: GetHoldForRequest): Promise<HoldViewModel>;
 	getHeldAmountFor(request: GetHeldAmountForRequest): Promise<BigDecimal>;
 	getHoldCountFor(request: GetHoldCountForRequest): Promise<number>;
 	getHoldsIdFor(request: GetHoldsIdForRequest): Promise<number[]>;
-	transfers(request: TransfersRequest): Promise<boolean>;
-	update(request: UpdateRequest): Promise<boolean>;
-	signTransaction(request: SignTransactionRequest): Promise<boolean>;
-	submitTransaction(request: SubmitTransactionRequest): Promise<boolean>;
-	removeTransaction(request: RemoveTransactionRequest): Promise<boolean>;
+	transfers(request: TransfersRequest): Promise<TransactionResult>;
+	update(request: UpdateRequest): Promise<TransactionResult>;
+	signTransaction(
+		request: SignTransactionRequest,
+	): Promise<TransactionResult>;
+	submitTransaction(
+		request: SubmitTransactionRequest,
+	): Promise<TransactionResult>;
+	removeTransaction(
+		request: RemoveTransactionRequest,
+	): Promise<TransactionResult>;
 	getTransactions(
 		request: GetTransactionsRequest,
 	): Promise<MultiSigTransactionsViewModel>;
@@ -361,92 +387,84 @@ class StableCoinInPort implements IStableCoinInPort {
 	}
 
 	@LogError
-	async cashIn(request: CashInRequest): Promise<boolean> {
+	async cashIn(request: CashInRequest): Promise<TransactionResult> {
 		const { tokenId, amount, targetId, startDate } = request;
 		handleValidation('CashInRequest', request);
 
-		return (
-			await this.commandBus.execute(
-				new CashInCommand(
-					amount,
-					HederaId.from(targetId),
-					HederaId.from(tokenId),
-					startDate,
-				),
-			)
-		).payload;
+		const response = await this.commandBus.execute(
+			new CashInCommand(
+				amount,
+				HederaId.from(targetId),
+				HederaId.from(tokenId),
+				startDate,
+			),
+		);
+		return new TransactionResult(response.payload, response.transactionId);
 	}
 
 	@LogError
-	async burn(request: BurnRequest): Promise<boolean> {
+	async burn(request: BurnRequest): Promise<TransactionResult> {
 		const { tokenId, amount, startDate } = request;
 		handleValidation('BurnRequest', request);
 
-		return (
-			await this.commandBus.execute(
-				new BurnCommand(amount, HederaId.from(tokenId), startDate),
-			)
-		).payload;
+		const response = await this.commandBus.execute(
+			new BurnCommand(amount, HederaId.from(tokenId), startDate),
+		);
+		return new TransactionResult(response.payload, response.transactionId);
 	}
 
 	@LogError
-	async rescue(request: RescueRequest): Promise<boolean> {
+	async rescue(request: RescueRequest): Promise<TransactionResult> {
 		const { tokenId, amount, startDate } = request;
 		handleValidation('RescueRequest', request);
 
-		return (
-			await this.commandBus.execute(
-				new RescueCommand(amount, HederaId.from(tokenId), startDate),
-			)
-		).payload;
+		const response = await this.commandBus.execute(
+			new RescueCommand(amount, HederaId.from(tokenId), startDate),
+		);
+		return new TransactionResult(response.payload, response.transactionId);
 	}
 
 	@LogError
-	async rescueHBAR(request: RescueHBARRequest): Promise<boolean> {
+	async rescueHBAR(request: RescueHBARRequest): Promise<TransactionResult> {
 		const { tokenId, amount, startDate } = request;
 		handleValidation('RescueHBARRequest', request);
 
-		return (
-			await this.commandBus.execute(
-				new RescueHBARCommand(
-					amount,
-					HederaId.from(tokenId),
-					startDate,
-				),
-			)
-		).payload;
+		const response = await this.commandBus.execute(
+			new RescueHBARCommand(amount, HederaId.from(tokenId), startDate),
+		);
+		return new TransactionResult(response.payload, response.transactionId);
 	}
 
 	@LogError
-	async wipe(request: WipeRequest): Promise<boolean> {
+	async wipe(request: WipeRequest): Promise<TransactionResult> {
 		const { tokenId, amount, targetId, startDate } = request;
 		handleValidation('WipeRequest', request);
 
-		return (
-			await this.commandBus.execute(
-				new WipeCommand(
-					amount,
-					HederaId.from(targetId),
-					HederaId.from(tokenId),
-					startDate,
-				),
-			)
-		).payload;
+		const response = await this.commandBus.execute(
+			new WipeCommand(
+				amount,
+				HederaId.from(targetId),
+				HederaId.from(tokenId),
+				startDate,
+			),
+		);
+		return new TransactionResult(response.payload, response.transactionId);
 	}
 
 	@LogError
-	async associate(request: AssociateTokenRequest): Promise<boolean> {
+	async associate(
+		request: AssociateTokenRequest,
+	): Promise<TransactionResult> {
 		const { tokenId, targetId } = request;
 		handleValidation('AssociateTokenRequest', request);
 
-		return (
-			await this.commandBus.execute(
-				new AssociateCommand(
-					HederaId.from(targetId),
-					HederaId.from(tokenId),
-				),
-			)
-		).payload;
+		const response = await this.commandBus.execute(
+			new AssociateCommand(
+				HederaId.from(targetId),
+				HederaId.from(tokenId),
+			),
+		);
+		return new TransactionResult(response.payload, response.transactionId);
 	}
 
 	@LogError
@@ -497,71 +515,66 @@ class StableCoinInPort implements IStableCoinInPort {
 	}
 
 	@LogError
-	async pause(request: PauseRequest): Promise<boolean> {
+	async pause(request: PauseRequest): Promise<TransactionResult> {
 		const { tokenId, startDate } = request;
 		handleValidation('PauseRequest', request);
 
-		return (
-			await this.commandBus.execute(
-				new PauseCommand(HederaId.from(tokenId), startDate),
-			)
-		).payload;
+		const response = await this.commandBus.execute(
+			new PauseCommand(HederaId.from(tokenId), startDate),
+		);
+		return new TransactionResult(response.payload, response.transactionId);
 	}
 
 	@LogError
-	async unPause(request: PauseRequest): Promise<boolean> {
+	async unPause(request: PauseRequest): Promise<TransactionResult> {
 		const { tokenId, startDate } = request;
 		handleValidation('PauseRequest', request);
 
-		return (
-			await this.commandBus.execute(
-				new UnPauseCommand(HederaId.from(tokenId), startDate),
-			)
-		).payload;
+		const response = await this.commandBus.execute(
+			new UnPauseCommand(HederaId.from(tokenId), startDate),
+		);
+		return new TransactionResult(response.payload, response.transactionId);
 	}
 
 	@LogError
-	async delete(request: DeleteRequest): Promise<boolean> {
+	async delete(request: DeleteRequest): Promise<TransactionResult> {
 		const { tokenId, startDate } = request;
 		handleValidation('DeleteRequest', request);
 
-		return (
-			await this.commandBus.execute(
-				new DeleteCommand(HederaId.from(tokenId), startDate),
-			)
-		).payload;
+		const response = await this.commandBus.execute(
+			new DeleteCommand(HederaId.from(tokenId), startDate),
+		);
+		return new TransactionResult(response.payload, response.transactionId);
 	}
 
 	@LogError
-	async freeze(request: FreezeAccountRequest): Promise<boolean> {
+	async freeze(request: FreezeAccountRequest): Promise<TransactionResult> {
 		const { tokenId, targetId, startDate } = request;
 		handleValidation('FreezeAccountRequest', request);
 
-		return (
-			await this.commandBus.execute(
-				new FreezeCommand(
-					HederaId.from(targetId),
-					HederaId.from(tokenId),
-					startDate,
-				),
-			)
-		).payload;
+		const response = await this.commandBus.execute(
+			new FreezeCommand(
+				HederaId.from(targetId),
+				HederaId.from(tokenId),
+				startDate,
+			),
+		);
+		return new TransactionResult(response.payload, response.transactionId);
 	}
 
 	@LogError
-	async unFreeze(request: FreezeAccountRequest): Promise<boolean> {
+	async unFreeze(request: FreezeAccountRequest): Promise<TransactionResult> {
 		const { tokenId, targetId, startDate } = request;
 		handleValidation('FreezeAccountRequest', request);
 
-		return (
-			await this.commandBus.execute(
-				new UnFreezeCommand(
-					HederaId.from(targetId),
-					HederaId.from(tokenId),
-					startDate,
-				),
-			)
-		).payload;
+		const response = await this.commandBus.execute(
+			new UnFreezeCommand(
+				HederaId.from(targetId),
+				HederaId.from(tokenId),
+				startDate,
+			),
+		);
+		return new TransactionResult(response.payload, response.transactionId);
 	}
 
 	@LogError
@@ -582,32 +595,31 @@ class StableCoinInPort implements IStableCoinInPort {
 	}
 
 	@LogError
-	async grantKyc(request: KYCRequest): Promise<boolean> {
+	async grantKyc(request: KYCRequest): Promise<TransactionResult> {
 		const { tokenId, targetId } = request;
 		handleValidation('KYCRequest', request);
 
-		return (
-			await this.commandBus.execute(
-				new GrantKycCommand(
-					HederaId.from(targetId),
-					HederaId.from(tokenId),
-				),
-			)
-		).payload;
+		const response = await this.commandBus.execute(
+			new GrantKycCommand(
+				HederaId.from(targetId),
+				HederaId.from(tokenId),
+			),
+		);
+		return new TransactionResult(response.payload, response.transactionId);
 	}
 
 	@LogError
-	async revokeKyc(request: KYCRequest): Promise<boolean> {
+	async revokeKyc(request: KYCRequest): Promise<TransactionResult> {
 		const { tokenId, targetId } = request;
 		handleValidation('KYCRequest', request);
-		return (
-			await this.commandBus.execute(
-				new RevokeKycCommand(
-					HederaId.from(targetId),
-					HederaId.from(tokenId),
-				),
-			)
-		).payload;
+
+		const response = await this.commandBus.execute(
+			new RevokeKycCommand(
+				HederaId.from(targetId),
+				HederaId.from(tokenId),
+			),
+		);
+		return new TransactionResult(response.payload, response.transactionId);
 	}
 
 	@LogError
@@ -661,30 +673,29 @@ class StableCoinInPort implements IStableCoinInPort {
 	@LogError
 	async updateReserveAddress(
 		request: UpdateReserveAddressRequest,
-	): Promise<boolean> {
+	): Promise<TransactionResult> {
 		handleValidation('UpdateReserveAddressRequest', request);
 
 		const reserveAddressId: string = (
 			await this.mirrorNode.getContractInfo(request.reserveAddress)
 		).id;
 
-		return (
-			await this.commandBus.execute(
-				new UpdateReserveAddressCommand(
-					HederaId.from(request.tokenId),
-					new ContractId(reserveAddressId),
-				),
-			)
-		).payload;
+		const response = await this.commandBus.execute(
+			new UpdateReserveAddressCommand(
+				HederaId.from(request.tokenId),
+				new ContractId(reserveAddressId),
+			),
+		);
+		return new TransactionResult(response.payload, response.transactionId);
 	}
 
 	@LogError
 	async createHold(
 		request: CreateHoldRequest,
-	): Promise<{ holdId: number; payload: boolean }> {
+	): Promise<CreateHoldTransactionResult> {
 		handleValidation(CreateHoldRequest.name, request);
 		const { tokenId, targetId, amount, expirationDate, escrow } = request;
-		return await this.commandBus.execute(
+		const response = await this.commandBus.execute(
 			new CreateHoldCommand(
 				HederaId.from(tokenId),
 				amount,
@@ -693,16 +704,21 @@ class StableCoinInPort implements IStableCoinInPort {
 				targetId ? HederaId.from(targetId) : undefined,
 			),
 		);
+		return {
+			holdId: response.holdId,
+			success: response.payload,
+			transactionId: response.transactionId,
+		} as CreateHoldTransactionResult;
 	}
 
 	@LogError
 	async createHoldByController(
 		request: CreateHoldByControllerRequest,
-	): Promise<{ holdId: number; payload: boolean }> {
+	): Promise<CreateHoldTransactionResult> {
 		handleValidation(CreateHoldByControllerRequest.name, request);
 		const { tokenId, targetId, sourceId, amount, expirationDate, escrow } =
 			request;
-		return await this.commandBus.execute(
+		const response = await this.commandBus.execute(
 			new CreateHoldByControllerCommand(
 				HederaId.from(tokenId),
 				HederaId.from(sourceId),
@@ -712,54 +728,56 @@ class StableCoinInPort implements IStableCoinInPort {
 				targetId ? HederaId.from(targetId) : undefined,
 			),
 		);
+		return {
+			holdId: response.holdId,
+			success: response.payload,
+			transactionId: response.transactionId,
+		} as CreateHoldTransactionResult;
 	}
 
 	@LogError
-	async executeHold(request: ExecuteHoldRequest): Promise<boolean> {
+	async executeHold(request: ExecuteHoldRequest): Promise<TransactionResult> {
 		handleValidation(ExecuteHoldRequest.name, request);
 		const { tokenId, targetId, amount, sourceId, holdId } = request;
-		return (
-			await this.commandBus.execute(
-				new ExecuteHoldCommand(
-					HederaId.from(tokenId),
-					holdId,
-					HederaId.from(sourceId),
-					amount,
-					targetId ? HederaId.from(targetId) : undefined,
-				),
-			)
-		).payload;
+		const response = await this.commandBus.execute(
+			new ExecuteHoldCommand(
+				HederaId.from(tokenId),
+				holdId,
+				HederaId.from(sourceId),
+				amount,
+				targetId ? HederaId.from(targetId) : undefined,
+			),
+		);
+		return new TransactionResult(response.payload, response.transactionId);
 	}
 
 	@LogError
-	async releaseHold(request: ReleaseHoldRequest): Promise<boolean> {
+	async releaseHold(request: ReleaseHoldRequest): Promise<TransactionResult> {
 		handleValidation(ReleaseHoldRequest.name, request);
 		const { tokenId, amount, sourceId, holdId } = request;
-		return (
-			await this.commandBus.execute(
-				new ReleaseHoldCommand(
-					HederaId.from(tokenId),
-					holdId,
-					HederaId.from(sourceId),
-					amount,
-				),
-			)
-		).payload;
+		const response = await this.commandBus.execute(
+			new ReleaseHoldCommand(
+				HederaId.from(tokenId),
+				holdId,
+				HederaId.from(sourceId),
+				amount,
+			),
+		);
+		return new TransactionResult(response.payload, response.transactionId);
 	}
 
 	@LogError
-	async reclaimHold(request: ReclaimHoldRequest): Promise<boolean> {
+	async reclaimHold(request: ReclaimHoldRequest): Promise<TransactionResult> {
 		handleValidation(ReclaimHoldRequest.name, request);
 		const { tokenId, sourceId, holdId } = request;
-		return (
-			await this.commandBus.execute(
-				new ReclaimHoldCommand(
-					HederaId.from(tokenId),
-					holdId,
-					HederaId.from(sourceId),
-				),
-			)
-		).payload;
+		const response = await this.commandBus.execute(
+			new ReclaimHoldCommand(
+				HederaId.from(tokenId),
+				holdId,
+				HederaId.from(sourceId),
+			),
+		);
+		return new TransactionResult(response.payload, response.transactionId);
 	}
 
 	@LogError
@@ -844,7 +862,7 @@ class StableCoinInPort implements IStableCoinInPort {
 	}
 
 	@LogError
-	async transfers(request: TransfersRequest): Promise<boolean> {
+	async transfers(request: TransfersRequest): Promise<TransactionResult> {
 		const { tokenId, targetsId, amounts, targetId } = request;
 
 		handleValidation('TransfersRequest', request);
@@ -854,20 +872,19 @@ class StableCoinInPort implements IStableCoinInPort {
 			targetsIdHederaIds.push(HederaId.from(targetId));
 		});
 
-		return (
-			await this.commandBus.execute(
-				new TransfersCommand(
-					amounts,
-					targetsIdHederaIds,
-					HederaId.from(tokenId),
-					HederaId.from(targetId),
-				),
-			)
-		).payload;
+		const response = await this.commandBus.execute(
+			new TransfersCommand(
+				amounts,
+				targetsIdHederaIds,
+				HederaId.from(tokenId),
+				HederaId.from(targetId),
+			),
+		);
+		return new TransactionResult(response.payload, response.transactionId);
 	}
 
 	@LogError
-	async update(request: UpdateRequest): Promise<boolean> {
+	async update(request: UpdateRequest): Promise<TransactionResult> {
 		const {
 			tokenId,
 			name,
@@ -882,84 +899,89 @@ class StableCoinInPort implements IStableCoinInPort {
 			metadata,
 		} = request;
 		handleValidation('UpdateRequest', request);
-		return (
-			await this.commandBus.execute(
-				new UpdateCommand(
-					HederaId.from(tokenId),
-					name,
-					symbol,
-					autoRenewPeriod ? Number(autoRenewPeriod) : undefined,
-					expirationTimestamp
-						? Number(expirationTimestamp)
-						: undefined,
-					kycKey
-						? new PublicKey({
-								key: kycKey.key,
-								type: kycKey.type,
-						  })
-						: undefined,
-					freezeKey
-						? new PublicKey({
-								key: freezeKey.key,
-								type: freezeKey.type,
-						  })
-						: undefined,
-					feeScheduleKey
-						? new PublicKey({
-								key: feeScheduleKey.key,
-								type: feeScheduleKey.type,
-						  })
-						: undefined,
-					pauseKey
-						? new PublicKey({
-								key: pauseKey.key,
-								type: pauseKey.type,
-						  })
-						: undefined,
-					wipeKey
-						? new PublicKey({
-								key: wipeKey.key,
-								type: wipeKey.type,
-						  })
-						: undefined,
-					metadata,
-				),
-			)
-		).payload;
+		const response = await this.commandBus.execute(
+			new UpdateCommand(
+				HederaId.from(tokenId),
+				name,
+				symbol,
+				autoRenewPeriod ? Number(autoRenewPeriod) : undefined,
+				expirationTimestamp ? Number(expirationTimestamp) : undefined,
+				kycKey
+					? new PublicKey({
+							key: kycKey.key,
+							type: kycKey.type,
+					  })
+					: undefined,
+				freezeKey
+					? new PublicKey({
+							key: freezeKey.key,
+							type: freezeKey.type,
+					  })
+					: undefined,
+				feeScheduleKey
+					? new PublicKey({
+							key: feeScheduleKey.key,
+							type: feeScheduleKey.type,
+					  })
+					: undefined,
+				pauseKey
+					? new PublicKey({
+							key: pauseKey.key,
+							type: pauseKey.type,
+					  })
+					: undefined,
+				wipeKey
+					? new PublicKey({
+							key: wipeKey.key,
+							type: wipeKey.type,
+					  })
+					: undefined,
+				metadata,
+			),
+		);
+		return new TransactionResult(response.payload, response.transactionId);
 	}
 
 	@LogError
-	async signTransaction(request: SignTransactionRequest): Promise<boolean> {
+	async signTransaction(
+		request: SignTransactionRequest,
+	): Promise<TransactionResult> {
 		const { transactionId } = request;
 
 		handleValidation('SignTransactionRequest', request);
 
-		return (await this.commandBus.execute(new SignCommand(transactionId)))
-			.payload;
+		const response = await this.commandBus.execute(
+			new SignCommand(transactionId),
+		);
+		return new TransactionResult(response.payload, response.transactionId);
 	}
 
 	@LogError
 	async submitTransaction(
 		request: SubmitTransactionRequest,
-	): Promise<boolean> {
+	): Promise<TransactionResult> {
 		const { transactionId } = request;
 
 		handleValidation('SubmitTransactionRequest', request);
 
-		return (await this.commandBus.execute(new SubmitCommand(transactionId)))
-			.payload;
+		const response = await this.commandBus.execute(
+			new SubmitCommand(transactionId),
+		);
+		return new TransactionResult(response.payload, response.transactionId);
 	}
 
 	@LogError
 	async removeTransaction(
 		request: RemoveTransactionRequest,
-	): Promise<boolean> {
+	): Promise<TransactionResult> {
 		const { transactionId } = request;
 
 		handleValidation('RemoveTransactionRequest', request);
 
-		return (await this.commandBus.execute(new RemoveCommand(transactionId)))
-			.payload;
+		const response = await this.commandBus.execute(
+			new RemoveCommand(transactionId),
+		);
+		return new TransactionResult(response.payload, response.transactionId);
 	}
 
 	@LogError

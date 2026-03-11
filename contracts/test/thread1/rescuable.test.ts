@@ -8,6 +8,8 @@ import {
     RescuableFacet,
     RescuableFacet__factory,
     StableCoinTokenMock__factory,
+    RolesFacet,
+    RolesFacet__factory,
 } from '@contracts'
 import {
     delay,
@@ -20,7 +22,7 @@ import {
     ROLES,
     ValidateTxResponseCommand,
 } from '@scripts'
-import { deployStableCoinInTests, deployFullInfrastructureInTests, GAS_LIMIT } from '@test/shared'
+import { deployStableCoinInTests, deployFullInfrastructureInTests, expectRevert, GAS_LIMIT } from '@test/shared'
 import { TransactionRequest } from 'ethers'
 
 describe('➡️ Rescue Tests', function () {
@@ -29,6 +31,7 @@ describe('➡️ Rescue Tests', function () {
     let tokenAddress: string
     let hederaTokenManagerFacet: HederaTokenManagerFacet
     let rescuableFacet: RescuableFacet
+    let rolesFacet: RolesFacet
     // Accounts
     let operator: SignerWithAddress
     let nonOperator: SignerWithAddress
@@ -36,6 +39,7 @@ describe('➡️ Rescue Tests', function () {
     async function setFacets(address: string) {
         hederaTokenManagerFacet = HederaTokenManagerFacet__factory.connect(address, operator)
         rescuableFacet = RescuableFacet__factory.connect(address, operator)
+        rolesFacet = RolesFacet__factory.connect(address, operator)
     }
 
     before(async () => {
@@ -72,6 +76,29 @@ describe('➡️ Rescue Tests', function () {
         await new ValidateTxResponseCommand({ txResponse: response }).execute()
     })
 
+    it('Account trying to reentrant rescue reverts', async () => {
+        const amountToRescue = ONE_HBAR
+
+        const Attacker = await ethers.getContractFactory('ReentrancyAttacker')
+        const attacker = await Attacker.deploy(await rescuableFacet.getAddress(), amountToRescue)
+        await attacker.waitForDeployment()
+
+        await expect(
+            rolesFacet.grantRole(ROLES.rescue.hash, attacker.getAddress(), {
+                gasLimit: GAS_LIMIT.hederaTokenManager.grantRole,
+            })
+        )
+            .to.emit(rolesFacet, 'RoleGranted')
+            .withArgs(ROLES.rescue.hash, attacker.getAddress(), operator.address)
+
+        await expectRevert({
+            txPromise: attacker.attack({ gasLimit: GAS_LIMIT.high }),
+            contract: rescuableFacet,
+            customError: 'HBARRescueError',
+            args: [ONE_HBAR],
+        })
+    })
+
     it('Account with RESCUE role can rescue 10 tokens', async function () {
         // Get the initial balance of the token owner and client
         const initialTokenOwnerBalance = await hederaTokenManagerFacet.balanceOf(stableCoinProxyAddress, {
@@ -103,30 +130,43 @@ describe('➡️ Rescue Tests', function () {
         expect(finalClientBalance.toString()).to.equals(expectedClientBalance.toString())
     })
 
+    it('Account with RESCUE role cannot rescue zero or less tokens', async function () {
+        await expectRevert({
+            txPromise: rescuableFacet.rescue(0, {
+                gasLimit: GAS_LIMIT.hederaTokenManager.rescue,
+            }),
+            contract: rescuableFacet,
+            customError: 'NegativeAmount',
+            args: [0],
+        })
+    })
+
     it('Account with RESCUE role cannot rescue more tokens than the token owner balance', async function () {
         // Get the initial balance of the token owner
         const TokenOwnerBalance = await hederaTokenManagerFacet.balanceOf(stableCoinProxyAddress, {
             gasLimit: GAS_LIMIT.hederaTokenManager.balanceOf,
         })
         // Rescue TokenOwnerBalance + 1 : fail
-        await expect(
-            rescuableFacet.rescue(TokenOwnerBalance + 1n, {
+        await expectRevert({
+            txPromise: rescuableFacet.rescue(TokenOwnerBalance + 1n, {
                 gasLimit: GAS_LIMIT.hederaTokenManager.rescue,
-            })
-        )
-            .to.be.revertedWithCustomError(rescuableFacet, 'GreaterThan')
-            .withArgs(TokenOwnerBalance + 1n, TokenOwnerBalance)
+            }),
+            contract: rescuableFacet,
+            customError: 'GreaterThan',
+            args: [TokenOwnerBalance + 1n, TokenOwnerBalance],
+        })
     })
 
     it('Account without RESCUE role cannot rescue tokens', async function () {
         rescuableFacet = rescuableFacet.connect(nonOperator)
-        await expect(
-            rescuableFacet.rescue(ONE_TOKEN, {
+        await expectRevert({
+            txPromise: rescuableFacet.rescue(ONE_TOKEN, {
                 gasLimit: GAS_LIMIT.hederaTokenManager.rescue,
-            })
-        )
-            .to.be.revertedWithCustomError(rescuableFacet, 'AccountHasNoRole')
-            .withArgs(nonOperator.address, ROLES.rescue.hash)
+            }),
+            contract: rescuableFacet,
+            customError: 'AccountHasNoRole',
+            args: [nonOperator.address, ROLES.rescue.hash],
+        })
     })
 
     it('Account with RESCUE role can rescue 1 HBAR', async function () {
@@ -150,7 +190,10 @@ describe('➡️ Rescue Tests', function () {
 
         // check new balances : success
         const finalTokenOwnerBalance = await ethers.provider.getBalance(stableCoinProxyAddress)
-        const expectedTokenOwnerBalance = initialTokenOwnerBalance - amountToRescueInEvm
+        const expectedTokenOwnerBalance =
+            network.name === 'hardhat'
+                ? initialTokenOwnerBalance - amountToRescueInEvm
+                : initialTokenOwnerBalance - amountToRescue
         expect(finalTokenOwnerBalance.toString()).to.equals(expectedTokenOwnerBalance.toString())
     })
 
@@ -159,24 +202,26 @@ describe('➡️ Rescue Tests', function () {
         const TokenOwnerBalance = await ethers.provider.getBalance(stableCoinProxyAddress)
 
         // Rescue TokenOwnerBalance + 1 : fail
-        await expect(
-            rescuableFacet.rescueHBAR(TokenOwnerBalance + 1n, {
+        await expectRevert({
+            txPromise: rescuableFacet.rescueHBAR(TokenOwnerBalance + 1n, {
                 gasLimit: GAS_LIMIT.hederaTokenManager.rescueHBAR,
-            })
-        )
-            .to.be.revertedWithCustomError(rescuableFacet, 'GreaterThan')
-            .withArgs(TokenOwnerBalance + 1n, TokenOwnerBalance)
+            }),
+            contract: rescuableFacet,
+            customError: 'GreaterThan',
+            args: [TokenOwnerBalance + 1n, TokenOwnerBalance],
+        })
     })
 
     it('Account without RESCUE role cannot rescue HBAR', async function () {
         // Account without rescue role, rescues HBAR : fail
         rescuableFacet = rescuableFacet.connect(nonOperator)
-        await expect(
-            rescuableFacet.rescueHBAR(ONE_TOKEN, {
+        await expectRevert({
+            txPromise: rescuableFacet.rescueHBAR(ONE_TOKEN, {
                 gasLimit: GAS_LIMIT.hederaTokenManager.rescueHBAR,
-            })
-        )
-            .to.be.revertedWithCustomError(rescuableFacet, 'AccountHasNoRole')
-            .withArgs(nonOperator.address, ROLES.rescue.hash)
+            }),
+            contract: rescuableFacet,
+            customError: 'AccountHasNoRole',
+            args: [nonOperator.address, ROLES.rescue.hash],
+        })
     })
 })

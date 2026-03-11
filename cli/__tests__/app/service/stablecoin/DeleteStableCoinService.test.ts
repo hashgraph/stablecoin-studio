@@ -18,7 +18,11 @@
  *
  */
 
-import { DeleteRequest, StableCoin } from '@hashgraph/stablecoin-npm-sdk';
+import {
+  DeleteRequest,
+  StableCoin,
+  TransactionResult,
+} from '@hashgraph/stablecoin-npm-sdk';
 import DeleteStableCoinService from '../../../../src/app/service/stablecoin/DeleteStableCoinService';
 import { utilsService } from '../../../../src/index.js';
 import Language from '../../../../src/domain/language/Language.js';
@@ -45,10 +49,12 @@ describe(`Testing DeleteStableCoinService class`, () => {
   it('Should instance deleteStableCoin', async () => {
     const DeleteMock = jest
       .spyOn(StableCoin, 'delete')
-      .mockImplementation(async (request: DeleteRequest): Promise<boolean> => {
-        expect(request.tokenId).toEqual(token);
-        return true;
-      });
+      .mockImplementation(
+        async (request: DeleteRequest): Promise<TransactionResult> => {
+          expect(request.tokenId).toEqual(token);
+          return { success: true } as TransactionResult;
+        },
+      );
 
     await service.deleteStableCoin(request);
 

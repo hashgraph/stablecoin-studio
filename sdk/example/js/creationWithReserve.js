@@ -36,8 +36,8 @@ const main = async () => {
 			mirrorNode: mirrorNodeConfig,
 			rpcNode: RPCNodeConfig,
 			configuration: {
-				factoryAddress: '0.0.6431833',
-				resolverAddress: '0.0.6431794',
+				factoryAddress: process.env.FACTORY_ADDRESS,
+				resolverAddress: process.env.RESOLVER_ADDRESS,
 			},
 		}),
 	);
@@ -104,7 +104,7 @@ const main = async () => {
 		kycRoleAccount: account.accountId.toString(),
 		cashInRoleAccount: account.accountId.toString(),
 		feeRoleAccount: account.accountId.toString(),
-		cashInRoleAllowance: '0',
+		cashInRoleAllowance: '10',
 		proxyOwnerAccount: account.accountId.toString(),
 		configId:
 			'0x0000000000000000000000000000000000000000000000000000000000000002',

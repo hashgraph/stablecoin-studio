@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: MIT
-pragma solidity 0.8.18;
+pragma solidity 0.8.24;
 
 // solhint-disable-next-line max-line-length
 import {HoldManagementStorageWrapper} from './HoldManagementStorageWrapper.sol';
@@ -35,14 +35,7 @@ contract BurnableFacet is
      */
     function burn(
         int64 amount
-    )
-        external
-        override(IBurnable)
-        onlyRole(_BURN_ROLE)
-        amountIsNotNegative(amount, false)
-        checkBurnAmount(amount)
-        returns (bool)
-    {
+    ) external override(IBurnable) onlyRole(_BURN_ROLE) greaterThanZero(amount) checkBurnAmount(amount) returns (bool) {
         address currentTokenAddress = _getTokenAddress();
 
         (int64 responseCode, ) = IHederaTokenService(_PRECOMPILED_ADDRESS).burnToken(

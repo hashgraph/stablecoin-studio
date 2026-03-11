@@ -117,7 +117,6 @@ import {
 	WalletEvents,
 } from '../../../app/service/event/WalletEvent.js';
 import { SupportedWallets } from '../../../domain/context/network/Wallet.js';
-import { RPCTransactionResponseAdapter } from './RPCTransactionResponseAdapter.js';
 import LogService from '../../../app/service/LogService.js';
 import { WalletConnectRejectedError } from '../../../domain/context/network/error/WalletConnectRejectedError.js';
 import { TransactionResponseError } from '../error/TransactionResponseError.js';
@@ -146,7 +145,6 @@ import {
 	EnvironmentFactory,
 	Factories,
 } from '../../../domain/context/factory/Factories.js';
-import Hex from '../../../core/Hex.js';
 import { keccak256 } from 'ethereum-cryptography/keccak';
 import {
 	fromHCustomFeeToSCFee,
@@ -160,6 +158,7 @@ import {
 } from '../../../domain/context/factory/Resolvers.js';
 import { Hold, HoldIdentifier } from '../../../domain/context/hold/Hold.js';
 import CheckEvmAddress from '../../../core/checks/evmaddress/CheckEvmAddress.js';
+import { RPCTransactionResponseAdapter } from '../response/RPCTransactionResponseAdapter.js';
 
 // eslint-disable-next-line no-var
 declare var ethereum: MetaMaskInpageProvider;
@@ -1405,13 +1404,17 @@ export default class RPCTransactionAdapter extends TransactionAdapter {
 			const HTSTokenEVMAddress = tokenId
 				.toHederaAddress()
 				.toSolidityAddress();
+
+			const tx = await IHRC__factory.connect(
+				CheckEvmAddress.toEvmAddress(HTSTokenEVMAddress),
+				this.signerOrProvider as unknown as Signer,
+			).associate({ gasLimit: ASSOCIATE_GAS });
+
 			const response = await RPCTransactionResponseAdapter.manageResponse(
-				await IHRC__factory.connect(
-					CheckEvmAddress.toEvmAddress(HTSTokenEVMAddress),
-					this.signerOrProvider,
-				).associate({ gasLimit: ASSOCIATE_GAS }),
+				tx as unknown as ContractTransactionResponse,
 				this.networkService.environment,
 			);
+
 			this.logTransaction(
 				response.id ?? '',
 				this.networkService.environment,
@@ -1419,36 +1422,41 @@ export default class RPCTransactionAdapter extends TransactionAdapter {
 			return response;
 		} catch (error) {
 			LogService.logError(error);
-			this.logTransaction(
-				(error as any).error.transactionHash ?? '',
-				this.networkService.environment,
-			);
+
+			const txHash =
+				(error as any)?.transactionHash ??
+				(error as any)?.transaction?.hash ??
+				(error as any)?.error?.transactionHash ??
+				'';
+
+			this.logTransaction(txHash, this.networkService.environment);
+
 			throw new TransactionResponseError({
 				network: this.networkService.environment,
 				RPC_relay: true,
 				message: `Unexpected error in RPCTransactionAdapter association operation : ${error}`,
-				transactionId: (error as any).error.transactionHash,
+				transactionId: txHash,
 			});
 		}
 	}
 
-	async contractCall(
-		contractAddress: string,
-		functionName: string,
-		param: unknown[],
-	): Promise<ContractTransactionResponse> {
-		const tokenManager = IHederaTokenService__factory.connect(
-			contractAddress,
-			this.signerOrProvider,
-		);
-		const fn = tokenManager.getFunction(functionName);
-
-		if (typeof fn !== 'function') {
-			throw new Error(`Function ${functionName} not found on contract`);
-		}
-
-		return await fn(...param);
-	}
+	// async contractCall(
+	// 	contractAddress: string,
+	// 	functionName: string,
+	// 	param: unknown[],
+	// ): Promise<ContractTransactionResponse> {
+	// 	const tokenManager = IHederaTokenService__factory.connect(
+	// 		contractAddress,
+	// 		this.signerOrProvider,
+	// 	);
+	// 	const fn = tokenManager.getFunction(functionName);
+	//
+	// 	if (typeof fn !== 'function') {
+	// 		throw new Error(`Function ${functionName} not found on contract`);
+	// 	}
+	//
+	// 	return await fn(...param);
+	// }
 
 	async signAndSendTransaction(
 		t: RPCTransactionAdapter,
@@ -1743,7 +1751,7 @@ export default class RPCTransactionAdapter extends TransactionAdapter {
 	): Promise<TransactionResponse> {
 		try {
 			let response;
-			switch (CapabilityDecider.decide(coin, operation)) {
+			switch (CapabilityDecider.getAccessDecision(coin, operation)) {
 				case Decision.CONTRACT:
 					if (!coin.coin.evmProxyAddress?.toString())
 						throw new Error(
@@ -2084,20 +2092,10 @@ export default class RPCTransactionAdapter extends TransactionAdapter {
 		}
 	}
 
-	async sign(message: string): Promise<string> {
-		if (typeof (this.signerOrProvider as any).signMessage !== 'function') {
-			throw new Error('RPC instance is not a Signer.');
-		}
-		const bytesToSign = Hex.toUint8Array(message);
-		const bytesToSignHash = this.calcKeccak256(bytesToSign);
-		const bytesToSignHashHex = '0x' + Hex.fromUint8Array(bytesToSignHash);
-
-		const signature = await this.web3Provider.send('eth_sign', [
-			this.account.evmAddress,
-			bytesToSignHashHex,
-		]);
-
-		return signature.toString().slice(0, 130);
+	async sign(_message: string): Promise<string> {
+		throw new Error(
+			'Multisig signing is not supported for MetaMask (EVM) wallets.',
+		);
 	}
 
 	calcKeccak256(message: Uint8Array): Buffer {

@@ -18,7 +18,11 @@
  *
  */
 
-import { StableCoin, WipeRequest } from '@hashgraph/stablecoin-npm-sdk';
+import {
+  StableCoin,
+  TransactionResult,
+  WipeRequest,
+} from '@hashgraph/stablecoin-npm-sdk';
 import WipeStableCoinService from '../../../../src/app/service/stablecoin/WipeStableCoinService';
 import { utilsService } from '../../../../src/index.js';
 import Language from '../../../../src/domain/language/Language.js';
@@ -46,12 +50,14 @@ describe(`Testing WipeStableCoinService class`, () => {
   it('Should instance wipeStableCoin', async () => {
     const wipeMock = jest
       .spyOn(StableCoin, 'wipe')
-      .mockImplementation(async (request: WipeRequest): Promise<boolean> => {
-        expect(request.tokenId).toEqual(token);
-        expect(request.amount).toEqual(amount);
-        expect(request.targetId).toEqual(account);
-        return false;
-      });
+      .mockImplementation(
+        async (request: WipeRequest): Promise<TransactionResult> => {
+          expect(request.tokenId).toEqual(token);
+          expect(request.amount).toEqual(amount);
+          expect(request.targetId).toEqual(account);
+          return { success: true } as TransactionResult;
+        },
+      );
 
     await service.wipeStableCoin(request);
 

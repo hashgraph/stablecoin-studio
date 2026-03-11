@@ -55,7 +55,10 @@ export class RevokeSupplierRoleCommandHandler
 		const res = await handler.revokeSupplierRole(capabilities, targetId);
 		// return Promise.resolve({ payload: res.response ?? false });
 		return Promise.resolve(
-			new RevokeSupplierRoleCommandResponse(res.error === undefined),
+			new RevokeSupplierRoleCommandResponse(
+				res.error === undefined,
+				res.id,
+			),
 		);
 	}
 }

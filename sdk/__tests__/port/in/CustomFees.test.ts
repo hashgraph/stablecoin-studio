@@ -64,7 +64,7 @@ const rpcNode: JsonRpcRelay = {
 	baseUrl: RPC_NODE.baseUrl,
 };
 
-describe('🧪 [ADAPTER] HTSTransactionAdapter with ECDSA accounts', () => {
+describe('🧪 [ADAPTER] ClientTransactionAdapter with ECDSA accounts', () => {
 	// token to operate through HTS
 	const stableCoinCapabilitiesHTS = {
 		coin: {
@@ -103,7 +103,10 @@ describe('🧪 [ADAPTER] HTSTransactionAdapter with ECDSA accounts', () => {
 			decimals: stableCoinCapabilitiesHTS.coin.decimals,
 			amount: amount.toString(),
 		});
-		await Fees.addFixedFee(fixedFee);
+		const result = await Fees.addFixedFee(fixedFee);
+		expect(result).toBeTruthy();
+		expect(result.success).toBeTruthy();
+		expect(result.transactionId).toBeTruthy();
 
 		const tokenCustomFees: RequestCustomFee[] = await getTokenCustomFees(
 			stableCoinCapabilitiesHTS.coin.tokenId!,
@@ -134,7 +137,10 @@ describe('🧪 [ADAPTER] HTSTransactionAdapter with ECDSA accounts', () => {
 			net: net,
 		});
 
-		await Fees.addFractionalFee(FractionalFee);
+		const result = await Fees.addFractionalFee(FractionalFee);
+		expect(result).toBeTruthy();
+		expect(result.success).toBeTruthy();
+		expect(result.transactionId).toBeTruthy();
 
 		const tokenCustomFees: RequestCustomFee[] = await getTokenCustomFees(
 			stableCoinCapabilitiesHTS.coin.tokenId!,
@@ -166,7 +172,10 @@ describe('🧪 [ADAPTER] HTSTransactionAdapter with ECDSA accounts', () => {
 			net: net,
 		});
 
-		await Fees.addFractionalFee(FractionalFee);
+		const result = await Fees.addFractionalFee(FractionalFee);
+		expect(result).toBeTruthy();
+		expect(result.success).toBeTruthy();
+		expect(result.transactionId).toBeTruthy();
 
 		const tokenCustomFees: RequestCustomFee[] = await getTokenCustomFees(
 			stableCoinCapabilitiesHTS.coin.tokenId!,
@@ -232,7 +241,10 @@ describe('🧪 [ADAPTER] HTSTransactionAdapter with ECDSA accounts', () => {
 			tokenId: stableCoinCapabilitiesHTS.coin.tokenId!.toString(),
 		});
 
-		await Fees.updateCustomFees(newFees);
+		const result = await Fees.updateCustomFees(newFees);
+		expect(result).toBeTruthy();
+		expect(result.success).toBeTruthy();
+		expect(result.transactionId).toBeTruthy();
 
 		const tokenCustomFees: RequestCustomFee[] = await getTokenCustomFees(
 			stableCoinCapabilitiesHTS.coin.tokenId!,

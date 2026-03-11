@@ -99,7 +99,10 @@ export class UpdateCustomFeesCommandHandler
 		const res = await handler.updateCustomFees(capabilities, HcustomFee);
 
 		return Promise.resolve(
-			new UpdateCustomFeesCommandResponse(res.error === undefined),
+			new UpdateCustomFeesCommandResponse(
+				res.error === undefined,
+				res.id,
+			),
 		);
 	}
 }

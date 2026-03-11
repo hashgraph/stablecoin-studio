@@ -10,15 +10,34 @@ on:
       - "contracts/hardhat.config.ts"
       - "contracts/tsconfig.json"
       - "contracts/.solcover.js"
+      - ".github/workflows/test-contracts.yaml"
   push:
     branches:
       - main
 
+env:
+  LOCAL_PRIVATE_KEY_0: "0x105d050185ccb907fba04dd92d8de9e32c18305e097ab41dadda21489a211524"
+  LOCAL_PRIVATE_KEY_1: "0x2e1d968b041d84dd120a5860cee60cd83f9374ef527ca86996317ada3d0d03e7"
+  LOCAL_PRIVATE_KEY_2: "0x44162cd9b9a2f5582bd13b43cfd8be3bc20b8a81ee77f6bf77391598bcfbae4c"
+  LOCAL_JSON_RPC_ENDPOINT: "http://localhost:7546"
+  LOCAL_MIRROR_NODE_ENDPOINT: "http://localhost:5551"
+
+permissions:
+  contents: read
+
 jobs:
-  test-contracts:
-    name: Test Stablecoin Studio Contracts
+  # ==========================================================================
+  # Job 0: Build contracts (shared by test and coverage jobs)
+  # ==========================================================================
+  # Installs dependencies and builds contracts once, then caches both
+  # node_modules and build artifacts for downstream deployment jobs.
+  # Uses actions/cache (save) here and actions/cache/restore (read-only)
+  # in downstream jobs to avoid redundant npm ci + Solidity compilation.
+  # ==========================================================================
+  build:
+    name: Build Stablecoin Studio Contracts
     runs-on: token-studio-linux-medium
-    #timeout-minutes: 10
+    timeout-minutes: 10
     steps:
       - name: Harden Runner
         uses: step-security/harden-runner@5ef0c079ce82195b2a36a210272d6b661572d83e # v2.14.2
@@ -26,7 +45,57 @@ jobs:
           egress-policy: audit
 
       - name: Checkout code
-        uses: actions/checkout@08eba0b27e820071cde6df949e0beb9ba4906955 # v4.3.0
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+
+      - name: Setup Node.js
+        uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4.4.0
+        with:
+          node-version: "22"
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Save dependencies to cache
+        uses: actions/cache/save@0057852bfaa89a56745cba8c7296529d2fc39830 # v4.3.0
+        with:
+          path: |
+            node_modules
+            */node_modules
+            ~/.npm
+          key: ${{ runner.os }}-deps-${{ hashFiles('package-lock.json') }}
+
+      - name: Compile contracts
+        run: |
+          npm run build:contracts          
+
+      - name: Save Hardhat artifacts
+        uses: actions/cache/save@0057852bfaa89a56745cba8c7296529d2fc39830 # v4.3.0
+        with:
+          path: |
+            contracts/artifacts
+            contracts/cache
+            contracts/typechain-types
+          key: ${{ runner.os }}-contracts-build-${{ github.sha }}
+
+  # ==========================================================================
+  # Job 1: Execute smart contracts coverage (depends on test job)
+  # ==========================================================================
+  # Runs the smart contracts coverage in hardhat network.
+  # ==========================================================================
+  coverage:
+    name: Coverage of Stablecoin Studio Contracts
+    needs: [build]
+    runs-on: token-studio-linux-medium
+    timeout-minutes: 15
+
+    steps:
+      - name: Harden Runner
+        uses: step-security/harden-runner@5ef0c079ce82195b2a36a210272d6b661572d83e # v2.14.2
+        with:
+          egress-policy: audit
+
+      - name: Checkout code
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
 
       - name: Setup Node.js
         uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4.4.0
@@ -34,28 +103,148 @@ jobs:
           node-version: "22"
           cache: npm
 
-      - name: Install dependencies
-        run: npm ci
+      - name: Restore dependencies from cache
+        uses: actions/cache/restore@0057852bfaa89a56745cba8c7296529d2fc39830 # v4.3.0
+        with:
+          path: |
+            node_modules
+            */node_modules
+            ~/.npm
+          key: ${{ runner.os }}-deps-${{ hashFiles('package-lock.json') }}
+          fail-on-cache-miss: true
 
-      - name: Cache Hardhat artifacts
-        uses: actions/cache@0057852bfaa89a56745cba8c7296529d2fc39830 # v4.3.0
+      - name: Restore build artifacts from cache
+        uses: actions/cache/restore@0057852bfaa89a56745cba8c7296529d2fc39830 # v4.3.0
         with:
           path: |
             contracts/artifacts
-            contracts/cache
             contracts/typechain-types
-          # Include package-lock.json in key to invalidate cache when dependencies change
-          key: ${{ runner.os }}-hardhat-${{ hashFiles('**/package-lock.json', 'contracts/**/*.sol') }}
-          restore-keys: |
-            ${{ runner.os }}-hardhat-
+            contracts/cache
+          key: ${{ runner.os }}-contracts-build-${{ github.sha }}
+          fail-on-cache-miss: false
 
-      - name: Compile contracts
+      - name: Run coverage
         run: |
-          echo "🔨 Compiling Stablecoin Studio contracts..."
-          npm run build:contracts          
-          echo "✅ Contracts compiled successfully"
-
-      - name: Run tests with coverage
-        run: |
-          echo "🧪 Running tests with coverage for Stablecoin Studio contracts..."
           npm run coverage:contracts
+
+  # ==========================================================================
+  # Job 2: Execute smart contracts tests (depends on build job)
+  # ==========================================================================
+  # Runs the smart contracts tests in hiero ledger Solo.
+  # ==========================================================================
+  tests:
+    name: Test Stablecoin Studio Contracts
+    needs: [build]
+    runs-on: token-studio-linux-medium
+    timeout-minutes: 60
+
+    steps:
+      - name: Harden Runner
+        uses: step-security/harden-runner@5ef0c079ce82195b2a36a210272d6b661572d83e # v2.14.2
+        with:
+          egress-policy: audit
+
+      - name: Checkout code
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+
+      - name: Setup Node.js
+        uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4.4.0
+        with:
+          node-version: "22"
+          cache: npm
+
+      - name: Check Docker availability
+        id: docker-check
+        run: |
+          if docker info > /dev/null 2>&1; then
+            echo "available=true" >> "${GITHUB_OUTPUT}"
+            echo "Docker is available"
+            docker --version
+          else
+            echo "available=false" >> "${GITHUB_OUTPUT}"
+            echo "::warning::Docker not available - skipping Solo deployment test"
+          fi
+
+      - name: Restore dependencies from cache
+        uses: actions/cache/restore@0057852bfaa89a56745cba8c7296529d2fc39830 # v4.3.0
+        with:
+          path: |
+            node_modules
+            */node_modules
+            ~/.npm
+          key: ${{ runner.os }}-deps-${{ hashFiles('package-lock.json') }}
+          fail-on-cache-miss: true
+
+      - name: Restore build artifacts from cache
+        uses: actions/cache/restore@0057852bfaa89a56745cba8c7296529d2fc39830 # v4.3.0
+        with:
+          path: |
+            contracts/artifacts
+            contracts/typechain-types
+            contracts/cache
+          key: ${{ runner.os }}-contracts-build-${{ github.sha }}
+          fail-on-cache-miss: false
+
+      - name: Setup Hiero Solo Network
+        id: solo
+        if: steps.docker-check.outputs.available == 'true'
+        uses: hiero-ledger/hiero-solo-action@fbca3e7a99ce9aa8a250563a81187abe115e0dad # v0.16.0
+        with:
+          installRelay: true
+          installMirrorNode: true
+          hbarAmount: 10000000
+
+      - name: Create ECDSA account 0
+        if: steps.solo.outcome == 'success'
+        env:
+          DEPLOYMENT: ${{ steps.solo.outputs.deployment }}
+          KEY: ${{ env.LOCAL_PRIVATE_KEY_0 }}
+        run: |
+          DER_KEY=${KEY#0x}
+      
+          solo ledger account create \
+            --ecdsa-private-key "$DER_KEY" \
+            --set-alias \
+            --hbar-amount 10000000 \
+            --deployment "$DEPLOYMENT" \
+            --dev
+
+      - name: Create ECDSA account 1
+        if: steps.solo.outcome == 'success'
+        env:
+          DEPLOYMENT: ${{ steps.solo.outputs.deployment }}
+          KEY: ${{ env.LOCAL_PRIVATE_KEY_1 }}
+        run: |
+          DER_KEY=${KEY#0x}
+          
+          solo ledger account create \
+            --ecdsa-private-key "$DER_KEY" \
+            --set-alias \
+            --hbar-amount 10000000 \
+            --deployment "$DEPLOYMENT" \
+            --dev
+
+      - name: Create ED25519 account
+        if: steps.solo.outcome == 'success'
+        env:
+          DEPLOYMENT: ${{ steps.solo.outputs.deployment }}
+          KEY: ${{ env.LOCAL_PRIVATE_KEY_2 }}
+        run: |
+          DER_KEY=${KEY#0x}
+          
+          solo ledger account create \
+            --ed25519-private-key "$DER_KEY" \
+            --hbar-amount 10000000 \
+            --deployment "$DEPLOYMENT" \
+            --dev
+
+      - name: Run tests
+        if: steps.docker-check.outputs.available == 'true' && steps.solo.outcome == 'success'
+        run: |
+          npm run test --workspace=contracts -- --network local
+
+      - name: Stop Hiero Solo Network
+        if: always() && steps.docker-check.outputs.available == 'true'
+        run: |
+          docker stop $(docker ps -q --filter "name=hiero") || true
+          docker rm $(docker ps -aq --filter "name=hiero") || true

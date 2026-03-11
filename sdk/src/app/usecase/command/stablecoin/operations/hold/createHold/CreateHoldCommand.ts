@@ -6,6 +6,7 @@ export class CreateHoldCommandResponse implements CommandResponse {
 	constructor(
 		public readonly holdId: number,
 		public readonly payload: boolean,
+		public readonly transactionId?: string,
 	) {}
 }
 

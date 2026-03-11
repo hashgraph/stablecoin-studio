@@ -11,7 +11,7 @@ import {
     StableCoinTokenMock__factory,
 } from '@contracts'
 import { DeployFullInfrastructureCommand, MESSAGES, ONE_TOKEN, ROLES } from '@scripts'
-import { deployStableCoinInTests, deployFullInfrastructureInTests, GAS_LIMIT } from '@test/shared'
+import { deployStableCoinInTests, deployFullInfrastructureInTests, expectRevert, GAS_LIMIT } from '@test/shared'
 
 describe('➡️ Delete Tests', function () {
     const TOKEN_WAS_DELETED = 179
@@ -59,13 +59,14 @@ describe('➡️ Delete Tests', function () {
     it("Account without DELETE role can't delete a token", async function () {
         deletableFacet = deletableFacet.connect(nonOperator)
 
-        await expect(
-            deletableFacet.deleteToken({
+        await expectRevert({
+            txPromise: deletableFacet.deleteToken({
                 gasLimit: GAS_LIMIT.hederaTokenManager.deleteToken,
-            })
-        )
-            .to.be.revertedWithCustomError(deletableFacet, 'AccountHasNoRole')
-            .withArgs(nonOperator, ROLES.delete.hash)
+            }),
+            contract: deletableFacet,
+            customError: 'AccountHasNoRole',
+            args: [nonOperator.address, ROLES.delete.hash],
+        })
     })
 
     it('Account with DELETE role can delete a token', async function () {
@@ -100,14 +101,13 @@ describe('➡️ Delete Tests', function () {
             .withArgs(tokenAddress)
 
         // We check that the token does not exist by unsucessfully trying to mint 1
-        await expect(
-            cashInFacet.mint(nonOperator.address, ONE_TOKEN, {
+        await expectRevert({
+            txPromise: cashInFacet.mint(nonOperator.address, ONE_TOKEN, {
                 gasLimit: GAS_LIMIT.hederaTokenManager.mint,
-            })
-        )
-            .to.be.revertedWithCustomError(cashInFacet, 'ResponseCodeInvalid')
-            .withArgs(TOKEN_WAS_DELETED)
-
-        //! The status CANNOT BE reverted since we deleted the token
+            }),
+            contract: cashInFacet,
+            customError: 'ResponseCodeInvalid',
+            args: [TOKEN_WAS_DELETED],
+        })
     })
 })

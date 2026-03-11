@@ -20,7 +20,7 @@ npm-debug.log*
 coverage/
 
 # Transpiled files
-./build/
+build/
 
 # IDE configurations
 .vscode/
@@ -55,3 +55,5 @@ yarn-error.log*
 
 # Gas report
 gas-report.txt
+
+.tasks

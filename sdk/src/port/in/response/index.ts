@@ -20,5 +20,6 @@
 
 import ConfigInfoViewModel from './ConfigInfoViewModel';
 import HoldViewModel from './HoldViewModel';
+import { TransactionResult } from '../../../domain/context/transaction/TransactionResult';
 
-export { ConfigInfoViewModel, HoldViewModel };
+export { ConfigInfoViewModel, HoldViewModel, TransactionResult };

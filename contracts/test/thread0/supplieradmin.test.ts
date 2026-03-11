@@ -11,6 +11,8 @@ import {
     RolesFacet__factory,
     SupplierAdminFacet,
     SupplierAdminFacet__factory,
+    ReserveFacet,
+    ReserveFacet__factory,
     StableCoinTokenMock__factory,
 } from '@contracts'
 import {
@@ -20,11 +22,12 @@ import {
     DeployFullInfrastructureCommand,
     MESSAGES,
     ONE_TOKEN,
+    TEN_TOKENS,
     ROLES,
     validateTxResponse,
     ValidateTxResponseCommand,
 } from '@scripts'
-import { deployStableCoinInTests, deployFullInfrastructureInTests, GAS_LIMIT } from '@test/shared'
+import { deployStableCoinInTests, deployFullInfrastructureInTests, expectRevert, GAS_LIMIT } from '@test/shared'
 
 describe('➡️ Supplier Admin Tests', function () {
     // Contracts
@@ -105,8 +108,19 @@ describe('➡️ Supplier Admin Tests', function () {
         ).to.eq(cashInLimit.toString())
     })
 
-    it('should allow admin to revoke limited supplier role', async function () {
+    it('should not allow admin to revoke limited supplier role to address zero account', async function () {
         supplierAdminFacet = supplierAdminFacet.connect(operator)
+        await expectRevert({
+            txPromise: supplierAdminFacet.revokeSupplierRole(ADDRESS_ZERO, {
+                gasLimit: GAS_LIMIT.hederaTokenManager.revokeSupplierRole,
+            }),
+            contract: supplierAdminFacet,
+            customError: 'AddressZero',
+            args: [ADDRESS_ZERO],
+        })
+    })
+
+    it('should allow admin to revoke limited supplier role', async function () {
         await expect(
             supplierAdminFacet.revokeSupplierRole(nonOperator, {
                 gasLimit: GAS_LIMIT.hederaTokenManager.revokeSupplierRole,
@@ -186,6 +200,17 @@ describe('➡️ Supplier Admin Tests', function () {
         ).to.equal(false)
     })
 
+    it('should not allow admin to grant supplier role an amount less than zero', async function () {
+        await expectRevert({
+            txPromise: supplierAdminFacet.grantSupplierRole(nonOperator, 0, {
+                gasLimit: GAS_LIMIT.hederaTokenManager.grantSupplierRole,
+            }),
+            contract: supplierAdminFacet,
+            customError: 'LessThan',
+            args: [0, 0],
+        })
+    })
+
     it('should allow admin to grant supplier role', async function () {
         const cashInLimit = 1n
 
@@ -196,6 +221,30 @@ describe('➡️ Supplier Admin Tests', function () {
         )
             .to.emit(supplierAdminFacet, 'RoleGranted')
             .withArgs(ROLES.cashin.hash, nonOperator.address, operator.address)
+    })
+
+    it('should not allow admin to increase supplier allowance to address zero account', async function () {
+        const amount = 1n
+
+        await expectRevert({
+            txPromise: supplierAdminFacet.increaseSupplierAllowance(ADDRESS_ZERO, amount, {
+                gasLimit: GAS_LIMIT.hederaTokenManager.increaseSupplierAllowance,
+            }),
+            contract: supplierAdminFacet,
+            customError: 'AddressZero',
+            args: [ADDRESS_ZERO],
+        })
+    })
+
+    it('should not allow admin to increase supplier allowance a zero amount', async function () {
+        await expectRevert({
+            txPromise: supplierAdminFacet.increaseSupplierAllowance(nonOperator, 0, {
+                gasLimit: GAS_LIMIT.hederaTokenManager.increaseSupplierAllowance,
+            }),
+            contract: supplierAdminFacet,
+            customError: 'LessThan',
+            args: [0, 0],
+        })
     })
 
     it('should allow admin to increase supplier allowance', async function () {
@@ -220,6 +269,46 @@ describe('➡️ Supplier Admin Tests', function () {
         ).to.eq('2')
     })
 
+    it('should not allow admin to decrease an amount greater than the supplier allowance', async function () {
+        const supplierAllowance = await supplierAdminFacet.getSupplierAllowance(nonOperator, {
+            gasLimit: GAS_LIMIT.hederaTokenManager.getSupplierAllowance,
+        })
+        const amount = BigInt(supplierAllowance) + 1n
+
+        await expectRevert({
+            txPromise: supplierAdminFacet.decreaseSupplierAllowance(nonOperator, amount, {
+                gasLimit: GAS_LIMIT.hederaTokenManager.decreaseSupplierAllowance,
+            }),
+            contract: supplierAdminFacet,
+            customError: 'GreaterThan',
+            args: [amount, supplierAllowance],
+        })
+    })
+
+    it('should not allow admin to increase supplier allowance to address zero account', async function () {
+        const amount = 1n
+
+        await expectRevert({
+            txPromise: supplierAdminFacet.decreaseSupplierAllowance(ADDRESS_ZERO, amount, {
+                gasLimit: GAS_LIMIT.hederaTokenManager.decreaseSupplierAllowance,
+            }),
+            contract: supplierAdminFacet,
+            customError: 'AddressZero',
+            args: [ADDRESS_ZERO],
+        })
+    })
+
+    it('should not allow admin to decrease supplier allowance a zero amount', async function () {
+        await expectRevert({
+            txPromise: supplierAdminFacet.decreaseSupplierAllowance(nonOperator, 0, {
+                gasLimit: GAS_LIMIT.hederaTokenManager.decreaseSupplierAllowance,
+            }),
+            contract: supplierAdminFacet,
+            customError: 'LessThan',
+            args: [0, 0],
+        })
+    })
+
     it('should allow admin to decrease supplier allowance', async function () {
         const amount = 1n
 
@@ -238,6 +327,17 @@ describe('➡️ Supplier Admin Tests', function () {
                 gasLimit: GAS_LIMIT.hederaTokenManager.getSupplierAllowance,
             })
         ).to.eq('1')
+    })
+
+    it('should not allow admin to reset supplier allowance to address zero account', async function () {
+        await expectRevert({
+            txPromise: supplierAdminFacet.resetSupplierAllowance(ADDRESS_ZERO, {
+                gasLimit: GAS_LIMIT.hederaTokenManager.resetSupplierAllowance,
+            }),
+            contract: supplierAdminFacet,
+            customError: 'AddressZero',
+            args: [ADDRESS_ZERO],
+        })
     })
 
     it('should allow admin to reset supplier allowance', async function () {
@@ -272,23 +372,25 @@ describe('➡️ Supplier Admin Tests', function () {
         const cashInLimit = 1n
         supplierAdminFacet = supplierAdminFacet.connect(nonOperator)
 
-        await expect(
-            supplierAdminFacet.grantSupplierRole(nonOperator, cashInLimit, {
+        await expectRevert({
+            txPromise: supplierAdminFacet.grantSupplierRole(nonOperator, cashInLimit, {
                 gasLimit: GAS_LIMIT.hederaTokenManager.grantSupplierRole,
-            })
-        )
-            .to.be.revertedWithCustomError(supplierAdminFacet, 'AccountHasNoRole')
-            .withArgs(nonOperator, ROLES.defaultAdmin.hash)
+            }),
+            contract: supplierAdminFacet,
+            customError: 'AccountHasNoRole',
+            args: [nonOperator, ROLES.defaultAdmin.hash],
+        })
     })
 
     it('should not allow non-admin to grant unlimited supplier role', async function () {
-        await expect(
-            supplierAdminFacet.grantUnlimitedSupplierRole(nonOperator, {
+        await expectRevert({
+            txPromise: supplierAdminFacet.grantUnlimitedSupplierRole(nonOperator, {
                 gasLimit: GAS_LIMIT.hederaTokenManager.grantUnlimitedSupplierRole,
-            })
-        )
-            .to.be.revertedWithCustomError(supplierAdminFacet, 'AccountHasNoRole')
-            .withArgs(nonOperator, ROLES.defaultAdmin.hash)
+            }),
+            contract: supplierAdminFacet,
+            customError: 'AccountHasNoRole',
+            args: [nonOperator, ROLES.defaultAdmin.hash],
+        })
     })
 
     it('should not allow non-admin to revoke limited supplier role', async function () {
@@ -304,24 +406,26 @@ describe('➡️ Supplier Admin Tests', function () {
             .withArgs(ROLES.cashin.hash, nonOperator.address, operator.address)
 
         supplierAdminFacet = supplierAdminFacet.connect(nonOperator)
-        await expect(
-            supplierAdminFacet.revokeSupplierRole(nonOperator, {
+        await expectRevert({
+            txPromise: supplierAdminFacet.revokeSupplierRole(nonOperator, {
                 gasLimit: GAS_LIMIT.hederaTokenManager.revokeSupplierRole,
-            })
-        )
-            .to.be.revertedWithCustomError(supplierAdminFacet, 'AccountHasNoRole')
-            .withArgs(nonOperator, ROLES.defaultAdmin.hash)
+            }),
+            contract: supplierAdminFacet,
+            customError: 'AccountHasNoRole',
+            args: [nonOperator, ROLES.defaultAdmin.hash],
+        })
     })
 
     it('should not allow non-admin to revoke unlimited supplier role', async function () {
         supplierAdminFacet = supplierAdminFacet.connect(nonOperator)
-        await expect(
-            supplierAdminFacet.revokeSupplierRole(nonOperator, {
+        await expectRevert({
+            txPromise: supplierAdminFacet.revokeSupplierRole(nonOperator, {
                 gasLimit: GAS_LIMIT.hederaTokenManager.revokeSupplierRole,
-            })
-        )
-            .to.be.revertedWithCustomError(supplierAdminFacet, 'AccountHasNoRole')
-            .withArgs(nonOperator, ROLES.defaultAdmin.hash)
+            }),
+            contract: supplierAdminFacet,
+            customError: 'AccountHasNoRole',
+            args: [nonOperator, ROLES.defaultAdmin.hash],
+        })
     })
 
     it('should allow admin to clean up supplier role after tests', async function () {
@@ -349,34 +453,37 @@ describe('➡️ Supplier Admin Tests', function () {
     it('should not allow non-admin to increase supplier allowance', async function () {
         const amount = 1n
         supplierAdminFacet = supplierAdminFacet.connect(nonOperator)
-        await expect(
-            supplierAdminFacet.increaseSupplierAllowance(nonOperator, amount, {
+        await expectRevert({
+            txPromise: supplierAdminFacet.increaseSupplierAllowance(nonOperator, amount, {
                 gasLimit: GAS_LIMIT.hederaTokenManager.increaseSupplierAllowance,
-            })
-        )
-            .to.be.revertedWithCustomError(supplierAdminFacet, 'AccountHasNoRole')
-            .withArgs(nonOperator, ROLES.defaultAdmin.hash)
+            }),
+            contract: supplierAdminFacet,
+            customError: 'AccountHasNoRole',
+            args: [nonOperator, ROLES.defaultAdmin.hash],
+        })
     })
 
     it('should not allow non-admin to decrease supplier allowance', async function () {
         const amount = 1n
-        await expect(
-            supplierAdminFacet.decreaseSupplierAllowance(nonOperator, amount, {
+        await expectRevert({
+            txPromise: supplierAdminFacet.decreaseSupplierAllowance(nonOperator, amount, {
                 gasLimit: GAS_LIMIT.hederaTokenManager.decreaseSupplierAllowance,
-            })
-        )
-            .to.be.revertedWithCustomError(supplierAdminFacet, 'AccountHasNoRole')
-            .withArgs(nonOperator, ROLES.defaultAdmin.hash)
+            }),
+            contract: supplierAdminFacet,
+            customError: 'AccountHasNoRole',
+            args: [nonOperator, ROLES.defaultAdmin.hash],
+        })
     })
 
     it('should not allow non-admin to reset supplier allowance', async function () {
-        await expect(
-            supplierAdminFacet.resetSupplierAllowance(nonOperator, {
+        await expectRevert({
+            txPromise: supplierAdminFacet.resetSupplierAllowance(nonOperator, {
                 gasLimit: GAS_LIMIT.hederaTokenManager.resetSupplierAllowance,
-            })
-        )
-            .to.be.revertedWithCustomError(supplierAdminFacet, 'AccountHasNoRole')
-            .withArgs(nonOperator, ROLES.defaultAdmin.hash)
+            }),
+            contract: supplierAdminFacet,
+            customError: 'AccountHasNoRole',
+            args: [nonOperator, ROLES.defaultAdmin.hash],
+        })
     })
 
     it('should allow admin to revoke the supplier role for cleanup', async function () {
@@ -398,6 +505,7 @@ describe('➡️ Supplier Admin Tests - (Unlimited)', function () {
     let supplierAdminFacet: SupplierAdminFacet
     let hederaTokenManagerFacet: HederaTokenManagerFacet
     let cashInFacet: CashInFacet
+    let reserveFacet: ReserveFacet
     // Accounts
     let operator: SignerWithAddress
     let nonOperator: SignerWithAddress
@@ -406,6 +514,7 @@ describe('➡️ Supplier Admin Tests - (Unlimited)', function () {
         supplierAdminFacet = SupplierAdminFacet__factory.connect(address, operator)
         hederaTokenManagerFacet = HederaTokenManagerFacet__factory.connect(address, operator)
         cashInFacet = CashInFacet__factory.connect(address, operator)
+        reserveFacet = ReserveFacet__factory.connect(address, operator)
     }
 
     before(async () => {
@@ -445,6 +554,38 @@ describe('➡️ Supplier Admin Tests - (Unlimited)', function () {
             gasLimit: GAS_LIMIT.hederaTokenManager.associate,
         })
         await validateTxResponse(new ValidateTxResponseCommand({ txResponse: associateResponse }))
+    })
+
+    it('An account with unlimited supplier role cannot cash in tokens to the address zero', async function () {
+        const AmountToMint = 100n * ONE_TOKEN
+        await expectRevert({
+            txPromise: cashInFacet.mint(ADDRESS_ZERO, AmountToMint, {
+                gasLimit: GAS_LIMIT.hederaTokenManager.mint,
+            }),
+            contract: cashInFacet,
+            customError: 'AddressZero',
+        })
+    })
+
+    it('An account with unlimited supplier role cannot cash in a negative or zero amount', async function () {
+        await expectRevert({
+            txPromise: cashInFacet.mint(operator.address, 0, {
+                gasLimit: GAS_LIMIT.hederaTokenManager.mint,
+            }),
+            contract: cashInFacet,
+            customError: 'NegativeAmount',
+            args: [0],
+        })
+    })
+
+    it('An account with unlimited supplier role cannot cash in to the stablecoin address', async function () {
+        const AmountToMint = 100n * ONE_TOKEN
+
+        await expect(
+            cashInFacet.mint(stableCoinProxyAddress, AmountToMint, {
+                gasLimit: GAS_LIMIT.hederaTokenManager.mint,
+            })
+        ).to.not.emit(cashInFacet, 'TokenTransfer')
     })
 
     it('An account with unlimited supplier role can cash in 100 tokens to the treasury account', async function () {
@@ -506,24 +647,26 @@ describe('➡️ Supplier Admin Tests - (Unlimited)', function () {
         const TotalSupply = await hederaTokenManagerFacet.totalSupply()
 
         // Cashin more tokens than max supply : fail
-        await expect(
-            cashInFacet.mint(nonOperator, DEFAULT_TOKEN.maxSupply - TotalSupply + 1n, {
+        await expectRevert({
+            txPromise: cashInFacet.mint(nonOperator, DEFAULT_TOKEN.maxSupply - TotalSupply + 1n, {
                 gasLimit: GAS_LIMIT.hederaTokenManager.mint,
-            })
-        )
-            .to.be.revertedWithCustomError(cashInFacet, 'FormatNumberIncorrect')
-            .withArgs(DEFAULT_TOKEN.maxSupply - TotalSupply + 1n)
+            }),
+            contract: cashInFacet,
+            customError: 'FormatNumberIncorrect',
+            args: [DEFAULT_TOKEN.maxSupply - TotalSupply + 1n],
+        })
     })
 
     it('An account with unlimited supplier role can not be granted limited supplier role', async function () {
         // Grant limited supplier role to account with unlimited supplier role : fail
-        await expect(
-            supplierAdminFacet.grantSupplierRole(nonOperator, 1n, {
+        await expectRevert({
+            txPromise: supplierAdminFacet.grantSupplierRole(nonOperator, 1n, {
                 gasLimit: GAS_LIMIT.hederaTokenManager.grantSupplierRole,
-            })
-        )
-            .to.be.revertedWithCustomError(supplierAdminFacet, 'AccountHasUnlimitedSupplierAllowance')
-            .withArgs(nonOperator)
+            }),
+            contract: supplierAdminFacet,
+            customError: 'AccountHasUnlimitedSupplierAllowance',
+            args: [nonOperator],
+        })
     })
 
     it('An account with unlimited supplier role, but revoked, can not cash in anything at all', async function () {
@@ -539,13 +682,14 @@ describe('➡️ Supplier Admin Tests - (Unlimited)', function () {
         await delay({ time: 1, unit: 'sec' })
         // Cashin 1 token : fail
         cashInFacet = cashInFacet.connect(nonOperator)
-        await expect(
-            cashInFacet.mint(nonOperator, ONE_TOKEN, {
+        await expectRevert({
+            txPromise: cashInFacet.mint(nonOperator, ONE_TOKEN, {
                 gasLimit: GAS_LIMIT.hederaTokenManager.mint,
-            })
-        )
-            .to.be.revertedWithCustomError(cashInFacet, 'AccountHasNoRole')
-            .withArgs(nonOperator, ROLES.cashin.hash)
+            }),
+            contract: cashInFacet,
+            customError: 'AccountHasNoRole',
+            args: [nonOperator, ROLES.cashin.hash],
+        })
 
         // Grant unlimited supplier role to continue testing next tests cases
         cashInFacet = cashInFacet.connect(operator)
@@ -559,36 +703,216 @@ describe('➡️ Supplier Admin Tests - (Unlimited)', function () {
     })
 
     it('Granting unlimited or limited supplier role to address 0 fails', async function () {
-        await expect(supplierAdminFacet.grantUnlimitedSupplierRole(ADDRESS_ZERO)).to.be.revertedWithCustomError(
-            supplierAdminFacet,
-            'AddressZero'
-        )
+        await expectRevert({
+            txPromise: supplierAdminFacet.grantUnlimitedSupplierRole(ADDRESS_ZERO, {
+                gasLimit: GAS_LIMIT.hederaTokenManager.grantUnlimitedSupplierRole,
+            }),
+            contract: supplierAdminFacet,
+            customError: 'AddressZero',
+        })
 
-        await expect(supplierAdminFacet.grantSupplierRole(ADDRESS_ZERO, 1)).to.be.revertedWithCustomError(
-            supplierAdminFacet,
-            'AddressZero'
-        )
+        await expectRevert({
+            txPromise: supplierAdminFacet.grantSupplierRole(ADDRESS_ZERO, 1, {
+                gasLimit: GAS_LIMIT.hederaTokenManager.grantSupplierRole,
+            }),
+            contract: supplierAdminFacet,
+            customError: 'AddressZero',
+        })
     })
 
     it('An account with unlimited supplier role can not increase supplier allowance', async function () {
         // Increase supplier allowance an account with unlimited supplier role : fail
-        await expect(
-            supplierAdminFacet.increaseSupplierAllowance(nonOperator, ONE_TOKEN, {
+        await expectRevert({
+            txPromise: supplierAdminFacet.increaseSupplierAllowance(nonOperator, ONE_TOKEN, {
                 gasLimit: GAS_LIMIT.hederaTokenManager.increaseSupplierAllowance,
-            })
-        )
-            .to.be.revertedWithCustomError(supplierAdminFacet, 'AccountHasUnlimitedSupplierAllowance')
-            .withArgs(nonOperator)
+            }),
+            contract: supplierAdminFacet,
+            customError: 'AccountHasUnlimitedSupplierAllowance',
+            args: [nonOperator],
+        })
     })
 
     it('An account with unlimited supplier role can not decrease supplier allowance', async function () {
         // Decrease supplier allowance an account with unlimited supplier role : fail
-        await expect(
-            supplierAdminFacet.decreaseSupplierAllowance(nonOperator, ONE_TOKEN, {
+        await expectRevert({
+            txPromise: supplierAdminFacet.decreaseSupplierAllowance(nonOperator, ONE_TOKEN, {
                 gasLimit: GAS_LIMIT.hederaTokenManager.decreaseSupplierAllowance,
+            }),
+            contract: supplierAdminFacet,
+            customError: 'AccountHasUnlimitedSupplierAllowance',
+            args: [nonOperator],
+        })
+    })
+
+    it('An account with unlimited supplier role can mint tokens when reserve has zero address', async function () {
+        await reserveFacet.updateReserveAddress(ADDRESS_ZERO)
+        const AmountToMint = 100n * ONE_TOKEN
+        await expect(
+            cashInFacet.mint(operator.address, AmountToMint, {
+                gasLimit: GAS_LIMIT.hederaTokenManager.mint,
             })
         )
-            .to.be.revertedWithCustomError(supplierAdminFacet, 'AccountHasUnlimitedSupplierAllowance')
-            .withArgs(nonOperator)
+            .to.emit(cashInFacet, 'TokensMinted')
+            .withArgs(operator.address, tokenAddress, AmountToMint, operator.address)
+    })
+})
+
+describe('➡️ Supplier Admin Tests 1 - (Limited)', function () {
+    // Contracts
+    let stableCoinProxyAddress: string
+    let tokenAddress: string
+    let supplierAdminFacet: SupplierAdminFacet
+    let hederaTokenManagerFacet: HederaTokenManagerFacet
+    let cashInFacet: CashInFacet
+    // Accounts
+    let operator: SignerWithAddress
+    let nonOperator: SignerWithAddress
+
+    async function setFacets(address: string) {
+        supplierAdminFacet = SupplierAdminFacet__factory.connect(address, operator)
+        hederaTokenManagerFacet = HederaTokenManagerFacet__factory.connect(address, operator)
+        cashInFacet = CashInFacet__factory.connect(address, operator)
+    }
+
+    before(async () => {
+        // mute | mock console.log
+        console.log = () => {} // eslint-disable-line
+        console.info(MESSAGES.deploy.info.deployFullInfrastructureInTests)
+        ;[operator, nonOperator] = await ethers.getSigners()
+
+        const { ...deployedContracts } = await deployFullInfrastructureInTests(
+            await DeployFullInfrastructureCommand.newInstance({
+                signer: operator,
+                useDeployed: false,
+                useEnvironment: true,
+            })
+        )
+        ;({ stableCoinProxyAddress, tokenAddress } = await deployStableCoinInTests({
+            signer: operator,
+            businessLogicResolverProxyAddress: deployedContracts.businessLogicResolver.proxyAddress!,
+            stableCoinFactoryProxyAddress: deployedContracts.stableCoinFactoryFacet.proxyAddress!,
+        }))
+
+        await StableCoinTokenMock__factory.connect(tokenAddress, operator).setStableCoinAddress(stableCoinProxyAddress)
+
+        await setFacets(stableCoinProxyAddress)
+
+        // Grant unlimited supplier role
+        const LimitAmount = 100n * TEN_TOKENS
+        await expect(
+            supplierAdminFacet.grantSupplierRole(nonOperator, LimitAmount, {
+                gasLimit: GAS_LIMIT.hederaTokenManager.grantUnlimitedSupplierRole,
+            })
+        )
+            .to.emit(supplierAdminFacet, 'RoleGranted')
+            .withArgs(ROLES.cashin.hash, nonOperator.address, operator.address)
+
+        // Associate token to nonOperator account
+        const associateResponse = await IHRC__factory.connect(tokenAddress, nonOperator).associate({
+            gasLimit: GAS_LIMIT.hederaTokenManager.associate,
+        })
+        await validateTxResponse(new ValidateTxResponseCommand({ txResponse: associateResponse }))
+
+        cashInFacet = cashInFacet.connect(nonOperator)
+    })
+
+    it('An account with limited supplier role cannot cash in tokens to the address zero', async function () {
+        const AmountToMint = 100n * ONE_TOKEN
+        await expectRevert({
+            txPromise: cashInFacet.mint(ADDRESS_ZERO, AmountToMint, {
+                gasLimit: GAS_LIMIT.hederaTokenManager.mint,
+            }),
+            contract: cashInFacet,
+            customError: 'AddressZero',
+        })
+    })
+
+    it('An account with unlimited supplier role cannot cash in a negative amount', async function () {
+        await expectRevert({
+            txPromise: cashInFacet.mint(operator.address, 0, {
+                gasLimit: GAS_LIMIT.hederaTokenManager.mint,
+            }),
+            contract: cashInFacet,
+            customError: 'NegativeAmount',
+            args: [0],
+        })
+    })
+
+    it('An account with limited supplier role can cash in 100 tokens to the treasury account', async function () {
+        const AmountToMint = 100n * ONE_TOKEN
+
+        // Get the initial total supply and account's balanceOf
+        const initialTotalSupply = await hederaTokenManagerFacet.totalSupply()
+        const initialBalanceOf = await hederaTokenManagerFacet.balanceOf(operator.address)
+
+        // Cashin tokens to previously associated account
+        await expect(
+            cashInFacet.mint(operator.address, AmountToMint, {
+                gasLimit: GAS_LIMIT.hederaTokenManager.mint,
+            })
+        )
+            .to.emit(cashInFacet, 'TokensMinted')
+            .withArgs(nonOperator.address, tokenAddress, AmountToMint, operator.address)
+
+        await delay({ time: 1.5, unit: 'sec' })
+        // Check balance of account and total supply : success
+        const finalTotalSupply = await hederaTokenManagerFacet.totalSupply()
+        const finalBalanceOf = await hederaTokenManagerFacet.balanceOf(operator.address)
+        const expectedTotalSupply = initialTotalSupply + AmountToMint
+        const expectedBalanceOf = initialBalanceOf + AmountToMint
+
+        expect(finalTotalSupply.toString()).to.equals(expectedTotalSupply.toString())
+        expect(finalBalanceOf.toString()).to.equals(expectedBalanceOf.toString())
+    })
+})
+
+describe('➡️ Supplier Admin Tests 2 - (Limited)', function () {
+    // Contracts
+    let stableCoinProxyAddress: string
+    let hederaTokenManagerFacet: HederaTokenManagerFacet
+    let cashInFacet: CashInFacet
+    // Accounts
+    let operator: SignerWithAddress
+
+    async function setFacets(address: string) {
+        hederaTokenManagerFacet = HederaTokenManagerFacet__factory.connect(address, operator)
+        cashInFacet = CashInFacet__factory.connect(address, operator)
+    }
+
+    before(async () => {
+        // mute | mock console.log
+        console.log = () => {} // eslint-disable-line
+        console.info(MESSAGES.deploy.info.deployFullInfrastructureInTests)
+        ;[operator] = await ethers.getSigners()
+
+        const { ...deployedContracts } = await deployFullInfrastructureInTests(
+            await DeployFullInfrastructureCommand.newInstance({
+                signer: operator,
+                useDeployed: false,
+                useEnvironment: true,
+            }),
+            1
+        )
+        ;({ stableCoinProxyAddress } = await deployStableCoinInTests({
+            signer: operator,
+            businessLogicResolverProxyAddress: deployedContracts.businessLogicResolver.proxyAddress!,
+            stableCoinFactoryProxyAddress: deployedContracts.stableCoinFactoryFacet.proxyAddress!,
+        }))
+
+        await setFacets(stableCoinProxyAddress)
+    })
+
+    it('An account cannot cash in more tokens than owned', async function () {
+        const initialBalanceOf = await hederaTokenManagerFacet.balanceOf(operator.address)
+        console.log(initialBalanceOf)
+
+        const AmountToMint = 100n * TEN_TOKENS
+        await expectRevert({
+            txPromise: cashInFacet.mint(operator.address, AmountToMint, {
+                gasLimit: GAS_LIMIT.hederaTokenManager.mint,
+            }),
+            contract: cashInFacet,
+            customError: 'TheSmartContractIsNotTheTreasuryAccount',
+        })
     })
 })

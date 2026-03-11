@@ -147,6 +147,8 @@ describe('🧪 DFNSTransactionAdapter test', () => {
 				tokenId: stableCoinHTS?.tokenId?.toString() ?? '0.0.0',
 			}),
 		);
-		expect(result).toBe(true);
+		expect(result).toBeTruthy();
+		expect(result.success).toBeTruthy();
+		expect(result.transactionId).toBeTruthy();
 	}, 60_000);
 });

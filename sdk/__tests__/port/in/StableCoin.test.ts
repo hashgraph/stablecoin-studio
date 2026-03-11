@@ -27,6 +27,7 @@ import {
 	Account,
 	Balance,
 	BigDecimal,
+	CreateHoldTransactionResult,
 	HBAR_DECIMALS,
 	HederaId,
 	LoggerTransports,
@@ -37,6 +38,7 @@ import {
 	StableCoinRole,
 	StableCoinViewModel,
 	TokenSupplyType,
+	TransactionResult,
 } from '../../../src/index.js';
 import {
 	BurnRequest,
@@ -92,6 +94,7 @@ import Injectable from '../../../src/core/Injectable.js';
 import { CONFIG_SC, DEFAULT_VERSION } from '../../../src/core/Constants.js';
 import { Time } from '../../../src/core/Time.js';
 import HoldViewModel from '../../../src/port/in/response/HoldViewModel.js';
+import { CreateHoldCommandResponse } from 'app/usecase/command/stablecoin/operations/hold/createHold/CreateHoldCommand.js';
 
 const initialSupply = parseInt(INITIAL_SUPPLY);
 const maxSupply = parseInt(MAX_SUPPLY);
@@ -456,11 +459,13 @@ describe('🧪 Stablecoin test', () => {
 
 			Injectable.resolveTransactionHandler();
 
-			await StableCoin.signTransaction(
+			const result = await StableCoin.signTransaction(
 				new SignTransactionRequest({
 					transactionId: '1',
 				}),
 			);
+			expect(result).toBeTruthy();
+			expect(result.transactionId).toBeTruthy();
 		}
 
 		const result = await StableCoin.submitTransaction(
@@ -468,6 +473,8 @@ describe('🧪 Stablecoin test', () => {
 				transactionId: '1',
 			}),
 		);
+		expect(result).toBeTruthy();
+		expect(result.transactionId).toBeTruthy();
 
 		await Network.connect(
 			new ConnectRequest({
@@ -607,7 +614,9 @@ describe('🧪 Stablecoin test', () => {
 			nextHoldId,
 		);
 
-		expect(result.payload).toBeTruthy();
+		expect(result).toBeTruthy();
+		expect(result.success).toBeTruthy();
+		expect(result.transactionId).toBeDefined();
 		expect(result.holdId).toBe(parseInt(holdId, 16));
 		expect(holderBalance).toEqual(balanceSourceBefore);
 
@@ -626,13 +635,13 @@ describe('🧪 Stablecoin test', () => {
 		const escrow = CLIENT_ACCOUNT_ED25519.id.toString();
 		const targetId = CLIENT_ACCOUNT_ECDSA.id.toString();
 		const sourceId = CLIENT_ACCOUNT_ED25519.id.toString();
+
 		const balanceSourceBefore = await StableCoin.getBalanceOf(
 			new GetAccountBalanceRequest({
 				tokenId: stableCoin?.tokenId?.toString() ?? '0.0.0',
 				targetId: sourceId,
 			}),
 		);
-
 		await StableCoin.create(requestSC);
 		await StableCoin.cashIn(
 			new CashInRequest({
@@ -682,7 +691,9 @@ describe('🧪 Stablecoin test', () => {
 			nextHoldId,
 		);
 
-		expect(result.payload).toBeTruthy();
+		expect(result).toBeTruthy();
+		expect(result.success).toBeTruthy();
+		expect(result.transactionId).toBeDefined();
 		expect(result.holdId).toBe(parseInt(holdId, 16));
 		expect(holderBalance).toEqual(balanceSourceBefore);
 
@@ -743,6 +754,7 @@ describe('🧪 Stablecoin test', () => {
 		);
 
 		expect(result).toBeTruthy();
+		expect(result.success).toBeTruthy();
 		expect(targetBalance.value).toEqual(targetBalanceAfter);
 		await removeHold(targetId, amount);
 		nextHoldId = nextHoldId + 1;
@@ -796,6 +808,7 @@ describe('🧪 Stablecoin test', () => {
 		);
 
 		expect(result).toBeTruthy();
+		expect(result.success).toBeTruthy();
 		expect(holderBalance.value).toEqual(balanceSourceAfter);
 		await removeHold(CLIENT_ACCOUNT_ED25519.id.toString(), amount);
 		nextHoldId = nextHoldId + 1;
@@ -850,6 +863,7 @@ describe('🧪 Stablecoin test', () => {
 		);
 
 		expect(result).toBeTruthy();
+		expect(result.success).toBeTruthy();
 		expect(holderBalance.value).toEqual(balanceSourceAfter);
 		await removeHold(CLIENT_ACCOUNT_ED25519.id.toString(), amount);
 		nextHoldId = nextHoldId + 1;
@@ -867,7 +881,7 @@ describe('🧪 Stablecoin test', () => {
 			}),
 		);
 
-		await StableCoin.burn(
+		const result = await StableCoin.burn(
 			new BurnRequest({
 				amount: burnAmount.toString(),
 				tokenId: stableCoin?.tokenId?.toString() ?? '0.0.0',
@@ -888,6 +902,9 @@ describe('🧪 Stablecoin test', () => {
 		expect(finalAmount.value.toBigInt().toString()).toEqual(
 			final.toString(),
 		);
+		expect(result).toBeTruthy();
+		expect(result.success).toBeTruthy();
+		expect(result.transactionId).toBeTruthy();
 	}
 
 	async function cashInOperation(
@@ -902,7 +919,7 @@ describe('🧪 Stablecoin test', () => {
 			}),
 		);
 
-		await StableCoin.cashIn(
+		const result = await StableCoin.cashIn(
 			new CashInRequest({
 				amount: cashInAmount.toString(),
 				tokenId: stableCoin?.tokenId?.toString() ?? '0.0.0',
@@ -924,6 +941,9 @@ describe('🧪 Stablecoin test', () => {
 		expect(finalAmount.value.toBigInt().toString()).toEqual(
 			final.toString(),
 		);
+		expect(result).toBeTruthy();
+		expect(result.success).toBeTruthy();
+		expect(result.transactionId).toBeTruthy();
 	}
 
 	async function rescueOperation(
@@ -938,7 +958,7 @@ describe('🧪 Stablecoin test', () => {
 			}),
 		);
 
-		await StableCoin.rescue(
+		const result = await StableCoin.rescue(
 			new RescueRequest({
 				amount: rescueAmount.toString(),
 				tokenId: stableCoin?.tokenId?.toString() ?? '0.0.0',
@@ -959,6 +979,9 @@ describe('🧪 Stablecoin test', () => {
 		expect(finalAmount.value.toBigInt().toString()).toEqual(
 			final.toString(),
 		);
+		expect(result).toBeTruthy();
+		expect(result.success).toBeTruthy();
+		expect(result.transactionId).toBeTruthy();
 	}
 
 	async function rescueHBAROperation(
@@ -971,7 +994,7 @@ describe('🧪 Stablecoin test', () => {
 				treasuryAccountId: stableCoin?.treasury?.toString() ?? '0.0.0',
 			}),
 		);
-		await StableCoin.rescueHBAR(
+		const result = await StableCoin.rescueHBAR(
 			new RescueHBARRequest({
 				amount: rescueAmount.toString(),
 				tokenId: stableCoin?.tokenId?.toString() ?? '0.0.0',
@@ -989,6 +1012,9 @@ describe('🧪 Stablecoin test', () => {
 		expect(finalAmount.value.toBigInt().toString()).toEqual(
 			final.toString(),
 		);
+		expect(result).toBeTruthy();
+		expect(result.success).toBeTruthy();
+		expect(result.transactionId).toBeTruthy();
 	}
 
 	async function wipeOperation(
@@ -1003,7 +1029,7 @@ describe('🧪 Stablecoin test', () => {
 			}),
 		);
 
-		await StableCoin.wipe(
+		const result = await StableCoin.wipe(
 			new WipeRequest({
 				amount: wipeAmount.toString(),
 				tokenId: stableCoin?.tokenId?.toString() ?? '0.0.0',
@@ -1025,6 +1051,9 @@ describe('🧪 Stablecoin test', () => {
 		expect(finalAmount.value.toBigInt().toString()).toEqual(
 			final.toString(),
 		);
+		expect(result).toBeTruthy();
+		expect(result.success).toBeTruthy();
+		expect(result.transactionId).toBeTruthy();
 	}
 
 	async function capabilitiesOperation(
@@ -1053,7 +1082,7 @@ describe('🧪 Stablecoin test', () => {
 			}),
 		);
 
-		const result_1 = await StableCoin.freeze(
+		const result_freeze = await StableCoin.freeze(
 			new FreezeAccountRequest({
 				targetId: CLIENT_ACCOUNT_ED25519.id.toString(),
 				tokenId: stableCoin?.tokenId?.toString() ?? '0.0.0',
@@ -1067,7 +1096,7 @@ describe('🧪 Stablecoin test', () => {
 			}),
 		);
 
-		const result_2 = await StableCoin.unFreeze(
+		const result_unfrezze = await StableCoin.unFreeze(
 			new FreezeAccountRequest({
 				targetId: CLIENT_ACCOUNT_ED25519.id.toString(),
 				tokenId: stableCoin?.tokenId?.toString() ?? '0.0.0',
@@ -1081,8 +1110,12 @@ describe('🧪 Stablecoin test', () => {
 			}),
 		);
 
-		expect(result_1).toBe(true);
-		expect(result_2).toBe(true);
+		expect(result_freeze).toBeTruthy();
+		expect(result_freeze.success).toBeTruthy();
+		expect(result_freeze.transactionId).toBeTruthy();
+		expect(result_unfrezze).toBeTruthy();
+		expect(result_unfrezze.success).toBeTruthy();
+		expect(result_unfrezze.transactionId).toBeTruthy();
 		expect(notFrozen_1).toBe(false);
 		expect(Frozen).toBe(true);
 		expect(notFrozen_2).toBe(false);
@@ -1126,8 +1159,12 @@ describe('🧪 Stablecoin test', () => {
 			}),
 		);
 
-		expect(result_1).toBe(true);
-		expect(result_2).toBe(true);
+		expect(result_1).toBeTruthy();
+		expect(result_1.success).toBeTruthy();
+		expect(result_1.transactionId).toBeTruthy();
+		expect(result_2).toBeTruthy();
+		expect(result_2.success).toBeTruthy();
+		expect(result_2.transactionId).toBeTruthy();
 		expect(kycOK_1).toBe(true);
 		expect(kycNOK).toBe(false);
 		expect(kycOK_2).toBe(true);
@@ -1136,20 +1173,24 @@ describe('🧪 Stablecoin test', () => {
 	async function pauseUnpauseOperation(
 		stableCoin: StableCoinViewModel,
 	): Promise<void> {
-		const result_1 = await StableCoin.pause(
+		const result_pause = await StableCoin.pause(
 			new PauseRequest({
 				tokenId: stableCoin?.tokenId?.toString() ?? '0.0.0',
 			}),
 		);
 
-		const result_2 = await StableCoin.unPause(
+		const result_unpasue = await StableCoin.unPause(
 			new PauseRequest({
 				tokenId: stableCoin?.tokenId?.toString() ?? '0.0.0',
 			}),
 		);
 
-		expect(result_1).toBe(true);
-		expect(result_2).toBe(true);
+		expect(result_pause).toBeTruthy();
+		expect(result_pause.success).toBeTruthy();
+		expect(result_pause.transactionId).toBeTruthy();
+		expect(result_unpasue).toBeTruthy();
+		expect(result_unpasue.success).toBeTruthy();
+		expect(result_unpasue.transactionId).toBeTruthy();
 	}
 
 	async function getReserve(
@@ -1165,16 +1206,19 @@ describe('🧪 Stablecoin test', () => {
 	async function updateReserve(
 		stableCoin: StableCoinViewModel,
 		newReserveAddress: string,
-	): Promise<boolean> {
-		return await StableCoin.updateReserveAddress(
+	): Promise<void> {
+		const result = await StableCoin.updateReserveAddress(
 			new UpdateReserveAddressRequest({
 				tokenId: stableCoin?.tokenId?.toString() ?? '0.0.0',
 				reserveAddress: newReserveAddress,
 			}),
 		);
+		expect(result).toBeTruthy();
+		expect(result.success).toBeTruthy();
+		expect(result.transactionId).toBeTruthy();
 	}
 
-	async function updateToken(stableCoin: StableCoinViewModel): Promise<void> {
+	async function updateToken(stableCoin: StableCoinViewModel) {
 		const name = 'New Token Name';
 		const symbol = 'New Token Symbol';
 		const autoRenewPeriod = 30 * 24 * 3600;
@@ -1202,7 +1246,7 @@ describe('🧪 Stablecoin test', () => {
 				: Account.NullPublicKey;
 		const metadata = 'New Metadata';
 
-		await StableCoin.update(
+		const result = await StableCoin.update(
 			new UpdateRequest({
 				tokenId: stableCoin?.tokenId?.toString() ?? '0.0.0',
 				name: name,
@@ -1219,6 +1263,10 @@ describe('🧪 Stablecoin test', () => {
 				metadata: metadata,
 			}),
 		);
+
+		expect(result).toBeTruthy();
+		expect(result.success).toBeTruthy();
+		expect(result.transactionId).toBeTruthy();
 
 		const res = await StableCoin.getInfo(
 			new GetStableCoinDetailsRequest({
@@ -1256,6 +1304,8 @@ describe('🧪 Stablecoin test', () => {
 				: pauseKey?.toString(),
 		);
 		expect(res.metadata).toEqual(metadata);
+
+		return result;
 	}
 
 	function timestampInNanoToDays(timestamp: number): string {
@@ -1281,7 +1331,7 @@ describe('🧪 Stablecoin test', () => {
 		escrow: string,
 		expirationDate: string,
 		targetId: string,
-	): Promise<{ holdId: number; payload: boolean }> {
+	): Promise<CreateHoldTransactionResult> {
 		await StableCoin.create(requestSC);
 		await StableCoin.cashIn(
 			new CashInRequest({

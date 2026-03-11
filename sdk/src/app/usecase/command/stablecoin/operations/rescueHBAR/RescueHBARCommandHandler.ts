@@ -91,7 +91,7 @@ export class RescueHBARCommandHandler
 
 		const res = await handler.rescueHBAR(capabilities, amountBd, startDate);
 		return Promise.resolve(
-			new RescueHBARCommandResponse(res.error === undefined),
+			new RescueHBARCommandResponse(res.error === undefined, res.id),
 		);
 	}
 }
