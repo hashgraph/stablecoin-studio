@@ -188,7 +188,7 @@ jobs:
       - name: Setup Hiero Solo Network
         id: solo
         if: steps.docker-check.outputs.available == 'true'
-        uses: hiero-ledger/hiero-solo-action@fbca3e7a99ce9aa8a250563a81187abe115e0dad # v0.16.0
+        uses: hiero-ledger/hiero-solo-action@4d42a74e8e644a2753f3bb7a2afa429305375b14 # v0.17.0
         with:
           installRelay: true
           installMirrorNode: true
