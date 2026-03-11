@@ -18,11 +18,10 @@
  *
  */
 
-// packages/sdk/__tests__/app/service/TransactionService.test.ts
 
 import 'reflect-metadata';
 
-// Mock tsyringe and Injectable before any other imports to avoid DI
+// Mock tsyringe and Injectable before any other imports to prevent DI
 // circular dependency issues when loading TransactionService.
 jest.mock('tsyringe', () => ({
     singleton: () => (cls: unknown) => cls,
@@ -72,21 +71,21 @@ import {
 import TransactionService from '../../../src/app/service/TransactionService';
 import Hex from '../../../src/core/Hex';
 
-// Helper: encodes a function call and converts to Uint8Array
+// Helper: encodes a function call and returns it as a Uint8Array
 function encode(
     iface: ethers.Interface,
     fn: string,
     params: unknown[],
 ): Uint8Array {
     const hex = iface.encodeFunctionData(fn, params);
-    return Hex.toUint8Array(hex.slice(2)); // remove '0x' prefix
+    return Hex.toUint8Array(hex.slice(2)); // strip '0x' prefix
 }
 
 const DUMMY_ADDRESS = '0x0000000000000000000000000000000000000001';
 
 describe('TransactionService.decodeFunctionCall', () => {
-    describe('🟢 Regresión — HederaTokenManagerFacet (debe seguir funcionando)', () => {
-        it('debe decodificar una función existente de HederaTokenManagerFacet', () => {
+    describe('HederaTokenManagerFacet — regression', () => {
+        it('decodes an existing function from HederaTokenManagerFacet', () => {
             const iface = new ethers.Interface(
                 HederaTokenManagerFacet__factory.abi,
             );
@@ -109,108 +108,103 @@ describe('TransactionService.decodeFunctionCall', () => {
         });
     });
 
-    describe('🔴 CashInFacet — actualmente falla', () => {
-        it('debe decodificar mint(address, uint256)', () => {
+    describe('CashInFacet', () => {
+        it('decodes mint(address, uint256)', () => {
             const iface = new ethers.Interface(CashInFacet__factory.abi);
             const bytes = encode(iface, 'mint', [DUMMY_ADDRESS, BigInt(1000)]);
             const result = TransactionService.decodeFunctionCall(bytes);
-            expect(result).not.toBeNull(); // 🔴 falla hoy → null
+            expect(result).not.toBeNull();
             expect(result?.name).toBe('mint');
         });
     });
 
-    describe('🔴 BurnableFacet — actualmente falla', () => {
-        it('debe decodificar burn(uint256)', () => {
+    describe('BurnableFacet', () => {
+        it('decodes burn(uint256)', () => {
             const iface = new ethers.Interface(BurnableFacet__factory.abi);
             const bytes = encode(iface, 'burn', [BigInt(500)]);
             const result = TransactionService.decodeFunctionCall(bytes);
-            expect(result).not.toBeNull(); // 🔴 falla hoy → null
+            expect(result).not.toBeNull();
             expect(result?.name).toBe('burn');
         });
     });
 
-    describe('🔴 WipeableFacet — actualmente falla', () => {
-        it('debe decodificar wipe(address, uint256)', () => {
+    describe('WipeableFacet', () => {
+        it('decodes wipe(address, uint256)', () => {
             const iface = new ethers.Interface(WipeableFacet__factory.abi);
-            const bytes = encode(iface, 'wipe', [
-                DUMMY_ADDRESS,
-                BigInt(200),
-            ]);
+            const bytes = encode(iface, 'wipe', [DUMMY_ADDRESS, BigInt(200)]);
             const result = TransactionService.decodeFunctionCall(bytes);
-            expect(result).not.toBeNull(); // 🔴 falla hoy → null
+            expect(result).not.toBeNull();
             expect(result?.name).toBe('wipe');
         });
     });
 
-    describe('🔴 FreezableFacet — actualmente falla', () => {
-        it('debe decodificar freeze(address)', () => {
+    describe('FreezableFacet', () => {
+        it('decodes freeze(address)', () => {
             const iface = new ethers.Interface(FreezableFacet__factory.abi);
             const bytes = encode(iface, 'freeze', [DUMMY_ADDRESS]);
             const result = TransactionService.decodeFunctionCall(bytes);
-            expect(result).not.toBeNull(); // 🔴 falla hoy → null
+            expect(result).not.toBeNull();
             expect(result?.name).toBe('freeze');
         });
 
-        it('debe decodificar unfreeze(address)', () => {
+        it('decodes unfreeze(address)', () => {
             const iface = new ethers.Interface(FreezableFacet__factory.abi);
             const bytes = encode(iface, 'unfreeze', [DUMMY_ADDRESS]);
             const result = TransactionService.decodeFunctionCall(bytes);
-            expect(result).not.toBeNull(); // 🔴 falla hoy → null
+            expect(result).not.toBeNull();
             expect(result?.name).toBe('unfreeze');
         });
     });
 
-    describe('🔴 KYCFacet — actualmente falla', () => {
-        it('debe decodificar grantKyc(address)', () => {
+    describe('KYCFacet', () => {
+        it('decodes grantKyc(address)', () => {
             const iface = new ethers.Interface(KYCFacet__factory.abi);
             const bytes = encode(iface, 'grantKyc', [DUMMY_ADDRESS]);
             const result = TransactionService.decodeFunctionCall(bytes);
-            expect(result).not.toBeNull(); // 🔴 falla hoy → null
+            expect(result).not.toBeNull();
             expect(result?.name).toBe('grantKyc');
         });
 
-        it('debe decodificar revokeKyc(address)', () => {
+        it('decodes revokeKyc(address)', () => {
             const iface = new ethers.Interface(KYCFacet__factory.abi);
             const bytes = encode(iface, 'revokeKyc', [DUMMY_ADDRESS]);
             const result = TransactionService.decodeFunctionCall(bytes);
-            expect(result).not.toBeNull(); // 🔴 falla hoy → null
+            expect(result).not.toBeNull();
             expect(result?.name).toBe('revokeKyc');
         });
     });
 
-    describe('🔴 PausableFacet — actualmente falla', () => {
-        it('debe decodificar pause()', () => {
+    describe('PausableFacet', () => {
+        it('decodes pause()', () => {
             const iface = new ethers.Interface(PausableFacet__factory.abi);
             const bytes = encode(iface, 'pause', []);
             const result = TransactionService.decodeFunctionCall(bytes);
-            expect(result).not.toBeNull(); // 🔴 falla hoy → null
+            expect(result).not.toBeNull();
             expect(result?.name).toBe('pause');
         });
 
-        it('debe decodificar unpause()', () => {
+        it('decodes unpause()', () => {
             const iface = new ethers.Interface(PausableFacet__factory.abi);
             const bytes = encode(iface, 'unpause', []);
             const result = TransactionService.decodeFunctionCall(bytes);
-            expect(result).not.toBeNull(); // 🔴 falla hoy → null
+            expect(result).not.toBeNull();
             expect(result?.name).toBe('unpause');
         });
     });
 
-    describe('🔴 RescuableFacet — actualmente falla', () => {
-        it('debe decodificar rescue(int64)', () => {
+    describe('RescuableFacet', () => {
+        it('decodes rescue(int64)', () => {
             const iface = new ethers.Interface(RescuableFacet__factory.abi);
             const bytes = encode(iface, 'rescue', [BigInt(100)]);
             const result = TransactionService.decodeFunctionCall(bytes);
-            expect(result).not.toBeNull(); // 🔴 falla hoy → null
+            expect(result).not.toBeNull();
             expect(result?.name).toBe('rescue');
         });
     });
 
-    describe('🔴 HoldManagementFacet — actualmente falla', () => {
-        it('debe decodificar createHold(tuple)', () => {
-            const iface = new ethers.Interface(
-                HoldManagementFacet__factory.abi,
-            );
+    describe('HoldManagementFacet', () => {
+        it('decodes createHold(tuple)', () => {
+            const iface = new ethers.Interface(HoldManagementFacet__factory.abi);
             const hold = {
                 amount: BigInt(100),
                 expirationTimestamp: BigInt(9999999999),
@@ -220,33 +214,26 @@ describe('TransactionService.decodeFunctionCall', () => {
             };
             const bytes = encode(iface, 'createHold', [hold]);
             const result = TransactionService.decodeFunctionCall(bytes);
-            expect(result).not.toBeNull(); // 🔴 falla hoy → null
+            expect(result).not.toBeNull();
             expect(result?.name).toBe('createHold');
         });
 
-        it('debe decodificar executeHold(...)', () => {
-            const iface = new ethers.Interface(
-                HoldManagementFacet__factory.abi,
-            );
-            // _holdIdentifier: { tokenHolder: address, holdId: uint256 }
-            // _to: address
-            // _amount: int64
+        it('decodes executeHold(_holdIdentifier, _to, _amount)', () => {
+            const iface = new ethers.Interface(HoldManagementFacet__factory.abi);
             const bytes = encode(iface, 'executeHold', [
                 { tokenHolder: DUMMY_ADDRESS, holdId: BigInt(1) },
                 DUMMY_ADDRESS,
                 BigInt(100),
             ]);
             const result = TransactionService.decodeFunctionCall(bytes);
-            expect(result).not.toBeNull(); // 🔴 falla hoy → null
+            expect(result).not.toBeNull();
             expect(result?.name).toBe('executeHold');
         });
     });
 
-    describe('🔴 SupplierAdminFacet — actualmente falla', () => {
-        it('debe decodificar la primera función pública del ABI', () => {
-            const iface = new ethers.Interface(
-                SupplierAdminFacet__factory.abi,
-            );
+    describe('SupplierAdminFacet', () => {
+        it('decodes the first public function in the ABI', () => {
+            const iface = new ethers.Interface(SupplierAdminFacet__factory.abi);
             const fn = iface.fragments.find(
                 (f) => f.type === 'function',
             ) as ethers.FunctionFragment;
@@ -255,49 +242,44 @@ describe('TransactionService.decodeFunctionCall', () => {
             );
             const bytes = encode(iface, fn.name, params);
             const result = TransactionService.decodeFunctionCall(bytes);
-            expect(result).not.toBeNull(); // 🔴 falla hoy → null
+            expect(result).not.toBeNull();
             expect(result?.name).toBe(fn.name);
         });
     });
 
-    describe('🔴 RoleManagementFacet — actualmente falla', () => {
-        it('debe decodificar grantRoles(bytes32[],address[],uint256[])', () => {
-            const iface = new ethers.Interface(
-                RoleManagementFacet__factory.abi,
-            );
+    describe('RoleManagementFacet', () => {
+        it('decodes grantRoles(bytes32[], address[], uint256[])', () => {
+            const iface = new ethers.Interface(RoleManagementFacet__factory.abi);
             const bytes = encode(iface, 'grantRoles', [
                 [ethers.ZeroHash],
                 [DUMMY_ADDRESS],
                 [BigInt(0)],
             ]);
             const result = TransactionService.decodeFunctionCall(bytes);
-            expect(result).not.toBeNull(); // 🔴 falla hoy → null
+            expect(result).not.toBeNull();
             expect(result?.name).toBe('grantRoles');
         });
     });
 
-    describe('🔴 CustomFeesFacet — actualmente falla', () => {
-        it('debe decodificar updateTokenCustomFees(tuple[],tuple[])', () => {
+    describe('CustomFeesFacet', () => {
+        it('decodes updateTokenCustomFees(tuple[], tuple[])', () => {
             const iface = new ethers.Interface(CustomFeesFacet__factory.abi);
-            // Pasar arrays vacíos: ambos parámetros son tuple[]
             const bytes = encode(iface, 'updateTokenCustomFees', [[], []]);
             const result = TransactionService.decodeFunctionCall(bytes);
-            expect(result).not.toBeNull(); // 🔴 falla hoy → null
+            expect(result).not.toBeNull();
             expect(result?.name).toBe('updateTokenCustomFees');
         });
     });
 
-    describe('🟢 Casos límite (deben pasar hoy y tras el fix)', () => {
-        it('devuelve null cuando el selector no existe en ningún ABI', () => {
+    describe('Edge cases', () => {
+        it('returns null when the selector does not exist in any ABI', () => {
             const unknown = new Uint8Array([0xde, 0xad, 0xbe, 0xef, 0, 0, 0, 0]);
             const result = TransactionService.decodeFunctionCall(unknown);
             expect(result).toBeNull();
         });
 
-        it('devuelve null con Uint8Array vacío', () => {
-            const result = TransactionService.decodeFunctionCall(
-                new Uint8Array(0),
-            );
+        it('returns null for an empty Uint8Array', () => {
+            const result = TransactionService.decodeFunctionCall(new Uint8Array(0));
             expect(result).toBeNull();
         });
     });
