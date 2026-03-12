@@ -80,7 +80,8 @@
     "underscore": "1.13.8",
     "@nestjs/cli": {
       "glob": "10.5.0"
-    }
+    },
+    "serialize-javascript": "7.0.4"
   },
   "workspaces": [
     "packages/*",
