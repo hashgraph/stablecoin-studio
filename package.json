@@ -82,7 +82,11 @@
       "glob": "10.5.0"
     },
     "serialize-javascript": "7.0.4",
-    "squirrelly": "9.1.0"
+    "squirrelly": "9.1.0",
+    "nth-check": "2.1.1",
+    "@typescript-eslint/typescript-estree": {
+      "minimatch": "9.0.9"
+    }
   },
   "workspaces": [
     "packages/*",
