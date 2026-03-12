@@ -7,7 +7,7 @@ import {
 } from '../types/PipelineContext.js';
 import { ExecutionMode } from '../types/ExecutionMode.js';
 import { CommandParams, TransactionResult } from './types.js';
-import { ContractExecuteTransaction, ContractFunctionParameters, Long } from '@hiero-ledger/sdk';
+import { ContractExecuteTransaction, ContractFunctionParameters, ContractId, Long } from '@hiero-ledger/sdk';
 import { ethers } from 'ethers';
 
 /**
@@ -86,9 +86,13 @@ export abstract class BaseCommandHandler<
     const params = rawParams as unknown as TParams;
     this.validateParams(params);
     const funcParams = this.buildHederaFunctionParams(params);
-    return new ContractExecuteTransaction()
+    const tx = new ContractExecuteTransaction()
       .setGas(this.getGas(params))
       .setFunction(this.methodName, funcParams);
+    if (params.contractAddress) {
+      tx.setContractId(ContractId.fromSolidityAddress(params.contractAddress));
+    }
+    return tx;
   }
 
   async buildEVMTransaction(rawParams: Record<string, unknown>): Promise<EVMTransaction> {
