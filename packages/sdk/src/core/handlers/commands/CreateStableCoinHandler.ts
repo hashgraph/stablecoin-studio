@@ -1,25 +1,7 @@
 import { Command } from '../../decorators/Command.js';
 import { BaseCompositeHandler, SubCommand } from '../BaseCompositeHandler.js';
-import { CommandParams, TransactionResult } from '../types.js';
+import { CreateStableCoinParams, CreateStableCoinResult } from '../types.js';
 import { TransactionResultLike } from '../../types/PipelineContext.js';
-
-export interface CreateStableCoinParams extends CommandParams {
-  name: string;
-  symbol: string;
-  decimals: number;
-  initialSupply?: string;
-  maxSupply?: string;
-  factoryAddress: string;
-  resolverAddress: string;
-  createReserve: boolean;
-  reserveAddress?: string;
-  reserveInitialAmount?: string;
-}
-
-export interface CreateStableCoinResult extends TransactionResult {
-  proxyAddress: string;
-  tokenId: string;
-}
 
 @Command('create')
 export class CreateStableCoinHandler extends BaseCompositeHandler<

@@ -1,11 +1,7 @@
 import { Command } from '../../decorators/Command.js';
 import { BaseCommandHandler } from '../BaseCommandHandler.js';
-import { CommandParams, TransactionResult } from '../types.js';
+import { ReserveAddressParams, TransactionResult } from '../types.js';
 import { ContractFunctionParameters } from '@hiero-ledger/sdk';
-
-export interface ReserveAddressParams extends CommandParams {
-  reserveAddress: string;
-}
 
 @Command('updateReserveAddress')
 export class UpdateReserveAddressHandler extends BaseCommandHandler<ReserveAddressParams, TransactionResult> {

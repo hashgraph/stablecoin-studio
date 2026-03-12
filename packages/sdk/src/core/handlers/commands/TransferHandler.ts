@@ -1,19 +1,7 @@
 import { Command } from '../../decorators/Command.js';
 import { BaseCommandHandler } from '../BaseCommandHandler.js';
-import { CommandParams, TransactionResult } from '../types.js';
+import { TransferParams, TransferResult } from '../types.js';
 import { ContractFunctionParameters, Long } from '@hiero-ledger/sdk';
-
-export interface TransferParams extends CommandParams {
-  fromId: string;
-  targetId: string;
-  amount: string;
-}
-
-export interface TransferResult extends TransactionResult {
-  fromId: string;
-  targetId: string;
-  amount: string;
-}
 
 @Command('transfer')
 export class TransferHandler extends BaseCommandHandler<TransferParams, TransferResult> {

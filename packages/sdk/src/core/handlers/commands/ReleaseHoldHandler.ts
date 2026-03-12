@@ -1,11 +1,7 @@
 import { Command } from '../../decorators/Command.js';
 import { BaseCommandHandler } from '../BaseCommandHandler.js';
-import { CommandParams, TransactionResult } from '../types.js';
+import { HoldIdParams, TransactionResult, ensureBytes32 } from '../types.js';
 import { ContractFunctionParameters } from '@hiero-ledger/sdk';
-
-export interface HoldIdParams extends CommandParams {
-  holdId: string;
-}
 
 @Command('releaseHold')
 export class ReleaseHoldHandler extends BaseCommandHandler<HoldIdParams, TransactionResult> {
@@ -18,8 +14,7 @@ export class ReleaseHoldHandler extends BaseCommandHandler<HoldIdParams, Transac
   }
 
   protected buildHederaFunctionParams(params: HoldIdParams): ContractFunctionParameters {
-    const holdIdBytes = Buffer.from(params.holdId.replace('0x', ''), 'hex');
-    return new ContractFunctionParameters().addBytes32(holdIdBytes);
+    return new ContractFunctionParameters().addBytes32(ensureBytes32(params.holdId));
   }
 
   protected validateParams(params: HoldIdParams): void {

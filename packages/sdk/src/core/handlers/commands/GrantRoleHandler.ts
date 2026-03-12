@@ -1,12 +1,7 @@
 import { Command } from '../../decorators/Command.js';
 import { BaseCommandHandler } from '../BaseCommandHandler.js';
-import { CommandParams, TransactionResult } from '../types.js';
+import { RoleParams, TransactionResult, ensureBytes32 } from '../types.js';
 import { ContractFunctionParameters } from '@hiero-ledger/sdk';
-
-export interface RoleParams extends CommandParams {
-  role: string;
-  targetId: string;
-}
 
 @Command('grantRole')
 export class GrantRoleHandler extends BaseCommandHandler<RoleParams, TransactionResult> {
@@ -19,9 +14,8 @@ export class GrantRoleHandler extends BaseCommandHandler<RoleParams, Transaction
   }
 
   protected buildHederaFunctionParams(params: RoleParams): ContractFunctionParameters {
-    const roleBytes = Buffer.from(params.role.replace('0x', ''), 'hex');
     return new ContractFunctionParameters()
-      .addBytes32(roleBytes)
+      .addBytes32(ensureBytes32(params.role))
       .addAddress(params.targetId);
   }
 

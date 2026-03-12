@@ -59,3 +59,88 @@ export interface TargetAmountResult extends TransactionResult {
   targetId: string;
   amount: string;
 }
+
+// ── Params específicos de Hold ─────────────────────────────────────────
+
+/** Operaciones que solo necesitan un holdId (releaseHold, reclaimHold) */
+export interface HoldIdParams extends CommandParams {
+  holdId: string;
+}
+
+/** Creación de hold (createHold) */
+export interface CreateHoldParams extends CommandParams {
+  holdId: string;
+  recipient: string;
+  notary: string;
+  amount: string;
+  expiration: string;
+}
+
+/** Ejecución de hold (executeHold) */
+export interface ExecuteHoldParams extends CommandParams {
+  holdId: string;
+  amount: string;
+}
+
+// ── Params específicos de Transfer ─────────────────────────────────────
+
+export interface TransferParams extends CommandParams {
+  fromId: string;
+  targetId: string;
+  amount: string;
+}
+
+export interface TransferResult extends TransactionResult {
+  fromId: string;
+  targetId: string;
+  amount: string;
+}
+
+// ── Params específicos de Reserve ──────────────────────────────────────
+
+export interface ReserveAddressParams extends CommandParams {
+  reserveAddress: string;
+}
+
+// ── Params y resultado de Create ───────────────────────────────────────
+
+export interface CreateStableCoinParams extends CommandParams {
+  name: string;
+  symbol: string;
+  decimals: number;
+  initialSupply?: string;
+  maxSupply?: string;
+  factoryAddress: string;
+  resolverAddress: string;
+  createReserve: boolean;
+  reserveAddress?: string;
+  reserveInitialAmount?: string;
+}
+
+export interface CreateStableCoinResult extends TransactionResult {
+  proxyAddress: string;
+  tokenId: string;
+}
+
+// ── Tipos de Hold para queries ─────────────────────────────────────────
+
+export interface HoldData {
+  holdId: string;
+  recipient: string;
+  notary: string;
+  amount: string;
+  expiration: string;
+  releaseTime: string;
+}
+
+// ── Utilidad para bytes32 ──────────────────────────────────────────────
+
+/** Asegura que un valor hex tiene exactamente 32 bytes (64 chars hex + 0x prefix) */
+export function ensureBytes32(hex: string): Buffer {
+  const clean = hex.replace('0x', '');
+  if (clean.length > 64) {
+    throw new Error('Bytes32 value exceeds 32 bytes');
+  }
+  const padded = clean.padStart(64, '0');
+  return Buffer.from(padded, 'hex');
+}
