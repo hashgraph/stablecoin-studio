@@ -81,7 +81,8 @@
     "@nestjs/cli": {
       "glob": "10.5.0"
     },
-    "serialize-javascript": "7.0.4"
+    "serialize-javascript": "7.0.4",
+    "squirrelly": "9.1.0"
   },
   "workspaces": [
     "packages/*",
