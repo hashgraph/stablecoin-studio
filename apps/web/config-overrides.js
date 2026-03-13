@@ -7,6 +7,25 @@ module.exports = {
 			path.resolve(__dirname, 'node_modules'),
 			'node_modules',
 		];
+		config.resolve.alias = {
+			...config.resolve.alias,
+			// @notabene/pii-sdk uses axios.interceptors at module load time which
+			// fails in the browser due to ESM/CJS interop issues. The SDK is only
+			// used server-side (Fireblocks), so we stub it out in the browser bundle.
+			'@notabene/pii-sdk': false,
+		};
+		// @svgr/webpack@5.x generates ESM code with `import * as React from 'react'`
+		// using the classic JSX transform. Webpack 5 strict harmony analysis treats CJS
+		// modules (React) as having no static exports, causing build errors.
+		// Downgrade these from errors to warnings since the runtime behavior is correct.
+		config.module = config.module || {};
+		config.module.parser = {
+			...(config.module.parser || {}),
+			javascript: {
+				...((config.module.parser || {}).javascript || {}),
+				exportsPresence: 'warn',
+			},
+		};
 		const fallback = config.resolve.fallback || {};
 		Object.assign(fallback, {
 			crypto: require.resolve('crypto-browserify'),
