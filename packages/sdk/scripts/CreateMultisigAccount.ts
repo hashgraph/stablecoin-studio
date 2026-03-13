@@ -94,7 +94,9 @@ async function createMultisigAccount(): Promise<string> {
 createMultisigAccount()
 	.then((events) => {
 		console.log(events);
+		process.exit(0);
 	})
 	.catch((error) => {
 		console.error(error);
+		process.exit(1);
 	});
