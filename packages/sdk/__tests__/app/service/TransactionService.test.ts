@@ -18,17 +18,16 @@
  *
  */
 
-
 import 'reflect-metadata';
 
 // Mock tsyringe and Injectable before any other imports to prevent DI
 // circular dependency issues when loading TransactionService.
 jest.mock('tsyringe', () => ({
-    singleton: () => (cls: unknown) => cls,
-    registry: () => (cls: unknown) => cls,
-    injectable: () => (cls: unknown) => cls,
-    inject: () => () => undefined,
-    delay: (fn: () => unknown) => fn(),
+    singleton: () => (cls: unknown): unknown => cls,
+    registry: () => (cls: unknown): unknown => cls,
+    injectable: () => (cls: unknown): unknown => cls,
+    inject: () => (): undefined => undefined,
+    delay: (fn: () => unknown): unknown => fn(),
     container: {
         register: jest.fn(),
         resolve: jest.fn(),
@@ -39,17 +38,17 @@ jest.mock('tsyringe', () => ({
 jest.mock('../../../src/core/Injectable', () => ({
     __esModule: true,
     default: {
-        resolve: () => ({}),
-        lazyResolve: () => ({}),
+        resolve: (): Record<string, unknown> => ({}),
+        lazyResolve: (): Record<string, unknown> => ({}),
         TOKENS: { COMMAND_HANDLER: Symbol(), QUERY_HANDLER: Symbol(), TRANSACTION_HANDLER: 'TransactionHandler' },
-        register: () => {},
-        registerCommandHandler: () => {},
-        registerTransactionHandler: () => {},
-        resolveTransactionHandler: () => {},
-        registerTransactionAdapterInstances: () => [],
-        getQueryHandlers: () => [],
-        getCommandHandlers: () => [],
-        isWeb: () => false,
+        register: jest.fn(),
+        registerCommandHandler: jest.fn(),
+        registerTransactionHandler: jest.fn(),
+        resolveTransactionHandler: jest.fn(),
+        registerTransactionAdapterInstances: (): unknown[] => [],
+        getQueryHandlers: (): unknown[] => [],
+        getCommandHandlers: (): unknown[] => [],
+        isWeb: (): boolean => false,
     },
 }));
 

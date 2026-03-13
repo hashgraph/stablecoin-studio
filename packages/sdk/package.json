@@ -47,6 +47,7 @@
 	},
 	"scripts": {
 		"execute:createMultisig": "node build/cjs/scripts/CreateMultisigAccount.js",
+		"execute:associateToken": "node build/cjs/scripts/AssociateToken.js",
 		"start": "node build/src/index.js",
 		"clean": "rimraf coverage build",
 		"clean:modules": "rimraf node_modules",
