@@ -20,83 +20,68 @@
 
 /**
  * DESCRIPTION
- * This script will deploy a multi-key account with a key list made of 2 keys:
- * - one ED25519 key
- * - one EDCSA key
+ * Creates a multisig account with a 2-of-2 KeyList (ED25519 + ECDSA).
+ * The resulting account requires both keys to sign every transaction.
+ * The fee payer is the ECDSA account 0.0.1653 (which has funds).
  *
  * HOW TO RUN IT
- * 1- Fill in the following constants : Multisig_ED25519_privateKey, Multisig_ECDSA_privateKey, deployingAccount
- * 2- Compile the script : npm run build (this command will actually build all the typescript files in the module)
- * 3- Run the compiled script : npm run execute:createMultisig
- * 4- the multisig account id will be displayed in the console.
+ * 1- npm run build (inside packages/sdk)
+ * 2- npm run execute:createMultisig
  */
 
 import {
 	AccountCreateTransaction,
-	KeyList,
-	Client,
-	PrivateKey,
 	AccountId,
+	Client,
+	Hbar,
+	KeyList,
+	PrivateKey,
 } from '@hiero-ledger/sdk';
 
-// Hex encoded private key of the ED25519 key that will be added to the multisig account's key
-const Multisig_ED25519_privateKey = '';
+// Clave privada ED25519 de la cuenta 0.0.1579
+const Multisig_ED25519_privateKey = 'e8e993b064ba3d8209a40526513574f043d5af0f900764f35fc92c9a9198deb2';
 
-// Hex encoded private key of the ECDSA key that will be added to the multisig account's key
-const Multisig_ECDSA_privateKey = '';
+// Clave privada ECDSA de la cuenta 0.0.1653
+const Multisig_ECDSA_privateKey = '3bb707249245cfb5090cfa49d598ad43eee5a266a91585f5cddb063ed525e491';
 
-// Account Id and Hex encoded ECDSA private key of the single key account that will be used to deploy the multisig account.
-// MAKE SURE this account has funds as it will pay for the account creation fees !!!!!!!!!!!
+// Cuenta pagadora (fee payer): debe tener fondos en testnet
 const deployingAccount = {
-	id: '',
-	ECDSA_privateKey: '',
+	id: '0.0.1653',
+	ECDSA_privateKey: '3bb707249245cfb5090cfa49d598ad43eee5a266a91585f5cddb063ed525e491',
 };
 
-const delay = async (seconds = 5): Promise<void> => {
-	seconds = seconds * 1000;
-	await new Promise((r) => setTimeout(r, seconds));
-};
+async function createMultisigAccount(): Promise<void> {
+	const ed25519Key = PrivateKey.fromStringED25519(Multisig_ED25519_privateKey);
+	const ecdsaKey   = PrivateKey.fromStringECDSA(Multisig_ECDSA_privateKey);
+	const feePayerKey = PrivateKey.fromStringECDSA(deployingAccount.ECDSA_privateKey);
 
-async function createMultisigAccount(): Promise<string> {
-	const signerKeys = [
-		PrivateKey.fromStringED25519(Multisig_ED25519_privateKey),
-		PrivateKey.fromStringECDSA(Multisig_ECDSA_privateKey),
-	];
-
-	const keyList = KeyList.of(
-		signerKeys[0].publicKey,
-		signerKeys[1].publicKey,
-	);
-
-	const newAccountTx = new AccountCreateTransaction().setKey(keyList);
+	// 2-of-2 KeyList: both ED25519 and ECDSA must sign
+	const keyList = new KeyList([ed25519Key.publicKey, ecdsaKey.publicKey], 2);
 
 	const client = Client.forTestnet().setOperator(
 		AccountId.fromString(deployingAccount.id),
-		PrivateKey.fromStringECDSA(deployingAccount.ECDSA_privateKey),
+		feePayerKey,
 	);
 
-	const newAccountResponse = await newAccountTx.execute(client);
+	const tx = await new AccountCreateTransaction()
+		.setKeyWithoutAlias(keyList)
+		.setInitialBalance(new Hbar(0))
+		.execute(client);
 
-	await delay();
+	const receipt = await tx.getReceipt(client);
+	const newAccountId = receipt.accountId;
 
-	const newAccountReceipt = await newAccountResponse.getReceipt(client);
-	const newAccountId = newAccountReceipt.accountId;
-	if (newAccountId === null) {
-		throw new Error('newAccountId is null');
+	if (!newAccountId) {
+		throw new Error('Error creating multisig account');
 	}
 
-	const multisigAccountId = newAccountId.toString();
-
-	return multisigAccountId;
+	console.log(`Multisig account created: ${newAccountId.toString()}`);
+	console.log(`KeyList: ED25519 (0.0.1579) + ECDSA (0.0.1653), threshold 2-of-2`);
 }
 
-// Main
 createMultisigAccount()
-	.then((events) => {
-		console.log(events);
-		process.exit(0);
-	})
-	.catch((error) => {
-		console.error(error);
+	.then(() => process.exit(0))
+	.catch((err) => {
+		console.error(err);
 		process.exit(1);
 	});
