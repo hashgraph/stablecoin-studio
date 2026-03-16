@@ -47,6 +47,7 @@
 	},
 	"scripts": {
 		"execute:createMultisig": "node build/cjs/scripts/CreateMultisigAccount.js",
+		"execute:associateToken": "node build/cjs/scripts/AssociateToken.js",
 		"start": "node build/src/index.js",
 		"clean": "rimraf coverage build",
 		"clean:modules": "rimraf node_modules",
@@ -58,6 +59,7 @@
 		"build:release": "npm run clean && tsc -p tsconfig.release.json",
 		"lint": "eslint . --ext .ts --ext .mts",
 		"test": "NODE_OPTIONS=--max-old-space-size=8192 npx jest --forceExit --maxWorkers=50%",
+		"test:unit": "NODE_OPTIONS=--max-old-space-size=8192 npx jest --config jest.unit.config.js --forceExit --maxWorkers=50%",
 		"test:watch": "concurrently --kill-others \"npm run build:watch\" \"npm run test:jest:watch\"",
 		"test:jest:watch": "NODE_OPTIONS=--experimental-vm-modules npx jest --watch",
 		"test:ci": "NODE_OPTIONS=--max-old-space-size=8192 npx jest --ci --forceExit --runInBand",
