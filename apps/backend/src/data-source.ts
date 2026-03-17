@@ -18,37 +18,22 @@
  *
  */
 
-export const testnet = 'testnet';
-export const previewnet = 'previewnet';
-export const mainnet = 'mainnet';
-export const local = 'local';
-export const custom = 'custom';
-export const unrecognized = 'unrecognized';
+import { DataSource, DataSourceOptions } from 'typeorm';
+import * as dotenv from 'dotenv';
+import Transaction from './transaction/transaction.entity';
 
-export type Environment =
-	| 'testnet'
-	| 'previewnet'
-	| 'mainnet'
-	| 'local'
-	| 'custom'
-	| 'unrecognized'
-	| string;
+dotenv.config();
 
-export const HederaNetworks = [
-	{
-		network: testnet,
-		chainId: 296,
-	},
-	{
-		network: previewnet,
-		chainId: 297,
-	},
-	{
-		network: mainnet,
-		chainId: 295,
-	},
-	{
-		network: local,
-		chainId: 298,
-	},
-];
+export const dataSourceOptions: DataSourceOptions = {
+  type: 'postgres',
+  host: process.env.DB_HOST || 'localhost',
+  port: parseInt(process.env.DB_PORT || '5432'),
+  username: process.env.DB_USER,
+  password: process.env.DB_PASSWORD,
+  database: process.env.DB_NAME,
+  entities: [Transaction],
+  migrations: ['src/migrations/*.ts'],
+};
+
+const dataSource = new DataSource(dataSourceOptions);
+export default dataSource;
