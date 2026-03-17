@@ -10,7 +10,7 @@ sidebar_position: 2
 ## Prerequisites
 
 * **Node.js** v18 or higher
-* A **Hedera Wallet Extension** (HashPack or Blade) installed in your browser
+* A **Hedera-compatible wallet** (HashPack, MetaMask, or any WalletConnect-compatible wallet)
 * A **Hedera Testnet Account** (if running in dev mode)
 
 ---
@@ -65,17 +65,19 @@ Only needed if you use multi-signature transaction support. See [Backend Quick S
 | :--- | :--- |
 | `REACT_APP_CONSENSUS_NODES` | Consensus node addresses (see [Hedera Nodes](https://docs.hedera.com/hedera/networks/mainnet/mainnet-nodes)). Format: `[{"Environment":"testnet","CONSENSUS_NODES":[{"ID":"0.0.3","ADDRESS":"34.94.106.61:50211"}]}]` |
 
-### Hedera Wallet Connect (optional)
+### Hedera Wallet Connect 2.0
 
-Required only if you want to connect wallets via [Hedera WalletConnect](https://walletconnect.com/). You need to create a project in the [WalletConnect Cloud](https://cloud.walletconnect.com/) to get a project ID.
+Required for wallet connections via [Hedera WalletConnect](https://walletconnect.com/). Create a project in the [WalletConnect Cloud](https://cloud.walletconnect.com/) to get a project ID. HWC 2.0 supports both native Hedera accounts and EVM accounts (MetaMask).
 
 | Variable | Description | Default |
 | :--- | :--- | :--- |
-| `REACT_APP_PROJECT_ID` | WalletConnect Cloud project ID | *(empty)* |
+| `REACT_APP_PROJECT_ID` | WalletConnect Cloud project ID | **required** |
 | `REACT_APP_DAPP_NAME` | Display name shown in the wallet pairing dialog | `Hedera Stablecoin` |
 | `REACT_APP_DAPP_DESCRIPTION` | DApp description shown during wallet pairing | `StableCoin is a decentralized stablecoin platform built on Hedera Hashgraph.` |
 | `REACT_APP_DAPP_URL` | DApp URL used for WalletConnect metadata | `https://wc.hgraph.app/` |
 | `REACT_APP_DAPP_ICONS` | JSON array of icon URLs displayed in the wallet | *(Hedera logos)* |
+
+> **Note:** Multi-signature operations are only supported when connected with a native Hedera wallet. EVM wallets (MetaMask) do not support multisig signing.
 
 ### Theme & Branding
 
@@ -100,4 +102,4 @@ On first load, select your wallet provider to connect:
 
 ![Wallet connection dialog](../img/scs-connection.png)
 
-Supported options: **MetaMask**, **Multisig**, and **Hedera WalletConnect**.
+Supported options: **MetaMask**, **Multisig** (native Hedera wallets only), and **Hedera WalletConnect 2.0**.

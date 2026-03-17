@@ -17,8 +17,8 @@ update_version() {
   local temp_file
   temp_file=$(mktemp)
 
-  # List of specific modules
-  local modules=("sdk" "contracts" "cli" "web" "backend")
+  # List of specific modules (packages/ and apps/ directories)
+  local modules=("packages/sdk" "packages/contracts" "apps/cli" "apps/web" "apps/backend")
 
   # Update the root package.json
   if [ -f "package.json" ]; then

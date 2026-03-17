@@ -47,21 +47,23 @@ console.log("Token created:", token.tokenId);
 Mint new tokens to a specific address. Requires `CASHIN_ROLE`.
 
 ```typescript
-await sdk.mint({
+const result = await sdk.mint({
   tokenId: "0.0.12345",
   amount: "500.00",
   targetId: "0.0.98765" // Receiver
 });
+console.log("Success:", result.success, "Tx:", result.transactionId);
 ```
 
 ### Cash-Out (Burning)
 Burn tokens to reduce supply. Typically done from the treasury. Requires `BURN_ROLE`.
 
 ```typescript
-await sdk.burn({
+const result = await sdk.burn({
   tokenId: "0.0.12345",
   amount: "100.00"
 });
+console.log("Success:", result.success, "Tx:", result.transactionId);
 ```
 
 ### Role Management
@@ -69,9 +71,10 @@ Grant capabilities to other accounts for security and compliance.
 
 ```typescript
 // Grant KYC Role to a compliance officer
-await sdk.grantRole({
+const result = await sdk.grantRole({
   tokenId: "0.0.12345",
   targetId: "0.0.55555",
   role: "KYC_ROLE"
 });
+console.log("Success:", result.success, "Tx:", result.transactionId);
 ```
