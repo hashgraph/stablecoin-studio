@@ -16,7 +16,7 @@ The **Stablecoin Studio Web Interface** is a React-based DApp that lets issuers 
 - Step-by-step wizard for stablecoin creation
 - Treasury management: mint, burn, wipe, rescue
 - Compliance controls: KYC, freeze/unfreeze, role assignment
-- Wallet integration via HashPack, MetaMask, and Blade browser extensions
+- Wallet integration via HashPack, MetaMask, and WalletConnect 2.0 (powered by ReOWN AppKit)
 - Optional multi-signature support via the Backend API
 
 ---
@@ -29,4 +29,4 @@ The **Stablecoin Studio Web Interface** is a React-based DApp that lets issuers 
 | **CSS Modules / Tailwind** | Styling |
 | **React Context & Hooks** | State management |
 | **Stablecoin Studio SDK** | Blockchain interaction |
-| **HashConnect** | Wallet pairing |
+| **Hedera WalletConnect 2.0** | Wallet pairing (via ReOWN AppKit) |
