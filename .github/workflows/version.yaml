@@ -39,7 +39,7 @@ jobs:
         id: pr_version
         run: |
           # Define module directories
-          MODULES=("contracts" "sdk" "cli" "web" "backend")
+          MODULES=("packages/contracts" "packages/sdk" "apps/cli" "apps/web" "apps/backend")
 
           # Extract version from each module's package.json
           pr_version=""
@@ -65,7 +65,7 @@ jobs:
           cd main-repo
 
           # Define module directories
-          MODULES=("contracts" "sdk" "cli" "web" "backend")
+          MODULES=("packages/contracts" "packages/sdk" "apps/cli" "apps/web" "apps/backend")
 
           # Extract version from each module's package.json in the main branch
           main_version=""
