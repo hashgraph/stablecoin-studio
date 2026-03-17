@@ -57,13 +57,14 @@ const config: Config = {
         routeBasePath: "scs",
         sidebarPath: "./sidebars.ts",
         editUrl: "https://github.com/hashgraph/stablecoin-studio/tree/main/",
+        exclude: ["references/**"],
       },
     ],
     [
       "@docusaurus/plugin-content-docs",
       {
         id: "references",
-        path: "../../documentation-references",
+        path: "../../documentation/references",
         routeBasePath: "references",
         sidebarPath: "./sidebarsReferences.ts",
         editUrl: "https://github.com/hashgraph/stablecoin-studio/tree/main/",
