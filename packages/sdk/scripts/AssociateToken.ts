@@ -40,8 +40,8 @@ import {
 } from '@hiero-ledger/sdk';
 
 // Multisig account keys
-const ED25519_PRIVATE_KEY = '';
-const ECDSA_PRIVATE_KEY   = '';
+const ECDSA_1_PRIVATE_KEY = '';
+const ECDSA_2_PRIVATE_KEY = '';
 
 // The multisig account to associate the token to
 const MULTISIG_ACCOUNT_ID = '';
@@ -52,12 +52,12 @@ const TOKEN_ID = '';
 // Fee payer — single ECDSA account with funds
 const FEE_PAYER = {
 	id: '',
-	privateKey: ECDSA_PRIVATE_KEY,
+	privateKey: '',
 };
 
 async function associateToken(): Promise<void> {
-	const ed25519Key = PrivateKey.fromStringED25519(ED25519_PRIVATE_KEY);
-	const ecdsaKey   = PrivateKey.fromStringECDSA(ECDSA_PRIVATE_KEY);
+	const ecdsaKey1 = PrivateKey.fromStringECDSA(ECDSA_1_PRIVATE_KEY);
+	const ecdsaKey2 = PrivateKey.fromStringECDSA(ECDSA_2_PRIVATE_KEY);
 
 	const client = Client.forTestnet().setOperator(
 		AccountId.fromString(FEE_PAYER.id),
@@ -70,7 +70,7 @@ async function associateToken(): Promise<void> {
 		.freezeWith(client);
 
 	// Both keys of the KeyList must sign
-	const signedTx = await (await tx.sign(ed25519Key)).sign(ecdsaKey);
+	const signedTx = await (await tx.sign(ecdsaKey1)).sign(ecdsaKey2);
 
 	const response = await signedTx.execute(client);
 	const receipt  = await response.getReceipt(client);
