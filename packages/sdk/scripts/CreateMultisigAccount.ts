@@ -20,81 +20,67 @@
 
 /**
  * DESCRIPTION
- * This script will deploy a multi-key account with a key list made of 2 keys:
- * - one ED25519 key
- * - one EDCSA key
+ * Creates a multisig account with a 2-of-2 KeyList (ED25519 + ECDSA).
+ * The resulting account requires both keys to sign every transaction.
+ * The fee payer is the ECDSA account 0.0.1653 (which has funds).
  *
  * HOW TO RUN IT
- * 1- Fill in the following constants : Multisig_ED25519_privateKey, Multisig_ECDSA_privateKey, deployingAccount
- * 2- Compile the script : npm run build (this command will actually build all the typescript files in the module)
- * 3- Run the compiled script : npm run execute:createMultisig
- * 4- the multisig account id will be displayed in the console.
+ * 1- npm run build (inside packages/sdk)
+ * 2- npm run execute:createMultisig
  */
 
 import {
 	AccountCreateTransaction,
-	KeyList,
-	Client,
-	PrivateKey,
 	AccountId,
+	Client,
+	Hbar,
+	KeyList,
+	PrivateKey,
 } from '@hiero-ledger/sdk';
 
-// Hex encoded private key of the ED25519 key that will be added to the multisig account's key
-const Multisig_ED25519_privateKey = '';
+// ECDSA private key of account 1
+const Multisig_ECDSA_1_privateKey = '';
 
-// Hex encoded private key of the ECDSA key that will be added to the multisig account's key
-const Multisig_ECDSA_privateKey = '';
+// ECDSA private key of account 2
+const Multisig_ECDSA_2_privateKey = '';
 
-// Account Id and Hex encoded ECDSA private key of the single key account that will be used to deploy the multisig account.
-// MAKE SURE this account has funds as it will pay for the account creation fees !!!!!!!!!!!
+// Payer account (fee payer): It must have funds in the testnet
 const deployingAccount = {
 	id: '',
 	ECDSA_privateKey: '',
 };
 
-const delay = async (seconds = 5): Promise<void> => {
-	seconds = seconds * 1000;
-	await new Promise((r) => setTimeout(r, seconds));
-};
+async function createMultisigAccount(): Promise<void> {
+	const ecdsaKey1 = PrivateKey.fromStringECDSA(Multisig_ECDSA_1_privateKey);
+	const ecdsaKey2 = PrivateKey.fromStringECDSA(Multisig_ECDSA_2_privateKey);
+	const feePayerKey = PrivateKey.fromStringECDSA(deployingAccount.ECDSA_privateKey);
 
-async function createMultisigAccount(): Promise<string> {
-	const signerKeys = [
-		PrivateKey.fromStringED25519(Multisig_ED25519_privateKey),
-		PrivateKey.fromStringECDSA(Multisig_ECDSA_privateKey),
-	];
-
-	const keyList = KeyList.of(
-		signerKeys[0].publicKey,
-		signerKeys[1].publicKey,
-	);
-
-	const newAccountTx = new AccountCreateTransaction().setKey(keyList);
+	// 2-of-2 KeyList: both ECDSA keys must sign
+	const keyList = new KeyList([ecdsaKey1.publicKey, ecdsaKey2.publicKey], 2);
 
 	const client = Client.forTestnet().setOperator(
 		AccountId.fromString(deployingAccount.id),
-		PrivateKey.fromStringECDSA(deployingAccount.ECDSA_privateKey),
+		feePayerKey,
 	);
 
-	const newAccountResponse = await newAccountTx.execute(client);
+	const tx = await new AccountCreateTransaction()
+		.setKeyWithoutAlias(keyList)
+		.setInitialBalance(new Hbar(0))
+		.execute(client);
 
-	await delay();
+	const receipt = await tx.getReceipt(client);
+	const newAccountId = receipt.accountId;
 
-	const newAccountReceipt = await newAccountResponse.getReceipt(client);
-	const newAccountId = newAccountReceipt.accountId;
-	if (newAccountId === null) {
-		throw new Error('newAccountId is null');
+	if (!newAccountId) {
+		throw new Error('Error creating multisig account');
 	}
 
-	const multisigAccountId = newAccountId.toString();
-
-	return multisigAccountId;
+	console.log(`Multisig account created: ${newAccountId.toString()}`);
 }
 
-// Main
 createMultisigAccount()
-	.then((events) => {
-		console.log(events);
-	})
-	.catch((error) => {
-		console.error(error);
+	.then(() => process.exit(0))
+	.catch((err) => {
+		console.error(err);
+		process.exit(1);
 	});

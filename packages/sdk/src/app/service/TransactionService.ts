@@ -50,7 +50,7 @@ import {
 	TransferTransaction,
 } from '@hiero-ledger/sdk';
 import { MirrorNodeAdapter } from '../../port/out/mirror/MirrorNodeAdapter.js';
-import { HederaTokenManagerFacet__factory } from '@hashgraph/stablecoin-npm-contracts';
+import * as Factories from '@hashgraph/stablecoin-npm-contracts/typechain-types/factories/contracts';
 import { ethers } from 'ethers';
 import Hex from '../../core/Hex.js';
 import { AWSKMSTransactionAdapter } from '../../port/out/hs/custodial/AWSKMSTransactionAdapter';
@@ -319,17 +319,40 @@ export default class TransactionService extends Service {
 		}
 	}
 
-	static decodeFunctionCall(
-		parameters: Uint8Array,
-	): ethers.TransactionDescription | null {
-		const inputData = '0x' + Hex.fromUint8Array(parameters);
 
-		try {
-			const iface_tokenManager = new ethers.Interface(
-				HederaTokenManagerFacet__factory.abi,
+	
+
+
+	private static readonly COMBINED_INTERFACE: ethers.Interface = (() => {
+		const seen = new Set<string>();
+		const fragments: any[] = [];
+
+		function flattenFactories(obj: Record<string, any>): any[] {
+			return Object.values(obj).flatMap(v =>
+				Array.isArray(v?.abi) ? [v] : v && typeof v === 'object' ? flattenFactories(v) : []
 			);
-			return iface_tokenManager.parseTransaction({ data: inputData });
-		} catch (e) {
+		}
+		const factories = flattenFactories(Factories as Record<string, any>);
+
+		for (const factory of Object.values(factories)) {
+			if (!Array.isArray(factory?.abi)) continue;
+			for (const fragment of factory.abi) {
+				if (fragment.type !== 'function') continue;
+				const sig = `${fragment.name}(${(fragment.inputs ?? []).map((i: any) => i.type).join(',')})`;
+				if (!seen.has(sig)) {
+					seen.add(sig);
+					fragments.push(fragment);
+				}
+			}
+		}
+		return new ethers.Interface(fragments);
+	})();
+
+	static decodeFunctionCall(parameters: Uint8Array): ethers.TransactionDescription | null {
+		const inputData = '0x' + Hex.fromUint8Array(parameters);
+		try {
+			return TransactionService.COMBINED_INTERFACE.parseTransaction({ data: inputData });
+		} catch (_) {
 			return null;
 		}
 	}
