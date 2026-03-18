@@ -40,6 +40,7 @@ export class MultiSigTransaction {
 	network: string;
 	hedera_account_id: string;
 	start_date: string;
+	consensus_nodes?: { url: string; nodeId: string }[];
 
 	constructor(
 		id: string,
@@ -53,6 +54,7 @@ export class MultiSigTransaction {
 		network: string,
 		hedera_account_id: string,
 		start_date: string,
+		consensus_nodes?: { url: string; nodeId: string }[],
 	) {
 		this.id = id;
 		this.transaction_message = transaction_message;
@@ -65,6 +67,7 @@ export class MultiSigTransaction {
 		this.network = network;
 		this.hedera_account_id = hedera_account_id;
 		this.start_date = start_date;
+		this.consensus_nodes = consensus_nodes;
 	}
 }
 
