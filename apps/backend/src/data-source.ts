@@ -32,7 +32,6 @@ export const dataSourceOptions: DataSourceOptions = {
   password: process.env.DB_PASSWORD,
   database: process.env.DB_NAME,
   entities: [Transaction],
-  migrations: ['src/migrations/*.ts'],
 };
 
 const dataSource = new DataSource(dataSourceOptions);

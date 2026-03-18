@@ -23,10 +23,6 @@
     "clear-cache": "npx jest --clearCache",
     "clean:modules": "rimraf node_modules",
     "deleteAllTransactions": "ts-node ./src/scripts/deleteAllDBTransactions.ts",
-    "migration:run": "typeorm-ts-node-commonjs migration:run -d src/data-source.ts",
-    "migration:revert": "typeorm-ts-node-commonjs migration:revert -d src/data-source.ts",
-    "migration:generate": "typeorm-ts-node-commonjs migration:generate -d src/data-source.ts",
-    "migration:show": "typeorm-ts-node-commonjs migration:show -d src/data-source.ts",
     "pre-commit": "npm run lint && npm run prettier"
   },
   "dependencies": {
