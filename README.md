@@ -273,6 +273,7 @@ npm run prettier:check     # Check formatting without changes
 
 The project uses separate GitHub Actions workflows for each module:
 
+- **Changeset Check** (`.github/workflows/changeset.yaml`): Enforces that PRs to `develop` include a changeset file; can be bypassed with labels (`no-changeset`, `docs-only`, `hotfix`, `chore`)
 - **Contracts Tests** (`.github/workflows/test-contracts.yaml`): Runs when contract files change
 - **SDK Tests** (`.github/workflows/test-sdk.yaml`): Runs when SDK files change
 - **Backend Tests** (`.github/workflows/test-backend.yaml`): Runs when backend files change
