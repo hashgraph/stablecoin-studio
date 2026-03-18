@@ -11,7 +11,7 @@ const config: Config = {
 
   // Future flags, see https://docusaurus.io/docs/api/docusaurus-config#future
   future: {
-    v4: true, // Improve compatibility with the upcoming Docusaurus v4
+    v4: true,
   },
 
   // Set the production url of your site here
@@ -57,17 +57,6 @@ const config: Config = {
         routeBasePath: "scs",
         sidebarPath: "./sidebars.ts",
         editUrl: "https://github.com/hashgraph/stablecoin-studio/tree/main/",
-        exclude: ["references/**"],
-      },
-    ],
-    [
-      "@docusaurus/plugin-content-docs",
-      {
-        id: "references",
-        path: "../../documentation/references",
-        routeBasePath: "references",
-        sidebarPath: "./sidebarsReferences.ts",
-        editUrl: "https://github.com/hashgraph/stablecoin-studio/tree/main/",
       },
     ],
     [
@@ -87,6 +76,7 @@ const config: Config = {
   ],
 
   markdown: {
+    format: 'detect',
     mermaid: true,
   },
 
@@ -115,8 +105,7 @@ const config: Config = {
         },
         {
           type: "doc",
-          docId: "intro",
-          docsPluginId: "references",
+          docId: "references/intro",
           position: "left",
           label: "References",
         },

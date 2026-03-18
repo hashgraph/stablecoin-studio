@@ -38,8 +38,8 @@ All values are JSON arrays so you can configure multiple environments.
 
 | Variable | Description |
 | :--- | :--- |
-| `REACT_APP_FACTORIES` | Factory addresses per environment (see [Deployed Addresses](/references/deployed-addresses)). Format: `[{"Environment":"testnet","STABLE_COIN_FACTORY_ADDRESS":"0.0.xxxxx"}]` |
-| `REACT_APP_RESOLVERS` | Resolver addresses per environment (see [Deployed Addresses](/references/deployed-addresses)). Format: `[{"Environment":"testnet","STABLE_COIN_RESOLVER_ADDRESS":"0.0.xxxxx"}]` |
+| `REACT_APP_FACTORIES` | Factory addresses per environment (see [Deployed Addresses](/scs/references/deployed-addresses)). Format: `[{"Environment":"testnet","STABLE_COIN_FACTORY_ADDRESS":"0.0.xxxxx"}]` |
+| `REACT_APP_RESOLVERS` | Resolver addresses per environment (see [Deployed Addresses](/scs/references/deployed-addresses)). Format: `[{"Environment":"testnet","STABLE_COIN_RESOLVER_ADDRESS":"0.0.xxxxx"}]` |
 | `REACT_APP_MIRROR_NODE` | Mirror node configuration (see [Hedera Mirror Nodes](https://docs.hedera.com/hedera/core-concepts/mirror-nodes)). If no API key is needed, leave `API_KEY` and `HEADER` empty. Format: `[{"Environment":"testnet","BASE_URL":"https://testnet.mirrornode.hedera.com","API_KEY":"","HEADER":""}]` |
 | `REACT_APP_RPC_NODE` | RPC node configuration (see [Hedera JSON-RPC Relay](https://docs.hedera.com/hedera/core-concepts/smart-contracts/json-rpc-relay)). Same format as mirror node. |
 
