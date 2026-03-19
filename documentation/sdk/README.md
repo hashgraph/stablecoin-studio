@@ -12,8 +12,15 @@ npm install @hashgraph/stablecoin-npm-sdk
 
 - [**🏗️ Architecture & Design**](./architecture.md): Deep dive into connections via RPC, Mirror Nodes, and gRPC.
 - [**🚀 Getting Started & Usage**](./usage.md): Code examples for initialization, minting, burning, and transfers.
-- [**🧭 API Overview**](./api-overview.md): Reference for methods and role enums.
 
 ## 🤝 Contributing
 
 This project is Open Source. We welcome contributions! Please see the root `CONTRIBUTING.md` for more details.
+
+When submitting a PR to the `develop` branch, you must include a changeset file documenting your changes:
+
+```bash
+npm run changeset    # Interactive prompt: select packages and bump type
+```
+
+If your PR does not require a changeset (documentation, chores, hotfixes), add one of the following labels to bypass the check: `no-changeset`, `docs-only`, `chore`, `hotfix`.

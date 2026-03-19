@@ -61,9 +61,11 @@
     "prettier:backend:check": "npm run prettier:check --workspace=backend",
     "prettier:web:check": "npm run prettier:check --workspace=web",
     "prettier:cli:check": "npm run prettier:check --workspace=cli",
-    "commitlint": "commitlint --edit"
+    "commitlint": "commitlint --edit",
+    "changeset": "changeset"
   },
   "devDependencies": {
+    "@changesets/cli": "2.29.8",
     "@commitlint/cli": "19.8.0",
     "@commitlint/config-conventional": "19.8.0",
     "concurrently": "7.6.0",

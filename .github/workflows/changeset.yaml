@@ -1,0 +1,124 @@
+name: "000: [FLOW] Changeset Check"
+
+on:
+  pull_request:
+    branches:
+      - develop
+    types:
+      - opened
+      - synchronize
+      - reopened
+      - labeled # checks for bypass labels (no-changeset, docs-only, hotfix, chore)
+      - unlabeled
+
+defaults:
+  run:
+    shell: bash
+
+permissions:
+  contents: read
+  pull-requests: read
+
+jobs:
+  check-changeset:
+    name: Validate Changeset Required
+    runs-on: token-studio-linux-medium
+    timeout-minutes: 5
+
+    steps:
+      - name: Harden Runner
+        uses: step-security/harden-runner@5ef0c079ce82195b2a36a210272d6b661572d83e # v2.14.2
+        with:
+          egress-policy: audit
+
+      - name: Checkout repository
+        uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5.0.0
+        with:
+          fetch-depth: 0
+          # Ensure we have the head branch for comparison
+          ref: ${{ github.head_ref }}
+
+      - name: Fetch base branch
+        run: |
+          echo "Base branch: ${{ github.base_ref }}"
+          git fetch origin ${{ github.base_ref }}:${{ github.base_ref }}
+          git branch -a
+
+      - name: Setup NodeJS Environment
+        uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4.4.0
+        with:
+          node-version: 22.20.0
+
+      - name: Check for bypass labels
+        id: bypass
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          LABELS=$(gh pr view ${{ github.event.number }} --json labels --jq '.labels[].name' || echo "")
+          if echo "${LABELS}" | grep -E "(no-changeset|docs-only|hotfix|chore)" > /dev/null; then
+            echo "bypass=true" >> "${GITHUB_OUTPUT}"
+            echo "✅ Found bypass label. Skipping changeset check."
+          else
+            echo "bypass=false" >> "${GITHUB_OUTPUT}"
+            echo "🔍 No bypass labels found. Changeset check required."
+          fi
+
+      - name: Install dependencies
+        if: ${{ steps.bypass.outputs.bypass == 'false' }}
+        run: npm ci
+
+      - name: Check changeset status
+        if: ${{ steps.bypass.outputs.bypass == 'false' }}
+        env:
+          BASE_BRANCH: ${{ github.base_ref }}
+        run: |
+          echo "🔍 Checking for NEW changesets in this PR..."
+          echo "Comparing HEAD against base branch: ${BASE_BRANCH}"
+
+          NEW_CHANGESETS=$(git diff "${BASE_BRANCH}...HEAD" --name-only --diff-filter=A | grep "^\.changeset/.*\.md$" | grep -v "README.md" || true)
+          NEW_CHANGESET_COUNT=$(echo "${NEW_CHANGESETS}" | grep -c "\.md$" || true)
+
+          echo "Files changed in PR:"
+          git diff "${BASE_BRANCH}...HEAD" --name-only --diff-filter=A | head -10
+          echo ""
+          echo "NEW changeset files in this PR: ${NEW_CHANGESET_COUNT}"
+          if [[ -n "${NEW_CHANGESETS}" ]]; then
+            echo "Found NEW changesets:"
+            echo "${NEW_CHANGESETS}"
+          fi
+
+          if [[ "${NEW_CHANGESET_COUNT}" -gt 0 ]]; then
+            echo "✅ Changeset validation passed - found NEW changeset files in PR"
+          else
+            echo ""
+            echo "❌ NEW CHANGESET REQUIRED"
+            echo ""
+            echo "This PR requires a NEW changeset to document the changes."
+            echo "We found no new .changeset/*.md files introduced by this PR."
+            echo ""
+            echo "To create a changeset:"
+            echo "1. Run: npm run changeset"
+            echo "2. Select the packages that changed"
+            echo "3. Choose the change type (patch/minor/major)"
+            echo "4. Write a description of your changes"
+            echo "5. Commit the generated .changeset/*.md file"
+            echo ""
+            echo "To bypass this check (for docs/chore changes only):"
+            echo "Add one of these labels to the PR:"
+            echo "- no-changeset: For pure documentation or config changes"
+            echo "- docs-only: For documentation-only changes"
+            echo "- chore: For build system or dependency updates"
+            echo "- hotfix: For emergency fixes"
+            echo ""
+            echo "More info: https://github.com/changesets/changesets/blob/main/docs/intro-to-using-changesets.md"
+            exit 1
+          fi
+
+      - name: Success summary
+        if: ${{ always() }}
+        run: |
+          if [[ "${{ steps.bypass.outputs.bypass }}" == "true" ]]; then
+            echo "✅ Changeset check bypassed due to label"
+          else
+            echo "✅ Changeset validation completed successfully"
+          fi

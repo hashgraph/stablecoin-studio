@@ -38,4 +38,5 @@ Please describe the tests that you ran to verify your changes. Provide instructi
 - **Effective Tests** (I have added tests that prove my fix is effective or that my feature works) ✔️
 - **Local Test Pass** (New and existing unit tests pass locally with my changes) ✅
 - **Dependency Updates** (Any dependent changes have been merged and published in downstream modules) 🔄
+- **Changeset** (I have added a changeset file via `npm run changeset`, or applied a bypass label if not applicable: `no-changeset`, `docs-only`, `chore`, `hotfix`) 📦
 - **Spellcheck** (I have checked my code and corrected any misspellings) 📝
