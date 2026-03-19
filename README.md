@@ -267,10 +267,21 @@ npm run prettier           # Format all modules
 npm run prettier:check     # Check formatting without changes
 ```
 
+### Changesets
+
+PRs targeting the `develop` branch must include a changeset file documenting the change. To create one:
+
+```bash
+npm run changeset          # Interactive prompt: select packages and bump type
+```
+
+This generates a `.changeset/*.md` file that must be committed with your changes. If your PR does not require a changeset (documentation, chores, hotfixes), add one of the following labels to bypass the check: `no-changeset`, `docs-only`, `chore`, `hotfix`.
+
 ## Continuous Integration
 
 The project uses separate GitHub Actions workflows for each module:
 
+- **Changeset Check** (`.github/workflows/changeset.yaml`): Enforces that PRs to `develop` include a changeset file; can be bypassed with labels (`no-changeset`, `docs-only`, `hotfix`, `chore`)
 - **Contracts Tests** (`.github/workflows/test-contracts.yaml`): Runs when contract files change
 - **SDK Tests** (`.github/workflows/test-sdk.yaml`): Runs when SDK files change
 - **Backend Tests** (`.github/workflows/test-backend.yaml`): Runs when backend files change
