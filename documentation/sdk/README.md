@@ -16,3 +16,11 @@ npm install @hashgraph/stablecoin-npm-sdk
 ## 🤝 Contributing
 
 This project is Open Source. We welcome contributions! Please see the root `CONTRIBUTING.md` for more details.
+
+When submitting a PR to the `develop` branch, you must include a changeset file documenting your changes:
+
+```bash
+npm run changeset    # Interactive prompt: select packages and bump type
+```
+
+If your PR does not require a changeset (documentation, chores, hotfixes), add one of the following labels to bypass the check: `no-changeset`, `docs-only`, `chore`, `hotfix`.
