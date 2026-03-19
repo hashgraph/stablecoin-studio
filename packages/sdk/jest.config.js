@@ -10,6 +10,7 @@ module.exports = {
 		'^(\\.{1,2}/.*)\\.(m)?js$': '$1',
 		'@hashgraph/hedera-wallet-connect':
 			'<rootDir>/__mocks__/hedera-wallet-connect.js',
+		'fireblocks-sdk': '<rootDir>/__mocks__/fireblocks-sdk.js',
 		'^uuid$': 'uuid',
 	},
 	testMatch: ['**/__tests__/**/*.(test|spec).[jt]s?(x)'],
