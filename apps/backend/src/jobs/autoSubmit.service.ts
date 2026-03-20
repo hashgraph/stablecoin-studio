@@ -24,12 +24,13 @@ import TransactionService from '../transaction/transaction.service';
 import { TransactionStatus } from '../transaction/status.enum';
 import {
   Transaction,
-  Client,
   PublicKey,
   TransactionResponse,
   TransactionReceipt,
   Status,
+  Client,
 } from '@hiero-ledger/sdk';
+import { buildHederaClient } from '../utils/clientFactory';
 import { GetTransactionsResponseDto } from '../transaction/dto/get-transactions-response.dto';
 import { hexToUint8Array } from '../utils/utils';
 import { LoggerService } from '../logger/logger.service.js';
@@ -142,7 +143,7 @@ export default class AutoSubmitService {
 
   async submit(transaction: GetTransactionsResponseDto): Promise<boolean> {
     try {
-      const client: Client = Client.forName(transaction.network);
+      const client = buildHederaClient(transaction.network, transaction.consensus_nodes);
 
       let deserializedTransaction = Transaction.fromBytes(
         hexToUint8Array(transaction.transaction_message),

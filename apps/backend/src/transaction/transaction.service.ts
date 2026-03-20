@@ -44,7 +44,8 @@ import {
 } from '../common/exceptions/domain-exceptions';
 import { TransactionStatus } from './status.enum';
 import { Network } from './network.enum';
-import { Client, Transaction as TransactionSdk } from '@hiero-ledger/sdk';
+import { Transaction as TransactionSdk } from '@hiero-ledger/sdk';
+import { buildHederaClient } from '../utils/clientFactory';
 
 @Injectable()
 export default class TransactionService {
@@ -97,7 +98,7 @@ export default class TransactionService {
 
     const deserializedTransaction = TransactionSdk.fromBytes(
       hexToUint8Array(transaction.transaction_message),
-    ).freezeWith(Client.forName(transaction.network));
+    ).freezeWith(buildHederaClient(transaction.network, transaction.consensus_nodes));
 
     if (
       !verifySignature(
@@ -251,6 +252,7 @@ export default class TransactionService {
       transaction.network,
       transaction.hedera_account_id,
       transaction.start_date.toUTCString(),
+      transaction.consensus_nodes ?? null,
     );
   }
 }

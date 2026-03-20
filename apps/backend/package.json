@@ -19,7 +19,7 @@
     "test:cov": "npx jest --coverage",
     "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
     "test:e2e": "npx jest --config ./test/jest-e2e.json",
-    "test:ci": "npx jest --ci --runInBand",
+    "test:ci": "npx jest --ci --runInBand --forceExit",
     "clear-cache": "npx jest --clearCache",
     "clean:modules": "rimraf node_modules",
     "deleteAllTransactions": "ts-node ./src/scripts/deleteAllDBTransactions.ts",

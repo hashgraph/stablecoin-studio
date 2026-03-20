@@ -25,6 +25,7 @@ import { Repository } from 'typeorm';
 import TransactionService from '../../src/transaction/transaction.service';
 import Transaction from '../../src/transaction/transaction.entity';
 import { SignTransactionRequestDto } from '../../src/transaction/dto/sign-transaction-request.dto';
+import { CreateTransactionRequestDto } from '../../src/transaction/dto/create-transaction-request.dto';
 import TransactionMock, { DEFAULT } from './transaction.mock';
 import { LoggerService } from '../../src/logger/logger.service';
 import { TransactionStatus } from '../../src/transaction/status.enum';
@@ -88,7 +89,7 @@ describe('Transaction Service Test', () => {
         threshold: pendingTransaction.threshold,
         network: pendingTransaction.network,
         start_date: pendingTransaction.start_date.toDateString(),
-      };
+      } as CreateTransactionRequestDto;
 
       const expected = TransactionMock.txPending0();
       //* 🎬 Act ⬇
@@ -118,7 +119,7 @@ describe('Transaction Service Test', () => {
         threshold: pendingTransaction.threshold,
         network: pendingTransaction.network,
         start_date: pendingTransaction.start_date.toDateString(),
-      };
+      } as CreateTransactionRequestDto;
 
       //* 🎬 Act ⬇
       const transaction = await service.create(createTransactionDto);
@@ -143,7 +144,7 @@ describe('Transaction Service Test', () => {
         threshold: new_threshold,
         network: pendingTransaction.network,
         start_date: pendingTransaction.start_date.toDateString(),
-      };
+      } as CreateTransactionRequestDto;
 
       //* 🎬 Act ⬇
       const transaction = await service.create(createTransactionDto);
@@ -167,7 +168,7 @@ describe('Transaction Service Test', () => {
         threshold: pendingTransaction.threshold,
         network: pendingTransaction.network,
         start_date: pendingTransaction.start_date.toDateString(),
-      };
+      } as CreateTransactionRequestDto;
 
       const expected = TransactionMock.txPending0({
         threshold: createTransactionDto.key_list.length,
