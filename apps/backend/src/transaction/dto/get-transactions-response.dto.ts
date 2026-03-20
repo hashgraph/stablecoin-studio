@@ -30,6 +30,7 @@ export class GetTransactionsResponseDto {
   network: string;
   hedera_account_id: string;
   start_date: string;
+  consensus_nodes: { url: string; nodeId: string }[] | null;
 
   constructor(
     id: string,
@@ -43,6 +44,7 @@ export class GetTransactionsResponseDto {
     network: string,
     hedera_account_id: string,
     start_date: string,
+    consensus_nodes: { url: string; nodeId: string }[] | null,
   ) {
     this.id = id;
     this.transaction_message = transaction_message;
@@ -55,5 +57,6 @@ export class GetTransactionsResponseDto {
     this.network = network;
     this.hedera_account_id = hedera_account_id;
     this.start_date = start_date;
+    this.consensus_nodes = consensus_nodes;
   }
 }

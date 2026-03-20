@@ -79,6 +79,21 @@ export abstract class CustodialTransactionAdapter extends BaseHederaTransactionA
 			case 'previewnet':
 				this.client = Client.forPreviewnet();
 				break;
+			case 'custom':
+				if (!this.networkService.consensusNodes?.length) {
+					throw new Error(
+						'Custom network requires at least one consensus node',
+					);
+				}
+				this.client = Client.forNetwork(
+					Object.fromEntries(
+						this.networkService.consensusNodes.map((n) => [
+							n.url,
+							n.nodeId,
+						]),
+					),
+				);
+				break;
 			default:
 				throw new Error('Network not supported');
 		}
