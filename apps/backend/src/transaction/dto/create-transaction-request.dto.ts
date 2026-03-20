@@ -26,14 +26,27 @@ import {
   IsIn,
   IsInt,
   IsNotEmpty,
+  IsOptional,
   IsString,
   Matches,
   Min,
+  ValidateNested,
 } from 'class-validator';
+import { Type } from 'class-transformer';
 import { hederaIdRegex, hexRegex } from '../../common/regexp';
 import { RemoveHexPrefix } from '../../common/decorators/transform-hexPrefix.decorator';
 import { Network } from '../network.enum';
 import { Transform } from 'class-transformer';
+
+export class ConsensusNodeDto {
+  @IsString()
+  @IsNotEmpty()
+  url: string;
+
+  @IsString()
+  @IsNotEmpty()
+  nodeId: string;
+}
 
 export class CreateTransactionRequestDto {
   @ApiProperty({
@@ -113,6 +126,17 @@ export class CreateTransactionRequestDto {
   network: Network;
 
   @ApiProperty({
+    description:
+      'Consensus nodes for custom networks (required when network is "custom")',
+    required: false,
+  })
+  @IsOptional()
+  @IsArray()
+  @ValidateNested({ each: true })
+  @Type(() => ConsensusNodeDto)
+  consensus_nodes?: ConsensusNodeDto[];
+
+  @ApiProperty({
     description: 'The start date of the transaction in ISO 8601 format',
     example: '2023-08-01T12:00:00Z',
     required: true,
@@ -129,6 +153,7 @@ export class CreateTransactionRequestDto {
     threshold: number,
     network: Network,
     start_date: string,
+    consensus_nodes?: ConsensusNodeDto[],
   ) {
     this.transaction_message = transaction_message;
     this.description = description;
@@ -137,5 +162,6 @@ export class CreateTransactionRequestDto {
     this.threshold = threshold;
     this.network = network;
     this.start_date = start_date;
+    this.consensus_nodes = consensus_nodes;
   }
 }
