@@ -1,6 +1,6 @@
 {
 	"name": "@hashgraph/stablecoin-npm-sdk",
-	"version": "4.1.0",
+	"version": "4.2.0",
 	"description": "stablecoin studio SDK",
 	"main": "./build/cjs/src/index.js",
 	"module": "./build/esm/src/index.js",
@@ -28,7 +28,7 @@
 		"@types/uuid": "^9.0.0 ",
 		"@typescript-eslint/eslint-plugin": "^5.62.0",
 		"@typescript-eslint/parser": "^5.48.2",
-		"axios": "^ 1.2.3",
+		"axios": "1.13.6",
 		"babel-jest": "^29.3.1 ",
 		"concurrently": "^7.6.0",
 		"eslint": "^8.32.0",
@@ -47,6 +47,7 @@
 	},
 	"scripts": {
 		"execute:createMultisig": "node build/cjs/scripts/CreateMultisigAccount.js",
+		"execute:associateToken": "node build/cjs/scripts/AssociateToken.js",
 		"start": "node build/src/index.js",
 		"clean": "rimraf coverage build",
 		"clean:modules": "rimraf node_modules",
@@ -58,6 +59,7 @@
 		"build:release": "npm run clean && tsc -p tsconfig.release.json",
 		"lint": "eslint . --ext .ts --ext .mts",
 		"test": "NODE_OPTIONS=--max-old-space-size=8192 npx jest --forceExit --maxWorkers=50%",
+		"test:unit": "NODE_OPTIONS=--max-old-space-size=8192 npx jest --config jest.unit.config.js --forceExit --maxWorkers=50%",
 		"test:watch": "concurrently --kill-others \"npm run build:watch\" \"npm run test:jest:watch\"",
 		"test:jest:watch": "NODE_OPTIONS=--experimental-vm-modules npx jest --watch",
 		"test:ci": "NODE_OPTIONS=--max-old-space-size=8192 npx jest --ci --forceExit --runInBand",
@@ -67,7 +69,9 @@
 		"format:imports": "npx format-imports ./src",
 		"pre-commit": "npm run lint && npm run prettier",
 		"prettierCheck": "prettier --config .prettierrc --check",
-		"prepack": "npm run build"
+		"prepack": "npm run build",
+		"test-external-evm": "ts-node --project example/ts/tsconfig.json example/ts/testExternalEVM.ts",
+		"test-external-hedera": "ts-node --project example/ts/tsconfig.json example/ts/testExternalHedera.ts"
 	},
 	"license": "Apache-2.0",
 	"repository": "https://github.com/hashgraph/stablecoin-studio",
@@ -81,7 +85,7 @@
 		"@hiero-ledger/sdk": "2.79.0",
 		"@metamask/detect-provider": "^2.0.0",
 		"@metamask/providers": "^10.2.1",
-		"@notabene/pii-sdk": "1.16.2",
+		"@notabene/pii-sdk": "1.17.1",
 		"@reown/appkit": "1.8.10",
 		"@reown/appkit-adapter-ethers": "1.8.10",
 		"@reown/appkit-controllers": "1.8.10",
@@ -100,7 +104,6 @@
 		"tslib": "^2.4.1",
 		"tsyringe": "^4.7.0",
 		"uuid": "^9.0.0",
-		"web3": "^1.8.1",
 		"winston": "^3.8.2",
 		"winston-daily-rotate-file": "^4.7.1"
 	},

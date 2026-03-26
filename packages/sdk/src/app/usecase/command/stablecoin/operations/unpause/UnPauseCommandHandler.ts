@@ -47,7 +47,7 @@ export class UnPauseCommandHandler implements ICommandHandler<UnPauseCommand> {
 		);
 		const res = await handler.unpause(capabilities, startDate);
 		return Promise.resolve(
-			new UnPauseCommandResponse(res.error === undefined, res.id),
+			new UnPauseCommandResponse(res.error === undefined, res.id, res.serializedTransactionData),
 		);
 	}
 }

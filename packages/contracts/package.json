@@ -1,6 +1,6 @@
 {
     "name": "@hashgraph/stablecoin-npm-contracts",
-    "version": "4.1.0",
+    "version": "4.2.0",
     "description": "",
     "main": "./build/typechain-types/index.js",
     "module": "./build/typechain-types/index.js",
@@ -15,6 +15,14 @@
         "./typechain-types/index.js": {
             "import": "./build/typechain-types/index.js",
             "require": "./build/typechain-types/index.js"
+        },
+        "./typechain-types/factories/contracts": {
+            "import": "./build/typechain-types/factories/contracts/index.js",
+            "require": "./build/typechain-types/factories/contracts/index.js"
+        },
+        "./typechain-types/*": {
+            "import": "./build/typechain-types/*",
+            "require": "./build/typechain-types/*"
         }
     },
     "scripts": {

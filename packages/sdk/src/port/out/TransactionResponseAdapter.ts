@@ -18,7 +18,7 @@
  *
  */
 
-import Web3 from 'web3';
+import { AbiCoder } from 'ethers';
 import LogService from '../../app/service/LogService.js';
 import TransactionResponse from '../../domain/context/transaction/TransactionResponse.js';
 import { TransactionResponseError } from './error/TransactionResponseError.js';
@@ -35,8 +35,6 @@ export class TransactionResponseAdapter {
 		network: string,
 	): Uint8Array {
 		try {
-			const web3 = new Web3();
-
 			let functionAbi;
 			if (abi) {
 				functionAbi = abi.find(
@@ -57,10 +55,7 @@ export class TransactionResponseAdapter {
 			const resultHex = '0x'.concat(
 				Buffer.from(resultAsBytes).toString('hex'),
 			);
-			const result = web3.eth.abi.decodeParameters(
-				functionParameters || [],
-				resultHex,
-			);
+			const result = AbiCoder.defaultAbiCoder().decode(functionParameters, resultHex);
 
 			const jsonParsedArray = JSON.parse(JSON.stringify(result));
 			return jsonParsedArray;

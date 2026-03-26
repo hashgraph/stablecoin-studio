@@ -21,6 +21,7 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
 import Injectable from '../../core/Injectable.js';
+import { EmptyResponse } from '../../app/service/error/EmptyResponse.js';
 import { QueryBus } from '../../core/query/QueryBus.js';
 import { CommandBus } from '../../core/command/CommandBus.js';
 import {
@@ -63,34 +64,41 @@ import { RevokeMultiRolesCommand } from '../../app/usecase/command/stablecoin/ro
 import GetAccountsWithRolesRequest from './request/GetAccountsWithRolesRequest.js';
 import { GetAccountsWithRolesQuery } from '../../app/usecase/query/stablecoin/roles/getAccountsWithRole/GetAccountsWithRolesQuery.js';
 import { TransactionResult } from '../../domain/context/transaction/TransactionResult.js';
+import { SerializedTransactionData } from '../../domain/context/transaction/TransactionResponse.js';
+
 
 export { StableCoinRole, StableCoinRoleLabel, MAX_ACCOUNTS_ROLES };
 
 interface IRole {
 	hasRole(request: HasRoleRequest): Promise<boolean>;
 	grantRole(request: GrantRoleRequest): Promise<TransactionResult>;
+	buildGrantRole(request: GrantRoleRequest): Promise<SerializedTransactionData>;
 	revokeRole(request: RevokeRoleRequest): Promise<TransactionResult>;
-	grantMultiRoles(
-		request: GrantMultiRolesRequest,
-	): Promise<TransactionResult>;
-	revokeMultiRoles(
-		request: RevokeMultiRolesRequest,
-	): Promise<TransactionResult>;
+	buildRevokeRole(request: RevokeRoleRequest): Promise<SerializedTransactionData>;
+	grantMultiRoles(request: GrantMultiRolesRequest): Promise<TransactionResult>;
+	buildGrantMultiRoles(request: GrantMultiRolesRequest): Promise<SerializedTransactionData>;
+	revokeMultiRoles(request: RevokeMultiRolesRequest): Promise<TransactionResult>;
+	buildRevokeMultiRoles(request: RevokeMultiRolesRequest): Promise<SerializedTransactionData>;
 	getRoles(request: GetRolesRequest): Promise<string[]>;
 	getAccountsWithRole(
 		request: GetAccountsWithRolesRequest,
 	): Promise<string[]>;
 	//Supplier
 	getAllowance(request: GetSupplierAllowanceRequest): Promise<Balance>;
-	resetAllowance(
-		request: ResetSupplierAllowanceRequest,
-	): Promise<TransactionResult>;
+	resetAllowance(request: ResetSupplierAllowanceRequest): Promise<TransactionResult>;
+	buildResetAllowance(request: ResetSupplierAllowanceRequest): Promise<SerializedTransactionData>;
 	increaseAllowance(
 		request: IncreaseSupplierAllowanceRequest,
 	): Promise<TransactionResult>;
+	buildIncreaseAllowance(
+		request: IncreaseSupplierAllowanceRequest,
+	): Promise<SerializedTransactionData>;
 	decreaseAllowance(
 		request: DecreaseSupplierAllowanceRequest,
 	): Promise<TransactionResult>;
+	buildDecreaseAllowance(
+		request: DecreaseSupplierAllowanceRequest,
+	): Promise<SerializedTransactionData>;
 	isLimited(request: CheckSupplierLimitRequest): Promise<boolean>;
 	isUnlimited(request: CheckSupplierLimitRequest): Promise<boolean>;
 }
@@ -124,7 +132,7 @@ class RoleInPort implements IRole {
 		handleValidation('GrantRoleRequest', request);
 
 		if (role === StableCoinRole.CASHIN_ROLE) {
-			if (supplierType == 'limited') {
+			if (supplierType === 'limited') {
 				const response = await this.commandBus.execute(
 					new GrantSupplierRoleCommand(
 						HederaId.from(targetId),
@@ -132,10 +140,7 @@ class RoleInPort implements IRole {
 						amount!,
 					),
 				);
-				return new TransactionResult(
-					response.payload,
-					response.transactionId,
-				);
+				return new TransactionResult(response.payload, response.transactionId);
 			} else {
 				const response = await this.commandBus.execute(
 					new GrantUnlimitedSupplierRoleCommand(
@@ -143,10 +148,7 @@ class RoleInPort implements IRole {
 						HederaId.from(tokenId),
 					),
 				);
-				return new TransactionResult(
-					response.payload,
-					response.transactionId,
-				);
+				return new TransactionResult(response.payload, response.transactionId);
 			}
 		} else {
 			const response = await this.commandBus.execute(
@@ -156,17 +158,53 @@ class RoleInPort implements IRole {
 					HederaId.from(tokenId),
 				),
 			);
-			return new TransactionResult(
-				response.payload,
-				response.transactionId,
+			return new TransactionResult(response.payload, response.transactionId);
+		}
+	}
+
+	@LogError
+	async buildGrantRole(request: GrantRoleRequest): Promise<SerializedTransactionData> {
+		const { tokenId, targetId, role, supplierType, amount } = request;
+		handleValidation('GrantRoleRequest', request);
+
+		if (role === StableCoinRole.CASHIN_ROLE) {
+			if (supplierType === 'limited') {
+				const response = await this.commandBus.execute(
+					new GrantSupplierRoleCommand(
+						HederaId.from(targetId),
+						HederaId.from(tokenId),
+						amount!,
+					),
+				);
+				if (!response.serializedTransactionData) throw new EmptyResponse("buildTransaction");
+				return response.serializedTransactionData;
+			} else {
+				const response = await this.commandBus.execute(
+					new GrantUnlimitedSupplierRoleCommand(
+						HederaId.from(targetId),
+						HederaId.from(tokenId),
+					),
+				);
+				if (!response.serializedTransactionData) throw new EmptyResponse("buildTransaction");
+				return response.serializedTransactionData;
+			}
+		} else {
+			const response = await this.commandBus.execute(
+				new GrantRoleCommand(
+					role!,
+					HederaId.from(targetId),
+					HederaId.from(tokenId),
+				),
 			);
+			if (!response.serializedTransactionData) throw new EmptyResponse("buildTransaction");
+			return response.serializedTransactionData;
 		}
 	}
 
 	@LogError
 	async revokeRole(request: RevokeRoleRequest): Promise<TransactionResult> {
 		const { tokenId, targetId, role } = request;
-		handleValidation('HasRoleRequest', request);
+		handleValidation('RevokeRoleRequest', request);
 
 		if (role === StableCoinRole.CASHIN_ROLE) {
 			const response = await this.commandBus.execute(
@@ -175,10 +213,7 @@ class RoleInPort implements IRole {
 					HederaId.from(tokenId),
 				),
 			);
-			return new TransactionResult(
-				response.payload,
-				response.transactionId,
-			);
+			return new TransactionResult(response.payload, response.transactionId);
 		} else {
 			const response = await this.commandBus.execute(
 				new RevokeRoleCommand(
@@ -187,17 +222,39 @@ class RoleInPort implements IRole {
 					HederaId.from(tokenId),
 				),
 			);
-			return new TransactionResult(
-				response.payload,
-				response.transactionId,
-			);
+			return new TransactionResult(response.payload, response.transactionId);
 		}
 	}
 
 	@LogError
-	async grantMultiRoles(
-		request: GrantMultiRolesRequest,
-	): Promise<TransactionResult> {
+	async buildRevokeRole(request: RevokeRoleRequest): Promise<SerializedTransactionData> {
+		const { tokenId, targetId, role } = request;
+		handleValidation('RevokeRoleRequest', request);
+
+		if (role === StableCoinRole.CASHIN_ROLE) {
+			const response = await this.commandBus.execute(
+				new RevokeSupplierRoleCommand(
+					HederaId.from(targetId),
+					HederaId.from(tokenId),
+				),
+			);
+			if (!response.serializedTransactionData) throw new EmptyResponse("buildTransaction");
+			return response.serializedTransactionData;
+		} else {
+			const response = await this.commandBus.execute(
+				new RevokeRoleCommand(
+					role!,
+					HederaId.from(targetId),
+					HederaId.from(tokenId),
+				),
+			);
+			if (!response.serializedTransactionData) throw new EmptyResponse("buildTransaction");
+			return response.serializedTransactionData;
+		}
+	}
+
+	@LogError
+	async grantMultiRoles(request: GrantMultiRolesRequest): Promise<TransactionResult> {
 		const { tokenId, targetsId, roles, amounts, startDate } = request;
 		handleValidation('GrantMultiRolesRequest', request);
 
@@ -219,11 +276,32 @@ class RoleInPort implements IRole {
 	}
 
 	@LogError
-	async revokeMultiRoles(
-		request: RevokeMultiRolesRequest,
-	): Promise<TransactionResult> {
+	async buildGrantMultiRoles(request: GrantMultiRolesRequest): Promise<SerializedTransactionData> {
+		const { tokenId, targetsId, roles, amounts, startDate } = request;
+		handleValidation('GrantMultiRolesRequest', request);
+
+		const targetsIdHederaIds: HederaId[] = [];
+		targetsId.forEach((targetId) => {
+			targetsIdHederaIds.push(HederaId.from(targetId));
+		});
+
+		const response = await this.commandBus.execute(
+			new GrantMultiRolesCommand(
+				roles,
+				targetsIdHederaIds,
+				amounts ?? [],
+				HederaId.from(tokenId),
+				startDate,
+			),
+		);
+		if (!response.serializedTransactionData) throw new EmptyResponse("buildTransaction");
+		return response.serializedTransactionData;
+	}
+
+	@LogError
+	async revokeMultiRoles(request: RevokeMultiRolesRequest): Promise<TransactionResult> {
 		const { tokenId, targetsId, roles, startDate } = request;
-		handleValidation('HasRoleRequest', request);
+		handleValidation('RevokeMultiRolesRequest', request);
 
 		const targetsIdHederaIds: HederaId[] = [];
 		targetsId.forEach((targetId) => {
@@ -242,6 +320,28 @@ class RoleInPort implements IRole {
 	}
 
 	@LogError
+	async buildRevokeMultiRoles(request: RevokeMultiRolesRequest): Promise<SerializedTransactionData> {
+		const { tokenId, targetsId, roles, startDate } = request;
+		handleValidation('RevokeMultiRolesRequest', request);
+
+		const targetsIdHederaIds: HederaId[] = [];
+		targetsId.forEach((targetId) => {
+			targetsIdHederaIds.push(HederaId.from(targetId));
+		});
+
+		const response = await this.commandBus.execute(
+			new RevokeMultiRolesCommand(
+				roles,
+				targetsIdHederaIds,
+				HederaId.from(tokenId),
+				startDate,
+			),
+		);
+		if (!response.serializedTransactionData) throw new EmptyResponse("buildTransaction");
+		return response.serializedTransactionData;
+	}
+
+	@LogError
 	async getRoles(request: GetRolesRequest): Promise<string[]> {
 		const { tokenId, targetId } = request;
 		handleValidation('GetRolesRequest', request);
@@ -255,6 +355,7 @@ class RoleInPort implements IRole {
 			)
 		).payload;
 	}
+
 	@LogError
 	async getAccountsWithRole(
 		request: GetAccountsWithRolesRequest,
@@ -301,6 +402,24 @@ class RoleInPort implements IRole {
 	}
 
 	@LogError
+	async buildResetAllowance(
+		request: ResetSupplierAllowanceRequest,
+	): Promise<SerializedTransactionData> {
+		const { tokenId, targetId, startDate } = request;
+		handleValidation('ResetSupplierAllowanceRequest', request);
+
+		const response = await this.commandBus.execute(
+			new ResetAllowanceCommand(
+				HederaId.from(targetId),
+				HederaId.from(tokenId),
+				startDate,
+			),
+		);
+		if (!response.serializedTransactionData) throw new EmptyResponse("buildTransaction");
+		return response.serializedTransactionData;
+	}
+
+	@LogError
 	async increaseAllowance(
 		request: IncreaseSupplierAllowanceRequest,
 	): Promise<TransactionResult> {
@@ -319,6 +438,25 @@ class RoleInPort implements IRole {
 	}
 
 	@LogError
+	async buildIncreaseAllowance(
+		request: IncreaseSupplierAllowanceRequest,
+	): Promise<SerializedTransactionData> {
+		const { tokenId, amount, targetId, startDate } = request;
+		handleValidation('IncreaseSupplierAllowanceRequest', request);
+
+		const response = await this.commandBus.execute(
+			new IncreaseAllowanceCommand(
+				amount,
+				HederaId.from(targetId),
+				HederaId.from(tokenId),
+				startDate,
+			),
+		);
+		if (!response.serializedTransactionData) throw new EmptyResponse("buildTransaction");
+		return response.serializedTransactionData;
+	}
+
+	@LogError
 	async decreaseAllowance(
 		request: DecreaseSupplierAllowanceRequest,
 	): Promise<TransactionResult> {
@@ -334,6 +472,25 @@ class RoleInPort implements IRole {
 			),
 		);
 		return new TransactionResult(response.payload, response.transactionId);
+	}
+
+	@LogError
+	async buildDecreaseAllowance(
+		request: DecreaseSupplierAllowanceRequest,
+	): Promise<SerializedTransactionData> {
+		const { tokenId, amount, targetId, startDate } = request;
+		handleValidation('DecreaseSupplierAllowanceRequest', request);
+
+		const response = await this.commandBus.execute(
+			new DecreaseAllowanceCommand(
+				amount,
+				HederaId.from(targetId),
+				HederaId.from(tokenId),
+				startDate,
+			),
+		);
+		if (!response.serializedTransactionData) throw new EmptyResponse("buildTransaction");
+		return response.serializedTransactionData;
 	}
 
 	@LogError

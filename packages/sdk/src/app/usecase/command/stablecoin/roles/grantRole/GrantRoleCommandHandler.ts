@@ -55,7 +55,7 @@ export class GrantRoleCommandHandler
 		const res = await handler.grantRole(capabilities, targetId, role);
 		// return Promise.resolve({ payload: res.response });
 		return Promise.resolve(
-			new GrantRoleCommandResponse(res.error === undefined, res.id),
+			new GrantRoleCommandResponse(res.error === undefined, res.id, res.serializedTransactionData),
 		);
 	}
 }

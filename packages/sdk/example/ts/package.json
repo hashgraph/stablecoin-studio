@@ -13,6 +13,11 @@
 		"mint": "npm run build && node build/mint.js",
 		"wipe": "npm run build && node build/wipe.js",
 		"roles": "npm run build && node build/role.js",
+		"test-external-evm": "npm run build && node build/testExternalEVM.js",
+		"test-external-hedera": "npm run build && node build/testExternalHedera.js",
+		"multisig-freeze": "npm run build && node build/multisigFreeze.js",
+		"multisig-freeze-dfns": "npm run build && node build/multisigFreezeDFNS.js",
+		"create-dfns-multisig-account": "npm run build && node build/createDFNSMultisigAccount.js",
 		"test": "echo \"Error: no test specified\" && exit 1"
 	},
 	"keywords": [],

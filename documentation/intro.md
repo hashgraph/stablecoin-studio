@@ -120,6 +120,6 @@ A **React** application providing a visual interface for the complete stablecoin
 
 ## References
 
-- [Troubleshooting](/references/troubleshooting) — Common issues and solutions
-- [Security policy](/references/security) — Vulnerability reporting
+- [Troubleshooting](/scs/references/troubleshooting) — Common issues and solutions
+- [Security policy](/scs/references/security) — Vulnerability reporting
 - [Hedera documentation](https://docs.hedera.com)

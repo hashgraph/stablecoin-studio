@@ -59,10 +59,7 @@ export class UpdateConfigVersionCommandHandler
 		);
 
 		return Promise.resolve(
-			new UpdateConfigVersionCommandResponse(
-				res.error === undefined,
-				res.id,
-			),
+			new UpdateConfigVersionCommandResponse(res.error === undefined, res.id, res.serializedTransactionData),
 		);
 	}
 }

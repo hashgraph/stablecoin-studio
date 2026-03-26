@@ -115,6 +115,8 @@ import { GetHoldCountForQueryHandler } from '../app/usecase/query/stablecoin/hol
 import { GetBurnableAmountQueryHandler } from '../app/usecase/query/stablecoin/burn/getBurnableAmount/GetBurnableAmountQueryHandler.js';
 import { GetAccountAutoAssociationQueryHandler } from '../app/usecase/query/account/autoAssociation/GetAccountAutoAssociationQueryHandler';
 import { ClientTransactionAdapter } from '../port/out/hs/client/ClientTransactionAdapter.js';
+import { ExternalHederaTransactionAdapter } from '../port/out/hs/external/ExternalHederaTransactionAdapter.js';
+import { ExternalEVMTransactionAdapter } from '../port/out/hs/external/ExternalEVMTransactionAdapter.js';
 
 export const TOKENS = {
 	COMMAND_HANDLER: Symbol('CommandHandler'),
@@ -198,10 +200,6 @@ const COMMAND_HANDLERS = [
 	{
 		token: TOKENS.COMMAND_HANDLER,
 		useClass: AssociateCommandHandler,
-	},
-	{
-		token: TOKENS.COMMAND_HANDLER,
-		useClass: CreateHoldCommandHandler,
 	},
 	{
 		token: TOKENS.COMMAND_HANDLER,
@@ -439,6 +437,14 @@ const TRANSACTION_HANDLER = [
 		token: TOKENS.TRANSACTION_HANDLER,
 		useClass: HederaWalletConnectTransactionAdapter,
 	},
+	{
+		token: TOKENS.TRANSACTION_HANDLER,
+		useClass: ExternalHederaTransactionAdapter,
+	},
+	{
+		token: TOKENS.TRANSACTION_HANDLER,
+		useClass: ExternalEVMTransactionAdapter,
+	},
 ];
 
 const defaultNetworkProps: NetworkProps = {
@@ -535,6 +541,8 @@ export default class Injectable {
 			adapters.push(Injectable.resolve(ClientTransactionAdapter));
 		}
 		adapters.push(Injectable.resolve(MultiSigTransactionAdapter));
+		adapters.push(Injectable.resolve(ExternalHederaTransactionAdapter));
+		adapters.push(Injectable.resolve(ExternalEVMTransactionAdapter));
 		return adapters;
 	}
 

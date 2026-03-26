@@ -19,6 +19,7 @@
  */
 
 import Injectable from '../../core/Injectable.js';
+import { EmptyResponse } from '../../app/service/error/EmptyResponse.js';
 import ContractId from '../../domain/context/contract/ContractId.js';
 import GetConfigInfoRequest from './request/GetConfigInfoRequest';
 import UpdateConfigRequest from './request/UpdateConfigRequest';
@@ -35,15 +36,17 @@ import { UpdateConfigCommand } from '../../app/usecase/command/stablecoin/manage
 import { GetConfigInfoQuery } from '../../app/usecase/query/stablecoin/management/getConfigInfo/GetConfigInfoQuery.js';
 import ConfigInfoViewModel from './response/ConfigInfoViewModel.js';
 import { TransactionResult } from '../../domain/context/transaction/TransactionResult.js';
+import { SerializedTransactionData } from '../../domain/context/transaction/TransactionResponse.js';
+
 
 interface IManagementInPort {
-	updateConfigVersion(
-		request: UpdateConfigVersionRequest,
-	): Promise<TransactionResult>;
+	updateConfigVersion(request: UpdateConfigVersionRequest): Promise<TransactionResult>;
+	buildUpdateConfigVersion(request: UpdateConfigVersionRequest): Promise<SerializedTransactionData>;
 	updateConfig(request: UpdateConfigRequest): Promise<TransactionResult>;
-
+	buildUpdateConfig(request: UpdateConfigRequest): Promise<SerializedTransactionData>;
 	getConfigInfo(request: GetConfigInfoRequest): Promise<ConfigInfoViewModel>;
 	updateResolver(request: UpdateResolverRequest): Promise<TransactionResult>;
+	buildUpdateResolver(request: UpdateResolverRequest): Promise<SerializedTransactionData>;
 }
 
 class ManagementInPort implements IManagementInPort {
@@ -71,9 +74,24 @@ class ManagementInPort implements IManagementInPort {
 	}
 
 	@LogError
-	async updateConfig(
-		request: UpdateConfigRequest,
-	): Promise<TransactionResult> {
+	async buildUpdateConfigVersion(
+		request: UpdateConfigVersionRequest,
+	): Promise<SerializedTransactionData> {
+		const { configVersion, tokenId } = request;
+		handleValidation('UpdateConfigVersionRequest', request);
+
+		const response = await this.commandBus.execute(
+			new UpdateConfigVersionCommand(
+				HederaId.from(tokenId),
+				configVersion,
+			),
+		);
+		if (!response.serializedTransactionData) throw new EmptyResponse("buildTransaction");
+		return response.serializedTransactionData;
+	}
+
+	@LogError
+	async updateConfig(request: UpdateConfigRequest): Promise<TransactionResult> {
 		const { configId, configVersion, tokenId } = request;
 		handleValidation('UpdateConfigRequest', request);
 
@@ -88,9 +106,23 @@ class ManagementInPort implements IManagementInPort {
 	}
 
 	@LogError
-	async updateResolver(
-		request: UpdateResolverRequest,
-	): Promise<TransactionResult> {
+	async buildUpdateConfig(request: UpdateConfigRequest): Promise<SerializedTransactionData> {
+		const { configId, configVersion, tokenId } = request;
+		handleValidation('UpdateConfigRequest', request);
+
+		const response = await this.commandBus.execute(
+			new UpdateConfigCommand(
+				HederaId.from(tokenId),
+				configId,
+				configVersion,
+			),
+		);
+		if (!response.serializedTransactionData) throw new EmptyResponse("buildTransaction");
+		return response.serializedTransactionData;
+	}
+
+	@LogError
+	async updateResolver(request: UpdateResolverRequest): Promise<TransactionResult> {
 		const { configId, tokenId, resolver, configVersion } = request;
 		handleValidation('UpdateResolverRequest', request);
 
@@ -103,6 +135,23 @@ class ManagementInPort implements IManagementInPort {
 			),
 		);
 		return new TransactionResult(response.payload, response.transactionId);
+	}
+
+	@LogError
+	async buildUpdateResolver(request: UpdateResolverRequest): Promise<SerializedTransactionData> {
+		const { configId, tokenId, resolver, configVersion } = request;
+		handleValidation('UpdateResolverRequest', request);
+
+		const response = await this.commandBus.execute(
+			new UpdateResolverCommand(
+				HederaId.from(tokenId),
+				configVersion,
+				configId,
+				new ContractId(resolver),
+			),
+		);
+		if (!response.serializedTransactionData) throw new EmptyResponse("buildTransaction");
+		return response.serializedTransactionData;
 	}
 
 	@LogError

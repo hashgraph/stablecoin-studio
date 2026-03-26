@@ -50,7 +50,7 @@ import {
 	TransferTransaction,
 } from '@hiero-ledger/sdk';
 import { MirrorNodeAdapter } from '../../port/out/mirror/MirrorNodeAdapter.js';
-import { HederaTokenManagerFacet__factory } from '@hashgraph/stablecoin-npm-contracts';
+import * as Factories from '@hashgraph/stablecoin-npm-contracts/typechain-types/factories/contracts';
 import { ethers } from 'ethers';
 import Hex from '../../core/Hex.js';
 import { AWSKMSTransactionAdapter } from '../../port/out/hs/custodial/AWSKMSTransactionAdapter';
@@ -60,6 +60,8 @@ import { Response } from '../../domain/context/transaction/Response';
 import { EmptyResponse } from './error/EmptyResponse.js';
 import { InvalidResponse } from '../../port/out/mirror/error/InvalidResponse.js';
 import { ClientTransactionAdapter } from '../../port/out/hs/client/ClientTransactionAdapter.js';
+import { ExternalHederaTransactionAdapter } from '../../port/out/hs/external/ExternalHederaTransactionAdapter.js';
+import { ExternalEVMTransactionAdapter } from '../../port/out/hs/external/ExternalEVMTransactionAdapter.js';
 
 export const EVM_ADDRESS_REGEX = /0x[a-fA-F0-9]{40}$/;
 
@@ -107,9 +109,21 @@ export default class TransactionService extends Service {
 				);
 			case SupportedWallets.AWSKMS:
 				return Injectable.resolve(AWSKMSTransactionAdapter);
+			case SupportedWallets.EXTERNAL_HEDERA:
+				return Injectable.resolve(ExternalHederaTransactionAdapter);
+			case SupportedWallets.EXTERNAL_EVM:
+				return Injectable.resolve(ExternalEVMTransactionAdapter);
 			default:
 				return Injectable.resolve(ClientTransactionAdapter);
 		}
+	}
+
+	isExternalWallet(): boolean {
+		const handler = this.getHandler();
+		return (
+			handler instanceof ExternalHederaTransactionAdapter ||
+			handler instanceof ExternalEVMTransactionAdapter
+		);
 	}
 
 	static async getDescription(
@@ -305,17 +319,40 @@ export default class TransactionService extends Service {
 		}
 	}
 
-	static decodeFunctionCall(
-		parameters: Uint8Array,
-	): ethers.TransactionDescription | null {
-		const inputData = '0x' + Hex.fromUint8Array(parameters);
 
-		try {
-			const iface_tokenManager = new ethers.Interface(
-				HederaTokenManagerFacet__factory.abi,
+	
+
+
+	private static readonly COMBINED_INTERFACE: ethers.Interface = (() => {
+		const seen = new Set<string>();
+		const fragments: any[] = [];
+
+		function flattenFactories(obj: Record<string, any>): any[] {
+			return Object.values(obj).flatMap(v =>
+				Array.isArray(v?.abi) ? [v] : v && typeof v === 'object' ? flattenFactories(v) : []
 			);
-			return iface_tokenManager.parseTransaction({ data: inputData });
-		} catch (e) {
+		}
+		const factories = flattenFactories(Factories as Record<string, any>);
+
+		for (const factory of Object.values(factories)) {
+			if (!Array.isArray(factory?.abi)) continue;
+			for (const fragment of factory.abi) {
+				if (fragment.type !== 'function') continue;
+				const sig = `${fragment.name}(${(fragment.inputs ?? []).map((i: any) => i.type).join(',')})`;
+				if (!seen.has(sig)) {
+					seen.add(sig);
+					fragments.push(fragment);
+				}
+			}
+		}
+		return new ethers.Interface(fragments);
+	})();
+
+	static decodeFunctionCall(parameters: Uint8Array): ethers.TransactionDescription | null {
+		const inputData = '0x' + Hex.fromUint8Array(parameters);
+		try {
+			return TransactionService.COMBINED_INTERFACE.parseTransaction({ data: inputData });
+		} catch (_) {
 			return null;
 		}
 	}

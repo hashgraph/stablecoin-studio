@@ -55,6 +55,7 @@ import GetAccountsWithRolesRequest from '../../../src/port/in/request/GetAccount
 import { MirrorNode } from '../../../src/domain/context/network/MirrorNode.js';
 import { JsonRpcRelay } from '../../../src/domain/context/network/JsonRpcRelay.js';
 import Injectable from '../../../src/core/Injectable.js';
+import { TransactionResult } from '../../../src/domain/context/transaction/TransactionResult.js';
 
 describe('🧪 Role test', () => {
 	const stableCoinSC = {
@@ -113,7 +114,7 @@ describe('🧪 Role test', () => {
 				tokenId: stableCoinSC?.tokenId?.toString() ?? '0.0.0',
 				role: StableCoinRole.WIPE_ROLE,
 			}),
-		);
+		) as TransactionResult;
 
 		const hasRole = await Role.hasRole(
 			new HasRoleRequest({
@@ -128,7 +129,7 @@ describe('🧪 Role test', () => {
 				tokenId: stableCoinSC?.tokenId?.toString() ?? '0.0.0',
 				role: StableCoinRole.WIPE_ROLE,
 			}),
-		);
+		) as TransactionResult;
 
 		const noRoleAgain = await Role.hasRole(
 			new HasRoleRequest({
@@ -169,7 +170,7 @@ describe('🧪 Role test', () => {
 				roles: [StableCoinRole.WIPE_ROLE, StableCoinRole.CASHIN_ROLE],
 				amounts: ['0'],
 			}),
-		);
+		) as TransactionResult;
 
 		const hasRole_1 = await Role.hasRole(
 			new HasRoleRequest({
@@ -197,7 +198,7 @@ describe('🧪 Role test', () => {
 				tokenId: stableCoinSC?.tokenId?.toString() ?? '0.0.0',
 				roles: [StableCoinRole.WIPE_ROLE, StableCoinRole.CASHIN_ROLE],
 			}),
-		);
+		) as TransactionResult;
 		const noRole_again_1 = await Role.hasRole(
 			new HasRoleRequest({
 				targetId: CLIENT_ACCOUNT_ED25519.id.toString(),
@@ -240,7 +241,7 @@ describe('🧪 Role test', () => {
 				tokenId: stableCoinSC?.tokenId?.toString() ?? '0.0.0',
 				role: StableCoinRole.CASHIN_ROLE,
 			}),
-		);
+		) as TransactionResult;
 		const hasRole = await Role.hasRole(
 			new HasRoleRequest({
 				targetId: CLIENT_ACCOUNT_ED25519.id.toString(),
@@ -266,7 +267,7 @@ describe('🧪 Role test', () => {
 				tokenId: stableCoinSC?.tokenId?.toString() ?? '0.0.0',
 				role: StableCoinRole.CASHIN_ROLE,
 			}),
-		);
+		) as TransactionResult;
 
 		expect(revokeRes).toBeTruthy();
 		expect(revokeRes.transactionId).toBeTruthy();
@@ -298,7 +299,7 @@ describe('🧪 Role test', () => {
 				supplierType: 'limited',
 				amount: AMOUNT,
 			}),
-		);
+		) as TransactionResult;
 
 		const hasRole = await Role.hasRole(
 			new HasRoleRequest({
@@ -325,7 +326,7 @@ describe('🧪 Role test', () => {
 				tokenId: stableCoinSC?.tokenId?.toString() ?? '0.0.0',
 				role: StableCoinRole.CASHIN_ROLE,
 			}),
-		);
+		) as TransactionResult;
 
 		expect(revokeRes).toBeTruthy();
 		expect(revokeRes.transactionId).toBeTruthy();
@@ -346,7 +347,7 @@ describe('🧪 Role test', () => {
 				tokenId: stableCoinSC?.tokenId?.toString() ?? '0.0.0',
 				role: StableCoinRole.CASHIN_ROLE,
 			}),
-		);
+		) as TransactionResult;
 
 		const hasRole = await Role.hasRole(
 			new HasRoleRequest({
@@ -361,7 +362,7 @@ describe('🧪 Role test', () => {
 				tokenId: stableCoinSC?.tokenId?.toString() ?? '0.0.0',
 				role: StableCoinRole.CASHIN_ROLE,
 			}),
-		);
+		) as TransactionResult;
 
 		const noRole = await Role.hasRole(
 			new HasRoleRequest({
@@ -408,7 +409,7 @@ describe('🧪 Role test', () => {
 				supplierType: 'limited',
 				amount: '10',
 			}),
-		);
+		) as TransactionResult;
 
 		const allowanceBefore = await Role.getAllowance(
 			new GetSupplierAllowanceRequest({
@@ -421,7 +422,7 @@ describe('🧪 Role test', () => {
 				targetId: CLIENT_ACCOUNT_ED25519.id.toString(),
 				tokenId: stableCoinSC?.tokenId?.toString() ?? '0.0.0',
 			}),
-		);
+		) as TransactionResult;
 
 		const allowanceAfter = await Role.getAllowance(
 			new GetSupplierAllowanceRequest({
@@ -435,7 +436,7 @@ describe('🧪 Role test', () => {
 				tokenId: stableCoinSC?.tokenId?.toString() ?? '0.0.0',
 				role: StableCoinRole.CASHIN_ROLE,
 			}),
-		);
+		) as TransactionResult;
 
 		expect(revokeRes).toBeTruthy();
 		expect(revokeRes.transactionId).toBeTruthy();
@@ -461,7 +462,7 @@ describe('🧪 Role test', () => {
 				supplierType: 'limited',
 				amount: '10',
 			}),
-		);
+		) as TransactionResult;
 
 		const allowanceBefore = await Role.getAllowance(
 			new GetSupplierAllowanceRequest({
@@ -475,7 +476,7 @@ describe('🧪 Role test', () => {
 				tokenId: stableCoinSC?.tokenId?.toString() ?? '0.0.0',
 				amount: '10',
 			}),
-		);
+		) as TransactionResult;
 
 		const allowanceAfter = await Role.getAllowance(
 			new GetSupplierAllowanceRequest({
@@ -489,7 +490,7 @@ describe('🧪 Role test', () => {
 				tokenId: stableCoinSC?.tokenId?.toString() ?? '0.0.0',
 				role: StableCoinRole.CASHIN_ROLE,
 			}),
-		);
+		) as TransactionResult;
 
 		expect(revokeRes).toBeTruthy();
 		expect(revokeRes.transactionId).toBeTruthy();
@@ -514,7 +515,7 @@ describe('🧪 Role test', () => {
 				supplierType: 'limited',
 				amount: '10',
 			}),
-		);
+		) as TransactionResult;
 
 		const allowanceBefore = await Role.getAllowance(
 			new GetSupplierAllowanceRequest({
@@ -528,7 +529,7 @@ describe('🧪 Role test', () => {
 				tokenId: stableCoinSC?.tokenId?.toString() ?? '0.0.0',
 				amount: '5',
 			}),
-		);
+		) as TransactionResult;
 
 		const allowanceAfter = await Role.getAllowance(
 			new GetSupplierAllowanceRequest({
@@ -542,7 +543,7 @@ describe('🧪 Role test', () => {
 				tokenId: stableCoinSC?.tokenId?.toString() ?? '0.0.0',
 				role: StableCoinRole.CASHIN_ROLE,
 			}),
-		);
+		) as TransactionResult;
 
 		expect(revokeRes).toBeTruthy();
 		expect(revokeRes.success).toBeTruthy();
@@ -570,7 +571,7 @@ describe('🧪 Role test', () => {
 				supplierType: 'limited',
 				amount: '10',
 			}),
-		);
+		) as TransactionResult;
 
 		const isLimited = await Role.isLimited(
 			new CheckSupplierLimitRequest({
@@ -590,7 +591,7 @@ describe('🧪 Role test', () => {
 				tokenId: stableCoinSC?.tokenId?.toString() ?? '0.0.0',
 				role: StableCoinRole.CASHIN_ROLE,
 			}),
-		);
+		) as TransactionResult;
 
 		expect(revokeRes).toBeTruthy();
 		expect(revokeRes.success).toBeTruthy();
@@ -617,7 +618,7 @@ describe('🧪 Role test', () => {
 				tokenId: stableCoinSC?.tokenId?.toString() ?? '0.0.0',
 				role: StableCoinRole.CASHIN_ROLE,
 			}),
-		);
+		) as TransactionResult;
 
 		const isLimited = await Role.isLimited(
 			new CheckSupplierLimitRequest({
@@ -637,7 +638,7 @@ describe('🧪 Role test', () => {
 				tokenId: stableCoinSC?.tokenId?.toString() ?? '0.0.0',
 				role: StableCoinRole.CASHIN_ROLE,
 			}),
-		);
+		) as TransactionResult;
 
 		expect(revokeRes).toBeTruthy();
 		expect(revokeRes.success).toBeTruthy();
@@ -684,7 +685,7 @@ describe('🧪 Role test', () => {
 				tokenId: stableCoinSC?.tokenId?.toString() ?? '0.0.0',
 				roles: [StableCoinRole.PAUSE_ROLE],
 			}),
-		);
+		) as TransactionResult;
 
 		expect(revokeRes).toBeTruthy();
 		expect(revokeRes.success).toBeTruthy();
