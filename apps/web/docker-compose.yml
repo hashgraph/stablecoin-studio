@@ -1,0 +1,25 @@
+services:
+  stablecoin:
+    build:
+      context: ../../
+      dockerfile: ./apps/web/Dockerfile
+      platforms:
+        - "linux/amd64"
+      args:
+        REACT_APP_FACTORIES: ${REACT_APP_FACTORIES}
+        REACT_APP_RESOLVERS: ${REACT_APP_RESOLVERS}
+        REACT_APP_MIRROR_NODE: ${REACT_APP_MIRROR_NODE}
+        REACT_APP_RPC_NODE: ${REACT_APP_RPC_NODE}
+        REACT_APP_CONSENSUS_NODES: ${REACT_APP_CONSENSUS_NODES}
+        # # Optional
+        # REACT_APP_LOG_LEVEL: ${REACT_APP_LOG_LEVEL}
+        # REACT_APP_BACKEND_URL: ${REACT_APP_BACKEND_URL}
+        # GENERATE_SOURCEMAP: ${GENERATE_SOURCEMAP}
+        # REACT_APP_SHOW_CONFIG: ${REACT_APP_SHOW_CONFIG}
+        # REACT_APP_PROJECT_ID: ${REACT_APP_PROJECT_ID}
+        # REACT_APP_DAPP_NAME: ${REACT_APP_DAPP_NAME}
+        # REACT_APP_DAPP_DESCRIPTION: ${REACT_APP_DAPP_DESCRIPTION}
+        # REACT_APP_DAPP_URL: ${REACT_APP_DAPP_URL}
+        # REACT_APP_DAPP_ICONS: ${REACT_APP_DAPP_ICONS}
+    ports:
+      - "5174:5174"

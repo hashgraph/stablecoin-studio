@@ -1,0 +1,28 @@
+# Dependencies
+node_modules
+
+# Build outputs
+dist
+build
+artifacts
+typechain-types
+cache
+docs
+
+# Git
+.git
+.github
+.husky
+.changeset
+.claude
+
+# Environment files (values passed via --build-arg)
+.env
+.env.sample
+.env.local
+.env.*.local
+
+# Documentation & non-build files
+Certik final smart contracts audit report.pdf
+logs
+docs

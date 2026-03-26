@@ -94,6 +94,18 @@ npm run start
 
 Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
 
+### Docker (optional)
+
+The web application can be built and run as a Docker container using Docker Compose. The multi-stage Dockerfile compiles contracts, SDK, and the web app, then serves the production bundle with nginx.
+
+```bash
+cd apps/web
+cp .env.sample .env   # then edit with your values
+docker compose up --build
+```
+
+The app will be available at `http://localhost:5174`.
+
 ---
 
 ## Connect Your Wallet
