@@ -18,7 +18,7 @@
  *
  */
 
-import CheckNums from '../../../core/checks/numbers/CheckNums.js';
+import CheckNums from '../../../domain/shared/checks/numbers/CheckNums.js';
 import BigDecimal from '../../../domain/context/shared/BigDecimal.js';
 import InvalidDecimalRange from '../../../domain/context/stablecoin/error/InvalidDecimalRange.js';
 import { StableCoin } from '../../../domain/context/stablecoin/StableCoin.js';

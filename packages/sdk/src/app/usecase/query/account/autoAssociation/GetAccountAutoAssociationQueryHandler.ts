@@ -21,7 +21,7 @@
 import { QueryHandler } from '../../../../../core/decorator/QueryHandlerDecorator.js';
 import Injectable from '../../../../../core/Injectable.js';
 import { IQueryHandler } from '../../../../../core/query/QueryHandler.js';
-import { MirrorNodeAdapter } from '../../../../../port/out/mirror/MirrorNodeAdapter.js';
+import { AbstractMirrorNodeAdapter } from '../../../../../port/out/mirror/AbstractMirrorNodeAdapter.js';
 import {
 	GetAccountAutoAssociationQuery,
 	GetAccountAutoAssociationQueryResponse,
@@ -33,8 +33,8 @@ export class GetAccountAutoAssociationQueryHandler
 	implements IQueryHandler<GetAccountAutoAssociationQuery>
 {
 	constructor(
-		public readonly repo: MirrorNodeAdapter = Injectable.resolve(
-			MirrorNodeAdapter,
+		public readonly repo: AbstractMirrorNodeAdapter = Injectable.resolve(
+			AbstractMirrorNodeAdapter,
 		),
 	) {}
 

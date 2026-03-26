@@ -18,7 +18,7 @@
  *
  */
 
-import WalletEvent from '../../../app/service/event/WalletEvent.js';
+import type { WalletEvent } from '../Event.js';
 import Configuration from '../../../domain/context/network/Configuration.js';
 import { Environment } from '../../../domain/context/network/Environment.js';
 import {

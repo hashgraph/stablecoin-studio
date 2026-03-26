@@ -24,7 +24,7 @@ import Validation from './validation/Validation.js';
 import { InvalidType } from './error/InvalidType.js';
 import InvalidDecimalRange from '../../../domain/context/stablecoin/error/InvalidDecimalRange.js';
 import { InvalidValue } from './error/InvalidValue.js';
-import CheckNums from '../../../core/checks/numbers/CheckNums.js';
+import CheckNums from '../../../domain/shared/checks/numbers/CheckNums.js';
 import { InvalidRange } from './error/InvalidRange.js';
 import BigDecimal from '../../../domain/context/shared/BigDecimal.js';
 import { MAX_PERCENTAGE_DECIMALS } from '../../../domain/context/fee/CustomFee.js';

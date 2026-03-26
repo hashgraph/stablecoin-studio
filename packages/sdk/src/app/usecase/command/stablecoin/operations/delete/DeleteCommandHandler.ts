@@ -38,14 +38,16 @@ export class DeleteCommandHandler implements ICommandHandler<DeleteCommand> {
 	) {}
 
 	async execute(command: DeleteCommand): Promise<DeleteCommandResponse> {
-		const { tokenId, startDate } = command;
-		const handler = this.transactionService.getHandler();
+		const { tokenId } = command;
 		const account = this.accountService.getCurrentAccount();
 		const capabilities = await this.stableCoinService.getCapabilities(
 			account,
 			tokenId,
 		);
-		const res = await handler.delete(capabilities, startDate);
+		const res = await this.transactionService.executeOperation(
+			'delete',
+			{ contractAddress: capabilities.coin.evmProxyAddress?.toString() },
+		);
 		return Promise.resolve(
 			new DeleteCommandResponse(res.error === undefined, res.id, res.serializedTransactionData),
 		);

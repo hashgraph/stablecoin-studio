@@ -38,10 +38,11 @@ import { StableCoinNotAssociated } from '../../error/StableCoinNotAssociated.js'
 import {
 	FreezeStatus,
 	KycStatus,
-} from '../../../../../../port/out/mirror/response/AccountTokenRelationViewModel.js';
+} from '../../../../../../domain/context/stablecoin/TokenRelation.js';
 import { AccountFreeze } from '../../error/AccountFreeze.js';
 import { AccountNotKyc } from '../../error/AccountNotKyc.js';
-//import FeeAssessmentMethod from '@hiero-ledger/sdk/lib/token/FeeAssessmentMethod.js';
+import { AbstractMirrorNodeAdapter } from '../../../../../../port/out/mirror/AbstractMirrorNodeAdapter.js';
+import { prepareCustomFees } from '../prepareCustomFees.js';
 
 @CommandHandler(addFixedFeesCommand)
 export class addFixedFeesCommandHandler
@@ -54,6 +55,8 @@ export class addFixedFeesCommandHandler
 		public readonly accountService: AccountService,
 		@lazyInject(TransactionService)
 		public readonly transactionService: TransactionService,
+		@lazyInject(AbstractMirrorNodeAdapter)
+		public readonly mirrorNodeAdapter: AbstractMirrorNodeAdapter,
 	) {}
 
 	async execute(
@@ -67,7 +70,6 @@ export class addFixedFeesCommandHandler
 			collectorsExempt,
 		} = command;
 
-		const handler = this.transactionService.getHandler();
 		const account = this.accountService.getCurrentAccount();
 		const capabilities = await this.stableCoinService.getCapabilities(
 			account,
@@ -110,10 +112,29 @@ export class addFixedFeesCommandHandler
 
 		HcustomFee.push(customFeeToAdd);
 
-		const res = await handler.updateCustomFees(capabilities, HcustomFee);
+		const evmProxyAddress = capabilities.coin.evmProxyAddress?.toString();
+		if (!evmProxyAddress) {
+			throw new Error('StableCoin does not have a proxy address');
+		}
 
-		return Promise.resolve(
-			new addFixedFeesCommandResponse(res.error === undefined, res.id, res.serializedTransactionData),
+		const { fixedFees, fractionalFees } = await prepareCustomFees(
+			HcustomFee,
+			tokenId.toString(),
+			this.mirrorNodeAdapter,
+		);
+
+		const res = await this.transactionService.executeOperation(
+			'updateCustomFees',
+			{
+				contractAddress: evmProxyAddress,
+				fixedFees,
+				fractionalFees,
+			},
+		);
+
+		return new addFixedFeesCommandResponse(
+			res.error === undefined,
+			res.id,
 		);
 	}
 }

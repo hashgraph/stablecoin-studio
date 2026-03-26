@@ -40,7 +40,7 @@
  */
 
 import { BaseContract, ethers, Result, TransactionReceipt } from 'ethers';
-import LogService from '../../../app/service/LogService.js';
+import LogService from '../../../core/service/LogService.js';
 import TransactionResponse from '../../../domain/context/transaction/TransactionResponse.js';
 import { TransactionResponseError } from '../error/TransactionResponseError.js';
 import { TransactionResponseAdapter } from '../TransactionResponseAdapter.js';

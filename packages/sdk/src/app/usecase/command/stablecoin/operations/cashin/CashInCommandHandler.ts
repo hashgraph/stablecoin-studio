@@ -18,7 +18,7 @@
  *
  */
 
-import CheckNums from '../../../../../../core/checks/numbers/CheckNums.js';
+import CheckNums from '../../../../../../domain/shared/checks/numbers/CheckNums.js';
 import { ICommandHandler } from '../../../../../../core/command/CommandHandler.js';
 import { CommandHandler } from '../../../../../../core/decorator/CommandHandlerDecorator.js';
 import { lazyInject } from '../../../../../../core/decorator/LazyInjectDecorator.js';
@@ -34,13 +34,13 @@ import { GetAccountTokenRelationshipQuery } from '../../../../query/account/toke
 import {
 	FreezeStatus,
 	KycStatus,
-} from '../../../../../../port/out/mirror/response/AccountTokenRelationViewModel.js';
-import { RPCQueryAdapter } from '../../../../../../port/out/rpc/RPCQueryAdapter.js';
+} from '../../../../../../domain/context/stablecoin/TokenRelation.js';
+import { AbstractRPCQueryAdapter } from '../../../../../../port/out/rpc/AbstractRPCQueryAdapter.js';
 import { AccountFreeze } from '../../error/AccountFreeze.js';
 import { AccountNotKyc } from '../../error/AccountNotKyc.js';
 import { GetReserveAmountQuery } from '../../../../query/stablecoin/getReserveAmount/GetReserveAmountQuery.js';
 import { RESERVE_DECIMALS } from '../../../../../../domain/context/reserve/Reserve.js';
-import { MirrorNodeAdapter } from '../../../../../../port/out/mirror/MirrorNodeAdapter.js';
+import { AbstractMirrorNodeAdapter } from '../../../../../../port/out/mirror/AbstractMirrorNodeAdapter.js';
 import { TokenSupplyType } from '@hiero-ledger/sdk';
 import { GetAccountAutoAssociationQuery } from '../../../../query/account/autoAssociation/GetAccountAutoAssociationQuery';
 import { StableCoinMaxAutoAssociationReached } from '../../error/StableCoinMaxAutoAssociationReached';
@@ -56,15 +56,14 @@ export class CashInCommandHandler implements ICommandHandler<CashInCommand> {
 		public readonly accountService: AccountService,
 		@lazyInject(TransactionService)
 		public readonly transactionService: TransactionService,
-		@lazyInject(RPCQueryAdapter)
-		public readonly queryAdapter: RPCQueryAdapter,
-		@lazyInject(MirrorNodeAdapter)
-		public readonly mirrorNode: MirrorNodeAdapter,
+		@lazyInject(AbstractRPCQueryAdapter)
+		public readonly queryAdapter: AbstractRPCQueryAdapter,
+		@lazyInject(AbstractMirrorNodeAdapter)
+		public readonly mirrorNode: AbstractMirrorNodeAdapter,
 	) {}
 
 	async execute(command: CashInCommand): Promise<CashInCommandResponse> {
-		const { amount, targetId, tokenId, startDate } = command;
-		const handler = this.transactionService.getHandler();
+		const { amount, targetId, tokenId } = command;
 		const account = this.accountService.getCurrentAccount();
 
 		const tokenRelationship = (
@@ -187,11 +186,16 @@ export class CashInCommandHandler implements ICommandHandler<CashInCommand> {
 			}
 		}
 
-		const res = await handler.cashin(
-			capabilities,
-			targetId,
-			amountBd,
-			startDate,
+		const targetEvmAddress = (
+			await this.mirrorNode.accountToEvmAddress(targetId)
+		).toString();
+		const res = await this.transactionService.executeOperation(
+			'cashIn',
+			{
+				contractAddress: capabilities.coin.evmProxyAddress?.toString(),
+				targetId: targetEvmAddress,
+				amount: amountBd.toLong().toString(),
+			},
 		);
 		return Promise.resolve(
 			new CashInCommandResponse(res.error === undefined, res.id, res.serializedTransactionData),

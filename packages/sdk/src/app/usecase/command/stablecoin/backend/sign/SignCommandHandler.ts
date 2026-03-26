@@ -24,7 +24,7 @@ import Hex from '../../../../../../core/Hex.js';
 import { ICommandHandler } from '../../../../../../core/command/CommandHandler.js';
 import { CommandHandler } from '../../../../../../core/decorator/CommandHandlerDecorator.js';
 import { lazyInject } from '../../../../../../core/decorator/LazyInjectDecorator.js';
-import { BackendAdapter } from '../../../../../../port/out/backend/BackendAdapter.js';
+import { AbstractBackendAdapter } from '../../../../../../port/out/backend/AbstractBackendAdapter.js';
 // import { HashpackTransactionAdapter } from '../../../../../../port/out/hs/hashpack/HashpackTransactionAdapter.js';
 import { HederaWalletConnectTransactionAdapter } from '../../../../../../port/out/hs/walletconnect/HederaWalletConnectTransactionAdapter.js';
 import AccountService from '../../../../../service/AccountService.js';
@@ -37,8 +37,8 @@ export class SignCommandHandler implements ICommandHandler<SignCommand> {
 	constructor(
 		@lazyInject(AccountService)
 		public readonly accountService: AccountService,
-		@lazyInject(BackendAdapter)
-		public readonly backendAdapter: BackendAdapter,
+		@lazyInject(AbstractBackendAdapter)
+		public readonly backendAdapter: AbstractBackendAdapter,
 		@lazyInject(TransactionService)
 		public readonly transactionService: TransactionService,
 	) {}

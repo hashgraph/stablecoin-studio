@@ -21,7 +21,7 @@
 import { ICommandHandler } from '../../../../../core/command/CommandHandler.js';
 import { CommandHandler } from '../../../../../core/decorator/CommandHandlerDecorator.js';
 import { lazyInject } from '../../../../../core/decorator/LazyInjectDecorator.js';
-import { BackendAdapter } from '../../../../../port/out/backend/BackendAdapter.js';
+import { AbstractBackendAdapter } from '../../../../../port/out/backend/AbstractBackendAdapter.js';
 import NetworkService from '../../../../service/NetworkService.js';
 import {
 	SetBackendCommand,
@@ -35,8 +35,8 @@ export class SetBackendCommandHandler
 	constructor(
 		@lazyInject(NetworkService)
 		public readonly networkService: NetworkService,
-		@lazyInject(BackendAdapter)
-		public readonly backendAdapter: BackendAdapter,
+		@lazyInject(AbstractBackendAdapter)
+		public readonly backendAdapter: AbstractBackendAdapter,
 	) {}
 
 	async execute(

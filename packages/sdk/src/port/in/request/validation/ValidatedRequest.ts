@@ -26,8 +26,8 @@ import ValidationResponse from './ValidationResponse.js';
 import { EmptyValue } from '../error/EmptyValue.js';
 import RequestMapper from '../mapping/RequestMapper.js';
 import { getOptionalFields } from '../../../../core/decorator/OptionalDecorator.js';
-import BaseError from '../../../../core/error/BaseError.js';
-import { RuntimeError } from '../../../../core/error/RuntimeError.js';
+import BaseError from '../../../../domain/shared/error/BaseError.js';
+import { RuntimeError } from '../../../../domain/shared/error/RuntimeError.js';
 export default class ValidatedRequest<T extends BaseRequest> {
 	private schema: ValidationSchema<T>;
 

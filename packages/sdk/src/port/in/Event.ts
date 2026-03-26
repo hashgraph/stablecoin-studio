@@ -20,12 +20,11 @@
 
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import Injectable from '../../core/Injectable.js';
-import NetworkService from '../../app/service/NetworkService.js';
 import WalletEvent, {
 	ConnectionState,
 	WalletEvents,
-} from '../../app/service/event/WalletEvent.js';
-import EventService from '../../app/service/event/EventService.js';
+} from '../../domain/context/event/WalletEvent.js';
+import { AbstractEventService } from '../../core/service/AbstractEventService.js';
 import { LogError } from '../../core/decorator/LogErrorDecorator.js';
 
 export { WalletEvent, WalletEvents, ConnectionState };
@@ -40,11 +39,8 @@ interface EventInPortBase {
 
 class EventInPort implements EventInPortBase {
 	constructor(
-		private readonly networkService: NetworkService = Injectable.resolve<NetworkService>(
-			NetworkService,
-		),
-		private readonly eventService: EventService = Injectable.resolve(
-			EventService,
+		private readonly eventService: AbstractEventService = Injectable.resolve(
+			AbstractEventService,
 		),
 	) {}
 

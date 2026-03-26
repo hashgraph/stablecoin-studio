@@ -19,7 +19,7 @@
  */
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import LogService from '../../../../app/service/LogService.js';
+import LogService from '../../../../core/service/LogService.js';
 import { isConstructible } from '../../../../core/Cast.js';
 import { Constructible, MapFunction } from '../../../../core/Type.js';
 import Account from '../../../../domain/context/account/Account.js';

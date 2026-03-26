@@ -21,17 +21,17 @@
 import { lazyInject } from '../../../../../../core/decorator/LazyInjectDecorator.js';
 import { QueryHandler } from '../../../../../../core/decorator/QueryHandlerDecorator.js';
 import { IQueryHandler } from '../../../../../../core/query/QueryHandler.js';
-import { BackendAdapter } from '../../../../../../port/out/backend/BackendAdapter.js';
-import { MirrorNodeAdapter } from '../../../../../../port/out/mirror/MirrorNodeAdapter.js';
-import { RPCQueryAdapter } from '../../../../../../port/out/rpc/RPCQueryAdapter.js';
+import { AbstractBackendAdapter } from '../../../../../../port/out/backend/AbstractBackendAdapter.js';
+import { AbstractMirrorNodeAdapter } from '../../../../../../port/out/mirror/AbstractMirrorNodeAdapter.js';
+import { AbstractRPCQueryAdapter } from '../../../../../../port/out/rpc/AbstractRPCQueryAdapter.js';
 import {
 	GetTransactionsQuery,
 	GetTransactionsQueryResponse,
 } from './GetTransactionsQuery.js';
 import NetworkService from '../../../../../service/NetworkService.js';
-import MultiSigTransactionViewModel from '../../../../../../port/out/backend/response/MultiSigTransactionViewModel';
-import MultiSigTransactionsViewModel from '../../../../../../port/out/backend/response/MultiSigTransactionsViewModel';
-import { PaginationViewModel } from '../../../../../../port/out/backend/response/MultiSigTransactionsViewModel';
+import MultiSigTransactionViewModel from '../../../../../../core/query/response/MultiSigTransactionViewModel.js';
+import MultiSigTransactionsViewModel from '../../../../../../core/query/response/MultiSigTransactionsViewModel.js';
+import { PaginationViewModel } from '../../../../../../core/query/response/MultiSigTransactionsViewModel.js';
 
 @QueryHandler(GetTransactionsQuery)
 export class GetTransactionsQueryHandler
@@ -40,12 +40,12 @@ export class GetTransactionsQueryHandler
 	constructor(
 		@lazyInject(NetworkService)
 		public readonly networkService: NetworkService,
-		@lazyInject(BackendAdapter)
-		public readonly backendAdapter: BackendAdapter,
-		@lazyInject(MirrorNodeAdapter)
-		public readonly mirrorNode: MirrorNodeAdapter,
-		@lazyInject(RPCQueryAdapter)
-		public readonly queryAdapter: RPCQueryAdapter,
+		@lazyInject(AbstractBackendAdapter)
+		public readonly backendAdapter: AbstractBackendAdapter,
+		@lazyInject(AbstractMirrorNodeAdapter)
+		public readonly mirrorNode: AbstractMirrorNodeAdapter,
+		@lazyInject(AbstractRPCQueryAdapter)
+		public readonly queryAdapter: AbstractRPCQueryAdapter,
 	) {}
 
 	async execute(

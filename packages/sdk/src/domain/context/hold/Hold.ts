@@ -18,11 +18,11 @@
  *
  */
 
-import BaseError from '../../../core/error/BaseError';
+import BaseError from '../../shared/error/BaseError';
 import InvalidExpirationTimestamp from '../stablecoin/error/InvalidExpirationTimestamp';
 import BigDecimal from '../shared/BigDecimal.js';
 import { HederaId } from '../shared/HederaId.js';
-import { EVM_ZERO_ADDRESS } from '../../../core/Constants';
+import { EVM_ZERO_ADDRESS } from '../../shared/constants.js';
 
 export class Hold {
 	constructor(

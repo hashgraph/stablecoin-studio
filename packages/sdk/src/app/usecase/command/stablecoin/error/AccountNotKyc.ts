@@ -18,7 +18,7 @@
  *
  */
 
-import BaseError, { ErrorCode } from '../../../../../core/error/BaseError.js';
+import BaseError, { ErrorCode } from '../../../../../domain/shared/error/BaseError.js';
 
 export class AccountNotKyc extends BaseError {
 	constructor(targetId: unknown) {

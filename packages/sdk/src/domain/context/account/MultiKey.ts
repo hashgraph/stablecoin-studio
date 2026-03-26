@@ -22,7 +22,7 @@ import PublicKey from './PublicKey.js';
 import { proto } from '@hiero-ledger/proto';
 import { UnsupportedKeyType } from './error/UnsupportedKeyType.js';
 import { KeyType } from './KeyProps.js';
-import Hex from '../../../core/Hex.js';
+import Hex from '../../shared/utils/Hex.js';
 
 export default class MultiKey {
 	keys: PublicKey[];

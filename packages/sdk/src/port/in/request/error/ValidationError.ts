@@ -18,7 +18,7 @@
  *
  */
 
-import BaseError, { ErrorCode } from '../../../../core/error/BaseError.js';
+import BaseError, { ErrorCode } from '../../../../domain/shared/error/BaseError.js';
 import ValidationResponse from '../validation/ValidationResponse.js';
 
 export class ValidationError extends BaseError {

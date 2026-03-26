@@ -21,7 +21,7 @@
 import { Query } from '../../../../../core/query/Query.js';
 import { QueryResponse } from '../../../../../core/query/QueryResponse.js';
 import { HederaId } from '../../../../../domain/context/shared/HederaId.js';
-import StableCoinListViewModel from '../../../../../port/out/mirror/response/StableCoinListViewModel.js';
+import StableCoinListViewModel from '../../../../../core/query/response/StableCoinListViewModel.js';
 
 export class GetListStableCoinQueryResponse implements QueryResponse {
 	constructor(public readonly list: StableCoinListViewModel) {}

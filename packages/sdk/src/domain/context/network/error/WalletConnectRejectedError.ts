@@ -18,8 +18,8 @@
  *
  */
 
-import BaseError, { ErrorCode } from '../../../../core/error/BaseError.js';
-import { SupportedWallets } from '../../../../port/in/request/ConnectRequest.js';
+import BaseError, { ErrorCode } from '../../../shared/error/BaseError.js';
+import { SupportedWallets } from '../Wallet.js';
 
 export class WalletConnectRejectedError extends BaseError {
 	constructor(wallet: SupportedWallets) {

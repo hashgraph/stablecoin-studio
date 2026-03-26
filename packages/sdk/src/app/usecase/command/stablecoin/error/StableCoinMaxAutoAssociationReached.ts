@@ -1,4 +1,4 @@
-import BaseError, { ErrorCode } from '../../../../../core/error/BaseError';
+import BaseError, { ErrorCode } from '../../../../../domain/shared/error/BaseError';
 
 export class StableCoinMaxAutoAssociationReached extends BaseError {
 	constructor(targetId: unknown, maxAssociations: number) {

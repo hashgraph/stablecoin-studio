@@ -24,6 +24,7 @@ import { lazyInject } from '../../../../../../core/decorator/LazyInjectDecorator
 import AccountService from '../../../../../service/AccountService.js';
 import StableCoinService from '../../../../../service/StableCoinService.js';
 import TransactionService from '../../../../../service/TransactionService.js';
+import { AbstractMirrorNodeAdapter } from '../../../../../../port/out/mirror/AbstractMirrorNodeAdapter.js';
 import {
 	RevokeRoleCommand,
 	RevokeRoleCommandResponse,
@@ -40,21 +41,27 @@ export class RevokeRoleCommandHandler
 		public readonly accountService: AccountService,
 		@lazyInject(TransactionService)
 		public readonly transactionService: TransactionService,
+		@lazyInject(AbstractMirrorNodeAdapter)
+		public readonly mirrorNode: AbstractMirrorNodeAdapter,
 	) {}
 
 	async execute(
 		command: RevokeRoleCommand,
 	): Promise<RevokeRoleCommandResponse> {
 		const { role, targetId, tokenId } = command;
-		const handler = this.transactionService.getHandler();
 		const account = this.accountService.getCurrentAccount();
 		const capabilities = await this.stableCoinService.getCapabilities(
 			account,
 			tokenId,
 		);
-		const res = await handler.revokeRole(capabilities, targetId, role);
-
-		// return Promise.resolve({ payload: res.response ?? false });
+		const targetEvmAddress = (
+			await this.mirrorNode.accountToEvmAddress(targetId)
+		).toString();
+		const res = await this.transactionService.executeOperation('revokeRole', {
+			contractAddress: capabilities.coin.evmProxyAddress?.toString(),
+			role,
+			targetId: targetEvmAddress,
+		});
 		return Promise.resolve(
 			new RevokeRoleCommandResponse(res.error === undefined, res.id, res.serializedTransactionData),
 		);

@@ -19,13 +19,14 @@
  */
 
 import { singleton } from 'tsyringe';
-import { AccountId, Signer, Transaction } from '@hiero-ledger/sdk';
+import { AccountId, Client, Transaction } from '@hiero-ledger/sdk';
 import { NetworkName } from '@hiero-ledger/sdk/lib/client/Client';
 import { InitializationData } from '../../TransactionAdapter';
 import { BaseHederaTransactionAdapter } from '../BaseHederaTransactionAdapter';
+import type { SigningConfig } from '../../../../core/config/SigningConfig.js';
 import type { PublicStateControllerState } from '@reown/appkit-controllers';
-import LogService from '../../../../app/service/LogService';
-import { ethers, Provider } from 'ethers';
+import LogService from '../../../../core/service/LogService.js';
+import { ethers } from 'ethers';
 import HWCSettings from '../../../../domain/context/hwalletconnectsettings/HWCSettings';
 import {
 	Environment,
@@ -33,18 +34,16 @@ import {
 } from '../../../../domain/context/network/Environment';
 import Account from '../../../../domain/context/account/Account';
 import { lazyInject } from '../../../../core/decorator/LazyInjectDecorator';
-import EventService from '../../../../app/service/event/EventService';
-import NetworkService from '../../../../app/service/NetworkService';
-import { MirrorNodeAdapter } from '../../mirror/MirrorNodeAdapter';
+import { AbstractMirrorNodeAdapter } from '../../mirror/AbstractMirrorNodeAdapter.js';
+import { AbstractNetworkService } from '../../../../core/service/AbstractNetworkService.js';
+import { AbstractEventService } from '../../../../core/service/AbstractEventService.js';
 import AccountViewModel from '../../mirror/response/AccountViewModel';
 import { QueryBus } from '../../../../core/query/QueryBus';
-import { WalletEvents } from '../../../in';
+import { WalletEvents, WalletPairedEvent } from '../../../../domain/context/event/WalletEvent.js';
 import Injectable from '../../../../core/Injectable';
 import { TransactionType } from '../../TransactionResponseEnums';
 import TransactionResponse from '../../../../domain/context/transaction/TransactionResponse';
-import { WalletPairedEvent } from '../../../../app/service/event/WalletEvent';
 import { SigningError } from '../error/SigningError';
-import { RPCTransactionResponseAdapter } from '../../response/RPCTransactionResponseAdapter';
 import Hex from '../../../../core/Hex';
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -71,7 +70,6 @@ if (typeof window !== 'undefined') {
 @singleton()
 export class HederaWalletConnectTransactionAdapter extends BaseHederaTransactionAdapter {
 	public account!: Account;
-	signerOrProvider!: Signer | Provider;
 	protected network!: Environment;
 	protected projectId = '';
 	protected hederaAdapter: InstanceType<typeof HederaAdapter> | undefined;
@@ -91,11 +89,11 @@ export class HederaWalletConnectTransactionAdapter extends BaseHederaTransaction
 	};
 
 	constructor(
-		@lazyInject(EventService) public readonly eventService: EventService,
-		@lazyInject(NetworkService)
-		public readonly networkService: NetworkService,
-		@lazyInject(MirrorNodeAdapter)
-		public readonly mirrorNodeAdapter: MirrorNodeAdapter,
+		@lazyInject(AbstractEventService) public readonly eventService: AbstractEventService,
+		@lazyInject(AbstractNetworkService)
+		public readonly networkService: AbstractNetworkService,
+		@lazyInject(AbstractMirrorNodeAdapter)
+		public readonly mirrorNodeAdapter: AbstractMirrorNodeAdapter,
 		@lazyInject(QueryBus) public readonly queryBus: QueryBus,
 	) {
 		super();
@@ -367,67 +365,88 @@ export class HederaWalletConnectTransactionAdapter extends BaseHederaTransaction
 	}
 
 	/**
-	 * Execute a contract call. Routes to EVM or native Hedera based on session type.
-	 * Overrides base implementation to support EVM sessions with proper address handling.
-	 */
-	public async executeContractCall(
-		contractId: string,
-		iface: ethers.Interface,
-		functionName: string,
-		params: unknown[],
-		gasLimit: number,
-		transactionType: TransactionType = TransactionType.RECEIPT,
-		payableAmountHbar?: string,
-		startDate?: string,
-		evmAddress?: string,
-	): Promise<TransactionResponse> {
-		if (this.isEvmSession()) {
-			// EVM session - need EVM address format
-			let addressToUse = evmAddress || contractId;
-
-			// Only call Mirror Node if we don't have EVM address and contractId is Hedera ID format
-			if (!evmAddress && contractId.match(/^0\.0\.\d+$/)) {
-				const contractInfo =
-					await this.mirrorNodeAdapter.getContractInfo(contractId);
-				addressToUse = contractInfo.evmAddress;
-			}
-
-			return await this.executeEvmContractCall(
-				addressToUse,
-				iface,
-				functionName,
-				params,
-				gasLimit,
-				payableAmountHbar,
-			);
-		} else {
-			// Native Hedera session - use default implementation with Hedera ID
-			return await super.executeContractCall(
-				contractId,
-				iface,
-				functionName,
-				params,
-				gasLimit,
-				transactionType,
-				payableAmountHbar,
-				startDate,
-				evmAddress,
-			);
-		}
-	}
-
-	/**
 	 * Get the network service.
 	 */
-	public getNetworkService(): NetworkService {
+	public getNetworkService(): AbstractNetworkService {
 		return this.networkService;
 	}
 
 	/**
 	 * Get the mirror node adapter.
 	 */
-	public getMirrorNodeAdapter(): MirrorNodeAdapter {
+	public getMirrorNodeAdapter(): AbstractMirrorNodeAdapter {
 		return this.mirrorNodeAdapter;
+	}
+
+	toSigningConfig(): SigningConfig {
+		if (this.isEvmSession()) {
+			const rpcUrl = this.networkService.rpcNode?.baseUrl;
+			const provider = rpcUrl
+				? new ethers.JsonRpcProvider(rpcUrl)
+				: new ethers.JsonRpcProvider();
+
+			return {
+				type: 'evm-external',
+				provider,
+				sign: async (bytes: Uint8Array) => {
+					const hex = Buffer.from(bytes).toString('hex');
+					const signedHex = await this.sign(hex);
+					return Buffer.from(signedHex, 'hex');
+				},
+			};
+		}
+
+		const env = this.networkService.environment;
+		let client: Client;
+		if (env === 'mainnet') client = Client.forMainnet();
+		else if (env === 'previewnet') client = Client.forPreviewnet();
+		else client = Client.forTestnet();
+
+		const accountId = this.account.id.toString();
+		const chainRef = this.isTestnet()
+			? 'hedera:testnet'
+			: 'hedera:mainnet';
+		// eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+		const provider = this.hederaProvider!;
+
+		return {
+			type: 'hedera-external-execute',
+			client,
+			accountId,
+			mirrorNodeBaseUrl: this.networkService.mirrorNode.baseUrl,
+			signAndExecute: async (
+				transactionBytes: Uint8Array,
+			): Promise<string> => {
+				this.ensureInitialized();
+				const transactionBase64 =
+					Buffer.from(transactionBytes).toString('base64');
+
+				const result = await provider.request(
+					{
+						method: 'hedera_signAndExecuteTransaction',
+						params: {
+							transactionList: transactionBase64,
+							signerAccountId: `${chainRef}:${accountId}`,
+						},
+					},
+					// eslint-disable-next-line @typescript-eslint/no-explicit-any
+					chainRef as any,
+				);
+
+				// eslint-disable-next-line @typescript-eslint/no-explicit-any
+				const txResponse = result as any;
+				const transactionId =
+					txResponse?.transactionId ||
+					txResponse?.result?.transactionId ||
+					'';
+
+				if (transactionId) {
+					this.logTransaction(transactionId, env);
+				}
+
+				return transactionId;
+			},
+		};
 	}
 
 	// ===== Helper Methods =====
@@ -438,66 +457,6 @@ export class HederaWalletConnectTransactionAdapter extends BaseHederaTransaction
 
 	public supportsEvmOperations(): boolean {
 		return this.isEvmSession();
-	}
-
-	// ===== Helpers ============================================================
-
-	private async executeEvmContractCall(
-		proxyAddress: string,
-		iface: ethers.Interface,
-		functionName: string,
-		params: unknown[],
-		gasLimit: number,
-		payableAmountHbar?: string,
-		responseOptions?: { eventName: string; contract: ethers.BaseContract },
-	): Promise<TransactionResponse> {
-		try {
-			this.ensureInitialized();
-			if (!this.account.evmAddress)
-				throw new Error('Account EVM address is not set');
-
-			const data = iface.encodeFunctionData(functionName, params);
-			const chainRef = this.currentEvmChainRef();
-
-			const txParams: Record<string, string> = {
-				from: this.account.evmAddress,
-				to: proxyAddress,
-				data,
-				gas: ethers.toBeHex(gasLimit),
-			};
-
-			if (payableAmountHbar) {
-				txParams.value = ethers.toBeHex(
-					ethers.parseEther(payableAmountHbar),
-				);
-			}
-
-			// eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-			const txHash = await this.hederaProvider!.request(
-				{ method: 'eth_sendTransaction', params: [txParams] },
-				chainRef,
-			);
-			const provider = this.rpcProvider();
-			const receipt = await provider.waitForTransaction(txHash as string);
-
-			/* eslint-disable @typescript-eslint/no-explicit-any */
-			const responsePayload = {
-				hash: txHash,
-				wait: () => Promise.resolve(receipt),
-			} as any;
-			/* eslint-enable @typescript-eslint/no-explicit-any */
-
-			return RPCTransactionResponseAdapter.manageResponse(
-				responsePayload,
-				this.networkService.environment,
-				responseOptions,
-			);
-		} catch (e) {
-			console.log('=== FULL ERROR ===');
-			console.log(e);
-			console.log('==================');
-			throw e;
-		}
 	}
 
 	/**
@@ -587,16 +546,6 @@ export class HederaWalletConnectTransactionAdapter extends BaseHederaTransaction
 				'[HWC Native] Error executing transaction:',
 				error,
 			);
-			console.log('=== FULL ERROR (Native) ===');
-			console.log('Error type:', typeof error);
-			const err = error as Record<string, unknown>;
-			console.log('Error code:', err?.code);
-			console.log('Error message:', err?.message);
-			console.log('Error data:', err?.data);
-			console.log('Full error object:', error);
-			console.log('JSON error:', JSON.stringify(error, null, 2));
-			console.log('===========================');
-
 			throw new SigningError(
 				`Native Hedera transaction failed: ${error}`,
 			);
@@ -619,18 +568,6 @@ export class HederaWalletConnectTransactionAdapter extends BaseHederaTransaction
 
 	private isTestnet(): boolean {
 		return this.networkService.environment === testnet;
-	}
-
-	private evmChainId(): '295' | '296' {
-		return this.isTestnet() ? '296' : '295';
-	}
-
-	private currentEvmChainRef(): `eip155:${string}` {
-		return `eip155:${this.evmChainId()}`;
-	}
-
-	private rpcProvider(): ethers.JsonRpcProvider {
-		return new ethers.JsonRpcProvider(this.networkService.rpcNode?.baseUrl);
 	}
 
 	private isEvmSession(): boolean {
@@ -678,8 +615,10 @@ export class HederaWalletConnectTransactionAdapter extends BaseHederaTransaction
 			});
 
 			if (hederaOnly.length === 0) {
-				// No Hedera EVM accounts — let the original run so the error surfaces normally.
-				return orig();
+				// No Hedera EVM accounts in this session — skip EIP155Provider setup.
+				// connectWalletConnect will detect eip155Provider === undefined and
+				// surface a user-friendly error asking the user to switch to a Hedera EVM network.
+				return;
 			}
 
 			sessionEip155.accounts = hederaOnly;
@@ -779,9 +718,10 @@ export class HederaWalletConnectTransactionAdapter extends BaseHederaTransaction
 						'eip155:296': isTestnet
 							? rpcUrl
 							: 'https://testnet.hashio.io/api',
+						// eip155:295 = Hedera EVM Mainnet — always use mainnet URL regardless of selected network
 						'eip155:295': isTestnet
-							? rpcUrl
-							: 'https://mainnet.hashio.io/api', // Include some common non-Hedera chains to prevent "No RPC url provided for chainId: X" errors in MetaMask if those chains are in the approved session. The URLs won't actually be used since our patched initProviders filters to only Hedera EVM chains, but this keeps MetaMask happy.
+							? 'https://mainnet.hashio.io/api'
+							: rpcUrl,
 					},
 				},
 			},

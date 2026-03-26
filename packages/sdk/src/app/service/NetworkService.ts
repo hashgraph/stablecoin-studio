@@ -23,7 +23,7 @@ import Configuration from '../../domain/context/network/Configuration.js';
 import { Environment } from '../../domain/context/network/Environment.js';
 import { MirrorNode } from '../../domain/context/network/MirrorNode.js';
 import { JsonRpcRelay } from '../../domain/context/network/JsonRpcRelay.js';
-import Service from './Service.js';
+import { AbstractNetworkService } from '../../core/service/AbstractNetworkService.js';
 import BackendEndpoint from '../../domain/context/network/BackendEndpoint.js';
 import { ConsensusNode } from '../../domain/context/network/ConsensusNodes.js';
 
@@ -36,7 +36,7 @@ export interface NetworkProps {
 }
 
 @singleton()
-export default class NetworkService extends Service implements NetworkProps {
+export default class NetworkService extends AbstractNetworkService implements NetworkProps {
 	private _environment: Environment;
 	private _mirrorNode: MirrorNode;
 	private _rpcNode: JsonRpcRelay;

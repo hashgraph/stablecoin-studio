@@ -40,11 +40,13 @@ export class UpdateReserveAmountCommandHandler
 		command: UpdateReserveAmountCommand,
 	): Promise<UpdateReserveAmountCommandResponse> {
 		const { reserveAddress, reserveAmount } = command;
-		const handler = this.transactionService.getHandler();
 
-		const res = await handler.updateReserveAmount(
-			reserveAddress,
-			reserveAmount,
+		const res = await this.transactionService.executeOperation(
+			'updateReserveAmount',
+			{
+				contractAddress: '0x' + reserveAddress.toHederaAddress().toSolidityAddress(),
+				amount: reserveAmount.toLong().toString(),
+			},
 		);
 		return Promise.resolve(
 			new UpdateReserveAmountCommandResponse(res.error === undefined, res.id, res.serializedTransactionData),

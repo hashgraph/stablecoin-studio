@@ -18,7 +18,7 @@
  *
  */
 
-import CheckNums from '../../../../../../core/checks/numbers/CheckNums.js';
+import CheckNums from '../../../../../../domain/shared/checks/numbers/CheckNums.js';
 import { ICommandHandler } from '../../../../../../core/command/CommandHandler.js';
 import { CommandHandler } from '../../../../../../core/decorator/CommandHandlerDecorator.js';
 import { lazyInject } from '../../../../../../core/decorator/LazyInjectDecorator.js';
@@ -30,6 +30,7 @@ import { GetAccountTokenRelationshipQuery } from '../../../../query/account/toke
 import { DecimalsOverRange } from '../../error/DecimalsOverRange.js';
 import { OperationNotAllowed } from '../../error/OperationNotAllowed.js';
 import { StableCoinNotAssociated } from '../../error/StableCoinNotAssociated.js';
+import { AbstractMirrorNodeAdapter } from '../../../../../../port/out/mirror/AbstractMirrorNodeAdapter.js';
 import { WipeCommand, WipeCommandResponse } from './WipeCommand.js';
 
 @CommandHandler(WipeCommand)
@@ -41,11 +42,12 @@ export class WipeCommandHandler implements ICommandHandler<WipeCommand> {
 		public readonly accountService: AccountService,
 		@lazyInject(TransactionService)
 		public readonly transactionService: TransactionService,
+		@lazyInject(AbstractMirrorNodeAdapter)
+		public readonly mirrorNode: AbstractMirrorNodeAdapter,
 	) {}
 
 	async execute(command: WipeCommand): Promise<WipeCommandResponse> {
-		const { amount, targetId, tokenId, startDate } = command;
-		const handler = this.transactionService.getHandler();
+		const { amount, targetId, tokenId } = command;
 		const account = this.accountService.getCurrentAccount();
 
 		const tokenRelationship = (
@@ -79,11 +81,16 @@ export class WipeCommandHandler implements ICommandHandler<WipeCommand> {
 			);
 		}
 
-		const res = await handler.wipe(
-			capabilities,
-			targetId,
-			BigDecimal.fromString(amount, capabilities.coin.decimals),
-			startDate,
+		const targetEvmAddress = (
+			await this.mirrorNode.accountToEvmAddress(targetId)
+		).toString();
+		const res = await this.transactionService.executeOperation(
+			'wipe',
+			{
+				contractAddress: capabilities.coin.evmProxyAddress?.toString(),
+				targetId: targetEvmAddress,
+				amount: amountBd.toLong().toString(),
+			},
 		);
 		return Promise.resolve(
 			new WipeCommandResponse(res.error === undefined, res.id, res.serializedTransactionData),

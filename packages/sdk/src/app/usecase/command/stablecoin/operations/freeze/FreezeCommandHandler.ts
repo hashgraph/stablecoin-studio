@@ -26,6 +26,7 @@ import StableCoinService from '../../../../../service/StableCoinService.js';
 import TransactionService from '../../../../../service/TransactionService.js';
 import { GetAccountTokenRelationshipQuery } from '../../../../query/account/tokenRelationship/GetAccountTokenRelationshipQuery.js';
 import { StableCoinNotAssociated } from '../../error/StableCoinNotAssociated.js';
+import { AbstractMirrorNodeAdapter } from '../../../../../../port/out/mirror/AbstractMirrorNodeAdapter.js';
 import { FreezeCommand, FreezeCommandResponse } from './FreezeCommand.js';
 
 @CommandHandler(FreezeCommand)
@@ -37,11 +38,12 @@ export class FreezeCommandHandler implements ICommandHandler<FreezeCommand> {
 		public readonly accountService: AccountService,
 		@lazyInject(TransactionService)
 		public readonly transactionService: TransactionService,
+		@lazyInject(AbstractMirrorNodeAdapter)
+		public readonly mirrorNode: AbstractMirrorNodeAdapter,
 	) {}
 
 	async execute(command: FreezeCommand): Promise<FreezeCommandResponse> {
-		const { targetId, tokenId, startDate } = command;
-		const handler = this.transactionService.getHandler();
+		const { targetId, tokenId } = command;
 		const account = this.accountService.getCurrentAccount();
 
 		const tokenRelationship = (
@@ -61,7 +63,16 @@ export class FreezeCommandHandler implements ICommandHandler<FreezeCommand> {
 			account,
 			tokenId,
 		);
-		const res = await handler.freeze(capabilities, targetId, startDate);
+		const targetEvmAddress = (
+			await this.mirrorNode.accountToEvmAddress(targetId)
+		).toString();
+		const res = await this.transactionService.executeOperation(
+			'freeze',
+			{
+				contractAddress: capabilities.coin.evmProxyAddress?.toString(),
+				targetId: targetEvmAddress,
+			},
+		);
 		return Promise.resolve(
 			new FreezeCommandResponse(res.error === undefined, res.id, res.serializedTransactionData),
 		);

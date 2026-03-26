@@ -34,3 +34,6 @@ report.json
 
 # Optional eslint cache
 .eslintcache
+
+# Trace output from integration tests
+trace-output.log

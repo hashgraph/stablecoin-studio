@@ -18,14 +18,5 @@
  *
  */
 
-import { QueryResponse } from '../../../../core/query/QueryResponse.js';
-import MultiKey from '../../../../domain/context/account/MultiKey.js';
-import PublicKey from '../../../../domain/context/account/PublicKey.js';
-
-export default interface AccountViewModel extends QueryResponse {
-	id?: string;
-	accountEvmAddress?: string;
-	publicKey?: PublicKey;
-	alias?: string;
-	multiKey?: MultiKey;
-}
+// Re-export from core/ — canonical definition
+export { default } from '../../../../core/query/response/AccountViewModel.js';

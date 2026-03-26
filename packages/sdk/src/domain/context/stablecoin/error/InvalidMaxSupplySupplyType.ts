@@ -18,7 +18,7 @@
  *
  */
 
-import BaseError, { ErrorCode } from '../../../../core/error/BaseError.js';
+import BaseError, { ErrorCode } from '../../../shared/error/BaseError.js';
 
 export default class InvalidMaxSupplySupplyType extends BaseError {
 	constructor(val: string) {

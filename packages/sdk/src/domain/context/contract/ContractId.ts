@@ -5,8 +5,8 @@ import {
 } from '@hiero-ledger/sdk';
 import { proto } from '@hiero-ledger/proto';
 import InvalidKeyForContract from './error/InvalidKeyForContract.js';
-import BaseError from '../../../core/error/BaseError.js';
-import CheckStrings from '../../../core/checks/strings/CheckStrings.js';
+import BaseError from '../../shared/error/BaseError.js';
+import CheckStrings from '../../shared/checks/strings/CheckStrings.js';
 import { InvalidContractId } from './error/InvalidContractId.js';
 import { HederaId } from '../shared/HederaId.js';
 

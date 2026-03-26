@@ -304,7 +304,7 @@ const StableCoinCreation = () => {
 			request.grantKYCToOriginalSender = false;
 		}
 
-		request.proxyOwnerAccount = accountInfo.id;
+		request.proxyOwnerAccount = accountInfo.id ?? account.accountId;
 
 		request.feeScheduleKey = manageCustomFees
 			? formatKey(feeScheduleKey.label, 'feeScheduleKey')

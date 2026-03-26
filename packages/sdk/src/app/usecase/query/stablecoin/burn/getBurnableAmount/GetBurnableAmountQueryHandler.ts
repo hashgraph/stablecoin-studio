@@ -24,7 +24,7 @@ import {
 } from './GetBurnableAmountQuery.js';
 import { QueryHandler } from '../../../../../../core/decorator/QueryHandlerDecorator.js';
 import { IQueryHandler } from '../../../../../../core/query/QueryHandler.js';
-import { RPCQueryAdapter } from '../../../../../../port/out/rpc/RPCQueryAdapter.js';
+import { AbstractRPCQueryAdapter } from '../../../../../../port/out/rpc/AbstractRPCQueryAdapter.js';
 import { lazyInject } from '../../../../../../core/decorator/LazyInjectDecorator.js';
 import StableCoinService from '../../../../../service/StableCoinService.js';
 import BigDecimal from '../../../../../../domain/context/shared/BigDecimal.js';
@@ -36,8 +36,8 @@ export class GetBurnableAmountQueryHandler
 	constructor(
 		@lazyInject(StableCoinService)
 		private readonly stableCoinService: StableCoinService,
-		@lazyInject(RPCQueryAdapter)
-		private readonly queryAdapter: RPCQueryAdapter,
+		@lazyInject(AbstractRPCQueryAdapter)
+		private readonly queryAdapter: AbstractRPCQueryAdapter,
 	) {}
 
 	async execute(

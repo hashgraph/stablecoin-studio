@@ -29,9 +29,10 @@ import { BackendError } from './error/BackendError.js';
 import BackendEndpoint from '../../../domain/context/network/BackendEndpoint.js';
 import Injectable from '../../../core/Injectable.js';
 import { Environment } from '../../../domain/context/network/Environment.js';
+import { AbstractBackendAdapter } from './AbstractBackendAdapter.js';
 
 @singleton()
-export class BackendAdapter {
+export class BackendAdapter extends AbstractBackendAdapter {
 	private httpClient: AxiosInstance;
 	private backendEndpoint: BackendEndpoint;
 

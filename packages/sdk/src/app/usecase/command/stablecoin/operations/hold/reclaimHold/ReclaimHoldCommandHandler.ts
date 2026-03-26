@@ -25,7 +25,7 @@ import { QueryBus } from '../../../../../../../core/query/QueryBus.js';
 import {
 	FreezeStatus,
 	KycStatus,
-} from '../../../../../../../port/out/mirror/response/AccountTokenRelationViewModel.js';
+} from '../../../../../../../domain/context/stablecoin/TokenRelation.js';
 import AccountService from '../../../../../../service/AccountService.js';
 import StableCoinService from '../../../../../../service/StableCoinService.js';
 import TransactionService from '../../../../../../service/TransactionService.js';
@@ -38,6 +38,7 @@ import { AccountNotKyc } from '../../../error/AccountNotKyc.js';
 import { AccountFreeze } from '../../../error/AccountFreeze.js';
 import { StableCoinNotAssociated } from '../../../error/StableCoinNotAssociated.js';
 import ValidationService from '../../../../../../service/ValidationService.js';
+import { AbstractMirrorNodeAdapter } from '../../../../../../../port/out/mirror/AbstractMirrorNodeAdapter.js';
 
 @CommandHandler(ReclaimHoldCommand)
 export class ReclaimHoldCommandHandler
@@ -54,13 +55,14 @@ export class ReclaimHoldCommandHandler
 		private readonly transactionService: TransactionService,
 		@lazyInject(ValidationService)
 		private readonly validationService: ValidationService,
+		@lazyInject(AbstractMirrorNodeAdapter)
+		private readonly mirrorNode: AbstractMirrorNodeAdapter,
 	) {}
 
 	async execute(
 		command: ReclaimHoldCommand,
 	): Promise<ReclaimHoldCommandResponse> {
 		const { tokenId, holdId, sourceId } = command;
-		const handler = this.transactionService.getHandler();
 		const account = this.accountService.getCurrentAccount();
 		const capabilities = await this.stableCoinService.getCapabilities(
 			account,
@@ -100,7 +102,17 @@ export class ReclaimHoldCommandHandler
 			true,
 		);
 
-		const res = await handler.reclaimHold(capabilities, sourceId, holdId);
+		const tokenHolderEvmAddress = (
+			await this.mirrorNode.accountToEvmAddress(sourceId)
+		).toString();
+		const res = await this.transactionService.executeOperation(
+			'reclaimHold',
+			{
+				contractAddress: capabilities.coin.evmProxyAddress?.toString(),
+				tokenHolder: tokenHolderEvmAddress,
+				holdId: '0x' + holdId.toString(16),
+			},
+		);
 
 		return Promise.resolve(
 			new ReclaimHoldCommandResponse(res.error === undefined, res.id, res.serializedTransactionData),

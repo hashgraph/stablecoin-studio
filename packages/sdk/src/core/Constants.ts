@@ -23,7 +23,7 @@ export const COMMAND_HANDLER_METADATA = '__commandHandler__';
 export const QUERY_METADATA = '__query__';
 export const QUERY_HANDLER_METADATA = '__queryHandler__';
 export const TOKEN_CREATION_COST_HBAR = 80;
-export const EVM_ZERO_ADDRESS = '0x0000000000000000000000000000000000000000';
+export { EVM_ZERO_ADDRESS } from '../domain/shared/constants.js';
 export const HBAR_DECIMALS = 8;
 export const CREATE_SC_GAS = 10000000;
 export const CASHIN_GAS = 200000;
@@ -68,8 +68,7 @@ export const IS_UNLIMITED_ALLOWANCE_GAS = 120000;
 export const BYTES_32_LENGTH = 64;
 export const ADDRESS_LENGTH = 40;
 export const TOPICS_IN_FACTORY_RESULT = 3;
-export const BYTES_32_NULL =
-	'0x0000000000000000000000000000000000000000000000000000000000000000';
+export { BYTES_32_NULL } from '../domain/shared/constants.js';
 
 export const CONFIG_SC =
 	'0x0000000000000000000000000000000000000000000000000000000000000002';

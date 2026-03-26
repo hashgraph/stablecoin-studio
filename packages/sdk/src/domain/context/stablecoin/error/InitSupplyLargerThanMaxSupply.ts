@@ -18,7 +18,7 @@
  *
  */
 
-import BaseError, { ErrorCode } from '../../../../core/error/BaseError.js';
+import BaseError, { ErrorCode } from '../../../shared/error/BaseError.js';
 
 export class InitSupplyLargerThanMaxSupply extends BaseError {
 	constructor(initSupply: string, maxSupply: string) {

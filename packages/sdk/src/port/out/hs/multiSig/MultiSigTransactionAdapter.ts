@@ -30,22 +30,23 @@ import {
 import Account from '../../../../domain/context/account/Account.js';
 import TransactionResponse from '../../../../domain/context/transaction/TransactionResponse.js';
 import { lazyInject } from '../../../../core/decorator/LazyInjectDecorator.js';
-import NetworkService from '../../../../app/service/NetworkService.js';
-import { MirrorNodeAdapter } from '../../mirror/MirrorNodeAdapter.js';
-import { BackendAdapter } from '../../backend/BackendAdapter.js';
+import { AbstractNetworkService } from '../../../../core/service/AbstractNetworkService.js';
+import { AbstractMirrorNodeAdapter } from '../../mirror/AbstractMirrorNodeAdapter.js';
+import { AbstractBackendAdapter } from '../../backend/AbstractBackendAdapter.js';
 import { SupportedWallets } from '../../../../domain/context/network/Wallet.js';
 import { Environment } from '../../../../domain/context/network/Environment.js';
 import Injectable from '../../../../core/Injectable.js';
 import { InitializationData } from '../../TransactionAdapter.js';
-import LogService from '../../../../app/service/LogService.js';
+import LogService from '../../../../core/service/LogService.js';
 import {
 	WalletEvents,
 	WalletPairedEvent,
-} from '../../../../app/service/event/WalletEvent.js';
-import EventService from '../../../../app/service/event/EventService.js';
+} from '../../../../domain/context/event/WalletEvent.js';
+import { AbstractEventService } from '../../../../core/service/AbstractEventService.js';
 import Hex from '../../../../core/Hex.js';
-import TransactionService from '../../../../app/service/TransactionService.js';
+import { TransactionDescriber } from '../../../../core/service/TransactionDescriber.js';
 import { TransactionType } from '../../TransactionResponseEnums.js';
+import type { SigningConfig } from '../../../../core/config/SigningConfig.js';
 
 @singleton()
 export class MultiSigTransactionAdapter extends BaseHederaTransactionAdapter {
@@ -53,13 +54,15 @@ export class MultiSigTransactionAdapter extends BaseHederaTransactionAdapter {
 	protected network: Environment;
 
 	constructor(
-		@lazyInject(EventService) public readonly eventService: EventService,
-		@lazyInject(NetworkService)
-		public readonly networkService: NetworkService,
-		@lazyInject(MirrorNodeAdapter)
-		public readonly mirrorNodeAdapter: MirrorNodeAdapter,
-		@lazyInject(BackendAdapter)
-		public readonly backendAdapter: BackendAdapter,
+		@lazyInject(AbstractEventService) public readonly eventService: AbstractEventService,
+		@lazyInject(AbstractNetworkService)
+		public readonly networkService: AbstractNetworkService,
+		@lazyInject(AbstractMirrorNodeAdapter)
+		public readonly mirrorNodeAdapter: AbstractMirrorNodeAdapter,
+		@lazyInject(AbstractBackendAdapter)
+		public readonly backendAdapter: AbstractBackendAdapter,
+		@lazyInject(TransactionDescriber)
+		private readonly transactionDescriber: TransactionDescriber,
 	) {
 		super();
 	}
@@ -110,7 +113,7 @@ export class MultiSigTransactionAdapter extends BaseHederaTransactionAdapter {
 
 		this.account.multiKey.keys.forEach((key) => publicKeys.push(key.key));
 
-		const transactionDescription = await TransactionService.getDescription(
+		const transactionDescription = await this.transactionDescriber.getDescription(
 			t,
 			this.mirrorNodeAdapter,
 		);
@@ -137,12 +140,38 @@ export class MultiSigTransactionAdapter extends BaseHederaTransactionAdapter {
 		return true;
 	}
 
-	public getNetworkService(): NetworkService {
+	public getNetworkService(): AbstractNetworkService {
 		return this.networkService;
 	}
 
-	public getMirrorNodeAdapter(): MirrorNodeAdapter {
+	public getMirrorNodeAdapter(): AbstractMirrorNodeAdapter {
 		return this.mirrorNodeAdapter;
+	}
+
+	toSigningConfig(): SigningConfig {
+		const env = this.networkService.environment;
+		let client: Client;
+		if (env === 'mainnet') client = Client.forMainnet();
+		else if (env === 'previewnet') client = Client.forPreviewnet();
+		else client = Client.forTestnet();
+
+		const adapter = this.backendAdapter;
+		return {
+			type: 'multisig',
+			client,
+			backend: {
+				submitTransaction: (txBytes: Uint8Array) =>
+					adapter.addTransaction(
+						Buffer.from(txBytes).toString('hex'),
+						'Multi-sig transaction',
+						this.account.id.toString(),
+						this.account.multiKey?.keys.map(k => k.key) ?? [],
+						this.account.multiKey?.threshold ?? 1,
+						env,
+						new Date(),
+					),
+			},
+		};
 	}
 
 	// ===== Wallet Lifecycle Methods =====

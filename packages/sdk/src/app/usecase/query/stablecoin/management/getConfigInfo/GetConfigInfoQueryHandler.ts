@@ -26,9 +26,9 @@ import {
 	GetConfigInfoQuery,
 	GetConfigInfoQueryResponse,
 } from './GetConfigInfoQuery.js';
-import { RPCQueryAdapter } from '../../../../../../port/out/rpc/RPCQueryAdapter.js';
+import { AbstractRPCQueryAdapter } from '../../../../../../port/out/rpc/AbstractRPCQueryAdapter.js';
 import { DiamondConfiguration } from '../../../../../../domain/context/diamond/DiamondConfiguration.js';
-import { MirrorNodeAdapter } from '../../../../../../port/out/mirror/MirrorNodeAdapter.js';
+import { AbstractMirrorNodeAdapter } from '../../../../../../port/out/mirror/AbstractMirrorNodeAdapter.js';
 
 @QueryHandler(GetConfigInfoQuery)
 export class GetConfigInfoQueryHandler
@@ -37,10 +37,10 @@ export class GetConfigInfoQueryHandler
 	constructor(
 		@lazyInject(StableCoinService)
 		public readonly stableCoinService: StableCoinService,
-		@lazyInject(RPCQueryAdapter)
-		public readonly queryAdapter: RPCQueryAdapter,
-		@lazyInject(MirrorNodeAdapter)
-		public readonly mirrorNode: MirrorNodeAdapter,
+		@lazyInject(AbstractRPCQueryAdapter)
+		public readonly queryAdapter: AbstractRPCQueryAdapter,
+		@lazyInject(AbstractMirrorNodeAdapter)
+		public readonly mirrorNode: AbstractMirrorNodeAdapter,
 	) {}
 
 	async execute(

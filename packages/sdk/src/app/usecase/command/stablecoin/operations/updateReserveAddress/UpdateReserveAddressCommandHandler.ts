@@ -46,7 +46,6 @@ export class UpdateReserveAddressCommandHandler
 		command: UpdateReserveAddressCommand,
 	): Promise<UpdateReserveAddressCommandResponse> {
 		const { tokenId, reserveAddress } = command;
-		const handler = this.transactionService.getHandler();
 		const account = this.accountService.getCurrentAccount();
 
 		const capabilities = await this.stableCoinService.getCapabilities(
@@ -54,9 +53,12 @@ export class UpdateReserveAddressCommandHandler
 			tokenId,
 		);
 
-		const res = await handler.updateReserveAddress(
-			capabilities,
-			reserveAddress,
+		const res = await this.transactionService.executeOperation(
+			'updateReserveAddress',
+			{
+				contractAddress: capabilities.coin.evmProxyAddress?.toString(),
+				reserveAddress: '0x' + reserveAddress.toHederaAddress().toSolidityAddress(),
+			},
 		);
 		return Promise.resolve(
 			new UpdateReserveAddressCommandResponse(res.error === undefined, res.id, res.serializedTransactionData),

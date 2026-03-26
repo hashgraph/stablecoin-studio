@@ -18,7 +18,7 @@
  *
  */
 
-import LogService from '../../app/service/LogService.js';
+import { logger } from '../Logger.js';
 
 export const LogError = (
 	target: unknown,
@@ -31,7 +31,7 @@ export const LogError = (
 			const result = await originalMethod.apply(this, args);
 			return result;
 		} catch (error) {
-			LogService.logError(error);
+			logger.error(error instanceof Error ? error.message : String(error));
 			throw error;
 		}
 	};

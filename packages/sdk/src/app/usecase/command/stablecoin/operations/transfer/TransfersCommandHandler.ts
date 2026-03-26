@@ -18,18 +18,16 @@
  *
  */
 
-import CheckNums from '../../../../../../core/checks/numbers/CheckNums.js';
-import { CommandBus } from '../../../../../../core/command/CommandBus.js';
+import CheckNums from '../../../../../../domain/shared/checks/numbers/CheckNums.js';
 import { ICommandHandler } from '../../../../../../core/command/CommandHandler.js';
 import { CommandHandler } from '../../../../../../core/decorator/CommandHandlerDecorator.js';
 import { lazyInject } from '../../../../../../core/decorator/LazyInjectDecorator.js';
-import BaseError from '../../../../../../core/error/BaseError.js';
-import { QueryBus } from '../../../../../../core/query/QueryBus.js';
+import BaseError from '../../../../../../domain/shared/error/BaseError.js';
 import BigDecimal from '../../../../../../domain/context/shared/BigDecimal.js';
 import {
 	FreezeStatus,
 	KycStatus,
-} from '../../../../../../port/out/mirror/response/AccountTokenRelationViewModel.js';
+} from '../../../../../../domain/context/stablecoin/TokenRelation.js';
 import AccountService from '../../../../../service/AccountService.js';
 import StableCoinService from '../../../../../service/StableCoinService.js';
 import TransactionService from '../../../../../service/TransactionService.js';
@@ -45,6 +43,7 @@ import {
 } from './TransfersCommand.js';
 import { GetAccountAutoAssociationQuery } from '../../../../query/account/autoAssociation/GetAccountAutoAssociationQuery';
 import { StableCoinMaxAutoAssociationReached } from '../../error/StableCoinMaxAutoAssociationReached';
+import { AbstractMirrorNodeAdapter } from '../../../../../../port/out/mirror/AbstractMirrorNodeAdapter.js';
 
 @CommandHandler(TransfersCommand)
 export class TransfersCommandHandler
@@ -53,21 +52,18 @@ export class TransfersCommandHandler
 	constructor(
 		@lazyInject(StableCoinService)
 		public readonly stableCoinService: StableCoinService,
-		@lazyInject(CommandBus)
-		public readonly commandBus: CommandBus,
-		@lazyInject(QueryBus)
-		public readonly queryBus: QueryBus,
 		@lazyInject(AccountService)
 		public readonly accountService: AccountService,
 		@lazyInject(TransactionService)
 		public readonly transactionService: TransactionService,
+		@lazyInject(AbstractMirrorNodeAdapter)
+		public readonly mirrorNode: AbstractMirrorNodeAdapter,
 	) {}
 
 	async execute(
 		command: TransfersCommand,
 	): Promise<TransfersCommandResponse> {
 		const { amounts, targetsIds, tokenId, targetId } = command;
-		const handler = this.transactionService.getHandler();
 		const account = this.accountService.getCurrentAccount();
 
 		const errors: BaseError[] = [];
@@ -149,14 +145,36 @@ export class TransfersCommandHandler
 			amountsBd.push(BigDecimal.fromString(amounts[i], coin.decimals));
 		}
 
-		const res = await handler.transfers(
-			capabilities,
-			amountsBd,
-			targetsIds,
-			targetId,
-		);
+		const HTS_PRECOMPILE = '0x0000000000000000000000000000000000000167';
+		const tokenEvmAddress =
+			'0x' + tokenId.toHederaAddress().toSolidityAddress();
+		const fromEvmAddress = (
+			await this.mirrorNode.accountToEvmAddress(targetId)
+		).toString();
+
+		let res;
+		for (let i = 0; i < targetsIds.length; i++) {
+			const recipientEvmAddress = (
+				await this.mirrorNode.accountToEvmAddress(targetsIds[i])
+			).toString();
+			res = await this.transactionService.executeOperation(
+				'transfer',
+				{
+					contractAddress: HTS_PRECOMPILE,
+					tokenAddress: tokenEvmAddress,
+					fromId: fromEvmAddress,
+					targetId: recipientEvmAddress,
+					amount: amountsBd[i].toLong().toString(),
+				},
+			);
+		}
+
 		return Promise.resolve(
-			new TransfersCommandResponse(res.error === undefined, res.id, res.serializedTransactionData),
+			new TransfersCommandResponse(
+				res?.error === undefined,
+				res?.id,
+				res?.serializedTransactionData,
+			),
 		);
 	}
 }

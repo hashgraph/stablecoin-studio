@@ -1,6 +1,9 @@
 /** @type {import('ts-jest/dist/types').InitialOptionsTsJest} */
 import '@testing-library/jest-dom';
 
+// Ensure deterministic rendering regardless of local .env files
+process.env.REACT_APP_BACKEND_URL = 'http://localhost:3001/api/transactions';
+
 beforeEach(() => {
 	jest.resetModules();
 });

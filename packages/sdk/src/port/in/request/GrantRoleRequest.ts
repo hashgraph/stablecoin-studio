@@ -22,7 +22,7 @@
 import ValidatedRequest from './validation/ValidatedRequest.js';
 import { OptionalField } from '../../../core/decorator/OptionalDecorator.js';
 import Validation from './validation/Validation.js';
-import BaseError from '../../../core/error/BaseError.js';
+import BaseError from '../../../domain/shared/error/BaseError.js';
 import { InvalidSupplierType } from '../../../domain/context/stablecoin/error/InvalidSupplierType.js';
 import { StableCoinRole } from '../../../domain/context/stablecoin/StableCoinRole.js';
 

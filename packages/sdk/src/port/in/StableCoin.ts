@@ -20,7 +20,7 @@
 
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import Injectable from '../../core/Injectable.js';
-import { EmptyResponse } from '../../app/service/error/EmptyResponse.js';
+import { EmptyResponse } from '../../domain/shared/error/EmptyResponse.js';
 import CreateRequest from './request/CreateRequest.js';
 import CashInRequest from './request/CashInRequest.js';
 import GetStableCoinDetailsRequest from './request/GetStableCoinDetailsRequest.js';
@@ -42,7 +42,7 @@ import { CommandBus } from '../../core/command/CommandBus.js';
 import { CashInCommand } from '../../app/usecase/command/stablecoin/operations/cashin/CashInCommand.js';
 import StableCoinViewModel from '../out/mirror/response/StableCoinViewModel.js';
 import StableCoinListViewModel from '../out/mirror/response/StableCoinListViewModel.js';
-import StableCoinService from '../../app/service/StableCoinService.js';
+import { GetCapabilitiesQuery } from '../../app/usecase/query/stablecoin/capabilities/GetCapabilitiesQuery.js';
 import { GetStableCoinQuery } from '../../app/usecase/query/stablecoin/get/GetStableCoinQuery.js';
 import { CreateCommand } from '../../app/usecase/command/stablecoin/create/CreateCommand.js';
 import PublicKey from '../../domain/context/account/PublicKey.js';
@@ -95,9 +95,9 @@ import TransfersRequest from './request/TransfersRequest.js';
 import UpdateRequest from './request/UpdateRequest.js';
 import { TransfersCommand } from '../../app/usecase/command/stablecoin/operations/transfer/TransfersCommand.js';
 import { UpdateCommand } from '../../app/usecase/command/stablecoin/update/UpdateCommand.js';
-import NetworkService from '../../app/service/NetworkService.js';
+import { AbstractNetworkService } from '../../core/service/AbstractNetworkService.js';
 import { AssociateCommand } from '../../app/usecase/command/account/associate/AssociateCommand.js';
-import { MirrorNodeAdapter } from '../../port/out/mirror/MirrorNodeAdapter.js';
+import { AbstractMirrorNodeAdapter } from '../../port/out/mirror/AbstractMirrorNodeAdapter.js';
 import MultiSigTransactionViewModel from '../out/backend/response/MultiSigTransactionViewModel';
 import MultiSigTransactionsViewModel from '../out/backend/response/MultiSigTransactionsViewModel';
 import { PaginationViewModel } from '../out/backend/response/MultiSigTransactionsViewModel.js';
@@ -227,14 +227,11 @@ class StableCoinInPort implements IStableCoinInPort {
 		private readonly commandBus: CommandBus = Injectable.resolve(
 			CommandBus,
 		),
-		private readonly stableCoinService: StableCoinService = Injectable.resolve(
-			StableCoinService,
+		private readonly networkService: AbstractNetworkService = Injectable.resolve(
+			AbstractNetworkService,
 		),
-		private readonly networkService: NetworkService = Injectable.resolve(
-			NetworkService,
-		),
-		private readonly mirrorNode: MirrorNodeAdapter = Injectable.resolve(
-			MirrorNodeAdapter,
+		private readonly mirrorNode: AbstractMirrorNodeAdapter = Injectable.resolve(
+			AbstractMirrorNodeAdapter,
 		),
 	) {}
 
@@ -606,15 +603,18 @@ class StableCoinInPort implements IStableCoinInPort {
 		const resp = await this.queryBus.execute(
 			new GetAccountInfoQuery(HederaId.from(request.account.accountId)),
 		);
-		return this.stableCoinService.getCapabilities(
-			new Account({
-				id: resp.account.id ?? request.account.accountId,
-				publicKey: resp.account.publicKey,
-			}),
-			HederaId.from(request.tokenId),
-			request.tokenIsPaused,
-			request.tokenIsDeleted,
+		const capResp = await this.queryBus.execute(
+			new GetCapabilitiesQuery(
+				new Account({
+					id: resp.account.id ?? request.account.accountId,
+					publicKey: resp.account.publicKey,
+				}),
+				HederaId.from(request.tokenId),
+				request.tokenIsPaused,
+				request.tokenIsDeleted,
+			),
 		);
+		return capResp.capabilities;
 	}
 
 	@LogError

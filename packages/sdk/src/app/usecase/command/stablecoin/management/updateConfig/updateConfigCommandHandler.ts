@@ -47,16 +47,18 @@ export class UpdateConfigCommandHandler
 	): Promise<UpdateConfigCommandResponse> {
 		const { tokenId, configId, configVersion } = command;
 
-		const handler = this.transactionService.getHandler();
 		const account = this.accountService.getCurrentAccount();
 		const capabilities = await this.stableCoinService.getCapabilities(
 			account,
 			tokenId,
 		);
-		const res = await handler.updateConfig(
-			capabilities,
-			configId,
-			configVersion,
+		const res = await this.transactionService.executeOperation(
+			'updateConfig',
+			{
+				contractAddress: capabilities.coin.evmProxyAddress?.toString(),
+				configId,
+				configVersion: configVersion.toString(),
+			},
 		);
 
 		return Promise.resolve(

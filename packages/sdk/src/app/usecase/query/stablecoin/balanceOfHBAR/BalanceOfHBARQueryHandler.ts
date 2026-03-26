@@ -26,7 +26,7 @@ import { QueryHandler } from '../../../../../core/decorator/QueryHandlerDecorato
 import { IQueryHandler } from '../../../../../core/query/QueryHandler.js';
 import { lazyInject } from '../../../../../core/decorator/LazyInjectDecorator.js';
 import BigDecimal from '../../../../../domain/context/shared/BigDecimal.js';
-import { MirrorNodeAdapter } from '../../../../../port/out/mirror/MirrorNodeAdapter.js';
+import { AbstractMirrorNodeAdapter } from '../../../../../port/out/mirror/AbstractMirrorNodeAdapter.js';
 import { HBAR_DECIMALS } from '../../../../../core/Constants.js';
 
 @QueryHandler(BalanceOfHBARQuery)
@@ -34,8 +34,8 @@ export class BalanceOfHBARQueryHandler
 	implements IQueryHandler<BalanceOfHBARQuery>
 {
 	constructor(
-		@lazyInject(MirrorNodeAdapter)
-		public readonly mirrorNode: MirrorNodeAdapter,
+		@lazyInject(AbstractMirrorNodeAdapter)
+		public readonly mirrorNode: AbstractMirrorNodeAdapter,
 	) {}
 
 	async execute(

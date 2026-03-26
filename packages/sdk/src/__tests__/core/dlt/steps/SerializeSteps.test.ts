@@ -1,0 +1,192 @@
+/*
+ *
+ * Hedera Stablecoin SDK
+ *
+ * Copyright (C) 2023 Hedera Hashgraph, LLC
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *
+ */
+
+import { SerializeHederaStep } from '../../../../core/dlt/hedera/steps/SerializeHederaStep.js';
+import { SerializeEVMStep } from '../../../../core/dlt/evm/steps/SerializeEVMStep.js';
+import { ExecutionContext } from '../../../../core/types/ExecutionContext.js';
+
+function makeMockContext(overrides: Partial<ExecutionContext> = {}): ExecutionContext {
+  const mockHandler = {
+    buildHederaTransaction: jest.fn(),
+    buildEVMTransaction: jest.fn(),
+    extractResult: jest.fn(),
+    supportsMode: jest.fn().mockReturnValue(true),
+    getSupportedModes: jest.fn().mockReturnValue(['hedera', 'evm']),
+    validate: jest.fn(),
+  };
+  return {
+    operationName: 'test-command',
+    params: { foo: 'bar' },
+    builder: mockHandler,
+    ...overrides,
+  };
+}
+
+describe('SerializeHederaStep', () => {
+  it('has the correct name', () => {
+    const step = new SerializeHederaStep({} as any);
+    expect(step.name).toBe('SerializeHedera');
+  });
+
+  it('calls freezeWith on the transaction with the client', async () => {
+    const txBytes = new Uint8Array([1, 2, 3]);
+    const mockFrozen = {
+      toBytes: jest.fn().mockReturnValue(txBytes),
+      _signedTransactions: { get: jest.fn().mockReturnValue({ bodyBytes: undefined }) },
+    };
+    const mockTx = { freezeWith: jest.fn().mockReturnValue(mockFrozen) };
+    const mockClient = { operatorAccountId: '0.0.1234' } as any;
+
+    const step = new SerializeHederaStep(mockClient);
+    const ctx = makeMockContext({ transaction: mockTx as any });
+
+    await step.execute(ctx);
+
+    expect(mockTx.freezeWith).toHaveBeenCalledWith(mockClient);
+  });
+
+  it('returns signedTransaction with kind serialized and transactionBytes', async () => {
+    const txBytes = new Uint8Array([0xaa, 0xbb]);
+    const mockFrozen = {
+      toBytes: jest.fn().mockReturnValue(txBytes),
+      _signedTransactions: { get: jest.fn().mockReturnValue(null) },
+    };
+    const mockTx = { freezeWith: jest.fn().mockReturnValue(mockFrozen) };
+
+    const step = new SerializeHederaStep({ operatorAccountId: '0.0.1234' } as any);
+    const ctx = makeMockContext({ transaction: mockTx as any });
+
+    const result = await step.execute(ctx);
+
+    expect(result.signedTransaction).toMatchObject({
+      kind: 'serialized',
+      transactionBytes: txBytes,
+    });
+  });
+
+  it('extracts bodyBytes from _signedTransactions when available', async () => {
+    const txBytes = new Uint8Array([1, 2, 3]);
+    const bodyBytes = new Uint8Array([10, 20, 30]);
+    const mockFrozen = {
+      toBytes: jest.fn().mockReturnValue(txBytes),
+      _signedTransactions: {
+        get: jest.fn().mockReturnValue({ bodyBytes }),
+      },
+    };
+    const mockTx = { freezeWith: jest.fn().mockReturnValue(mockFrozen) };
+
+    const step = new SerializeHederaStep({ operatorAccountId: '0.0.1234' } as any);
+    const ctx = makeMockContext({ transaction: mockTx as any });
+
+    const result = await step.execute(ctx);
+
+    expect((result.signedTransaction as any).bodyBytes).toEqual(bodyBytes);
+  });
+
+  it('sets bodyBytes to undefined when _signedTransactions is unavailable', async () => {
+    const txBytes = new Uint8Array([1, 2, 3]);
+    const mockFrozen = {
+      toBytes: jest.fn().mockReturnValue(txBytes),
+      _signedTransactions: undefined,
+    };
+    const mockTx = { freezeWith: jest.fn().mockReturnValue(mockFrozen) };
+
+    const step = new SerializeHederaStep({ operatorAccountId: '0.0.1234' } as any);
+    const ctx = makeMockContext({ transaction: mockTx as any });
+
+    const result = await step.execute(ctx);
+
+    expect((result.signedTransaction as any).bodyBytes).toBeUndefined();
+  });
+
+  it('propagates the rest of the context unchanged', async () => {
+    const txBytes = new Uint8Array([1, 2, 3]);
+    const mockFrozen = {
+      toBytes: jest.fn().mockReturnValue(txBytes),
+      _signedTransactions: { get: jest.fn().mockReturnValue(null) },
+    };
+    const mockTx = { freezeWith: jest.fn().mockReturnValue(mockFrozen) };
+
+    const step = new SerializeHederaStep({ operatorAccountId: '0.0.1234' } as any);
+    const ctx = makeMockContext({ transaction: mockTx as any });
+
+    const result = await step.execute(ctx);
+
+    expect(result.operationName).toBe('test-command');
+    expect(result.params).toEqual({ foo: 'bar' });
+  });
+});
+
+describe('SerializeEVMStep', () => {
+  it('has the correct name', () => {
+    const step = new SerializeEVMStep();
+    expect(step.name).toBe('SerializeEVM');
+  });
+
+  it('serializes the EVM transaction and returns signedTransaction with kind serialized', async () => {
+    const mockUnsignedSerialized = '0x0201';
+    const expectedBytes = new Uint8Array([0x02, 0x01]); // ethers.getBytes('0x0201') = [2, 1]
+
+    const ethersModule = require('ethers');
+    const fromSpy = jest
+      .spyOn(ethersModule.Transaction, 'from')
+      .mockReturnValue({ unsignedSerialized: mockUnsignedSerialized } as any);
+
+    try {
+      const step = new SerializeEVMStep();
+      const ctx = makeMockContext({ transaction: { to: '0x123' } as any });
+
+      const result = await step.execute(ctx);
+
+      expect(fromSpy).toHaveBeenCalled();
+      // ethers.getBytes('0x0201') produces Uint8Array([0x02, 0x01])
+      expect(result.signedTransaction).toEqual({
+        kind: 'serialized',
+        transactionBytes: expectedBytes,
+      });
+    } finally {
+      fromSpy.mockRestore();
+    }
+  });
+
+  it('propagates the rest of the context unchanged', async () => {
+    const mockTxBytes = new Uint8Array([0x01]);
+    const ethersModule = require('ethers');
+    const fromSpy = jest
+      .spyOn(ethersModule.Transaction, 'from')
+      .mockReturnValue({ unsignedSerialized: '0x01' } as any);
+    const getBytesSpy = jest
+      .spyOn(ethersModule, 'getBytes')
+      .mockReturnValue(mockTxBytes);
+
+    try {
+      const step = new SerializeEVMStep();
+      const ctx = makeMockContext({ transaction: {} as any });
+
+      const result = await step.execute(ctx);
+
+      expect(result.operationName).toBe('test-command');
+      expect(result.params).toEqual({ foo: 'bar' });
+    } finally {
+      fromSpy.mockRestore();
+      getBytesSpy.mockRestore();
+    }
+  });
+});

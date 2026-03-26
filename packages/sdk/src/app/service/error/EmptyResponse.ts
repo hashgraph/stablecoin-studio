@@ -18,10 +18,5 @@
  *
  */
 
-import BaseError, { ErrorCode } from '../../../core/error/BaseError.js';
-
-export class EmptyResponse extends BaseError {
-	constructor(handler: string) {
-		super(ErrorCode.EmptyResponse, `${handler} response id empty`);
-	}
-}
+// Re-export from domain/ — canonical definition
+export { EmptyResponse } from '../../../domain/shared/error/EmptyResponse.js';

@@ -19,10 +19,10 @@
  */
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { injectable } from 'tsyringe';
+import { injectable, container } from 'tsyringe';
 import { QUERY_HANDLER_METADATA, QUERY_METADATA } from '../Constants.js';
 import { QueryMetadata } from '../decorator/QueryMetadata.js';
-import Injectable from '../Injectable.js';
+import { TOKENS } from '../tokens.js';
 import { Type } from '../Type.js';
 import { Query } from './Query.js';
 import { IQueryHandler } from './QueryHandler.js';
@@ -44,7 +44,7 @@ export class QueryBus<T extends QueryResponse = QueryResponse>
 	public handlers = new Map<string, IQueryHandler<Query<T>>>();
 
 	constructor() {
-		const handlers = Injectable.getQueryHandlers();
+		const handlers = container.resolveAll<QueryHandlerType>(TOKENS.QUERY_HANDLER);
 		this.registerHandlers(handlers);
 	}
 

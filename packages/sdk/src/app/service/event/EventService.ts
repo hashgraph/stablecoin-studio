@@ -19,7 +19,7 @@
  */
 
 import EventEmitter from '../../../core/EventEmitter.js';
-import Service from '../Service.js';
+import { AbstractEventService } from '../../../core/service/AbstractEventService.js';
 import { EventListenerNotFound } from './error/EventListenerNotFound.js';
 import { EventNotFound } from './error/EventNotFound.js';
 import { singleton } from 'tsyringe';
@@ -32,7 +32,7 @@ type WalletEventEmitterIndex = Partial<
 >;
 
 @singleton()
-export default class EventService extends Service {
+export default class EventService extends AbstractEventService {
 	private events: WalletEventIndex;
 	private emitters: WalletEventEmitterIndex = {};
 

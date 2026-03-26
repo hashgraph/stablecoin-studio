@@ -49,7 +49,7 @@ import {
 	Transaction,
 	TransferTransaction,
 } from '@hiero-ledger/sdk';
-import { MirrorNodeAdapter } from '../../port/out/mirror/MirrorNodeAdapter.js';
+import { AbstractMirrorNodeAdapter } from '../../port/out/mirror/AbstractMirrorNodeAdapter.js';
 import * as Factories from '@hashgraph/stablecoin-npm-contracts/typechain-types/factories/contracts';
 import { ethers } from 'ethers';
 import Hex from '../../core/Hex.js';
@@ -62,14 +62,20 @@ import { InvalidResponse } from '../../port/out/mirror/error/InvalidResponse.js'
 import { ClientTransactionAdapter } from '../../port/out/hs/client/ClientTransactionAdapter.js';
 import { ExternalHederaTransactionAdapter } from '../../port/out/hs/external/ExternalHederaTransactionAdapter.js';
 import { ExternalEVMTransactionAdapter } from '../../port/out/hs/external/ExternalEVMTransactionAdapter.js';
+import { TransactionOrchestrator } from '../../core/orchestration/TransactionOrchestrator.js';
+import type { OperationOutcome } from '../../core/types/ExecutionContext.js';
+import type { SigningConfig } from '../../core/config/SigningConfig.js';
+import type { NetworkConfig } from '../../core/config/HederaNetwork.js';
+import type { QueryResult } from '../../core/operations/types.js';
+import NetworkService from './NetworkService.js';
 
 export const EVM_ADDRESS_REGEX = /0x[a-fA-F0-9]{40}$/;
 
 @singleton()
 export default class TransactionService extends Service {
 	constructor(
-		public readonly mirrorNodeAdapter: MirrorNodeAdapter = Injectable.resolve(
-			MirrorNodeAdapter,
+		public readonly mirrorNodeAdapter: AbstractMirrorNodeAdapter = Injectable.resolve(
+			AbstractMirrorNodeAdapter,
 		),
 	) {
 		super();
@@ -119,16 +125,12 @@ export default class TransactionService extends Service {
 	}
 
 	isExternalWallet(): boolean {
-		const handler = this.getHandler();
-		return (
-			handler instanceof ExternalHederaTransactionAdapter ||
-			handler instanceof ExternalEVMTransactionAdapter
-		);
+		return this.getHandler().isExternal();
 	}
 
 	static async getDescription(
 		t: Transaction,
-		mirrorNodeAdapter: MirrorNodeAdapter,
+		mirrorNodeAdapter: AbstractMirrorNodeAdapter,
 	): Promise<string> {
 		try {
 			if (t instanceof ContractExecuteTransaction) {
@@ -386,5 +388,66 @@ export default class TransactionService extends Service {
 		}
 
 		return results[position];
+	}
+
+	// ── Transaction Orchestrator ────────────────────────────────────────
+
+	async executeOperation(
+		operationName: string,
+		params: Record<string, unknown>,
+	): Promise<TransactionResponse> {
+		const orchestrator = this.createOrchestrator();
+		const outcome = await orchestrator.execute(operationName, params);
+		return TransactionService.outcomeToResponse(outcome);
+	}
+
+	async executeQuery(
+		queryName: string,
+		params: Record<string, unknown>,
+	): Promise<QueryResult> {
+		const orchestrator = this.createOrchestrator();
+		return orchestrator.executeQuery(queryName, params);
+	}
+
+	async executeOperationTyped<T extends OperationOutcome>(
+		operationName: string,
+		params: Record<string, unknown>,
+	): Promise<T> {
+		const orchestrator = this.createOrchestrator();
+		return orchestrator.execute(operationName, params) as Promise<T>;
+	}
+
+	private createOrchestrator(): TransactionOrchestrator {
+		const networkService = Injectable.resolve(NetworkService);
+		const network: NetworkConfig =
+			networkService.environment === 'testnet' ||
+			networkService.environment === 'mainnet' ||
+			networkService.environment === 'previewnet'
+				? (networkService.environment as NetworkConfig)
+				: {
+						mirrorNode: networkService.mirrorNode.baseUrl,
+						jsonRpcRelay: networkService.rpcNode.baseUrl,
+					};
+
+		const signing = this.toSigningConfig(this.getHandler());
+
+		return new TransactionOrchestrator({ network, signing });
+	}
+
+	private toSigningConfig(handler: TransactionAdapter): SigningConfig {
+		return handler.toSigningConfig();
+	}
+
+	private static outcomeToResponse(
+		outcome: OperationOutcome,
+	): TransactionResponse {
+		if (outcome.success) {
+			return new TransactionResponse(outcome.transactionId);
+		}
+		return new TransactionResponse(
+			outcome.transactionId,
+			undefined,
+			new Error('Operation execution failed'),
+		);
 	}
 }

@@ -18,8 +18,7 @@
  *
  */
 
-import CheckNums from '../../../../../../core/checks/numbers/CheckNums.js';
-import { CommandBus } from '../../../../../../core/command/CommandBus.js';
+import CheckNums from '../../../../../../domain/shared/checks/numbers/CheckNums.js';
 import { ICommandHandler } from '../../../../../../core/command/CommandHandler.js';
 import { CommandHandler } from '../../../../../../core/decorator/CommandHandlerDecorator.js';
 import { lazyInject } from '../../../../../../core/decorator/LazyInjectDecorator.js';
@@ -45,8 +44,6 @@ export class RescueHBARCommandHandler
 	constructor(
 		@lazyInject(StableCoinService)
 		public readonly stableCoinService: StableCoinService,
-		@lazyInject(CommandBus)
-		public readonly commandBus: CommandBus,
 		@lazyInject(QueryBus)
 		public readonly queryBus: QueryBus,
 		@lazyInject(AccountService)
@@ -58,9 +55,8 @@ export class RescueHBARCommandHandler
 	async execute(
 		command: RescueHBARCommand,
 	): Promise<RescueHBARCommandResponse> {
-		const { amount, tokenId, startDate } = command;
+		const { amount, tokenId } = command;
 		const decimals = HBAR_DECIMALS;
-		const handler = this.transactionService.getHandler();
 		const account = this.accountService.getCurrentAccount();
 
 		const capabilities = await this.stableCoinService.getCapabilities(
@@ -89,7 +85,13 @@ export class RescueHBARCommandHandler
 			);
 		}
 
-		const res = await handler.rescueHBAR(capabilities, amountBd, startDate);
+		const res = await this.transactionService.executeOperation(
+			'rescueHBAR',
+			{
+				contractAddress: capabilities.coin.evmProxyAddress?.toString(),
+				amount: amountBd.toLong().toString(),
+			},
+		);
 		return Promise.resolve(
 			new RescueHBARCommandResponse(res.error === undefined, res.id, res.serializedTransactionData),
 		);

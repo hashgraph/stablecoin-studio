@@ -28,7 +28,7 @@ import { NotEscrow } from '../../app/usecase/command/stablecoin/operations/hold/
 import { GetHoldForQuery } from '../../app/usecase/query/stablecoin/hold/getHoldFor/GetHoldForQuery';
 import { EVM_ZERO_ADDRESS } from '../../core/Constants';
 import { InvalidHoldDestination } from '../../app/usecase/command/stablecoin/operations/hold/error/InvalidHoldDestination';
-import { MirrorNodeAdapter } from '../../port/out/mirror/MirrorNodeAdapter';
+import { AbstractMirrorNodeAdapter } from '../../port/out/mirror/AbstractMirrorNodeAdapter.js';
 import { InvalidHoldId } from '../../app/usecase/command/stablecoin/operations/hold/error/InvalidHoldId';
 import { GetHoldsIdForQuery } from '../../app/usecase/query/stablecoin/hold/getHoldsIdFor/GetHoldsIdForQuery';
 import { ExpiredHold } from '../../app/usecase/command/stablecoin/operations/hold/error/ExpiredHold';
@@ -44,8 +44,8 @@ export default class ValidationService extends Service {
 		public readonly accountService: AccountService = Injectable.resolve<AccountService>(
 			AccountService,
 		),
-		public readonly mirrorNodeAdapter: MirrorNodeAdapter = Injectable.resolve<MirrorNodeAdapter>(
-			MirrorNodeAdapter,
+		public readonly mirrorNodeAdapter: AbstractMirrorNodeAdapter = Injectable.resolve<AbstractMirrorNodeAdapter>(
+			AbstractMirrorNodeAdapter,
 		),
 	) {
 		super();

@@ -21,7 +21,7 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
 import Injectable from '../../core/Injectable.js';
-import { EmptyResponse } from '../../app/service/error/EmptyResponse.js';
+import { EmptyResponse } from '../../domain/shared/error/EmptyResponse.js';
 import { QueryBus } from '../../core/query/QueryBus.js';
 import { CommandBus } from '../../core/command/CommandBus.js';
 import {
@@ -50,12 +50,12 @@ import {
 	MAX_ACCOUNTS_ROLES,
 } from '../../domain/context/stablecoin/StableCoinRole.js';
 import { GrantSupplierRoleCommand } from '../../app/usecase/command/stablecoin/roles/grantSupplierRole/GrantSupplierRoleCommand.js';
-import { GrantUnlimitedSupplierRoleCommand } from '../../app/usecase/command/stablecoin/roles/granUnlimitedSupplierRole/GrantUnlimitedSupplierRoleCommand.js';
+import { GrantUnlimitedSupplierRoleCommand } from '../../app/usecase/command/stablecoin/roles/grantUnlimitedSupplierRole/GrantUnlimitedSupplierRoleCommand.js';
 import { RevokeSupplierRoleCommand } from '../../app/usecase/command/stablecoin/roles/revokeSupplierRole/RevokeSupplierRoleCommand.js';
 import { handleValidation } from './Common.js';
 import { Balance } from '../../domain/context/stablecoin/Balance.js';
 import { IsUnlimitedQuery } from '../../app/usecase/query/stablecoin/isUnlimited/IsUnlimitedQuery.js';
-import LogService from '../../app/service/LogService.js';
+import LogService from '../../core/service/LogService.js';
 import { LogError } from '../../core/decorator/LogErrorDecorator.js';
 import GrantMultiRolesRequest from './request/GrantMultiRolesRequest.js';
 import RevokeMultiRolesRequest from './request/RevokeMultiRolesRequest.js';

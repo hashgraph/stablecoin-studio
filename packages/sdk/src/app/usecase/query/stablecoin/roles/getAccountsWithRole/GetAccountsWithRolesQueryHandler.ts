@@ -26,8 +26,8 @@ import {
 	GetAccountsWithRolesQuery,
 	GetAccountsWithRolesQueryResponse,
 } from './GetAccountsWithRolesQuery.js';
-import { RPCQueryAdapter } from '../../../../../../port/out/rpc/RPCQueryAdapter.js';
-import { MirrorNodeAdapter } from '../../../../../../port/out/mirror/MirrorNodeAdapter.js';
+import { AbstractRPCQueryAdapter } from '../../../../../../port/out/rpc/AbstractRPCQueryAdapter.js';
+import { AbstractMirrorNodeAdapter } from '../../../../../../port/out/mirror/AbstractMirrorNodeAdapter.js';
 import { HederaId } from '../../../../../../domain/context/shared/HederaId.js';
 
 @QueryHandler(GetAccountsWithRolesQuery)
@@ -37,10 +37,10 @@ export class GetAccountsWithRolesQueryHandler
 	constructor(
 		@lazyInject(StableCoinService)
 		public readonly stableCoinService: StableCoinService,
-		@lazyInject(MirrorNodeAdapter)
-		public readonly mirrorNode: MirrorNodeAdapter,
-		@lazyInject(RPCQueryAdapter)
-		public readonly queryAdapter: RPCQueryAdapter,
+		@lazyInject(AbstractMirrorNodeAdapter)
+		public readonly mirrorNode: AbstractMirrorNodeAdapter,
+		@lazyInject(AbstractRPCQueryAdapter)
+		public readonly queryAdapter: AbstractRPCQueryAdapter,
 	) {}
 
 	async execute(

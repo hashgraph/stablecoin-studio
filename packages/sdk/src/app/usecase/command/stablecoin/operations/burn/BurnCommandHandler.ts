@@ -19,12 +19,10 @@
  */
 
 import ValidationService from '../../../../../service/ValidationService.js';
-import CheckNums from '../../../../../../core/checks/numbers/CheckNums.js';
-import { CommandBus } from '../../../../../../core/command/CommandBus.js';
+import CheckNums from '../../../../../../domain/shared/checks/numbers/CheckNums.js';
 import { ICommandHandler } from '../../../../../../core/command/CommandHandler.js';
 import { CommandHandler } from '../../../../../../core/decorator/CommandHandlerDecorator.js';
 import { lazyInject } from '../../../../../../core/decorator/LazyInjectDecorator.js';
-import { QueryBus } from '../../../../../../core/query/QueryBus.js';
 import BigDecimal from '../../../../../../domain/context/shared/BigDecimal.js';
 import AccountService from '../../../../../service/AccountService.js';
 import StableCoinService from '../../../../../service/StableCoinService.js';
@@ -38,10 +36,6 @@ export class BurnCommandHandler implements ICommandHandler<BurnCommand> {
 	constructor(
 		@lazyInject(StableCoinService)
 		public readonly stableCoinService: StableCoinService,
-		@lazyInject(CommandBus)
-		public readonly commandBus: CommandBus,
-		@lazyInject(QueryBus)
-		public readonly queryBus: QueryBus,
 		@lazyInject(AccountService)
 		public readonly accountService: AccountService,
 		@lazyInject(TransactionService)
@@ -51,8 +45,7 @@ export class BurnCommandHandler implements ICommandHandler<BurnCommand> {
 	) {}
 
 	async execute(command: BurnCommand): Promise<BurnCommandResponse> {
-		const { amount, tokenId, startDate } = command;
-		const handler = this.transactionService.getHandler();
+		const { amount, tokenId } = command;
 		const account = this.accountService.getCurrentAccount();
 		const capabilities = await this.stableCoinService.getCapabilities(
 			account,
@@ -70,7 +63,13 @@ export class BurnCommandHandler implements ICommandHandler<BurnCommand> {
 
 		await this.validationService.checkBurnableAmount(coin.tokenId, amount);
 
-		const res = await handler.burn(capabilities, amountBd, startDate);
+		const res = await this.transactionService.executeOperation(
+			'burn',
+			{
+				contractAddress: capabilities.coin.evmProxyAddress?.toString(),
+				amount: amountBd.toLong().toString(),
+			},
+		);
 		return Promise.resolve(
 			new BurnCommandResponse(res.error === undefined, res.id, res.serializedTransactionData),
 		);

@@ -35,10 +35,12 @@ import { StableCoinNotAssociated } from '../../error/StableCoinNotAssociated.js'
 import {
 	FreezeStatus,
 	KycStatus,
-} from '../../../../../../port/out/mirror/response/AccountTokenRelationViewModel.js';
+} from '../../../../../../domain/context/stablecoin/TokenRelation.js';
 import { AccountFreeze } from '../../error/AccountFreeze.js';
 import { AccountNotKyc } from '../../error/AccountNotKyc.js';
 import { CustomFeeWithoutCollectorId } from '../../error/CustomFeeWithoutCollectorId.js';
+import { AbstractMirrorNodeAdapter } from '../../../../../../port/out/mirror/AbstractMirrorNodeAdapter.js';
+import { prepareCustomFees } from '../prepareCustomFees.js';
 
 @CommandHandler(UpdateCustomFeesCommand)
 export class UpdateCustomFeesCommandHandler
@@ -51,13 +53,14 @@ export class UpdateCustomFeesCommandHandler
 		public readonly accountService: AccountService,
 		@lazyInject(TransactionService)
 		public readonly transactionService: TransactionService,
+		@lazyInject(AbstractMirrorNodeAdapter)
+		public readonly mirrorNodeAdapter: AbstractMirrorNodeAdapter,
 	) {}
 
 	async execute(
 		command: UpdateCustomFeesCommand,
 	): Promise<UpdateCustomFeesCommandResponse> {
 		const { tokenId, customFees } = command;
-		const handler = this.transactionService.getHandler();
 		const account = this.accountService.getCurrentAccount();
 		const capabilities = await this.stableCoinService.getCapabilities(
 			account,
@@ -96,10 +99,29 @@ export class UpdateCustomFeesCommandHandler
 		const HcustomFee: HCustomFee[] =
 			fromCustomFeesToHCustomFees(customFees);
 
-		const res = await handler.updateCustomFees(capabilities, HcustomFee);
+		const evmProxyAddress = capabilities.coin.evmProxyAddress?.toString();
+		if (!evmProxyAddress) {
+			throw new Error('StableCoin does not have a proxy address');
+		}
 
-		return Promise.resolve(
-			new UpdateCustomFeesCommandResponse(res.error === undefined, res.id, res.serializedTransactionData),
+		const { fixedFees, fractionalFees } = await prepareCustomFees(
+			HcustomFee,
+			tokenId.toString(),
+			this.mirrorNodeAdapter,
+		);
+
+		const res = await this.transactionService.executeOperation(
+			'updateCustomFees',
+			{
+				contractAddress: evmProxyAddress,
+				fixedFees,
+				fractionalFees,
+			},
+		);
+
+		return new UpdateCustomFeesCommandResponse(
+			res.error === undefined,
+			res.id,
 		);
 	}
 }

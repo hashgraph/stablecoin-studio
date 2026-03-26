@@ -18,7 +18,7 @@
  *
  */
 
-import BaseError, { ErrorCode } from '../../../../core/error/BaseError.js';
+import BaseError, { ErrorCode } from '../../../shared/error/BaseError.js';
 
 export class InvalidIdFormat extends BaseError {
 	constructor(val: unknown) {

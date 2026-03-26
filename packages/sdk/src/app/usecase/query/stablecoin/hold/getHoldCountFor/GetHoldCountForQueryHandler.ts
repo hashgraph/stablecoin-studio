@@ -24,10 +24,10 @@ import {
 } from './GetHoldCountForQuery.js';
 import { QueryHandler } from '../../../../../../core/decorator/QueryHandlerDecorator.js';
 import { IQueryHandler } from '../../../../../../core/query/QueryHandler.js';
-import { RPCQueryAdapter } from '../../../../../../port/out/rpc/RPCQueryAdapter.js';
+import { AbstractRPCQueryAdapter } from '../../../../../../port/out/rpc/AbstractRPCQueryAdapter.js';
 import { lazyInject } from '../../../../../../core/decorator/LazyInjectDecorator.js';
 import StableCoinService from '../../../../../service/StableCoinService.js';
-import { MirrorNodeAdapter } from '../../../../../../port/out/mirror/MirrorNodeAdapter.js';
+import { AbstractMirrorNodeAdapter } from '../../../../../../port/out/mirror/AbstractMirrorNodeAdapter.js';
 
 @QueryHandler(GetHoldCountForQuery)
 export class GetHoldCountForQueryHandler
@@ -36,10 +36,10 @@ export class GetHoldCountForQueryHandler
 	constructor(
 		@lazyInject(StableCoinService)
 		private readonly stableCoinService: StableCoinService,
-		@lazyInject(RPCQueryAdapter)
-		private readonly queryAdapter: RPCQueryAdapter,
-		@lazyInject(MirrorNodeAdapter)
-		private readonly mirrorNode: MirrorNodeAdapter,
+		@lazyInject(AbstractRPCQueryAdapter)
+		private readonly queryAdapter: AbstractRPCQueryAdapter,
+		@lazyInject(AbstractMirrorNodeAdapter)
+		private readonly mirrorNode: AbstractMirrorNodeAdapter,
 	) {}
 
 	async execute(

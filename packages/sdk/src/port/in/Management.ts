@@ -19,7 +19,7 @@
  */
 
 import Injectable from '../../core/Injectable.js';
-import { EmptyResponse } from '../../app/service/error/EmptyResponse.js';
+import { EmptyResponse } from '../../domain/shared/error/EmptyResponse.js';
 import ContractId from '../../domain/context/contract/ContractId.js';
 import GetConfigInfoRequest from './request/GetConfigInfoRequest';
 import UpdateConfigRequest from './request/UpdateConfigRequest';

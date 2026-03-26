@@ -30,8 +30,8 @@ import ConnectRequest, {
 	SupportedWallets,
 } from './request/ConnectRequest.js';
 import RequestMapper from './request/mapping/RequestMapper.js';
-import TransactionService from '../../app/service/TransactionService.js';
-import NetworkService from '../../app/service/NetworkService.js';
+import { DisconnectCommand } from '../../app/usecase/command/network/disconnect/DisconnectCommand.js';
+import { AbstractNetworkService } from '../../core/service/AbstractNetworkService.js';
 import SetNetworkRequest from './request/SetNetworkRequest.js';
 import { SetNetworkCommand } from '../../app/usecase/command/network/setNetwork/SetNetworkCommand.js';
 import { SetConfigurationCommand } from '../../app/usecase/command/network/setConfiguration/SetConfigurationCommand.js';
@@ -97,11 +97,8 @@ class NetworkInPort implements INetworkInPort {
 		private readonly commandBus: CommandBus = Injectable.resolve(
 			CommandBus,
 		),
-		private readonly transactionService: TransactionService = Injectable.resolve(
-			TransactionService,
-		),
-		private readonly networkService: NetworkService = Injectable.resolve(
-			NetworkService,
+		private readonly networkService: AbstractNetworkService = Injectable.resolve(
+			AbstractNetworkService,
 		),
 	) {}
 
@@ -298,8 +295,9 @@ class NetworkInPort implements INetworkInPort {
 		return undefined;
 	}
 
-	disconnect(): Promise<boolean> {
-		return this.transactionService.getHandler().stop();
+	async disconnect(): Promise<boolean> {
+		const res = await this.commandBus.execute(new DisconnectCommand());
+		return res.payload;
 	}
 }
 

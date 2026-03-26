@@ -25,6 +25,7 @@ import AccountService from '../../../../../service/AccountService.js';
 import StableCoinService from '../../../../../service/StableCoinService.js';
 import TransactionService from '../../../../../service/TransactionService.js';
 import { AccountsIdNotExists } from '../../error/AccountsIdNotExists.js';
+import { AbstractMirrorNodeAdapter } from '../../../../../../port/out/mirror/AbstractMirrorNodeAdapter.js';
 import {
 	RevokeMultiRolesCommand,
 	RevokeMultiRolesCommandResponse,
@@ -41,13 +42,14 @@ export class RevokeMultiRolesCommandHandler
 		public readonly accountService: AccountService,
 		@lazyInject(TransactionService)
 		public readonly transactionService: TransactionService,
+		@lazyInject(AbstractMirrorNodeAdapter)
+		public readonly mirrorNode: AbstractMirrorNodeAdapter,
 	) {}
 
 	async execute(
 		command: RevokeMultiRolesCommand,
 	): Promise<RevokeMultiRolesCommandResponse> {
-		const { roles, targetsId, tokenId, startDate } = command;
-		const handler = this.transactionService.getHandler();
+		const { roles, targetsId, tokenId } = command;
 		const account = this.accountService.getCurrentAccount();
 		const capabilities = await this.stableCoinService.getCapabilities(
 			account,
@@ -69,14 +71,18 @@ export class RevokeMultiRolesCommandHandler
 			throw new AccountsIdNotExists(noExistsAccounts);
 		}
 
-		const res = await handler.revokeRoles(
-			capabilities,
-			targetsId,
-			roles,
-			startDate,
+		const accounts = await Promise.all(
+			targetsId.map(async (id) =>
+				(await this.mirrorNode.accountToEvmAddress(id)).toString(),
+			),
 		);
 
-		// return Promise.resolve({ payload: res.response ?? false });
+		const res = await this.transactionService.executeOperation('revokeMultiRoles', {
+			contractAddress: capabilities.coin.evmProxyAddress?.toString(),
+			roles,
+			accounts,
+		});
+
 		return Promise.resolve(
 			new RevokeMultiRolesCommandResponse(res.error === undefined, res.id, res.serializedTransactionData),
 		);

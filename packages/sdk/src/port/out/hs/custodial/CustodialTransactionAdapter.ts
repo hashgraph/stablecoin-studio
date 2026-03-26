@@ -33,23 +33,24 @@ import FireblocksSettings from '../../../../domain/context/custodialwalletsettin
 import Account from '../../../../domain/context/account/Account';
 import { InitializationData } from '../../TransactionAdapter';
 import { lazyInject } from '../../../../core/decorator/LazyInjectDecorator';
-import EventService from '../../../../app/service/event/EventService';
-import { MirrorNodeAdapter } from '../../mirror/MirrorNodeAdapter';
-import NetworkService from '../../../../app/service/NetworkService';
+import { AbstractMirrorNodeAdapter } from '../../mirror/AbstractMirrorNodeAdapter.js';
+import { AbstractNetworkService } from '../../../../core/service/AbstractNetworkService.js';
+import { AbstractEventService } from '../../../../core/service/AbstractEventService.js';
 import { Environment } from '../../../../domain/context/network/Environment';
-import LogService from '../../../../app/service/LogService';
+import LogService from '../../../../core/service/LogService.js';
 import { HTSTransactionResponseAdapter } from '../../response/HTSTransactionResponseAdapter';
 import { SigningError } from '../../hs/error/SigningError';
 import { SupportedWallets } from '../../../../domain/context/network/Wallet';
 import {
 	WalletEvents,
 	WalletPairedEvent,
-} from '../../../../app/service/event/WalletEvent';
+} from '../../../../domain/context/event/WalletEvent.js';
 import Injectable from '../../../../core/Injectable';
 import { TransactionType } from '../../TransactionResponseEnums';
 import Hex from '../../../../core/Hex.js';
 import AWSKMSSettings from '../../../../domain/context/custodialwalletsettings/AWSKMSSettings';
 import { BaseHederaTransactionAdapter } from '../BaseHederaTransactionAdapter.js';
+import type { SigningConfig } from '../../../../core/config/SigningConfig.js';
 
 export abstract class CustodialTransactionAdapter extends BaseHederaTransactionAdapter {
 	protected client: Client;
@@ -58,11 +59,11 @@ export abstract class CustodialTransactionAdapter extends BaseHederaTransactionA
 	protected network: Environment;
 
 	constructor(
-		@lazyInject(EventService) public readonly eventService: EventService,
-		@lazyInject(MirrorNodeAdapter)
-		public readonly mirrorNodeAdapter: MirrorNodeAdapter,
-		@lazyInject(NetworkService)
-		public readonly networkService: NetworkService,
+		@lazyInject(AbstractEventService) public readonly eventService: AbstractEventService,
+		@lazyInject(AbstractMirrorNodeAdapter)
+		public readonly mirrorNodeAdapter: AbstractMirrorNodeAdapter,
+		@lazyInject(AbstractNetworkService)
+		public readonly networkService: AbstractNetworkService,
 	) {
 		super();
 	}
@@ -228,14 +229,26 @@ export abstract class CustodialTransactionAdapter extends BaseHederaTransactionA
 	/**
 	 * Get the network service.
 	 */
-	public getNetworkService(): NetworkService {
+	public getNetworkService(): AbstractNetworkService {
 		return this.networkService;
 	}
 
 	/**
 	 * Get the mirror node adapter.
 	 */
-	public getMirrorNodeAdapter(): MirrorNodeAdapter {
+	public getMirrorNodeAdapter(): AbstractMirrorNodeAdapter {
 		return this.mirrorNodeAdapter;
+	}
+
+	toSigningConfig(): SigningConfig {
+		const svc = this.custodialWalletService;
+		return {
+			type: 'custodial',
+			client: this.client,
+			custodialSigner: {
+				sign: (req: { transactionBytes: Uint8Array }) =>
+					svc.signTransaction(new SignatureRequest(req.transactionBytes)),
+			},
+		};
 	}
 }

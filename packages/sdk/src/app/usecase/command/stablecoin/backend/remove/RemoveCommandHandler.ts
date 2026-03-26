@@ -21,14 +21,14 @@
 import { ICommandHandler } from '../../../../../../core/command/CommandHandler.js';
 import { CommandHandler } from '../../../../../../core/decorator/CommandHandlerDecorator.js';
 import { lazyInject } from '../../../../../../core/decorator/LazyInjectDecorator.js';
-import { BackendAdapter } from '../../../../../../port/out/backend/BackendAdapter.js';
+import { AbstractBackendAdapter } from '../../../../../../port/out/backend/AbstractBackendAdapter.js';
 import { RemoveCommand, RemoveCommandResponse } from './RemoveCommand.js';
 
 @CommandHandler(RemoveCommand)
 export class RemoveCommandHandler implements ICommandHandler<RemoveCommand> {
 	constructor(
-		@lazyInject(BackendAdapter)
-		public readonly backendAdapter: BackendAdapter,
+		@lazyInject(AbstractBackendAdapter)
+		public readonly backendAdapter: AbstractBackendAdapter,
 	) {}
 
 	async execute(command: RemoveCommand): Promise<RemoveCommandResponse> {

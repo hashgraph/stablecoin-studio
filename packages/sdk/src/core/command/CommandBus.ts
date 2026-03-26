@@ -19,10 +19,10 @@
  */
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { injectable } from 'tsyringe';
+import { injectable, container } from 'tsyringe';
 import { COMMAND_HANDLER_METADATA, COMMAND_METADATA } from '../Constants.js';
 import { CommandMetadata } from '../decorator/CommandMetadata.js';
-import Injectable from '../Injectable.js';
+import { TOKENS } from '../tokens.js';
 import { Type } from '../Type.js';
 import { Command } from './Command.js';
 import { ICommandHandler } from './CommandHandler.js';
@@ -44,7 +44,7 @@ export class CommandBus<T extends CommandResponse = CommandResponse>
 	public handlers = new Map<string, ICommandHandler<Command<T>>>();
 
 	constructor() {
-		const handlers = Injectable.getCommandHandlers();
+		const handlers = container.resolveAll<CommandHandlerType>(TOKENS.COMMAND_HANDLER);
 		this.registerHandlers(handlers);
 	}
 

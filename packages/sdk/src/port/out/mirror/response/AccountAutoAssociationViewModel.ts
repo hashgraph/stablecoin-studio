@@ -18,10 +18,5 @@
  *
  */
 
-import { QueryResponse } from '../../../../core/query/QueryResponse';
-
-export interface AccountAutoAssociationViewModel extends QueryResponse {
-	maxAutoAssociations: number;
-	autoAssociationsCount: number;
-	remainingAutoAssociations: number;
-}
+// Re-export from core/ — canonical definition
+export { AccountAutoAssociationViewModel } from '../../../../core/query/response/AccountAutoAssociationViewModel.js';

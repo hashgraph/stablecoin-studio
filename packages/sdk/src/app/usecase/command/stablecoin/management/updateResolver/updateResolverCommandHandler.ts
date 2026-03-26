@@ -47,17 +47,19 @@ export class UpdateResolverCommandHandler
 	): Promise<UpdateResolverCommandResponse> {
 		const { tokenId, configId, configVersion, resolver } = command;
 
-		const handler = this.transactionService.getHandler();
 		const account = this.accountService.getCurrentAccount();
 		const capabilities = await this.stableCoinService.getCapabilities(
 			account,
 			tokenId,
 		);
-		const res = await handler.updateResolver(
-			capabilities,
-			resolver,
-			configVersion,
-			configId,
+		const res = await this.transactionService.executeOperation(
+			'updateResolver',
+			{
+				contractAddress: capabilities.coin.evmProxyAddress?.toString(),
+				resolver: '0x' + resolver.toHederaAddress().toSolidityAddress(),
+				configId,
+				configVersion: configVersion.toString(),
+			},
 		);
 
 		return Promise.resolve(

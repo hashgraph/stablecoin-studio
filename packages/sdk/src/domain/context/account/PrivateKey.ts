@@ -21,7 +21,7 @@
 import { PrivateKey as HPrivateKey } from '@hiero-ledger/sdk';
 import KeyProps, { KeyType } from './KeyProps.js';
 import PublicKey from './PublicKey.js';
-import BaseError from '../../../core/error/BaseError.js';
+import BaseError from '../../shared/error/BaseError.js';
 
 export default class PrivateKey implements KeyProps {
 	public readonly key: string;

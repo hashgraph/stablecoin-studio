@@ -18,7 +18,7 @@
  *
  */
 
-import BaseError, { ErrorCode } from '../../../../core/error/BaseError.js';
+import BaseError, { ErrorCode } from '../../../../domain/shared/error/BaseError.js';
 
 export class InvalidBytes32 extends BaseError {
 	constructor(value: string) {

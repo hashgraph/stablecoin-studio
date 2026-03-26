@@ -23,7 +23,7 @@ import { ICommandHandler } from '../../../../../../core/command/CommandHandler.j
 import { CommandHandler } from '../../../../../../core/decorator/CommandHandlerDecorator.js';
 import { lazyInject } from '../../../../../../core/decorator/LazyInjectDecorator.js';
 import { EXECUTED } from '../../../../../../domain/context/transaction/MultiSigTransaction.js';
-import { BackendAdapter } from '../../../../../../port/out/backend/BackendAdapter.js';
+import { AbstractBackendAdapter } from '../../../../../../port/out/backend/AbstractBackendAdapter.js';
 import AccountService from '../../../../../service/AccountService.js';
 import TransactionService from '../../../../../service/TransactionService.js';
 import { SubmitCommand, SubmitCommandResponse } from './SubmitCommand.js';
@@ -34,8 +34,8 @@ export class SubmitCommandHandler implements ICommandHandler<SubmitCommand> {
 	constructor(
 		@lazyInject(AccountService)
 		public readonly accountService: AccountService,
-		@lazyInject(BackendAdapter)
-		public readonly backendAdapter: BackendAdapter,
+		@lazyInject(AbstractBackendAdapter)
+		public readonly backendAdapter: AbstractBackendAdapter,
 		@lazyInject(TransactionService)
 		public readonly transactionService: TransactionService,
 	) {}

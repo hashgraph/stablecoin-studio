@@ -25,6 +25,7 @@ import BigDecimal from '../../../../../../domain/context/shared/BigDecimal.js';
 import AccountService from '../../../../../service/AccountService.js';
 import StableCoinService from '../../../../../service/StableCoinService.js';
 import TransactionService from '../../../../../service/TransactionService.js';
+import { AbstractMirrorNodeAdapter } from '../../../../../../port/out/mirror/AbstractMirrorNodeAdapter.js';
 import {
 	GrantSupplierRoleCommand,
 	GrantSupplierRoleCommandResponse,
@@ -41,24 +42,27 @@ export class GrantSupplierRoleCommandHandler
 		public readonly accountService: AccountService,
 		@lazyInject(TransactionService)
 		public readonly transactionService: TransactionService,
+		@lazyInject(AbstractMirrorNodeAdapter)
+		public readonly mirrorNode: AbstractMirrorNodeAdapter,
 	) {}
 
 	async execute(
 		command: GrantSupplierRoleCommand,
 	): Promise<GrantSupplierRoleCommandResponse> {
 		const { targetId, tokenId, amount } = command;
-		const handler = this.transactionService.getHandler();
 		const account = this.accountService.getCurrentAccount();
 		const capabilities = await this.stableCoinService.getCapabilities(
 			account,
 			tokenId,
 		);
-		const res = await handler.grantSupplierRole(
-			capabilities,
-			targetId,
-			BigDecimal.fromString(amount, capabilities.coin.decimals),
-		);
-		// return Promise.resolve({ payload: res.response });
+		const targetEvmAddress = (
+			await this.mirrorNode.accountToEvmAddress(targetId)
+		).toString();
+		const res = await this.transactionService.executeOperation('grantSupplierRole', {
+			contractAddress: capabilities.coin.evmProxyAddress?.toString(),
+			targetId: targetEvmAddress,
+			amount: BigDecimal.fromString(amount, capabilities.coin.decimals).toLong().toString(),
+		});
 		return Promise.resolve(
 			new GrantSupplierRoleCommandResponse(res.error === undefined, res.id, res.serializedTransactionData),
 		);

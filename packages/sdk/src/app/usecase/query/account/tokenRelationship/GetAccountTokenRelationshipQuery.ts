@@ -21,7 +21,7 @@
 import { Query } from '../../../../../core/query/Query.js';
 import { QueryResponse } from '../../../../../core/query/QueryResponse.js';
 import { HederaId } from '../../../../../domain/context/shared/HederaId.js';
-import { AccountTokenRelationViewModel } from '../../../../../port/out/mirror/response/AccountTokenRelationViewModel.js';
+import { AccountTokenRelationViewModel } from '../../../../../core/query/response/AccountTokenRelationViewModel.js';
 
 export class GetAccountTokenRelationshipQueryResponse implements QueryResponse {
 	constructor(public readonly payload?: AccountTokenRelationViewModel) {}

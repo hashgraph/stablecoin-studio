@@ -19,10 +19,10 @@
  */
 
 import MemoLength from './error/MemoLength.js';
-import CheckNums from '../../../core/checks/numbers/CheckNums.js';
-import CheckStrings from '../../../core/checks/strings/CheckStrings.js';
-import BaseError from '../../../core/error/BaseError.js';
-import { InvalidType } from '../../../port/in/request/error/InvalidType.js';
+import CheckNums from '../../shared/checks/numbers/CheckNums.js';
+import CheckStrings from '../../shared/checks/strings/CheckStrings.js';
+import BaseError from '../../shared/error/BaseError.js';
+import { InvalidType } from '../../shared/error/InvalidType.js';
 import PublicKey from '../account/PublicKey.js';
 import BaseEntity from '../BaseEntity.js';
 import { StableCoinMemo } from './StableCoinMemo.js';

@@ -24,7 +24,7 @@ import StableCoinViewModel from '../../out/mirror/response/StableCoinViewModel.j
 import AccountViewModel from '../../out/mirror/response/AccountViewModel.js';
 import StableCoinListViewModel from '../../out/mirror/response/StableCoinListViewModel.js';
 import TransactionResultViewModel from '../../out/mirror/response/TransactionResultViewModel.js';
-import LogService from '../../../app/service/LogService.js';
+import LogService from '../../../core/service/LogService.js';
 import { StableCoinNotFound } from './error/StableCoinNotFound.js';
 import BigDecimal from '../../../domain/context/shared/BigDecimal.js';
 import { PublicKey as HPublicKey } from '@hiero-ledger/sdk';
@@ -58,12 +58,13 @@ import MultiKey from '../../../domain/context/account/MultiKey.js';
 import { Time } from '../../../core/Time.js';
 import Validation from '../../../port/in/request/validation/Validation.js';
 import { AccountAutoAssociationViewModel } from './response/AccountAutoAssociationViewModel';
+import { AbstractMirrorNodeAdapter } from './AbstractMirrorNodeAdapter.js';
 import AccountDetailViewModel from './response/AccountDetailViewModel';
 
 const PROTOBUF_ENCODED = 'ProtobufEncoded';
 
 @singleton()
-export class MirrorNodeAdapter {
+export class MirrorNodeAdapter extends AbstractMirrorNodeAdapter {
 	private instance: AxiosInstance;
 	private config: AxiosRequestConfig;
 	private mirrorNodeConfig: MirrorNode;

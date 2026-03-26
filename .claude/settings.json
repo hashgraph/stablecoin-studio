@@ -1,0 +1,11 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(NODE_OPTIONS=--max-old-space-size=8192 npx jest --forceExit --runInBand --testPathPattern=\"CustodialE2E\" --verbose)",
+      "Bash(NODE_OPTIONS=--max-old-space-size=8192 npx jest --config jest.e2e.config.js --forceExit --runInBand --testPathPattern=\"CustodialE2E\" --verbose)",
+      "Bash(grep -v \"^$\")",
+      "Bash(git config:*)",
+      "Bash(npm install:*)"
+    ]
+  }
+}

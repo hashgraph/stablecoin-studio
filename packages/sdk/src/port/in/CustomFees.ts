@@ -20,7 +20,7 @@
 
 import { CommandBus } from '../../core/command/CommandBus.js';
 import Injectable from '../../core/Injectable.js';
-import { EmptyResponse } from '../../app/service/error/EmptyResponse.js';
+import { EmptyResponse } from '../../domain/shared/error/EmptyResponse.js';
 import {
 	AddFixedFeeRequest,
 	AddFractionalFeeRequest,

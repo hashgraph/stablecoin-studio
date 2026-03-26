@@ -22,7 +22,7 @@
 import ValidatedRequest from './validation/ValidatedRequest.js';
 import Validation from './validation/Validation.js';
 import BigDecimal from '../../../domain/context/shared/BigDecimal.js';
-import CheckNums from '../../../core/checks/numbers/CheckNums.js';
+import CheckNums from '../../../domain/shared/checks/numbers/CheckNums.js';
 import { InvalidType } from './error/InvalidType.js';
 import InvalidDecimalRange from '../../../domain/context/stablecoin/error/InvalidDecimalRange.js';
 import { InvalidRange } from './error/InvalidRange.js';

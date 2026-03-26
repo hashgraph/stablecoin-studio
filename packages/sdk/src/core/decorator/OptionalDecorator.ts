@@ -18,10 +18,13 @@
  *
  */
 
-import RequestMapper from '../../port/in/request/mapping/RequestMapper.js';
 import { IndexableObject } from '../Type.js';
 
 const OPTIONAL_KEYS = Symbol('optionalKeys');
+
+function stripPrivatePrefix(key: string): string {
+	return key.startsWith('_') || key.startsWith('#') ? key.substring(1) : key;
+}
 
 export function OptionalField(): (target: object, propertyKey: string) => void {
 	return registerProperty;
@@ -43,7 +46,7 @@ export function getOptionalFields(origin: IndexableObject): IndexableObject {
 		Reflect.getMetadata(OPTIONAL_KEYS, origin) ?? [];
 	const result: IndexableObject = {};
 	properties.forEach(
-		(key) => (result[RequestMapper.renamePrivateProps(key)] = origin[key]),
+		(key) => (result[stripPrivatePrefix(key)] = origin[key]),
 	);
 	return result;
 }

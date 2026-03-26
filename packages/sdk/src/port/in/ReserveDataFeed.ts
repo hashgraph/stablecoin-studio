@@ -20,7 +20,7 @@
 
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import Injectable from '../../core/Injectable.js';
-import { EmptyResponse } from '../../app/service/error/EmptyResponse.js';
+import { EmptyResponse } from '../../domain/shared/error/EmptyResponse.js';
 import BigDecimal from '../../domain/context/shared/BigDecimal.js';
 import ContractId from '../../domain/context/contract/ContractId.js';
 import { CommandBus } from '../../core/command/CommandBus.js';
@@ -34,7 +34,7 @@ import { RESERVE_DECIMALS } from '../../domain/context/reserve/Reserve.js';
 import { GetReserveAmountQuery } from '../../app/usecase/query/stablecoin/getReserveAmount/GetReserveAmountQuery.js';
 import { QueryBus } from '../../core/query/QueryBus.js';
 import { LogError } from '../../core/decorator/LogErrorDecorator.js';
-import { MirrorNodeAdapter } from '../../port/out/mirror/MirrorNodeAdapter.js';
+import { AbstractMirrorNodeAdapter } from '../../port/out/mirror/AbstractMirrorNodeAdapter.js';
 import { TransactionResult } from '../../domain/context/transaction/TransactionResult.js';
 import { SerializedTransactionData } from '../../domain/context/transaction/TransactionResponse.js';
 
@@ -51,8 +51,8 @@ class ReserveDataFeedInPort implements IReserveDataFeedInPort {
 			CommandBus,
 		),
 		private readonly queryBus: QueryBus = Injectable.resolve(QueryBus),
-		private readonly mirrorNode: MirrorNodeAdapter = Injectable.resolve(
-			MirrorNodeAdapter,
+		private readonly mirrorNode: AbstractMirrorNodeAdapter = Injectable.resolve(
+			AbstractMirrorNodeAdapter,
 		),
 	) {}
 

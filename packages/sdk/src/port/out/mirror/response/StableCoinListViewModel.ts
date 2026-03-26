@@ -18,8 +18,5 @@
  *
  */
 
-import { QueryResponse } from '../../../../core/query/QueryResponse.js';
-
-export default interface StableCoinListViewModel extends QueryResponse {
-	coins: { symbol: string; id: string }[];
-}
+// Re-export from core/ — canonical definition
+export { default } from '../../../../core/query/response/StableCoinListViewModel.js';

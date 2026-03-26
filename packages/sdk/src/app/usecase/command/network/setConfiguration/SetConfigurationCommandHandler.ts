@@ -21,7 +21,7 @@
 import { ICommandHandler } from '../../../../../core/command/CommandHandler.js';
 import { CommandHandler } from '../../../../../core/decorator/CommandHandlerDecorator.js';
 import { lazyInject } from '../../../../../core/decorator/LazyInjectDecorator.js';
-import { MirrorNodeAdapter } from '../../../../../port/out/mirror/MirrorNodeAdapter.js';
+import { AbstractMirrorNodeAdapter } from '../../../../../port/out/mirror/AbstractMirrorNodeAdapter.js';
 import NetworkService from '../../../../service/NetworkService.js';
 import {
 	SetConfigurationCommand,
@@ -35,8 +35,8 @@ export class SetConfigurationCommandHandler
 	constructor(
 		@lazyInject(NetworkService)
 		public readonly networkService: NetworkService,
-		@lazyInject(MirrorNodeAdapter)
-		public readonly mirrorNodeAdapter: MirrorNodeAdapter,
+		@lazyInject(AbstractMirrorNodeAdapter)
+		public readonly mirrorNodeAdapter: AbstractMirrorNodeAdapter,
 	) {}
 
 	async execute(

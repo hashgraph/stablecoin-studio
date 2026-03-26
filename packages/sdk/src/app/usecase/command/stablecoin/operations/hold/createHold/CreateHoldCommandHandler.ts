@@ -26,7 +26,7 @@ import { QueryBus } from '../../../../../../../core/query/QueryBus.js';
 import {
 	FreezeStatus,
 	KycStatus,
-} from '../../../../../../../port/out/mirror/response/AccountTokenRelationViewModel.js';
+} from '../../../../../../../domain/context/stablecoin/TokenRelation.js';
 import AccountService from '../../../../../../service/AccountService.js';
 import StableCoinService from '../../../../../../service/StableCoinService.js';
 import TransactionService from '../../../../../../service/TransactionService.js';
@@ -40,9 +40,10 @@ import {
 import { AccountNotKyc } from '../../../error/AccountNotKyc.js';
 import { AccountFreeze } from '../../../error/AccountFreeze.js';
 import { BalanceOfQuery } from '../../../../../query/stablecoin/balanceof/BalanceOfQuery.js';
-import CheckNums from '../../../../../../../core/checks/numbers/CheckNums.js';
+import CheckNums from '../../../../../../../domain/shared/checks/numbers/CheckNums.js';
 import { DecimalsOverRange } from '../../../error/DecimalsOverRange.js';
 import { MissingProxyWipeKey } from '../../../error/MissingProxyWipeKey.js';
+import { AbstractMirrorNodeAdapter } from '../../../../../../../port/out/mirror/AbstractMirrorNodeAdapter.js';
 
 @CommandHandler(CreateHoldCommand)
 export class CreateHoldCommandHandler
@@ -57,13 +58,14 @@ export class CreateHoldCommandHandler
 		private readonly accountService: AccountService,
 		@lazyInject(TransactionService)
 		private readonly transactionService: TransactionService,
+		@lazyInject(AbstractMirrorNodeAdapter)
+		private readonly mirrorNode: AbstractMirrorNodeAdapter,
 	) {}
 
 	async execute(
 		command: CreateHoldCommand,
 	): Promise<CreateHoldCommandResponse> {
 		const { tokenId, amount, escrow, expirationDate, targetId } = command;
-		const handler = this.transactionService.getHandler();
 		const account = this.accountService.getCurrentAccount();
 		const capabilities = await this.stableCoinService.getCapabilities(
 			account,
@@ -115,12 +117,18 @@ export class CreateHoldCommandHandler
 			);
 		}
 
-		const res = await handler.createHold(
-			capabilities,
-			amountBd,
-			escrow,
-			BigDecimal.fromString(expirationDate),
-			targetId,
+		const toEvmAddress = targetId
+			? (await this.mirrorNode.accountToEvmAddress(targetId)).toString()
+			: (await this.mirrorNode.accountToEvmAddress(account.id)).toString();
+		const res = await this.transactionService.executeOperation(
+			'createHold',
+			{
+				contractAddress: capabilities.coin.evmProxyAddress?.toString(),
+				toAddress: toEvmAddress,
+				escrowAddress: '0x' + escrow.toHederaAddress().toSolidityAddress(),
+				amount: amountBd.toLong().toString(),
+				expirationTimestamp: expirationDate,
+			},
 		);
 
 		if (this.transactionService.isExternalWallet()) {

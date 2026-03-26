@@ -33,17 +33,18 @@ import TransactionResponse, {
 } from '../../../../domain/context/transaction/TransactionResponse.js';
 import { SupportedWallets } from '../../../../domain/context/network/Wallet.js';
 import { TransactionType } from '../../TransactionResponseEnums.js';
-import NetworkService from '../../../../app/service/NetworkService.js';
-import { MirrorNodeAdapter } from '../../mirror/MirrorNodeAdapter.js';
+import { AbstractNetworkService } from '../../../../core/service/AbstractNetworkService.js';
+import { AbstractMirrorNodeAdapter } from '../../mirror/AbstractMirrorNodeAdapter.js';
 import Account from '../../../../domain/context/account/Account.js';
 import { InitializationData } from '../../TransactionAdapter.js';
 import Injectable from '../../../../core/Injectable.js';
 import {
 	WalletEvents,
 	WalletPairedEvent,
-} from '../../../../app/service/event/WalletEvent.js';
-import LogService from '../../../../app/service/LogService.js';
-import EventService from '../../../../app/service/event/EventService.js';
+} from '../../../../domain/context/event/WalletEvent.js';
+import LogService from '../../../../core/service/LogService.js';
+import { AbstractEventService } from '../../../../core/service/AbstractEventService.js';
+import type { SigningConfig } from '../../../../core/config/SigningConfig.js';
 
 @singleton()
 export class ExternalHederaTransactionAdapter extends BaseHederaTransactionAdapter {
@@ -51,12 +52,12 @@ export class ExternalHederaTransactionAdapter extends BaseHederaTransactionAdapt
 	private validStartOffsetMinutes = 0;
 
 	constructor(
-		@lazyInject(EventService)
-		public readonly eventService: EventService,
-		@lazyInject(MirrorNodeAdapter)
-		public readonly mirrorNodeAdapter: MirrorNodeAdapter,
-		@lazyInject(NetworkService)
-		public readonly networkService: NetworkService,
+		@lazyInject(AbstractEventService)
+		public readonly eventService: AbstractEventService,
+		@lazyInject(AbstractMirrorNodeAdapter)
+		public readonly mirrorNodeAdapter: AbstractMirrorNodeAdapter,
+		@lazyInject(AbstractNetworkService)
+		public readonly networkService: AbstractNetworkService,
 	) {
 		super();
 	}
@@ -125,16 +126,40 @@ export class ExternalHederaTransactionAdapter extends BaseHederaTransactionAdapt
 		return false;
 	}
 
-	public getNetworkService(): NetworkService {
+	public getNetworkService(): AbstractNetworkService {
 		return this.networkService;
 	}
 
-	public getMirrorNodeAdapter(): MirrorNodeAdapter {
+	public getMirrorNodeAdapter(): AbstractMirrorNodeAdapter {
 		return this.mirrorNodeAdapter;
+	}
+
+	toSigningConfig(): SigningConfig {
+		const env = this.networkService.environment;
+		let client: Client;
+		if (env === 'mainnet') client = Client.forMainnet();
+		else if (env === 'previewnet') client = Client.forPreviewnet();
+		else client = Client.forTestnet();
+
+		return {
+			type: 'hedera-external',
+			client,
+			accountId: this.getAccount().id.toString(),
+			sign: async (bytes: Uint8Array) => {
+				// Delegate to the external wallet's sign capability
+				const hex = Buffer.from(bytes).toString('hex');
+				const signedHex = await this.sign(hex);
+				return Buffer.from(signedHex, 'hex');
+			},
+		};
 	}
 
 	public getSupportedWallet(): SupportedWallets {
 		return SupportedWallets.EXTERNAL_HEDERA;
+	}
+
+	public isExternal(): boolean {
+		return true;
 	}
 
 	init(): Promise<string> {

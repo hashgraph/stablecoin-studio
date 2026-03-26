@@ -23,6 +23,10 @@
         "./typechain-types/*": {
             "import": "./build/typechain-types/*",
             "require": "./build/typechain-types/*"
+        },
+        "./typechain-types/factories/contracts": {
+            "import": "./build/typechain-types/factories/contracts/index.js",
+            "require": "./build/typechain-types/factories/contracts/index.js"
         }
     },
     "scripts": {

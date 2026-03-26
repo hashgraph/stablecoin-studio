@@ -18,7 +18,7 @@
  *
  */
 
-import BaseError, { ErrorCode } from '../../error/BaseError.js';
+import BaseError, { ErrorCode } from '../../../domain/shared/error/BaseError.js';
 
 export class InvalidCommandHandlerException extends BaseError {
 	constructor() {

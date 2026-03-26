@@ -28,17 +28,18 @@ import TransactionResponse, {
 } from '../../../../domain/context/transaction/TransactionResponse.js';
 import { SupportedWallets } from '../../../../domain/context/network/Wallet.js';
 import { TransactionType } from '../../TransactionResponseEnums.js';
-import NetworkService from '../../../../app/service/NetworkService.js';
-import { MirrorNodeAdapter } from '../../mirror/MirrorNodeAdapter.js';
+import { AbstractNetworkService } from '../../../../core/service/AbstractNetworkService.js';
+import { AbstractMirrorNodeAdapter } from '../../mirror/AbstractMirrorNodeAdapter.js';
 import Account from '../../../../domain/context/account/Account.js';
 import { InitializationData } from '../../TransactionAdapter.js';
 import Injectable from '../../../../core/Injectable.js';
 import {
 	WalletEvents,
 	WalletPairedEvent,
-} from '../../../../app/service/event/WalletEvent.js';
-import LogService from '../../../../app/service/LogService.js';
-import EventService from '../../../../app/service/event/EventService.js';
+} from '../../../../domain/context/event/WalletEvent.js';
+import LogService from '../../../../core/service/LogService.js';
+import { AbstractEventService } from '../../../../core/service/AbstractEventService.js';
+import type { SigningConfig } from '../../../../core/config/SigningConfig.js';
 
 const HEDERA_CHAIN_IDS: Record<string, number> = {
 	mainnet: 295,
@@ -51,12 +52,12 @@ export class ExternalEVMTransactionAdapter extends BaseHederaTransactionAdapter 
 	private account: Account;
 
 	constructor(
-		@lazyInject(EventService)
-		public readonly eventService: EventService,
-		@lazyInject(MirrorNodeAdapter)
-		public readonly mirrorNodeAdapter: MirrorNodeAdapter,
-		@lazyInject(NetworkService)
-		public readonly networkService: NetworkService,
+		@lazyInject(AbstractEventService)
+		public readonly eventService: AbstractEventService,
+		@lazyInject(AbstractMirrorNodeAdapter)
+		public readonly mirrorNodeAdapter: AbstractMirrorNodeAdapter,
+		@lazyInject(AbstractNetworkService)
+		public readonly networkService: AbstractNetworkService,
 	) {
 		super();
 	}
@@ -167,16 +168,37 @@ export class ExternalEVMTransactionAdapter extends BaseHederaTransactionAdapter 
 		return true;
 	}
 
-	public getNetworkService(): NetworkService {
+	public getNetworkService(): AbstractNetworkService {
 		return this.networkService;
 	}
 
-	public getMirrorNodeAdapter(): MirrorNodeAdapter {
+	public getMirrorNodeAdapter(): AbstractMirrorNodeAdapter {
 		return this.mirrorNodeAdapter;
+	}
+
+	toSigningConfig(): SigningConfig {
+		const rpcUrl = this.networkService.rpcNode?.baseUrl;
+		const provider = rpcUrl
+			? new ethers.JsonRpcProvider(rpcUrl)
+			: new ethers.JsonRpcProvider();
+
+		return {
+			type: 'evm-external',
+			provider,
+			sign: async (bytes: Uint8Array) => {
+				const hex = Buffer.from(bytes).toString('hex');
+				const signedHex = await this.sign(hex);
+				return Buffer.from(signedHex, 'hex');
+			},
+		};
 	}
 
 	public getSupportedWallet(): SupportedWallets {
 		return SupportedWallets.EXTERNAL_EVM;
+	}
+
+	public isExternal(): boolean {
+		return true;
 	}
 
 	init(): Promise<string> {

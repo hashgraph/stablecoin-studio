@@ -18,12 +18,10 @@
  *
  */
 
-import { CommandBus } from '../../../../../../core/command/CommandBus.js';
 import { ICommandHandler } from '../../../../../../core/command/CommandHandler.js';
 import { CommandHandler } from '../../../../../../core/decorator/CommandHandlerDecorator.js';
 import { lazyInject } from '../../../../../../core/decorator/LazyInjectDecorator.js';
-import { QueryBus } from '../../../../../../core/query/QueryBus.js';
-import { KycStatus } from '../../../../../../port/out/mirror/response/AccountTokenRelationViewModel.js';
+import { KycStatus } from '../../../../../../domain/context/stablecoin/TokenRelation.js';
 import AccountService from '../../../../../service/AccountService.js';
 import StableCoinService from '../../../../../service/StableCoinService.js';
 import TransactionService from '../../../../../service/TransactionService.js';
@@ -31,6 +29,7 @@ import { GetAccountTokenRelationshipQuery } from '../../../../query/account/toke
 import { KycNotActive } from '../../error/KycNotActive.js';
 import { OperationNotAllowed } from '../../error/OperationNotAllowed.js';
 import { StableCoinNotAssociated } from '../../error/StableCoinNotAssociated.js';
+import { AbstractMirrorNodeAdapter } from '../../../../../../port/out/mirror/AbstractMirrorNodeAdapter.js';
 import {
 	RevokeKycCommand,
 	RevokeKycCommandResponse,
@@ -43,21 +42,18 @@ export class RevokeKycCommandHandler
 	constructor(
 		@lazyInject(StableCoinService)
 		public readonly stableCoinService: StableCoinService,
-		@lazyInject(CommandBus)
-		public readonly commandBus: CommandBus,
-		@lazyInject(QueryBus)
-		public readonly queryBus: QueryBus,
 		@lazyInject(AccountService)
 		public readonly accountService: AccountService,
 		@lazyInject(TransactionService)
 		public readonly transactionService: TransactionService,
+		@lazyInject(AbstractMirrorNodeAdapter)
+		public readonly mirrorNode: AbstractMirrorNodeAdapter,
 	) {}
 
 	async execute(
 		command: RevokeKycCommand,
 	): Promise<RevokeKycCommandResponse> {
 		const { targetId, tokenId } = command;
-		const handler = this.transactionService.getHandler();
 		const account = this.accountService.getCurrentAccount();
 		const capabilities = await this.stableCoinService.getCapabilities(
 			account,
@@ -88,7 +84,16 @@ export class RevokeKycCommandHandler
 			);
 		}
 
-		const res = await handler.revokeKyc(capabilities, targetId);
+		const targetEvmAddress = (
+			await this.mirrorNode.accountToEvmAddress(targetId)
+		).toString();
+		const res = await this.transactionService.executeOperation(
+			'revokeKyc',
+			{
+				contractAddress: capabilities.coin.evmProxyAddress?.toString(),
+				targetId: targetEvmAddress,
+			},
+		);
 		return Promise.resolve(
 			new RevokeKycCommandResponse(res.error === undefined, res.id, res.serializedTransactionData),
 		);

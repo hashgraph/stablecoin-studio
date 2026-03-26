@@ -23,8 +23,8 @@ import { QueryHandler } from '../../../../../core/decorator/QueryHandlerDecorato
 import { IQueryHandler } from '../../../../../core/query/QueryHandler.js';
 import EvmAddress from '../../../../../domain/context/contract/EvmAddress.js';
 import BigDecimal from '../../../../../domain/context/shared/BigDecimal.js';
-import { MirrorNodeAdapter } from '../../../../../port/out/mirror/MirrorNodeAdapter.js';
-import { RPCQueryAdapter } from '../../../../../port/out/rpc/RPCQueryAdapter.js';
+import { AbstractMirrorNodeAdapter } from '../../../../../port/out/mirror/AbstractMirrorNodeAdapter.js';
+import { AbstractRPCQueryAdapter } from '../../../../../port/out/rpc/AbstractRPCQueryAdapter.js';
 import {
 	GetStableCoinQuery,
 	GetStableCoinQueryResponse,
@@ -35,10 +35,10 @@ export class GetStableCoinQueryHandler
 	implements IQueryHandler<GetStableCoinQuery>
 {
 	constructor(
-		@lazyInject(MirrorNodeAdapter)
-		public readonly mirrorNode: MirrorNodeAdapter,
-		@lazyInject(RPCQueryAdapter)
-		public readonly queryAdapter: RPCQueryAdapter,
+		@lazyInject(AbstractMirrorNodeAdapter)
+		public readonly mirrorNode: AbstractMirrorNodeAdapter,
+		@lazyInject(AbstractRPCQueryAdapter)
+		public readonly queryAdapter: AbstractRPCQueryAdapter,
 	) {}
 
 	async execute(
@@ -46,7 +46,6 @@ export class GetStableCoinQueryHandler
 	): Promise<GetStableCoinQueryResponse> {
 		const { tokenId } = query;
 
-		console.log('GetStableCoinQueryHandler', tokenId);
 		const coin = await this.mirrorNode.getStableCoin(tokenId);
 
 		if (!coin.evmProxyAddress) throw new Error('Invalid proxy address');

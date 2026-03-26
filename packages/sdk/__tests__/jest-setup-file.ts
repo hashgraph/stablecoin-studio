@@ -116,7 +116,7 @@ import {
 	HoldIdentifier,
 } from '../src/domain/context/hold/Hold.js';
 import ValidationService from 'app/service/ValidationService.js';
-import CheckEvmAddress from '../src/core/checks/evmaddress/CheckEvmAddress.js';
+import CheckEvmAddress from '../src/domain/shared/checks/evmaddress/CheckEvmAddress.js';
 
 interface token {
 	tokenId: string;
@@ -1365,6 +1365,144 @@ jest.mock('../src/port/out/hs/client/ClientTransactionAdapter', () => {
 
 	return {
 		ClientTransactionAdapter: jest.fn(() => ClientTransactionAdapterMock),
+	};
+});
+
+// ── TransactionOrchestrator mock ────────────────────────────────────────────
+// The new pipeline (TransactionOrchestrator → PipelineExecutor → steps) would
+// try to freeze/sign/submit real Hedera transactions.  In unit tests we
+// intercept at the orchestrator level and delegate to the existing
+// ClientTransactionAdapter mock which already simulates all business logic
+// (balance tracking, role mutations, etc.) via `executeContractCall`.
+jest.mock('../src/core/orchestration/TransactionOrchestrator', () => {
+	const actual = jest.requireActual(
+		'../src/core/orchestration/TransactionOrchestrator.ts',
+	);
+	const { OperationRegistry } = jest.requireActual(
+		'../src/core/orchestration/registry/OperationRegistry.ts',
+	);
+
+	class MockTransactionOrchestrator {
+		private registry: any;
+		constructor(private config: any) {
+			this.registry = new OperationRegistry();
+		}
+
+		async execute(
+			operationName: string,
+			params: Record<string, unknown>,
+		): Promise<any> {
+			// Resolve the registered adapter (ClientTransactionAdapterMock)
+			const handler = Injectable.resolveTransactionHandler() as any;
+
+			// Look up the operation from the real registry to get the ABI/method
+			let operation: any;
+			try {
+				operation = this.registry.get(operationName);
+			} catch {
+				// Unknown operation — generic success
+				return { success: true, transactionId: 'mock-tx-id', receipt: {} };
+			}
+
+			// Build the context the same way the real orchestrator does
+			const context = {
+				operationName,
+				params,
+				builder: operation,
+			};
+
+			// Use the operation's buildHedera to create the real ContractExecuteTransaction,
+			// then extract the function call data from it.
+			try {
+				const tx = operation.buildHederaTransaction(params);
+				// Extract the encoded function parameters from the transaction
+				const functionParameters: Uint8Array = tx.functionParameters;
+				if (functionParameters && functionParameters.length >= 4) {
+					// Decode via TransactionService static method to get method name + args
+					const tsModule = jest.requireActual(
+						'../src/app/service/TransactionService.ts',
+					);
+					const TS = tsModule.default ?? tsModule.TransactionService ?? tsModule;
+					const parsed = TS.decodeFunctionCall(functionParameters);
+					if (parsed) {
+						const contractAddress = (params.contractAddress as string) ?? '';
+						const iface = parsed.fragment
+							? new ethers.Interface([parsed.fragment.format('full')])
+							: new ethers.Interface([]);
+
+						const res = await handler.executeContractCall(
+							contractAddress,
+							iface,
+							parsed.name,
+							Array.from(parsed.args),
+							100_000,
+						);
+
+						return {
+							success: true,
+							transactionId: res?.id ?? 'mock-tx-id',
+							receipt: {},
+							response: res?.response,
+						};
+					}
+				}
+			} catch {
+				// If building the tx fails, fall through to generic handling
+			}
+
+			// Fallback for create or other complex operations
+			if (operationName === 'create' && handler.create) {
+				const res = await handler.create(
+					params.coin,
+					params.factory,
+					params.hederaTokenManager,
+					params.createReserve,
+					params.reserveAddress,
+					params.reserveInitialAmount,
+					params.proxyAdminOwnerAccount,
+				);
+				return {
+					success: true,
+					transactionId: res?.id ?? 'mock-tx-id',
+					receipt: {},
+					response: res?.response,
+				};
+			}
+
+			return { success: true, transactionId: 'mock-tx-id', receipt: {} };
+		}
+
+		async executeQuery(
+			queryName: string,
+			params: Record<string, unknown>,
+		): Promise<any> {
+			throw new Error(
+				`Query '${queryName}' not mocked in TransactionOrchestrator`,
+			);
+		}
+
+		async serialize(
+			operationName: string,
+			params: Record<string, unknown>,
+		): Promise<any> {
+			return {
+				operationName,
+				params,
+				signedTransaction: {
+					kind: 'serialized',
+					transactionBytes: new Uint8Array(),
+				},
+			};
+		}
+	}
+
+	return {
+		...actual,
+		TransactionOrchestrator: jest
+			.fn()
+			.mockImplementation(
+				(config: any) => new MockTransactionOrchestrator(config),
+			),
 	};
 });
 

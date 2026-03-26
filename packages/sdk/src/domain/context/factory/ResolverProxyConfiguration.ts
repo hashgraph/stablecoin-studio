@@ -18,7 +18,7 @@
  *
  */
 
-import { BYTES_32_NULL } from '../../../core/Constants';
+import { BYTES_32_NULL } from '../../shared/constants.js';
 
 export class ResolverProxyConfiguration {
 	public key: string;

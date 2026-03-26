@@ -47,7 +47,6 @@ export class AssociateCommandHandler
 		command: AssociateCommand,
 	): Promise<AssociateCommandResponse> {
 		const { targetId, tokenId } = command;
-		const handler = this.transactionService.getHandler();
 
 		const tokenRelationship = (
 			await this.stableCoinService.queryBus.execute(
@@ -56,13 +55,22 @@ export class AssociateCommandHandler
 		).payload;
 
 		if (tokenRelationship) {
-			return Promise.resolve(new AssociateCommandResponse(true));
+			return new AssociateCommandResponse(true);
 		}
 
-		const res = await handler.associateToken(tokenId, targetId);
+		// Use IHRC.associate() on the token's address — works for both
+		// Hedera native (via precompile) and EVM paths.
+		const tokenEvmAddress =
+			'0x' + tokenId.toHederaAddress().toSolidityAddress();
 
-		return Promise.resolve(
-			new AssociateCommandResponse(res.error === undefined, res.id, res.serializedTransactionData),
+		const res = await this.transactionService.executeOperation(
+			'associateToken',
+			{ contractAddress: tokenEvmAddress },
+		);
+
+		return new AssociateCommandResponse(
+			res.error === undefined,
+			res.id,
 		);
 	}
 }

@@ -18,8 +18,8 @@
  *
  */
 
-import CheckEvmAddress from '../../../core/checks/evmaddress/CheckEvmAddress.js';
-import { EVM_ZERO_ADDRESS } from '../../../core/Constants.js';
+import CheckEvmAddress from '../../shared/checks/evmaddress/CheckEvmAddress.js';
+import { EVM_ZERO_ADDRESS } from '../../shared/constants.js';
 import BigDecimal from '../shared/BigDecimal.js';
 import { HederaId } from '../shared/HederaId.js';
 import {

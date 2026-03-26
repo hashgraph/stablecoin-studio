@@ -18,7 +18,7 @@
  *
  */
 
-import CheckNums from '../../../core/checks/numbers/CheckNums.js';
+import CheckNums from '../../../domain/shared/checks/numbers/CheckNums.js';
 import { OptionalField } from '../../../core/decorator/OptionalDecorator.js';
 import { RESERVE_DECIMALS } from '../../../domain/context/reserve/Reserve.js';
 import BigDecimal from '../../../domain/context/shared/BigDecimal.js';

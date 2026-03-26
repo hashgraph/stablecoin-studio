@@ -18,29 +18,38 @@
  *
  */
 
-import { ContractId as HContractId } from '@hiero-ledger/sdk';
+import { ContractId as HContractId, PublicKey as HPublicKey } from '@hiero-ledger/sdk';
 import { ICommandHandler } from '../../../../../core/command/CommandHandler.js';
 import { CommandHandler } from '../../../../../core/decorator/CommandHandlerDecorator.js';
 import { lazyInject } from '../../../../../core/decorator/LazyInjectDecorator.js';
 import ContractId from '../../../../../domain/context/contract/ContractId.js';
-import { StableCoin } from '../../../../../domain/context/stablecoin/StableCoin.js';
+import PublicKey from '../../../../../domain/context/account/PublicKey.js';
+import { HederaId } from '../../../../../domain/context/shared/HederaId.js';
+import { StableCoinRole } from '../../../../../domain/context/stablecoin/StableCoinRole.js';
+import { TokenSupplyType } from '../../../../../domain/context/stablecoin/TokenSupply.js';
 import AccountService from '../../../../service/AccountService.js';
 import TransactionService from '../../../../service/TransactionService.js';
-import NetworkService from '../../../../service/NetworkService.js';
 import { OperationNotAllowed } from '../error/OperationNotAllowed.js';
 import { CreateCommand, CreateCommandResponse } from './CreateCommand.js';
 import { RESERVE_DECIMALS } from '../../../../../domain/context/reserve/Reserve.js';
 import { InvalidRequest } from '../error/InvalidRequest.js';
-import { MirrorNodeAdapter } from '../../../../../port/out/mirror/MirrorNodeAdapter.js';
-import { RPCQueryAdapter } from '../../../../../port/out/rpc/RPCQueryAdapter.js';
+import { AbstractMirrorNodeAdapter } from '../../../../../port/out/mirror/AbstractMirrorNodeAdapter.js';
+import { AbstractRPCQueryAdapter } from '../../../../../port/out/rpc/AbstractRPCQueryAdapter.js';
 import BigDecimal from '../../../../../domain/context/shared/BigDecimal.js';
 import EvmAddress from '../../../../../domain/context/contract/EvmAddress.js';
-import {
-	ADDRESS_LENGTH,
-	BYTES_32_LENGTH,
-	EVM_ZERO_ADDRESS,
-	TOPICS_IN_FACTORY_RESULT,
-} from '../../../../../core/Constants';
+import { EVM_ZERO_ADDRESS } from '../../../../../core/Constants.js';
+import type {
+	CreateStableCoinParams,
+	CreateStableCoinResult,
+	KeyDef,
+	RoleDef,
+	CashinRoleDef,
+} from '../../../../../core/operations/types.js';
+import { ethers } from 'ethers';
+
+const UINT256_MAX = (1n << 256n) - 1n;
+
+const KEY_TYPE_BITS = [1, 2, 4, 8, 16, 32, 64];
 
 @CommandHandler(CreateCommand)
 export class CreateCommandHandler implements ICommandHandler<CreateCommand> {
@@ -49,12 +58,10 @@ export class CreateCommandHandler implements ICommandHandler<CreateCommand> {
 		public readonly accountService: AccountService,
 		@lazyInject(TransactionService)
 		public readonly transactionService: TransactionService,
-		@lazyInject(NetworkService)
-		public readonly networkService: NetworkService,
-		@lazyInject(MirrorNodeAdapter)
-		public readonly mirrorNodeAdapter: MirrorNodeAdapter,
-		@lazyInject(RPCQueryAdapter)
-		public readonly queryAdapter: RPCQueryAdapter,
+		@lazyInject(AbstractMirrorNodeAdapter)
+		public readonly mirrorNodeAdapter: AbstractMirrorNodeAdapter,
+		@lazyInject(AbstractRPCQueryAdapter)
+		public readonly queryAdapter: AbstractRPCQueryAdapter,
 	) {}
 
 	async execute(command: CreateCommand): Promise<CreateCommandResponse> {
@@ -72,6 +79,8 @@ export class CreateCommandHandler implements ICommandHandler<CreateCommand> {
 			reserveConfigId,
 			reserveConfigVersion,
 		} = command;
+
+		// ── Validation ──────────────────────────────────────────────────
 
 		if (!factory) {
 			throw new InvalidRequest('Factory not found in request');
@@ -104,7 +113,6 @@ export class CreateCommandHandler implements ICommandHandler<CreateCommand> {
 			);
 		}
 
-		const handler = this.transactionService.getHandler();
 		if (
 			coin.maxSupply &&
 			coin.initialSupply &&
@@ -160,97 +168,190 @@ export class CreateCommandHandler implements ICommandHandler<CreateCommand> {
 			}
 		}
 
-		const res = await handler.create(
-			new StableCoin(coin),
-			factory,
-			createReserve,
-			resolver,
-			configId,
-			configVersion,
-			proxyOwnerAccount,
-			updatedAtThreshold ? updatedAtThreshold : '0',
-			reserveAddress,
-			reserveInitialAmount,
-			reserveConfigId,
-			reserveConfigVersion,
+		// ── Resolve addresses ───────────────────────────────────────────
+
+		const factoryEvmAddress = (
+			await this.mirrorNodeAdapter.getContractInfo(factory.toString())
+		).evmAddress;
+
+		const resolverEvmAddress = (
+			await this.mirrorNodeAdapter.getContractInfo(resolver.toString())
+		).evmAddress;
+
+		const signerEvmAddress = (
+			await this.mirrorNodeAdapter.accountToEvmAddress(proxyOwnerAccount)
+		).toString();
+
+		const reserveEvmAddress =
+			!reserveAddress || reserveAddress.toString() === '0.0.0'
+				? undefined
+				: (
+						await this.mirrorNodeAdapter.getContractInfo(
+							reserveAddress.toString(),
+						)
+				  ).evmAddress;
+
+		// ── Build keys ──────────────────────────────────────────────────
+
+		const providedKeys = [
+			coin.adminKey,
+			coin.kycKey,
+			coin.freezeKey,
+			coin.wipeKey,
+			coin.supplyKey,
+			coin.feeScheduleKey,
+			coin.pauseKey,
+		];
+
+		const keys: KeyDef[] = [];
+		for (let i = 0; i < providedKeys.length; i++) {
+			const pk = providedKeys[i];
+			if (pk && pk instanceof PublicKey) {
+				const isNull = pk.key === PublicKey.NULL.key;
+				keys.push({
+					keyType: BigInt(KEY_TYPE_BITS[i]),
+					publicKey: isNull
+						? '0x'
+						: ethers.hexlify(
+								HPublicKey.fromString(pk.key).toBytesRaw(),
+						  ),
+					isEd25519: pk.type === 'ED25519',
+				});
+			}
+		}
+
+		// ── Build roles ─────────────────────────────────────────────────
+
+		const baseRoles = [
+			{ account: proxyOwnerAccount, role: StableCoinRole.DEFAULT_ADMIN_ROLE },
+			{ account: coin.burnRoleAccount, role: StableCoinRole.BURN_ROLE },
+			{ account: coin.wipeRoleAccount, role: StableCoinRole.WIPE_ROLE },
+			{ account: coin.rescueRoleAccount, role: StableCoinRole.RESCUE_ROLE },
+			{ account: coin.pauseRoleAccount, role: StableCoinRole.PAUSE_ROLE },
+			{ account: coin.freezeRoleAccount, role: StableCoinRole.FREEZE_ROLE },
+			{ account: coin.deleteRoleAccount, role: StableCoinRole.DELETE_ROLE },
+			{ account: coin.kycRoleAccount, role: StableCoinRole.KYC_ROLE },
+			{ account: coin.feeRoleAccount, role: StableCoinRole.CUSTOM_FEES_ROLE },
+			{ account: coin.holdCreatorRoleAccount, role: StableCoinRole.HOLD_CREATOR_ROLE },
+		];
+
+		const roles: RoleDef[] = await Promise.all(
+			baseRoles
+				.filter(
+					(r) =>
+						r.account &&
+						r.account.value !== HederaId.NULL.value,
+				)
+				.map(async (r) => ({
+					role: r.role,
+					account: (
+						await this.mirrorNodeAdapter.accountToEvmAddress(
+							r.account as HederaId,
+						)
+					).toString(),
+				})),
 		);
 
-		if (this.transactionService.isExternalWallet()) {
-			return new CreateCommandResponse(
-				new ContractId('0.0.0'),
-				new ContractId('0.0.0'),
-				new ContractId('0.0.0'),
-				res.serializedTransactionData,
-			);
+		// ── Build cashinRole ────────────────────────────────────────────
+
+		let cashinRole: CashinRoleDef | undefined;
+		if (
+			coin.cashInRoleAccount &&
+			coin.cashInRoleAccount.toString() !== '0.0.0'
+		) {
+			const cashinEvmAddress = (
+				await this.mirrorNodeAdapter.accountToEvmAddress(
+					coin.cashInRoleAccount,
+				)
+			).toString();
+			cashinRole = {
+				account: cashinEvmAddress,
+				allowance:
+					!coin.cashInRoleAllowance ||
+					coin.cashInRoleAllowance.toString() === '0'
+						? UINT256_MAX
+						: BigInt(coin.cashInRoleAllowance.toFixedNumber()),
+			};
 		}
 
-		if (!res.id)
-			throw new Error('Create Command Handler response id empty');
+		// ── Execute operation ───────────────────────────────────────────
 
-		await new Promise((resolve) => setTimeout(resolve, 5000));
+		const params: CreateStableCoinParams = {
+			name: coin.name,
+			symbol: coin.symbol,
+			decimals: coin.decimals,
+			initialSupply: coin.initialSupply?.toFixedNumber() ?? '0',
+			maxSupply: coin.maxSupply?.toFixedNumber() ?? '0',
+			finite: coin.supplyType === TokenSupplyType.FINITE,
+			factoryAddress: factoryEvmAddress,
+			resolverAddress: resolverEvmAddress,
+			signerAddress: signerEvmAddress,
+			freeze: coin.freezeDefault ?? false,
+			createReserve,
+			reserveAddress: reserveEvmAddress,
+			reserveInitialAmount:
+				reserveInitialAmount?.toFixedNumber() ?? '0',
+			updatedAtThreshold: updatedAtThreshold ?? '0',
+			metadata: coin.metadata ?? '',
+			keys: keys.length > 0 ? keys : undefined,
+			roles: roles.length > 0 ? roles : undefined,
+			cashinRole,
+			configId,
+			configVersion,
+			reserveConfigId: createReserve ? reserveConfigId : undefined,
+			reserveConfigVersion: createReserve
+				? reserveConfigVersion
+				: undefined,
+		};
 
-		try {
-			const results = await this.mirrorNodeAdapter.getContractResults(
-				res.id.toString(),
-				TOPICS_IN_FACTORY_RESULT,
+		const result =
+			await this.transactionService.executeOperationTyped<CreateStableCoinResult>(
+				'create',
+				params as unknown as Record<string, unknown>,
 			);
 
-			console.log(`Creation event data:${JSON.stringify(results)}`); //! Remove this line
+		// ── Convert result to domain types ──────────────────────────────
 
-			if (!results || results.length !== TOPICS_IN_FACTORY_RESULT) {
-				throw new Error('Invalid data structure');
-			}
+		const tokenId = result.tokenAddress
+			? ContractId.fromHederaContractId(
+					HContractId.fromEvmAddress(0, 0, result.tokenAddress),
+			  )
+			: new ContractId('0.0.0');
 
-			const data = results.map(
-				(result) =>
-					'0x' +
-					result.substring(BYTES_32_LENGTH - ADDRESS_LENGTH + 2),
+		let stableCoinProxy: ContractId;
+		if (
+			result.proxyAddress &&
+			result.proxyAddress !== EVM_ZERO_ADDRESS
+		) {
+			const proxyInfo = await this.mirrorNodeAdapter.getContractInfo(
+				result.proxyAddress,
 			);
-
-			console.log(data);
-
-			if (data && data.length === TOPICS_IN_FACTORY_RESULT) {
-				return Promise.resolve(
-					new CreateCommandResponse(
-						ContractId.fromHederaContractId(
-							HContractId.fromEvmAddress(0, 0, data[1]),
-						),
-						data[0] === EVM_ZERO_ADDRESS
-							? new ContractId('0.0.0')
-							: ContractId.fromHederaContractId(
-									HContractId.fromString(
-										(
-											await this.mirrorNodeAdapter.getContractInfo(
-												data[0],
-											)
-										).id,
-									),
-							  ),
-						data[2] === EVM_ZERO_ADDRESS
-							? new ContractId('0.0.0')
-							: ContractId.fromHederaContractId(
-									HContractId.fromString(
-										(
-											await this.mirrorNodeAdapter.getContractInfo(
-												data[2],
-											)
-										).id,
-									),
-							  ),
-					),
-				);
-			} else {
-				throw new Error('Invalid data structure');
-			}
-		} catch (e) {
-			console.error(e);
-			return Promise.resolve(
-				new CreateCommandResponse(
-					new ContractId('0.0.0'),
-					new ContractId('0.0.0'),
-					new ContractId('0.0.0'),
-				),
+			stableCoinProxy = ContractId.fromHederaContractId(
+				HContractId.fromString(proxyInfo.id),
 			);
+		} else {
+			stableCoinProxy = new ContractId('0.0.0');
 		}
+
+		let reserveProxy: ContractId;
+		if (
+			result.reserveProxy &&
+			result.reserveProxy !== EVM_ZERO_ADDRESS
+		) {
+			const reserveInfo = await this.mirrorNodeAdapter.getContractInfo(
+				result.reserveProxy,
+			);
+			reserveProxy = ContractId.fromHederaContractId(
+				HContractId.fromString(reserveInfo.id),
+			);
+		} else {
+			reserveProxy = new ContractId('0.0.0');
+		}
+
+		return new CreateCommandResponse(
+			tokenId,
+			stableCoinProxy,
+			reserveProxy,
+		);
 	}
 }

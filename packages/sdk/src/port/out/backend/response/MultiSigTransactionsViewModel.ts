@@ -18,18 +18,6 @@
  *
  */
 
-import { QueryResponse } from '../../../../core/query/QueryResponse.js';
-import MultiSigTransactionViewModel from './MultiSigTransactionViewModel';
-
-export interface PaginationViewModel {
-	totalItems: number;
-	itemCount: number;
-	itemsPerPage: number;
-	totalPages: number;
-	currentPage: number;
-}
-
-export default interface MultiSigTransactionsViewModel extends QueryResponse {
-	transactions: MultiSigTransactionViewModel[];
-	pagination: PaginationViewModel;
-}
+// Re-export from core/ — canonical definition
+export { default } from '../../../../core/query/response/MultiSigTransactionsViewModel.js';
+export { PaginationViewModel } from '../../../../core/query/response/MultiSigTransactionsViewModel.js';

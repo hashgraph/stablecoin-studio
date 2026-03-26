@@ -18,7 +18,7 @@
  *
  */
 
-import BaseError, { ErrorCode } from '../../../../core/error/BaseError.js';
+import BaseError, { ErrorCode } from '../../../shared/error/BaseError.js';
 
 export default class InvalidAmount extends BaseError {
 	constructor(val: number | string, expected: number | string) {

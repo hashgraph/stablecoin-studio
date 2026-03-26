@@ -26,8 +26,8 @@
 import { ethers } from 'ethers';
 import { singleton } from 'tsyringe';
 import { lazyInject } from '../../../core/decorator/LazyInjectDecorator.js';
-import NetworkService from '../../../app/service/NetworkService.js';
-import LogService from '../../../app/service/LogService.js';
+import { AbstractNetworkService } from '../../../core/service/AbstractNetworkService.js';
+import LogService from '../../../core/service/LogService.js';
 import {
 	AggregatorV3Interface__factory,
 	HederaTokenManagerFacet__factory,
@@ -43,13 +43,14 @@ import {
 import { StableCoinRole } from '../../../domain/context/stablecoin/StableCoinRole.js';
 import ContractId from '../../../domain/context/contract/ContractId.js';
 import EvmAddress from '../../../domain/context/contract/EvmAddress.js';
-import { MirrorNodeAdapter } from '../mirror/MirrorNodeAdapter.js';
+import { AbstractMirrorNodeAdapter } from '../mirror/AbstractMirrorNodeAdapter.js';
 import { ContractId as HContractId } from '@hiero-ledger/sdk';
 import {
 	HoldDetails,
 	HoldIdentifier,
 } from '../../../domain/context/hold/Hold.js';
 import BigDecimal from '../../../domain/context/shared/BigDecimal';
+import { AbstractRPCQueryAdapter } from './AbstractRPCQueryAdapter.js';
 
 const LOCAL_JSON_RPC_RELAY_URL = 'http://127.0.0.1:7546/api';
 
@@ -70,15 +71,17 @@ type FactoryContract<T extends StaticConnect> = T['connect'] extends (
 	: never;
 
 @singleton()
-export class RPCQueryAdapter {
+export class RPCQueryAdapter extends AbstractRPCQueryAdapter {
 	provider: ethers.JsonRpcProvider;
 
 	constructor(
-		@lazyInject(NetworkService)
-		private readonly networkService: NetworkService,
-		@lazyInject(MirrorNodeAdapter)
-		public readonly mirrorNode: MirrorNodeAdapter,
-	) {}
+		@lazyInject(AbstractNetworkService)
+		private readonly networkService: AbstractNetworkService,
+		@lazyInject(AbstractMirrorNodeAdapter)
+		public readonly mirrorNode: AbstractMirrorNodeAdapter,
+	) {
+		super();
+	}
 
 	async init(urlRpcProvider?: string, apiKey?: string): Promise<string> {
 		const url = urlRpcProvider
@@ -113,10 +116,16 @@ export class RPCQueryAdapter {
 		LogService.logTrace(
 			`Requesting getReserveAddress address: ${address.toString()}`,
 		);
-		const val = await this.connect(
-			ReserveFacet,
-			address.toString(),
-		).getReserveAddress();
+		let val: string | undefined;
+		try {
+			val = await this.connect(
+				ReserveFacet,
+				address.toString(),
+			).getReserveAddress();
+		} catch {
+			// Contract may not implement reserve or may return empty data (0x)
+			return new ContractId('0.0.0');
+		}
 
 		if (
 			val == undefined ||

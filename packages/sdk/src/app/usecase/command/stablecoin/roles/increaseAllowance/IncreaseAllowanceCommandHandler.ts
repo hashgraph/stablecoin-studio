@@ -18,7 +18,7 @@
  *
  */
 
-import CheckNums from '../../../../../../core/checks/numbers/CheckNums.js';
+import CheckNums from '../../../../../../domain/shared/checks/numbers/CheckNums.js';
 import { ICommandHandler } from '../../../../../../core/command/CommandHandler.js';
 import { CommandHandler } from '../../../../../../core/decorator/CommandHandlerDecorator.js';
 import { lazyInject } from '../../../../../../core/decorator/LazyInjectDecorator.js';
@@ -27,6 +27,7 @@ import AccountService from '../../../../../service/AccountService.js';
 import StableCoinService from '../../../../../service/StableCoinService.js';
 import TransactionService from '../../../../../service/TransactionService.js';
 import { DecimalsOverRange } from '../../error/DecimalsOverRange.js';
+import { AbstractMirrorNodeAdapter } from '../../../../../../port/out/mirror/AbstractMirrorNodeAdapter.js';
 import {
 	IncreaseAllowanceCommand,
 	IncreaseAllowanceCommandResponse,
@@ -43,13 +44,14 @@ export class IncreaseAllowanceCommandHandler
 		public readonly accountService: AccountService,
 		@lazyInject(TransactionService)
 		public readonly transactionService: TransactionService,
+		@lazyInject(AbstractMirrorNodeAdapter)
+		public readonly mirrorNode: AbstractMirrorNodeAdapter,
 	) {}
 
 	async execute(
 		command: IncreaseAllowanceCommand,
 	): Promise<IncreaseAllowanceCommandResponse> {
-		const { amount, targetId, tokenId, startDate } = command;
-		const handler = this.transactionService.getHandler();
+		const { amount, targetId, tokenId } = command;
 		const account = this.accountService.getCurrentAccount();
 		const capabilities = await this.stableCoinService.getCapabilities(
 			account,
@@ -59,13 +61,14 @@ export class IncreaseAllowanceCommandHandler
 		if (CheckNums.hasMoreDecimals(amount, coin.decimals)) {
 			throw new DecimalsOverRange(coin.decimals);
 		}
-		const res = await handler.increaseSupplierAllowance(
-			capabilities,
-			targetId,
-			BigDecimal.fromString(amount, capabilities.coin.decimals),
-			startDate,
-		);
-		// return Promise.resolve({ payload: res.response });
+		const targetEvmAddress = (
+			await this.mirrorNode.accountToEvmAddress(targetId)
+		).toString();
+		const res = await this.transactionService.executeOperation('increaseAllowance', {
+			contractAddress: capabilities.coin.evmProxyAddress?.toString(),
+			targetId: targetEvmAddress,
+			amount: BigDecimal.fromString(amount, coin.decimals).toLong().toString(),
+		});
 		return Promise.resolve(
 			new IncreaseAllowanceCommandResponse(res.error === undefined, res.id, res.serializedTransactionData),
 		);

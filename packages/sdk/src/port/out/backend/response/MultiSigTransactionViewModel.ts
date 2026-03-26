@@ -18,18 +18,5 @@
  *
  */
 
-import { QueryResponse } from '../../../../core/query/QueryResponse.js';
-
-export default interface MultiSigTransactionViewModel extends QueryResponse {
-	id: string;
-	transaction_message: string;
-	description: string;
-	status: string;
-	threshold: number;
-	key_list: string[];
-	signed_keys: string[];
-	signatures: string[];
-	network: string;
-	hedera_account_id: string;
-	start_date: string;
-}
+// Re-export from core/ — canonical definition
+export { default } from '../../../../core/query/response/MultiSigTransactionViewModel.js';

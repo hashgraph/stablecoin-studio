@@ -35,16 +35,17 @@ import { Environment } from '../../../../domain/context/network/Environment.js';
 import {
 	WalletEvents,
 	WalletPairedEvent,
-} from '../../../../app/service/event/WalletEvent.js';
+} from '../../../../domain/context/event/WalletEvent.js';
 import { SupportedWallets } from '../../../in/request/ConnectRequest.js';
 import { lazyInject } from '../../../../core/decorator/LazyInjectDecorator.js';
-import { MirrorNodeAdapter } from '../../mirror/MirrorNodeAdapter.js';
-import NetworkService from '../../../../app/service/NetworkService.js';
-import LogService from '../../../../app/service/LogService.js';
+import { AbstractMirrorNodeAdapter } from '../../mirror/AbstractMirrorNodeAdapter.js';
+import { AbstractNetworkService } from '../../../../core/service/AbstractNetworkService.js';
+import { AbstractEventService } from '../../../../core/service/AbstractEventService.js';
+import LogService from '../../../../core/service/LogService.js';
 import { WalletConnectError } from '../../../../domain/context/network/error/WalletConnectError.js';
 import { SigningError } from '../../hs/error/SigningError.js';
 import Hex from '../../../../core/Hex.js';
-import EventService from '../../../../app/service/event/EventService';
+import type { SigningConfig } from '../../../../core/config/SigningConfig.js';
 
 @singleton()
 export class ClientTransactionAdapter extends BaseHederaTransactionAdapter {
@@ -57,11 +58,11 @@ export class ClientTransactionAdapter extends BaseHederaTransactionAdapter {
 	}
 
 	constructor(
-		@lazyInject(EventService) public readonly eventService: EventService,
-		@lazyInject(MirrorNodeAdapter)
-		public readonly mirrorNodeAdapter: MirrorNodeAdapter,
-		@lazyInject(NetworkService)
-		public readonly networkService: NetworkService,
+		@lazyInject(AbstractEventService) public readonly eventService: AbstractEventService,
+		@lazyInject(AbstractMirrorNodeAdapter)
+		public readonly mirrorNodeAdapter: AbstractMirrorNodeAdapter,
+		@lazyInject(AbstractNetworkService)
+		public readonly networkService: AbstractNetworkService,
 	) {
 		super();
 	}
@@ -143,7 +144,6 @@ export class ClientTransactionAdapter extends BaseHederaTransactionAdapter {
 		// eslint-disable-next-line @typescript-eslint/no-unused-vars
 		_startDate?: string,
 	): Promise<TransactionResponse> {
-		console.log('Executing transaction:', tx);
 		const tr: HTransactionResponse = await tx.execute(this.client);
 		this.logTransaction(
 			tr.transactionId.toString(),
@@ -163,16 +163,20 @@ export class ClientTransactionAdapter extends BaseHederaTransactionAdapter {
 		return false;
 	}
 
-	public getNetworkService(): NetworkService {
+	public getNetworkService(): AbstractNetworkService {
 		return this.networkService;
 	}
 
-	public getMirrorNodeAdapter(): MirrorNodeAdapter {
+	public getMirrorNodeAdapter(): AbstractMirrorNodeAdapter {
 		return this.mirrorNodeAdapter;
 	}
 
 	getAccount(): Account {
 		return this.account;
+	}
+
+	toSigningConfig(): SigningConfig {
+		return { type: 'client', client: this._client };
 	}
 
 	async sign(message: string | Transaction): Promise<string> {

@@ -18,8 +18,7 @@
  *
  */
 
-import CheckNums from '../../../../../../core/checks/numbers/CheckNums.js';
-import { CommandBus } from '../../../../../../core/command/CommandBus.js';
+import CheckNums from '../../../../../../domain/shared/checks/numbers/CheckNums.js';
 import { ICommandHandler } from '../../../../../../core/command/CommandHandler.js';
 import { CommandHandler } from '../../../../../../core/decorator/CommandHandlerDecorator.js';
 import { lazyInject } from '../../../../../../core/decorator/LazyInjectDecorator.js';
@@ -38,7 +37,7 @@ import { GetAccountTokenRelationshipQuery } from '../../../../query/account/toke
 import {
 	FreezeStatus,
 	KycStatus,
-} from '../../../../../../port/out/mirror/response/AccountTokenRelationViewModel.js';
+} from '../../../../../../domain/context/stablecoin/TokenRelation.js';
 import { AccountNotKyc } from '../../error/AccountNotKyc.js';
 import { AccountFreeze } from '../../error/AccountFreeze.js';
 
@@ -47,8 +46,6 @@ export class RescueCommandHandler implements ICommandHandler<RescueCommand> {
 	constructor(
 		@lazyInject(StableCoinService)
 		public readonly stableCoinService: StableCoinService,
-		@lazyInject(CommandBus)
-		public readonly commandBus: CommandBus,
 		@lazyInject(QueryBus)
 		public readonly queryBus: QueryBus,
 		@lazyInject(AccountService)
@@ -58,8 +55,7 @@ export class RescueCommandHandler implements ICommandHandler<RescueCommand> {
 	) {}
 
 	async execute(command: RescueCommand): Promise<RescueCommandResponse> {
-		const { amount, tokenId, startDate } = command;
-		const handler = this.transactionService.getHandler();
+		const { amount, tokenId } = command;
 		const account = this.accountService.getCurrentAccount();
 		const tokenRelationship = (
 			await this.stableCoinService.queryBus.execute(
@@ -106,7 +102,13 @@ export class RescueCommandHandler implements ICommandHandler<RescueCommand> {
 				'The rescue amount is bigger than the treasury account balance',
 			);
 		}
-		const res = await handler.rescue(capabilities, amountBd, startDate);
+		const res = await this.transactionService.executeOperation(
+			'rescue',
+			{
+				contractAddress: capabilities.coin.evmProxyAddress?.toString(),
+				amount: amountBd.toLong().toString(),
+			},
+		);
 		return Promise.resolve(
 			new RescueCommandResponse(res.error === undefined, res.id, res.serializedTransactionData),
 		);

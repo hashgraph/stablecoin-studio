@@ -18,10 +18,5 @@
  *
  */
 
-import { QueryResponse } from '../../../../core/query/QueryResponse.js';
-import ContractId from '../../../../domain/context/contract/ContractId.js';
-
-export default interface ReserveViewModel extends QueryResponse {
-	proxyAddress: ContractId;
-	proxyAdminAddress?: ContractId;
-}
+// Re-export from core/ — canonical definition
+export { default } from '../../../../core/query/response/ReserveViewModel.js';

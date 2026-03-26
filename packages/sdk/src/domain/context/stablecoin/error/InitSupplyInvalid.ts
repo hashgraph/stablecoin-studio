@@ -1,4 +1,4 @@
-import BaseError, { ErrorCode } from '../../../../core/error/BaseError.js';
+import BaseError, { ErrorCode } from '../../../shared/error/BaseError.js';
 
 export class InitSupplyInvalid extends BaseError {
 	constructor(initSupply: string, maxSupply: string = 'max supply') {

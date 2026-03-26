@@ -26,7 +26,7 @@ import { QueryBus } from '../../../../../../../core/query/QueryBus.js';
 import {
 	FreezeStatus,
 	KycStatus,
-} from '../../../../../../../port/out/mirror/response/AccountTokenRelationViewModel.js';
+} from '../../../../../../../domain/context/stablecoin/TokenRelation.js';
 import AccountService from '../../../../../../service/AccountService.js';
 import StableCoinService from '../../../../../../service/StableCoinService.js';
 import TransactionService from '../../../../../../service/TransactionService.js';
@@ -37,10 +37,11 @@ import {
 } from './ReleaseHoldCommand.js';
 import { AccountNotKyc } from '../../../error/AccountNotKyc.js';
 import { AccountFreeze } from '../../../error/AccountFreeze.js';
-import CheckNums from '../../../../../../../core/checks/numbers/CheckNums.js';
+import CheckNums from '../../../../../../../domain/shared/checks/numbers/CheckNums.js';
 import { DecimalsOverRange } from '../../../error/DecimalsOverRange.js';
 import ValidationService from '../../../../../../service/ValidationService.js';
 import { StableCoinNotAssociated } from '../../../error/StableCoinNotAssociated.js';
+import { AbstractMirrorNodeAdapter } from '../../../../../../../port/out/mirror/AbstractMirrorNodeAdapter.js';
 
 @CommandHandler(ReleaseHoldCommand)
 export class ReleaseHoldCommandHandler
@@ -57,13 +58,14 @@ export class ReleaseHoldCommandHandler
 		private readonly transactionService: TransactionService,
 		@lazyInject(ValidationService)
 		private readonly validationService: ValidationService,
+		@lazyInject(AbstractMirrorNodeAdapter)
+		private readonly mirrorNode: AbstractMirrorNodeAdapter,
 	) {}
 
 	async execute(
 		command: ReleaseHoldCommand,
 	): Promise<ReleaseHoldCommandResponse> {
 		const { tokenId, holdId, sourceId, amount } = command;
-		const handler = this.transactionService.getHandler();
 		const account = this.accountService.getCurrentAccount();
 		const capabilities = await this.stableCoinService.getCapabilities(
 			account,
@@ -111,11 +113,17 @@ export class ReleaseHoldCommandHandler
 			holdId,
 		);
 
-		const res = await handler.releaseHold(
-			capabilities,
-			amountBd,
-			sourceId,
-			holdId,
+		const tokenHolderEvmAddress = (
+			await this.mirrorNode.accountToEvmAddress(sourceId)
+		).toString();
+		const res = await this.transactionService.executeOperation(
+			'releaseHold',
+			{
+				contractAddress: capabilities.coin.evmProxyAddress?.toString(),
+				tokenHolder: tokenHolderEvmAddress,
+				holdId: '0x' + holdId.toString(16),
+				amount: amountBd.toLong().toString(),
+			},
 		);
 
 		return Promise.resolve(

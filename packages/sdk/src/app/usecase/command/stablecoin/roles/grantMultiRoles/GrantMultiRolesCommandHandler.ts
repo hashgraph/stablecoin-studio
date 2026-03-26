@@ -26,6 +26,7 @@ import AccountService from '../../../../../service/AccountService.js';
 import StableCoinService from '../../../../../service/StableCoinService.js';
 import TransactionService from '../../../../../service/TransactionService.js';
 import { AccountsIdNotExists } from '../../error/AccountsIdNotExists.js';
+import { AbstractMirrorNodeAdapter } from '../../../../../../port/out/mirror/AbstractMirrorNodeAdapter.js';
 import {
 	GrantMultiRolesCommand,
 	GrantMultiRolesCommandResponse,
@@ -42,13 +43,14 @@ export class GrantMultiRolesCommandHandler
 		public readonly accountService: AccountService,
 		@lazyInject(TransactionService)
 		public readonly transactionService: TransactionService,
+		@lazyInject(AbstractMirrorNodeAdapter)
+		public readonly mirrorNode: AbstractMirrorNodeAdapter,
 	) {}
 
 	async execute(
 		command: GrantMultiRolesCommand,
 	): Promise<GrantMultiRolesCommandResponse> {
-		const { roles, targetsId, amounts, tokenId, startDate } = command;
-		const handler = this.transactionService.getHandler();
+		const { roles, targetsId, amounts, tokenId } = command;
 		const account = this.accountService.getCurrentAccount();
 		const capabilities = await this.stableCoinService.getCapabilities(
 			account,
@@ -70,20 +72,21 @@ export class GrantMultiRolesCommandHandler
 			throw new AccountsIdNotExists(noExistsAccounts);
 		}
 
-		const amountsFormatted: BigDecimal[] = [];
-		amounts.forEach((amount) => {
-			amountsFormatted.push(
-				BigDecimal.fromString(amount, capabilities.coin.decimals),
-			);
-		});
-
-		const res = await handler.grantRoles(
-			capabilities,
-			targetsId,
-			roles,
-			amountsFormatted,
-			startDate,
+		const accounts = await Promise.all(
+			targetsId.map(async (id) =>
+				(await this.mirrorNode.accountToEvmAddress(id)).toString(),
+			),
 		);
+		const formattedAmounts = amounts.map((amount) =>
+			BigDecimal.fromString(amount, capabilities.coin.decimals).toLong().toString(),
+		);
+
+		const res = await this.transactionService.executeOperation('grantMultiRoles', {
+			contractAddress: capabilities.coin.evmProxyAddress?.toString(),
+			roles,
+			accounts,
+			amounts: formattedAmounts,
+		});
 
 		return Promise.resolve(
 			new GrantMultiRolesCommandResponse(res.error === undefined, res.id, res.serializedTransactionData),

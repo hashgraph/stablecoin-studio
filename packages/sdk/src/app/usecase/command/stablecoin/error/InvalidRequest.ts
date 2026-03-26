@@ -18,7 +18,7 @@
  *
  */
 
-import BaseError, { ErrorCode } from '../../../../../core/error/BaseError.js';
+import BaseError, { ErrorCode } from '../../../../../domain/shared/error/BaseError.js';
 
 export class InvalidRequest extends BaseError {
 	constructor(val: string) {

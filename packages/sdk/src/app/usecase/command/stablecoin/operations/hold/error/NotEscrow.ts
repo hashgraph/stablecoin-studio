@@ -20,7 +20,7 @@
 
 import BaseError, {
 	ErrorCode,
-} from '../../../../../../../core/error/BaseError.js';
+} from '../../../../../../../domain/shared/error/BaseError.js';
 
 export class NotEscrow extends BaseError {
 	constructor(caller: string, escrow: string) {

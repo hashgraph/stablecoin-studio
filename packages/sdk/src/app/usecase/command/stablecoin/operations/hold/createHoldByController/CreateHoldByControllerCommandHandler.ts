@@ -26,7 +26,7 @@ import { QueryBus } from '../../../../../../../core/query/QueryBus.js';
 import {
 	FreezeStatus,
 	KycStatus,
-} from '../../../../../../../port/out/mirror/response/AccountTokenRelationViewModel.js';
+} from '../../../../../../../domain/context/stablecoin/TokenRelation.js';
 import AccountService from '../../../../../../service/AccountService.js';
 import StableCoinService from '../../../../../../service/StableCoinService.js';
 import TransactionService from '../../../../../../service/TransactionService.js';
@@ -36,13 +36,15 @@ import { OperationNotAllowed } from '../../../error/OperationNotAllowed.js';
 import { AccountNotKyc } from '../../../error/AccountNotKyc.js';
 import { AccountFreeze } from '../../../error/AccountFreeze.js';
 import { BalanceOfQuery } from '../../../../../query/stablecoin/balanceof/BalanceOfQuery.js';
-import CheckNums from '../../../../../../../core/checks/numbers/CheckNums.js';
+import CheckNums from '../../../../../../../domain/shared/checks/numbers/CheckNums.js';
 import { DecimalsOverRange } from '../../../error/DecimalsOverRange.js';
 import {
 	CreateHoldByControllerCommand,
 	CreateHoldByControllerCommandResponse,
 } from './CreateHoldByControllerCommand.js';
 import { MissingProxyWipeKey } from '../../../error/MissingProxyWipeKey.js';
+import { AbstractMirrorNodeAdapter } from '../../../../../../../port/out/mirror/AbstractMirrorNodeAdapter.js';
+import { EVM_ZERO_ADDRESS } from '../../../../../../../core/Constants.js';
 
 @CommandHandler(CreateHoldByControllerCommand)
 export class CreateHoldByControllerCommandHandler
@@ -57,6 +59,8 @@ export class CreateHoldByControllerCommandHandler
 		private readonly accountService: AccountService,
 		@lazyInject(TransactionService)
 		private readonly transactionService: TransactionService,
+		@lazyInject(AbstractMirrorNodeAdapter)
+		private readonly mirrorNodeAdapter: AbstractMirrorNodeAdapter,
 	) {}
 
 	async execute(
@@ -64,7 +68,6 @@ export class CreateHoldByControllerCommandHandler
 	): Promise<CreateHoldByControllerCommandResponse> {
 		const { tokenId, sourceId, amount, escrow, expirationDate, targetId } =
 			command;
-		const handler = this.transactionService.getHandler();
 		const account = this.accountService.getCurrentAccount();
 		const capabilities = await this.stableCoinService.getCapabilities(
 			account,
@@ -116,39 +119,57 @@ export class CreateHoldByControllerCommandHandler
 			);
 		}
 
-		const res = await handler.createHoldByController(
-			capabilities,
-			amountBd,
-			escrow,
-			BigDecimal.fromString(expirationDate),
-			sourceId,
-			targetId,
+		// ── Resolve addresses ───────────────────────────────────────────
+
+		const evmProxyAddress = coin.evmProxyAddress?.toString();
+		if (!evmProxyAddress) {
+			throw new Error('StableCoin does not have a proxy address');
+		}
+
+		const evmSource = (
+			await this.mirrorNodeAdapter.accountToEvmAddress(sourceId)
+		).toString();
+
+		const evmEscrow = (
+			await this.mirrorNodeAdapter.accountToEvmAddress(escrow)
+		).toString();
+
+		const evmTo = targetId
+			? (
+					await this.mirrorNodeAdapter.accountToEvmAddress(targetId)
+			  ).toString()
+			: EVM_ZERO_ADDRESS;
+
+		// ── Execute operation ───────────────────────────────────────────
+
+		const res = await this.transactionService.executeOperation(
+			'createHoldByController',
+			{
+				contractAddress: evmProxyAddress,
+				sourceAddress: evmSource,
+				amount: amountBd.toBigInt().toString(),
+				expirationTimestamp: BigDecimal.fromString(expirationDate)
+					.toBigInt()
+					.toString(),
+				escrowAddress: evmEscrow,
+				toAddress: evmTo,
+			},
 		);
 
-		if (this.transactionService.isExternalWallet()) {
-			return new CreateHoldByControllerCommandResponse(
-				0,
-				false,
-				res.id,
-				res.serializedTransactionData,
-			);
-		}
+		// ── Parse holdId from contract event ────────────────────────────
 
 		const holdId = await this.transactionService.getTransactionResult({
 			res,
-			result: res.response?.holdId,
+			result: undefined,
 			className: CreateHoldByControllerCommandHandler.name,
 			position: 1,
 			numberOfResultsItems: 2,
 		});
 
-		return Promise.resolve(
-			new CreateHoldByControllerCommandResponse(
-				parseInt(holdId, 16),
-				res.error == undefined,
-				res.id,
-				res.serializedTransactionData,
-			),
+		return new CreateHoldByControllerCommandResponse(
+			parseInt(holdId, 16),
+			res.error == undefined,
+			res.id,
 		);
 	}
 }

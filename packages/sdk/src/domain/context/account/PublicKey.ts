@@ -21,8 +21,8 @@
 import KeyProps, { KeyType } from './KeyProps.js';
 import { PublicKey as HPublicKey } from '@hiero-ledger/sdk';
 import PrivateKey from './PrivateKey.js';
-import BaseError from '../../../core/error/BaseError.js';
-import { RuntimeError } from '../../../core/error/RuntimeError.js';
+import BaseError from '../../shared/error/BaseError.js';
+import { RuntimeError } from '../../shared/error/RuntimeError.js';
 
 export default class PublicKey implements KeyProps {
 	public static readonly NULL: PublicKey = new PublicKey({
