@@ -78,7 +78,7 @@
 	"dependencies": {
 		"@hashgraph/cryptography": "1.4.3",
 		"@hashgraph/hedera-custodians-integration": "^1.4.1",
-		"@hashgraph/hedera-wallet-connect": "file:../../../../hedera-wallet-connect/hashgraph-hedera-wallet-connect-2.0.6.tgz",
+		"@hashgraph/hedera-wallet-connect": "2.1.2",
 		"@hashgraph/proto": "2.25.0",
 		"@hashgraph/stablecoin-npm-contracts": "*",
 		"@hiero-ledger/proto": "2.25.0",
