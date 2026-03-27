@@ -29,7 +29,7 @@ Stablecoin Studio is an open-source toolkit for issuing and managing stablecoins
 The project is composed of five modules working as a vertical stack:
 
 - **Smart Contracts** — On-chain rules using a diamond proxy pattern with a centralized resolver (Factory, Resolver, Facets).
-- **SDK** — TypeScript library following hexagonal architecture with DDD and CQS. The programmatic entry point for all operations.
+- **SDK** — TypeScript library following hexagonal architecture with DDD and CQS. Pipeline-based execution engine supporting multiple signing backends (Hedera Client, ethers Signer, WalletConnect, custodial providers, multi-signature). The programmatic entry point for all operations.
 - **Backend** — NestJS REST API for multisignature transaction coordination (optional for single-key accounts).
 - **CLI** — Terminal interface supporting every SDK operation, with an interactive wizard mode.
 - **Web DApp** — React application providing a visual interface for the full stablecoin lifecycle.

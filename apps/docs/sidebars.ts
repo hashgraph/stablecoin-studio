@@ -31,6 +31,7 @@ const sidebars: SidebarsConfig = {
         "sdk/quick-start",
         "sdk/usage",
         "sdk/architecture",
+        "sdk/anatomy-of-an-operation",
       ],
     },
     {

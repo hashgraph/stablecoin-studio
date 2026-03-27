@@ -7,14 +7,14 @@ sidebar_position: 4
 
 # Architecture
 
-The Web UI acts as a client-side orchestrator. It does **not** store private keys. Instead, it delegates signing to the user's browser extension wallet (HashPack/Blade) and logic operations to the SDK.
+The Web UI acts as a client-side orchestrator. It does **not** store private keys. Instead, it delegates signing to the user's browser wallet (HashPack, MetaMask, or any WalletConnect-compatible wallet) and logic operations to the SDK.
 
 ```mermaid
 graph TD
     subgraph Browser ["User Browser"]
         UI["React UI Components"]
         Context["Global Context Provider"]
-        WalletExt["HashPack / Blade Extension"]
+        WalletExt["HashPack / MetaMask / WalletConnect"]
     end
 
     subgraph Logic_Layer ["Application Logic"]
@@ -55,8 +55,8 @@ graph TD
 
 ## Connection Flow
 
-1. **Initialization**: On app load, the `WalletProvider` establishes a session with the HashConnect pairing string.
-2. **SDK Injection**: Once connected, the app instantiates `StableCoinClient` with the wallet provider.
+1. **Initialization**: On app load, the `WalletProvider` establishes a session via WalletConnect 2.0 (ReOWN AppKit) or MetaMask.
+2. **SDK Injection**: Once connected, the SDK is configured with the appropriate signing mode (`hedera-external-execute` for HashPack, `signer` for MetaMask).
 3. **Action Execution**: When a user clicks "Mint", the service calls `sdk.cashIn()`, which sends a sign request to the wallet extension. The user approves the popup, and the transaction is submitted to Hedera.
 
 ---

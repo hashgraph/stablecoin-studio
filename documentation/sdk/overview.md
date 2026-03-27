@@ -7,7 +7,7 @@ sidebar_position: 1
 
 # SDK Overview
 
-The **Stablecoin Studio SDK** is the core TypeScript library for issuing, managing, and operating stablecoins on Hedera. It provides a high-level abstraction over the Hedera Token Service (HTS) and the Stablecoin Studio smart contracts.
+The **Stablecoin Studio SDK** is the core TypeScript library for issuing, managing, and operating stablecoins on Hedera. It provides a high-level abstraction over the Hedera Token Service (HTS) and the Stablecoin Studio smart contracts, with a pipeline-based execution engine that supports multiple signing backends.
 
 ---
 
@@ -15,12 +15,12 @@ The **Stablecoin Studio SDK** is the core TypeScript library for issuing, managi
 
 These methods execute transactions that modify the blockchain state. They require specific roles assigned to the signer's address.
 
-All write operations return a `TransactionResult` object containing:
+All write operations return an `OperationOutcome` object containing:
 - **`success`** (`boolean`) — whether the transaction succeeded
 - **`transactionId`** (`string | undefined`) — the Hedera transaction ID
 
 ```typescript
-const result = await StableCoin.burn(request);
+const result = await sdk.burn({ contractAddress, amount: '1000000' });
 if (result.success) {
   console.log(`Transaction ID: ${result.transactionId}`);
 }
@@ -28,33 +28,70 @@ if (result.success) {
 
 | Method | Main Parameters | Description | Required Roles |
 | :--- | :--- | :--- | :--- |
-| `createStableCoin(req)` | `name, symbol, decimals` | Deploys a new instance via Factory | None (Owner) |
-| `mint(req)` | `address, amount` | Mints new tokens to a target account | `CASHIN_ROLE` |
-| `burn(req)` | `amount` | Burns tokens from the treasury | `BURN_ROLE` |
-| `wipe(req)` | `address, amount` | Removes tokens from an account for compliance | `WIPE_ROLE` |
-| `transfer(req)` | `address, amount` | Sends tokens to another address | None |
-| `freeze(req)` | `address` | Blocks transfers for a specific account | `FREEZE_ROLE` |
-| `unfreeze(req)` | `address` | Unblocks a previously frozen account | `FREEZE_ROLE` |
-| `grantKyc(req)` | `address` | Marks an account as verified | `KYC_ROLE` |
-| `revokeKyc(req)` | `address` | Revokes verification status | `KYC_ROLE` |
-| `pause()` | `-` | Halts all operations (emergency) | `PAUSE_ROLE` |
-| `unpause()` | `-` | Resumes contract operations | `PAUSE_ROLE` |
-| `rescue(req)` | `token, address, amount` | Recovers assets sent to the contract by mistake | `RESCUE_ROLE` |
-| `grantRole(req)` | `role, address` | Assigns a role to an account | `DEFAULT_ADMIN_ROLE` |
-| `revokeRole(req)` | `role, address` | Revokes a role | `DEFAULT_ADMIN_ROLE` |
+| `create(req)` | `name, symbol, factoryAddress, resolverAddress` | Deploys a new stablecoin via Factory | None (Owner) |
+| `cashIn(req)` | `contractAddress, targetId, amount` | Mints new tokens to a target account | `CASHIN_ROLE` |
+| `burn(req)` | `contractAddress, amount` | Burns tokens from the treasury | `BURN_ROLE` |
+| `wipe(req)` | `contractAddress, targetId, amount` | Removes tokens from an account for compliance | `WIPE_ROLE` |
+| `transfer(req)` | `contractAddress, tokenAddress, fromId, targetId, amount` | Sends tokens to another address | None |
+| `freeze(req)` | `contractAddress, targetId` | Blocks transfers for a specific account | `FREEZE_ROLE` |
+| `unfreeze(req)` | `contractAddress, targetId` | Unblocks a previously frozen account | `FREEZE_ROLE` |
+| `grantKyc(req)` | `contractAddress, targetId` | Marks an account as verified | `KYC_ROLE` |
+| `revokeKyc(req)` | `contractAddress, targetId` | Revokes verification status | `KYC_ROLE` |
+| `pause(req)` | `contractAddress` | Halts all operations (emergency) | `PAUSE_ROLE` |
+| `unpause(req)` | `contractAddress` | Resumes contract operations | `PAUSE_ROLE` |
+| `rescue(req)` | `contractAddress, amount` | Recovers tokens sent to the contract by mistake | `RESCUE_ROLE` |
+| `rescueHBAR(req)` | `contractAddress, amount` | Recovers HBAR sent to the contract by mistake | `RESCUE_ROLE` |
+| `grantRole(req)` | `contractAddress, targetId, role` | Assigns a role to an account | `DEFAULT_ADMIN_ROLE` |
+| `revokeRole(req)` | `contractAddress, targetId, role` | Revokes a role | `DEFAULT_ADMIN_ROLE` |
+| `delete(req)` | `contractAddress` | Permanently deletes the token | `DELETE_ROLE` |
+
+### Hold Operations
+
+| Method | Main Parameters | Description |
+| :--- | :--- | :--- |
+| `createHold(req)` | `contractAddress, amount, expirationTimestamp, escrowAddress` | Creates a token hold under escrow |
+| `executeHold(req)` | `contractAddress, holdId, tokenHolder, toAddress, amount` | Executes a held amount (partial or full) |
+| `releaseHold(req)` | `contractAddress, holdId, tokenHolder, amount` | Releases a hold back to the holder |
+| `reclaimHold(req)` | `contractAddress, holdId, tokenHolder` | Reclaims an expired hold |
+
+### Supplier Role Management
+
+| Method | Description |
+| :--- | :--- |
+| `grantSupplierRole(req)` | Grants cash-in role with a minting allowance |
+| `revokeSupplierRole(req)` | Revokes cash-in role |
+| `grantUnlimitedSupplierRole(req)` | Grants cash-in role with unlimited minting |
+| `increaseAllowance(req)` | Increases a supplier's minting allowance |
+| `decreaseAllowance(req)` | Decreases a supplier's minting allowance |
+| `resetAllowance(req)` | Resets a supplier's minting allowance to zero |
+
+### Multi-Role Operations
+
+| Method | Description |
+| :--- | :--- |
+| `grantMultiRoles(req)` | Grants multiple roles to multiple accounts in one transaction |
+| `revokeMultiRoles(req)` | Revokes multiple roles from multiple accounts in one transaction |
 
 ---
 
 ## Query Methods (Read Operations)
 
-State queries with no gas cost.
+State queries executed via JSON-RPC with no gas cost.
 
-| Method | Return | Description |
+| Method | Return Field | Description |
 | :--- | :--- | :--- |
-| `getBalance(address)` | `BigNumber` | Token balance of an address |
-| `totalSupply()` | `BigNumber` | Total tokens in circulation |
-| `isFrozen(address)` | `boolean` | Checks if an account is blocked |
-| `isKycPassed(address)` | `boolean` | Confirms if the account has KYC |
+| `getBalance(req)` | `balance` | Token balance of an address |
+| `getBurnableAmount(req)` | `amount` | Tokens available for burning |
+| `getReserveAddress(req)` | `reserveAddress` | Reserve contract address |
+| `getReserveAmount(req)` | `amount` | Current reserve amount |
+| `hasRole(req)` | `hasRole` | Whether an account has a specific role |
+| `getRoles(req)` | `roles` | All roles held by an account |
+| `getAccountsWithRole(req)` | `accounts` | All accounts with a specific role |
+| `isUnlimited(req)` | `isUnlimited` | Whether a supplier has unlimited minting |
+| `getAllowance(req)` | `allowance` | Supplier's current minting allowance |
+| `getHeldAmount(req)` | `amount` | Tokens currently held for an account |
+| `getHoldCount(req)` | `count` | Number of active holds for an account |
+| `getHoldsId(req)` | `holdIds` | Hold IDs for an account |
 
 ---
 
@@ -65,79 +102,47 @@ State queries with no gas cost.
 - **`WIPE_ROLE`**: Compliance management
 - **`FREEZE_ROLE`**: Account blocking
 - **`PAUSE_ROLE`**: Emergency pause
+- **`RESCUE_ROLE`**: Asset recovery
+- **`KYC_ROLE`**: Account verification
+- **`DELETE_ROLE`**: Token deletion
+- **`HOLD_ROLE`**: Hold operations
 - **`DEFAULT_ADMIN_ROLE`**: Master administrator
 
 > The transaction issuer must have the corresponding role or the operation will fail.
 
 ---
 
-## External Wallet Support
+## Signing Modes
 
-The SDK supports external wallet integrations where the private key is **not** passed to the SDK. Instead, the SDK serializes transactions and returns them for signing by an external system (e.g., Fireblocks, DFNS, AWS KMS, or any custodial solution).
+The SDK supports multiple signing backends through a unified pipeline. The signing mode is set at initialization and determines how transactions are signed and submitted.
 
-Two wallet modes are available:
+| Mode | Transport | Description |
+| :--- | :--- | :--- |
+| **Client** | Hedera gRPC | Direct signing with a Hedera Client (operator ID + private key) |
+| **Signer** | EVM JSON-RPC | Signing with an ethers Signer (private key or browser wallet like MetaMask) |
+| **Hedera External** | Hedera | Serializes transactions for external signing (returns raw bytes) |
+| **Hedera External Execute** | Hedera | WalletConnect/HashPack — signs and executes atomically via wallet extension |
+| **EVM External** | EVM | Serializes EVM transactions for external signing |
+| **Custodial** | Hedera gRPC | Custodial providers (Fireblocks, DFNS, AWS KMS) sign via a callback interface |
+| **MultiSig** | Hedera | Serializes transactions for multi-signature coordination via the Backend API |
 
-| Wallet | Description |
-| :--- | :--- |
-| `EXTERNAL_HEDERA` | For native Hedera Token Service (HTS) operations. Returns hex-encoded serialized Hedera transactions. |
-| `EXTERNAL_EVM` | For EVM-compatible operations. Returns unsigned EVM transaction data for signing with ethers or similar libraries. |
+### Custodial Signing
 
-### Connection
-
-```typescript
-import { Network, ConnectRequest, SupportedWallets } from "@hashgraph/stablecoin-npm-sdk";
-
-await Network.connect(
-  new ConnectRequest({
-    account: { accountId: "0.0.12345" }, // Only account ID — no private key
-    network: "testnet",
-    mirrorNode: { baseUrl: "https://testnet.mirrornode.hedera.com" },
-    rpcNode: { baseUrl: "https://testnet.hashio.io/api" },
-    wallet: SupportedWallets.EXTERNAL_HEDERA,
-    externalWalletSettings: {
-      validStartOffsetMinutes: 0,
-    },
-  })
-);
-```
-
-### Build Methods
-
-Every write operation has a corresponding `build*` method that returns the raw serialized transaction without executing it. This is useful for external signing workflows or for inspecting transactions before submission.
-
-| Method | Description |
-| :--- | :--- |
-| `StableCoin.buildCashIn(req)` | Serialize a mint transaction |
-| `StableCoin.buildBurn(req)` | Serialize a burn transaction |
-| `StableCoin.buildWipe(req)` | Serialize a wipe transaction |
-| `StableCoin.buildRescue(req)` | Serialize a token rescue transaction |
-| `StableCoin.buildRescueHBAR(req)` | Serialize an HBAR rescue transaction |
-| `StableCoin.buildPause(req)` | Serialize a pause transaction |
-| `StableCoin.buildFreeze(req)` | Serialize a freeze transaction |
-| `StableCoin.buildTransfers(req)` | Serialize a transfer transaction |
-
-All build methods return a `SerializedTransactionData` object:
+For custodial wallets (Fireblocks, DFNS, AWS KMS), the SDK accepts a `CustodialSigner` interface:
 
 ```typescript
-interface SerializedTransactionData {
-  serializedTransaction: string;  // Hex-encoded transaction bytes
-  metadata: {
-    transactionType: string;      // e.g., "ContractExecuteTransaction"
-    description: string;          // Human-readable operation description
-    requiredSigners: string[];    // Account IDs that must sign
-  };
+interface CustodialSigner {
+  sign(req: { transactionBytes: Uint8Array }): Promise<Uint8Array>;
 }
 ```
 
-```typescript
-const data = await StableCoin.buildCashIn(request);
-console.log(data.serializedTransaction);       // Raw bytes to sign externally
-console.log(data.metadata.requiredSigners);    // Who needs to sign
-```
+The custodial provider signs the raw transaction bytes and the SDK submits the signed transaction to Hedera.
 
-### Transaction Flow
+### External Wallet Flow
 
-1. Call a `build*` method (e.g., `StableCoin.buildBurn(request)`)
-2. The SDK builds and serializes the transaction but does **not** sign it
-3. The result includes the unsigned transaction bytes, transaction type, description, and required signers
+For external signing modes (`hedera-external`, `evm-external`, `multisig`), the SDK returns the serialized transaction instead of executing it:
+
+1. Call any operation method (e.g., `sdk.cashIn(request)`)
+2. The SDK builds and serializes the transaction but does **not** sign or submit it
+3. The result includes the unsigned transaction bytes
 4. Your application signs the transaction externally and submits it to the network

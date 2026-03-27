@@ -57,7 +57,7 @@ The on-chain foundation using a **diamond proxy pattern with a centralized resol
 
 ### SDK
 
-The **TypeScript SDK** follows hexagonal architecture with DDD and CQS. Commands change state, queries read state, and wallet adapters abstract the signing layer.
+The **TypeScript SDK** follows hexagonal architecture with DDD and CQS. A pipeline-based execution engine (Build, Sign, Submit, Parse, Extract) supports multiple signing backends: Hedera Client, ethers Signer (MetaMask), WalletConnect, custodial providers (Fireblocks, DFNS, AWS KMS), and multi-signature coordination.
 
 [SDK documentation →](./sdk/overview.md)
 
@@ -84,10 +84,10 @@ A **React** application providing a visual interface for the complete stablecoin
 ## How the Components Interact
 
 1. **User action** — An administrator clicks "Mint 10,000 tokens" in the Web DApp (or runs the equivalent CLI command, or calls the SDK directly).
-2. **SDK** — The SDK builds the appropriate command, selects the correct contract facet, and prepares a Hedera transaction.
-3. **Signing** — If the account uses a single key, the wallet signs immediately. If it requires multiple keys, the transaction is sent to the backend, which collects all required signatures.
-4. **Execution** — The signed transaction is submitted to the Hedera network. The resolver routes the call to the correct facet.
-5. **Confirmation** — The SDK reads the transaction receipt and mirror node data to confirm the result.
+2. **SDK** — The SDK looks up the operation in the registry, builds the transaction (Hedera or EVM), and feeds it into the execution pipeline.
+3. **Signing** — The pipeline selects the appropriate signing step based on the configured mode: local key, browser wallet (MetaMask/HashPack), custodial provider, or multi-signature coordination via the backend.
+4. **Execution** — The signed transaction is submitted to the Hedera network (via gRPC or JSON-RPC relay). The resolver routes the call to the correct facet.
+5. **Confirmation** — The pipeline parses the receipt and extracts results from events and return values.
 
 ---
 

@@ -30,16 +30,46 @@ npm run build:sdk
 
 ## Initialization
 
+The SDK supports multiple initialization paths depending on your signing backend.
+
+### Option A: From environment variables (simplest)
+
+Set `HEDERA_NETWORK`, `HEDERA_OPERATOR_ID`, and `HEDERA_PRIVATE_KEY` in your `.env` file, then:
+
+```typescript
+import { StableCoinSDK } from "@hashgraph/stablecoin-npm-sdk";
+
+const sdk = StableCoinSDK.fromEnvironment();
+```
+
+### Option B: With a Hedera Client
+
 ```typescript
 import { Client } from "@hashgraph/sdk";
-import { StableCoinClient } from "@hashgraph/stablecoin-npm-sdk";
+import { StableCoinSDK } from "@hashgraph/stablecoin-npm-sdk";
 
-// 1. Setup the Hedera Client (Testnet)
-const hederaClient = Client.forTestnet();
-hederaClient.setOperator(process.env.MY_ACCOUNT_ID, process.env.MY_PRIVATE_KEY);
+const client = Client.forTestnet();
+client.setOperator(process.env.MY_ACCOUNT_ID, process.env.MY_PRIVATE_KEY);
 
-// 2. Initialize the SDK
-const sdk = new StableCoinClient(hederaClient);
+const sdk = new StableCoinSDK({
+  network: 'testnet',
+  signing: { type: 'client', client },
+});
+```
+
+### Option C: With an EVM Signer (MetaMask, ethers)
+
+```typescript
+import { ethers } from 'ethers';
+import { StableCoinSDK } from "@hashgraph/stablecoin-npm-sdk";
+
+const provider = new ethers.BrowserProvider(window.ethereum);
+const signer = await provider.getSigner();
+
+const sdk = new StableCoinSDK({
+  network: 'testnet',
+  signing: { type: 'signer', signer },
+});
 ```
 
 ---
@@ -47,16 +77,20 @@ const sdk = new StableCoinClient(hederaClient);
 ## Create Your First Stablecoin
 
 ```typescript
-const request = {
-  name: "Euro Stable",
-  symbol: "EUR-S",
-  decimals: 2,
-  initialSupply: "1000000",
-  adminKey: process.env.PUBLIC_KEY
-};
+const result = await sdk.create({
+  name: 'Euro Stable',
+  symbol: 'EUR-S',
+  factoryAddress: '0x...', // Factory contract address
+  resolverAddress: '0x...', // Resolver contract address
+  signerAddress: '0x...', // Your EVM address
+  keys: [
+    { keyType: 17n,  publicKey: '0x', isEd25519: false }, // admin + supply
+    { keyType: 110n, publicKey: '0x', isEd25519: false }, // kyc + freeze + wipe + fee_schedule + pause
+  ],
+});
 
-const token = await sdk.createStableCoin(request);
-console.log("Token created:", token.tokenId);
+console.log('Proxy address:', result.proxyAddress);
+console.log('Token address:', result.tokenAddress);
 ```
 
 ---
@@ -64,5 +98,5 @@ console.log("Token created:", token.tokenId);
 ## Next Steps
 
 - [Usage](./usage.md) — Minting, burning, role management, and more examples
-- [Architecture](./architecture.md) — Connectivity layers and internal design
+- [Architecture](./architecture.md) — Pipeline execution engine and signing modes
 - [Overview](./overview.md) — Full API reference
