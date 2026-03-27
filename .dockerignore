@@ -7,7 +7,6 @@ build
 artifacts
 typechain-types
 cache
-docs
 
 # Git
 .git
