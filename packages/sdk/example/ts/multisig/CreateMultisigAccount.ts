@@ -39,15 +39,15 @@ import {
 } from '@hiero-ledger/sdk';
 
 // ECDSA private key of account 1
-const Multisig_ECDSA_1_privateKey = '';
+const Multisig_ECDSA_1_privateKey = '0x25fb9d83c19762061f1ff3fe5adffbd638eade8a59657b4a5efecb45865db23f';
 
 // ECDSA private key of account 2
-const Multisig_ECDSA_2_privateKey = '';
+const Multisig_ECDSA_2_privateKey = '0x87dc6a31f674d5e57939ec1491a6231c279cc6c592b114259601051869bf9b4a';
 
 // Payer account (fee payer): It must have funds in the testnet
 const deployingAccount = {
-	id: '',
-	ECDSA_privateKey: '',
+	id: '0.0.4942656',
+	ECDSA_privateKey: '0x25fb9d83c19762061f1ff3fe5adffbd638eade8a59657b4a5efecb45865db23f',
 };
 
 async function createMultisigAccount(): Promise<void> {

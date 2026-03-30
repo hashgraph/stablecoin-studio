@@ -49,6 +49,7 @@ const sidebars: SidebarsConfig = {
       items: [
         "client/overview",
         "client/quick-start",
+        "client/configuration",
         "client/usage",
         "client/architecture",
       ],
@@ -61,6 +62,7 @@ const sidebars: SidebarsConfig = {
         "web/quick-start",
         "web/usage",
         "web/architecture",
+        "web/multisig",
       ],
     },
     {
