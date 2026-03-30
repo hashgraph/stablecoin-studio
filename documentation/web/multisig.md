@@ -64,7 +64,7 @@ docker compose up -d --build
 
 1. Go to **Operations** and create a freeze transaction:
    - **Target account**: any account associated with the token.
-   - **Execution time**: set a future timestamp (e.g., current time + 5 minutes).
+   - **Execution time**: set a future timestamp (e.g., current time + 5 minutes). This is when the backend will submit the transaction to Hedera. All signatures must be collected before this time.
 2. Confirm the transaction. It will appear with a `pending` status.
 
 ---
