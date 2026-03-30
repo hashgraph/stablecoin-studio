@@ -439,11 +439,10 @@ export class HederaWalletConnectTransactionAdapter extends BaseHederaTransaction
 			// EVM session - need EVM address format
 			let addressToUse = evmAddress || contractId;
 
-			// Only call Mirror Node if we don't have EVM address and contractId is Hedera ID format
+			// Compute long-zero EVM address from Hedera ID format (e.g. 0.0.1234 → 0x00...04D2)
 			if (!evmAddress && contractId.match(/^0\.0\.\d+$/)) {
-				const contractInfo =
-					await this.mirrorNodeAdapter.getContractInfo(contractId);
-				addressToUse = contractInfo.evmAddress;
+				const num = BigInt(contractId.split('.')[2]);
+				addressToUse = '0x' + num.toString(16).padStart(40, '0');
 			}
 
 			return await this.executeEvmContractCall(
@@ -975,8 +974,9 @@ export class HederaWalletConnectTransactionAdapter extends BaseHederaTransaction
 
 		let accountMirror: AccountViewModel;
 		try {
-			accountMirror =
-				await this.mirrorNodeAdapter.getAccountInfo(evmAddress);
+			accountMirror = await this.mirrorNodeAdapter.getAccountInfo(
+				evmAddress,
+			);
 		} catch (error) {
 			throw new Error(
 				`No Hedera account found for EVM address ${evmAddress} on ${currentNetwork}. ` +
