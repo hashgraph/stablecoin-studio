@@ -96,19 +96,34 @@ When the scheduled execution time arrives, the transaction is automatically subm
 
 ---
 
-## Demo Setup
+## Demo Setup (Testnet only)
 
-If you don't have a multisig account yet, you can use the helper scripts in `packages/sdk/example/ts/multisig/` to set one up for testing.
+The steps above describe how to use the multisig feature in the Web DApp. If you don't have a multisig account or an associated token yet, we provide a set of helper scripts in `packages/sdk/example/ts/multisig/` so you can quickly set up a testing environment on **testnet**.
+
+> **Important**: These scripts are intended for **testnet only**. Do not use them with mainnet accounts or private keys.
 
 You need **two Hedera accounts** with ECDSA private keys. If you don't have them, create them in the [Hedera Developer Portal](https://portal.hedera.com/).
 
 ### 1. Create a Multisig Account
 
-Open `packages/sdk/example/ts/multisig/CreateMultisigAccount.ts` and set the private keys:
+This helper script creates a new Hedera account with a 2-of-2 KeyList, meaning both signer keys must approve every transaction made from this account.
+
+Open `packages/sdk/example/ts/multisig/CreateMultisigAccount.ts` and edit the following variables:
+
+- `ECDSA_1_PRIVATE_KEY` — ECDSA private key of the first signer account.
+- `ECDSA_2_PRIVATE_KEY` — ECDSA private key of the second signer account.
+- `FEE_PAYER` — The account that will pay the cost of creating the multisig account. It must have funds in the testnet.
+  - `id` — Account ID (e.g., `0.0.12345`).
+  - `privateKey` — ECDSA private key of the account.
 
 ```typescript
-const Multisig_ECDSA_1_privateKey = '<your-account1-private-key>';
-const Multisig_ECDSA_2_privateKey = '<your-account2-private-key>';
+const ECDSA_1_PRIVATE_KEY = '';
+const ECDSA_2_PRIVATE_KEY = '';
+
+const FEE_PAYER = {
+    id: '',
+    privateKey: '',
+};
 ```
 
 From the `packages/sdk/example/ts` folder, run:
@@ -121,7 +136,31 @@ Save the resulting multisig account ID and send HBAR to it for transaction fees.
 
 ### 2. Associate a Token
 
-Create a token using the CLI or Web DApp. Then open `packages/sdk/example/ts/multisig/AssociateToken.ts` and configure the multisig account ID, the token ID, and the private keys of both signers.
+This helper script associates an existing token to the multisig account. This is required before the multisig account can operate with that token.
+
+Create a token using the CLI or Web DApp. Then open `packages/sdk/example/ts/multisig/AssociateToken.ts` and edit the following variables:
+
+- `ECDSA_1_PRIVATE_KEY` — ECDSA private key of the first signer of the multisig account.
+- `ECDSA_2_PRIVATE_KEY` — ECDSA private key of the second signer of the multisig account.
+- `MULTISIG_ACCOUNT_ID` — The multisig account ID created in the previous step (e.g., `0.0.12345`).
+- `TOKEN_ID` — The token ID to associate to the multisig account (e.g., `0.0.67890`).
+- `FEE_PAYER` — The account that will pay the cost of the token association. It must have funds in the testnet.
+  - `id` — Account ID (e.g., `0.0.12345`).
+  - `privateKey` — ECDSA private key of the account.
+
+```typescript
+const ECDSA_1_PRIVATE_KEY = '';
+const ECDSA_2_PRIVATE_KEY = '';
+
+const MULTISIG_ACCOUNT_ID = '';
+
+const TOKEN_ID = '';
+
+const FEE_PAYER = {
+    id: '',
+    privateKey: '',
+};
+```
 
 From the `packages/sdk/example/ts` folder, run:
 
@@ -129,4 +168,4 @@ From the `packages/sdk/example/ts` folder, run:
 npm run execute:associateToken
 ```
 
-Once done, return to [Step 2](#step-2--configure-permissions) to continue with the guide.
+Once done, return to [Step 1](#step-1--start-the-backend) to continue with the guide.

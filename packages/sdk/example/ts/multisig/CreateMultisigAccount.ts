@@ -39,28 +39,27 @@ import {
 } from '@hiero-ledger/sdk';
 
 // ECDSA private key of account 1
-const Multisig_ECDSA_1_privateKey = '0x25fb9d83c19762061f1ff3fe5adffbd638eade8a59657b4a5efecb45865db23f';
+const ECDSA_1_PRIVATE_KEY = '';
 
 // ECDSA private key of account 2
-const Multisig_ECDSA_2_privateKey = '0x87dc6a31f674d5e57939ec1491a6231c279cc6c592b114259601051869bf9b4a';
+const ECDSA_2_PRIVATE_KEY = '';
 
-// Payer account (fee payer): It must have funds in the testnet
-const deployingAccount = {
-	id: '0.0.4942656',
-	ECDSA_privateKey: '0x25fb9d83c19762061f1ff3fe5adffbd638eade8a59657b4a5efecb45865db23f',
+// Fee payer — single ECDSA account with funds
+const FEE_PAYER = {
+	id: '',
+	privateKey: '',
 };
 
 async function createMultisigAccount(): Promise<void> {
-	const ecdsaKey1 = PrivateKey.fromStringECDSA(Multisig_ECDSA_1_privateKey);
-	const ecdsaKey2 = PrivateKey.fromStringECDSA(Multisig_ECDSA_2_privateKey);
-	const feePayerKey = PrivateKey.fromStringECDSA(deployingAccount.ECDSA_privateKey);
+	const ecdsaKey1 = PrivateKey.fromStringECDSA(ECDSA_1_PRIVATE_KEY);
+	const ecdsaKey2 = PrivateKey.fromStringECDSA(ECDSA_2_PRIVATE_KEY);
 
 	// 2-of-2 KeyList: both ECDSA keys must sign
 	const keyList = new KeyList([ecdsaKey1.publicKey, ecdsaKey2.publicKey], 2);
 
 	const client = Client.forTestnet().setOperator(
-		AccountId.fromString(deployingAccount.id),
-		feePayerKey,
+		AccountId.fromString(FEE_PAYER.id),
+		PrivateKey.fromStringECDSA(FEE_PAYER.privateKey),
 	);
 
 	const tx = await new AccountCreateTransaction()
