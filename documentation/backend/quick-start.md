@@ -23,7 +23,7 @@ You can run the backend in two modes: **Dockerized** (recommended) or **Local De
 
 ```bash
 cd stablecoin-studio/apps/backend
-cp .env.sample .env
+cp .env.example .env
 # Edit .env with your Hedera credentials (see Configuration below)
 docker-compose up -d --build
 ```

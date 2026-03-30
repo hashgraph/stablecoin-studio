@@ -194,7 +194,7 @@ npm run build:backend      # Independent
 
 Each module has its own `.env` configuration. Sample files are provided:
 
-- **Contracts**: `packages/contracts/.env` (test account credentials) — use `packages/contracts/.env.sample`
+- **Contracts**: `packages/contracts/.env` (test account credentials) — use `packages/contracts/.env.example`
 - **CLI**: `apps/cli/hsca-config.yaml` — use `apps/cli/hsca-config.sample.yaml`
 - **Web**: `apps/web/.env` (factory addresses, mirror node, RPC endpoints)
 - **Backend**: `apps/backend/.env` (database, port configuration)
