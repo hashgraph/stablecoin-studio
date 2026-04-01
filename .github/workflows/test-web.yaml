@@ -3,16 +3,16 @@ name: Test_Web
 on:
   pull_request:
     paths:
-      - "web/src/**"
+      - "apps/web/src/**"
       - "package*.json"
-      - "web/tsconfig*.json"
+      - "apps/web/tsconfig*.json"
   push:
     branches:
       - main
     paths:
-      - "web/src/**"
+      - "apps/web/src/**"
       - "package*.json"
-      - "web/tsconfig*.json"
+      - "apps/web/tsconfig*.json"
   # env:
   # NODE_VERSION: "20.17.0" # Fixed version for better stability
 jobs:
@@ -46,7 +46,7 @@ jobs:
 
       # * Specific steps for the Web
       - name: Run tests Web
-        run: npm run test:ci --workspace=web
+        run: npm run test:ci --workspace=apps/web
 
       - name: Clear Cache
-        run: npm run clear:cache --workspace=web
+        run: npm run clear:cache --workspace=apps/web

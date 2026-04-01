@@ -63,7 +63,7 @@ npm run build:web
 The Web DApp is the recommended way to interact with Stablecoin Studio. Before starting it, configure the environment:
 
 ```bash
-cd web
+cd apps/web
 cp .env.example .env
 ```
 
@@ -76,7 +76,7 @@ REACT_APP_MIRROR_NODE='[{"Environment":"testnet","BASE_URL":"https://testnet.mir
 REACT_APP_RPC_NODE='[{"Environment":"testnet","BASE_URL":"https://testnet.hashio.io/api","API_KEY":"","HEADER":""}]'
 ```
 
-> The factory and resolver addresses above correspond to the latest version. Check [Deployed Addresses](/references/deployed-addresses) for other versions. For mirror node and RPC node options, see [Hedera Mirror Nodes](https://docs.hedera.com/hedera/core-concepts/mirror-nodes) and [Hedera JSON-RPC Relay](https://docs.hedera.com/hedera/core-concepts/smart-contracts/json-rpc-relay).
+> The factory and resolver addresses above correspond to the latest version. Check [Deployed Addresses](/scs/references/deployed-addresses) for other versions. For mirror node and RPC node options, see [Hedera Mirror Nodes](https://docs.hedera.com/hedera/core-concepts/mirror-nodes) and [Hedera JSON-RPC Relay](https://docs.hedera.com/hedera/core-concepts/smart-contracts/json-rpc-relay).
 
 For the full list of optional variables (backend, consensus nodes, Hedera WalletConnect, etc.), see the [Web Quick Start](../web/quick-start.md#configuration-env).
 

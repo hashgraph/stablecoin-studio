@@ -3,6 +3,7 @@ id: overview
 title: "Backend - Overview"
 sidebar_label: Overview
 sidebar_position: 1
+slug: /backend
 ---
 
 # Backend Overview

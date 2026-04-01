@@ -26,7 +26,7 @@ npm install -g @hashgraph/stablecoin-npm-cli
 **From source (local build):**
 
 ```bash
-cd stablecoin-studio/cli
+cd stablecoin-studio/apps/cli
 npm install
 ```
 

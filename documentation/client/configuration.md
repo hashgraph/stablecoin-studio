@@ -1,23 +1,23 @@
 ---
 id: configuration
-title: "⚙️ Configuration & Manual Setup"
-sidebar_label: "⚙️ Configuration & Manual Setup"
+title: "Configuration & Manual Setup"
+sidebar_label: "Configuration & Manual Setup"
 ---
 
-# ⚙️ Configuration & Manual Setup
+# Configuration & Manual Setup
 
 The CLI needs to know which account to use and how to connect to the Hedera network. You can achieve this via the Accelerator Wizard or by manually creating the configuration files.
 
-## 🪄 Accelerator Wizard
+## Accelerator Wizard
 The easiest way for new users. It validates your keys and sets up the environment automatically.
 
 ```bash
 npm run start:wizard
 ```
 
-## 🛠 Manual YAML Parameters
+## Manual YAML Parameters
 
-If you prefer to bypass the wizard, you must manually create a `hsca-config.yaml` file (using this [sample file (hsca-config.sample.yaml)](../../cli/hsca-config.sample.yaml) as a template).
+If you prefer to bypass the wizard, you must manually create a `hsca-config.yaml` file (using this [sample file (hsca-config.sample.yaml)](https://github.com/hashgraph/stablecoin-studio/blob/main/apps/cli/hsca-config.sample.yaml) as a template).
 
 ```bash
   cd path/to/cli/

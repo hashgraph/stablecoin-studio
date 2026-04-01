@@ -1,0 +1,29 @@
+{
+	"name": "@hashgraph/stablecoin-sdk-examples-ts",
+	"version": "1.0.0",
+	"description": "TypeScript examples for Stablecoin Studio SDK",
+	"private": true,
+	"main": "build/index.js",
+	"scripts": {
+		"build": "tsc",
+		"start-creation": "ts-node creation/creation.ts",
+		"start-creation-with-reserve": "ts-node creation/creationWithReserve.ts",
+		"start-creation-with-reserve-address": "ts-node creation/creationWithReserveAddress.ts",
+		"start-creation-assigning-keys": "ts-node creation/creationAssigningKeys.ts",
+		"burn": "ts-node operations/burn.ts",
+		"mint": "ts-node operations/mint.ts",
+		"wipe": "ts-node operations/wipe.ts",
+		"roles": "ts-node operations/role.ts",
+		"test-external-evm": "ts-node external/testExternalEVM.ts",
+		"test-external-hedera": "ts-node external/testExternalHedera.ts",
+		"execute:createMultisig": "ts-node multisig/CreateMultisigAccount.ts",
+		"execute:associateToken": "ts-node multisig/AssociateToken.ts"
+	},
+	"keywords": [],
+	"author": "",
+	"license": "Apache-2.0",
+	"devDependencies": {
+		"typescript": "4.9.5",
+		"@hashgraph/stablecoin-npm-sdk": "../../"
+	}
+}

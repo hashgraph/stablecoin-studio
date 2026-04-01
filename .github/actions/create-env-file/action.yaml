@@ -34,7 +34,7 @@ runs:
         echo "TESTNET_PRIVATE_KEY_0=$TESTNET_PRIVATE_KEY_0" >> $GITHUB_ENV
         echo "TESTNET_PRIVATE_KEY_1=$TESTNET_PRIVATE_KEY_1" >> $GITHUB_ENV
 
-      working-directory: contracts
+      working-directory: packages/contracts
 
     - name: Create .env file for SDK
       if: ${{ inputs.module == 'sdk' }}
@@ -98,4 +98,4 @@ runs:
         FACTORY_ADDRESS=0.0.7353542
         RESOLVER_ADDRESS=0.0.7353500
         EOF
-      working-directory: sdk
+      working-directory: packages/sdk

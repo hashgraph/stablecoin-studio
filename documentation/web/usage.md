@@ -145,7 +145,11 @@ The **Settings** tab lets you update the stablecoin's proxy configuration:
 
 ## 8. Multi-Signature Mode
 
-*Coming soon.*
+The Multi-Signature mode allows stablecoin operations to require approval from multiple signers before execution. This is useful for accounts controlled by a key list (e.g., 2-of-2 multisig). Instead of connecting with a wallet, you connect using the multisig account ID directly.
+
+From multisig mode you can create transactions, and each signer approves them individually from the **Multi-sig transactions** section in the sidebar.
+
+For the full step-by-step guide, see the [Multisig](./multisig.md) page.
 
 ---
 
