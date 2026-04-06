@@ -1,30 +1,29 @@
 {
-	"name": "ts",
+	"name": "@hashgraph/stablecoin-sdk-examples-ts",
 	"version": "1.0.0",
-	"description": "",
+	"description": "TypeScript examples for Stablecoin Studio SDK",
+	"private": true,
 	"main": "build/index.js",
 	"scripts": {
 		"build": "tsc",
-		"start-creation": "npm run build && node build/creation.js",
-		"start-creation-with-reserve": "npm run build && node build/creationWithReserve.js",
-		"start-creation-with-reserve-address": "npm run build && node build/creationWithReserveAddress.js",
-		"start-creation-assigning-keys": "npm run build && node build/creationAssigningKeys.js",
-		"burn": "npm run build && node build/burn.js",
-		"mint": "npm run build && node build/mint.js",
-		"wipe": "npm run build && node build/wipe.js",
-		"roles": "npm run build && node build/role.js",
-		"test-external-evm": "npm run build && node build/testExternalEVM.js",
-		"test-external-hedera": "npm run build && node build/testExternalHedera.js",
-		"multisig-freeze": "npm run build && node build/multisigFreeze.js",
-		"multisig-freeze-dfns": "npm run build && node build/multisigFreezeDFNS.js",
-		"create-dfns-multisig-account": "npm run build && node build/createDFNSMultisigAccount.js",
-		"test": "echo \"Error: no test specified\" && exit 1"
+		"start-creation": "ts-node creation/creation.ts",
+		"start-creation-with-reserve": "ts-node creation/creationWithReserve.ts",
+		"start-creation-with-reserve-address": "ts-node creation/creationWithReserveAddress.ts",
+		"start-creation-assigning-keys": "ts-node creation/creationAssigningKeys.ts",
+		"burn": "ts-node operations/burn.ts",
+		"mint": "ts-node operations/mint.ts",
+		"wipe": "ts-node operations/wipe.ts",
+		"roles": "ts-node operations/role.ts",
+		"test-external-evm": "ts-node external/testExternalEVM.ts",
+		"test-external-hedera": "ts-node external/testExternalHedera.ts",
+		"execute:createMultisig": "ts-node multisig/CreateMultisigAccount.ts",
+		"execute:associateToken": "ts-node multisig/AssociateToken.ts"
 	},
 	"keywords": [],
 	"author": "",
 	"license": "Apache-2.0",
 	"devDependencies": {
-		"typescript": "^4.8.4",
+		"typescript": "4.9.5",
 		"@hashgraph/stablecoin-npm-sdk": "../../"
 	}
 }

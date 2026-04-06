@@ -35,37 +35,22 @@ The application follows a Domain-Driven Design (DDD) approach via NestJS Modules
 
 ---
 
-## The Multi-Signature Flow
+## Multi-Signature Flow
 
-The most critical function of the backend is coordinating asynchronous signatures.
+The backend coordinates the asynchronous collection of signatures for multisig transactions.
 
 ```mermaid
 sequenceDiagram
-    participant Admin1 as Initiator
-    participant API as Backend API
-    participant DB as Postgres
-    participant J as Auto-Submit Job
-    participant H as Hedera Network
-
-    Admin1->>API: POST /transactions (Raw Tx + 1st Sig)
-    API->>DB: Save PENDING transaction
-    Note over API,DB: 3-minute validity starts
-    loop Asynchronous Signing
-        Admin2->>API: GET /transactions (Pending)
-        Admin2->>API: POST /transactions/{id}/sign
-        API->>DB: Update Signatures
-    end
-    Note over DB: Threshold Met? Status = SIGNED
-    J->>DB: Scan SIGNED transactions every 30s
-    J->>H: Submit Full Transaction
-    H-->>J: Success Receipt
-    J->>DB: Update Status: EXECUTED
+    Signer1->>API: Create transaction + 1st signature
+    API->>DB: Save (PENDING)
+    Signer2->>API: Add 2nd signature
+    API->>DB: Threshold met (SIGNED)
+    Job->>DB: Pick up SIGNED transactions
+    Job->>Hedera: Submit transaction
+    Job->>DB: Update (EXECUTED)
 ```
 
-## The Auto-Submit Job (Scheduled Job)
-The background worker (`AUTO_SUBMIT_JOB_FREQUENCY`) performs:
-1.  **Auto-Submit**: Sends `SIGNED` transactions to Hedera.
-2.  **Auto-Expire**: Marks transactions as `EXPIRED` if they aren't executed within **3 minutes** of `startDate`.
+Transactions not executed within **3 minutes** of their `startDate` are automatically marked as `EXPIRED`. This is a Hedera network constraint — transactions have a maximum validity window of 3 minutes.
 
 ---
 

@@ -56,13 +56,12 @@
     "prettier:cli": "npm run prettier --workspace=apps/cli",
     "prettier:contracts": "npm run prettier --workspace=packages/contracts",
     "prettier:check": "concurrently \"npm run prettier:sdk:check\" \"npm run prettier:backend:check\" \"npm run prettier:web:check\" \"npm run prettier:cli:check\" \"npm run prettier:contracts:check\"",
-    "prettier:contracts:check": "npm run prettier:check --workspace=contracts",
-    "prettier:sdk:check": "npm run prettier:check --workspace=sdk",
-    "prettier:backend:check": "npm run prettier:check --workspace=backend",
-    "prettier:web:check": "npm run prettier:check --workspace=web",
-    "prettier:cli:check": "npm run prettier:check --workspace=cli",
-    "commitlint": "commitlint --edit",
-    "changeset": "changeset"
+    "prettier:contracts:check": "npm run prettier:check --workspace=packages/contracts",
+    "prettier:sdk:check": "npm run prettier:check --workspace=packages/sdk",
+    "prettier:backend:check": "npm run prettier:check --workspace=apps/backend",
+    "prettier:web:check": "npm run prettier:check --workspace=apps/web",
+    "prettier:cli:check": "npm run prettier:check --workspace=apps/cli",
+    "commitlint": "commitlint --edit"
   },
   "devDependencies": {
     "@changesets/cli": "2.29.8",
