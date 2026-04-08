@@ -5,7 +5,7 @@ import type * as Preset from '@docusaurus/preset-classic';
 // This runs in Node.js - Don't use client-side code here (browser APIs, JSX...)
 
 const config: Config = {
-  title: "Stable Coin Studio",
+  title: "Stablecoin Studio",
   tagline: "Issue and manage institutional stablecoins on Hedera",
   favicon: "img/coin-dark.svg",
 
@@ -89,7 +89,7 @@ const config: Config = {
       respectPrefersColorScheme: true,
     },
     navbar: {
-      title: "Stable Coin Studio",
+      title: "Stablecoin Studio",
       logo: {
         alt: "Stable Coin Studio Logo",
         src: "img/coin-dark.svg",

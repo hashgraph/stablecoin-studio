@@ -29,7 +29,7 @@ npm install
 Copy the example file and edit it **before starting the app**:
 
 ```bash
-cp .env.example .env
+cp .env.sample .env
 ```
 
 All values are JSON arrays so you can configure multiple environments.
