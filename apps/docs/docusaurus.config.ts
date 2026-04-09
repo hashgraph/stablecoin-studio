@@ -7,7 +7,7 @@ import type * as Preset from '@docusaurus/preset-classic';
 const config: Config = {
   title: "Stablecoin Studio",
   tagline: "Issue and manage institutional stablecoins on Hedera",
-  favicon: "img/coin-dark.svg",
+  favicon: "img/favicon.svg",
 
   // Future flags, see https://docusaurus.io/docs/api/docusaurus-config#future
   future: {
