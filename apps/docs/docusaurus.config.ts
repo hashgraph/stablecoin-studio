@@ -91,9 +91,9 @@ const config: Config = {
     navbar: {
       title: "Stablecoin Studio",
       logo: {
-        alt: "Stable Coin Studio Logo",
-        src: "img/coin-dark.svg",
-        srcDark: "img/coin.svg",
+        alt: "Hedera Logo",
+        src: "img/hedera-logo.svg",
+        srcDark: "img/hedera-logo-dark.svg",
       },
       items: [
         {
