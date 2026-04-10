@@ -132,7 +132,7 @@ const config: Config = {
           title: "Products",
           items: [
             {
-              label: "Stable Coin Studio",
+              label: "Stablecoin Studio",
               href: "https://github.com/hashgraph/stablecoin-studio/tree/main",
             }
           ],

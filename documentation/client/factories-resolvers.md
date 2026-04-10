@@ -6,7 +6,7 @@ sidebar_label: "🏭 Factories & Resolvers"
 
 # 🏭 Factories & Resolvers
 
-The "Resolver" logic is a core part of the CLI. Instead of hardcoding addresses, the CLI queries a versioning contract or an internal map to ensure that your commands are always sent to the correct version of the Stable Coin Studio protocol.
+The "Resolver" logic is a core part of the CLI. Instead of hardcoding addresses, the CLI queries a versioning contract or an internal map to ensure that your commands are always sent to the correct version of the Stablecoin Studio protocol.
 
 These addresses are updated whenever a new version is released.:
 
