@@ -1,6 +1,6 @@
 {
   "name": "@hashgraph/hedera-stable-coin",
-  "version": "4.2.0",
+  "version": "4.3.0",
   "private": true,
   "description": "Stablecoin studio",
   "keywords": [
@@ -64,16 +64,21 @@
     "commitlint": "commitlint --edit"
   },
   "devDependencies": {
+    "@changesets/cli": "2.29.8",
     "@commitlint/cli": "19.8.0",
     "@commitlint/config-conventional": "19.8.0",
     "concurrently": "7.6.0",
     "dotenv": "16.4.7",
+    "react": "18.3.1",
+    "react-dom": "18.3.1",
     "rimraf": "4.4.1"
   },
   "dependencies": {
     "husky": "9.1.7"
   },
   "overrides": {
+    "react": "18.3.1",
+    "react-dom": "18.3.1",
     "react-refresh": "0.11.0",
     "webpack": "5.104.1",
     "bfj": "9.1.3",

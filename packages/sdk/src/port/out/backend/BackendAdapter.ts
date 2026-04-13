@@ -53,6 +53,7 @@ export class BackendAdapter {
 		threshold: number,
 		network: Environment,
 		startDate: Date,
+		consensusNodes?: { url: string; nodeId: string }[],
 	): Promise<string> {
 		try {
 			const body = {
@@ -63,6 +64,7 @@ export class BackendAdapter {
 				threshold: threshold,
 				network: network,
 				start_date: startDate,
+				consensus_nodes: consensusNodes ?? null,
 			};
 
 			//TODO: error because url is not defined

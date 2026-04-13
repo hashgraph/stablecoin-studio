@@ -84,7 +84,21 @@ export class ClientTransactionAdapter extends BaseHederaTransactionAdapter {
 		this.account = account;
 		this.account.publicKey = accountMirror.publicKey;
 		this.network = this.networkService.environment;
-		this._client = Client.forName(this.networkService.environment);
+		if (
+			this.networkService.environment === 'custom' &&
+			this.networkService.consensusNodes?.length
+		) {
+			this._client = Client.forNetwork(
+				Object.fromEntries(
+					this.networkService.consensusNodes.map((n) => [
+						n.url,
+						n.nodeId,
+					]),
+				),
+			);
+		} else {
+			this._client = Client.forName(this.networkService.environment);
+		}
 		const id = this.account.id?.value ?? '';
 		if (!account.privateKey)
 			throw new WalletConnectError(
@@ -170,10 +184,16 @@ export class ClientTransactionAdapter extends BaseHederaTransactionAdapter {
 
 		try {
 			const privateKey = this.account.privateKey.toHashgraphKey();
-			const signedTx = await message.sign(privateKey); // firma y retorna Transaction
-
-			const bytes = signedTx.toBytes(); // Uint8Array
-			return Hex.fromUint8Array(bytes);
+			// Sign only the body bytes and return the raw signature — matching HWC behavior.
+			// SubmitCommandHandler uses addSignature(publicKey, rawSig) so it expects raw bytes.
+			const bodyBytes =
+				message._signedTransactions.get(0)?.bodyBytes;
+			if (!bodyBytes)
+				throw new SigningError(
+					'No body bytes found in frozen transaction',
+				);
+			const rawSignature = privateKey.sign(bodyBytes);
+			return Hex.fromUint8Array(rawSignature);
 		} catch (error) {
 			LogService.logError(error);
 			throw new SigningError(error);
