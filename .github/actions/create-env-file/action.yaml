@@ -51,16 +51,21 @@ runs:
       shell: sh
       run: |
         # Making API call to fetch secrets
-        API_RESPONSE_1=$(curl -s -H "Authorization: Bearer ${{ inputs.api-access-token-1 }}" -H "User-Agent: AppName/1.2.3" https://portal.hedera.com/api/account)
-        API_RESPONSE_2=$(curl -s -H "Authorization: Bearer ${{ inputs.api-access-token-2 }}" -H "User-Agent: AppName/1.2.3" https://portal.hedera.com/api/account)
+        API_RESPONSE_1=$(curl -s -w "\n%{http_code}" -H "Authorization: Bearer ${{ inputs.api-access-token-1 }}" -H "User-Agent: AppName/1.2.3" https://portal.hedera.com/api/account)
+        HTTP_STATUS_1=$(echo "$API_RESPONSE_1" | tail -n1)
+        API_RESPONSE_1=$(echo "$API_RESPONSE_1" | sed '$d')
+
+        API_RESPONSE_2=$(curl -s -w "\n%{http_code}" -H "Authorization: Bearer ${{ inputs.api-access-token-2 }}" -H "User-Agent: AppName/1.2.3" https://portal.hedera.com/api/account)
+        HTTP_STATUS_2=$(echo "$API_RESPONSE_2" | tail -n1)
+        API_RESPONSE_2=$(echo "$API_RESPONSE_2" | sed '$d')
 
         # Validate API responses are valid JSON before parsing
         if ! echo "$API_RESPONSE_1" | jq . > /dev/null 2>&1; then
-          echo "Error: API call 1 did not return valid JSON. Check that api-access-token-1 is set and valid."
+          echo "Error: API call 1 failed (HTTP $HTTP_STATUS_1). Check that api-access-token-1 is set and valid."
           exit 1
         fi
         if ! echo "$API_RESPONSE_2" | jq . > /dev/null 2>&1; then
-          echo "Error: API call 2 did not return valid JSON. Check that api-access-token-2 is set and valid."
+          echo "Error: API call 2 failed (HTTP $HTTP_STATUS_2). Check that api-access-token-2 is set and valid."
           exit 1
         fi
 
