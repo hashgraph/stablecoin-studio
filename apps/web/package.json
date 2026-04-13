@@ -6,6 +6,7 @@
 	],
 	"scripts": {
 		"start": "react-app-rewired start",
+		"serve": "npx serve -s build",
 		"build": "react-app-rewired build",
 		"test": "react-app-rewired test --maxWorkers=25% --watchAll=false --cache=false",
 		"test:watch": "react-app-rewired test --maxWorkers=50% --watchAll=true",
@@ -94,7 +95,7 @@
 		"redux-mock-store": "1.5.5",
 		"terminal-link": "2.1.1",
 		"web-vitals": "3.5.2",
-		"webpack": "5.104.1"
+		"webpack": "5.106.1"
 	},
 	"eslintConfig": {
 		"extends": [
