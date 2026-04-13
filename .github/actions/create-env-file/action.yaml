@@ -24,9 +24,19 @@ runs:
         API_RESPONSE_1=$(curl -s -H "Authorization: Bearer ${{ inputs.api-access-token-1 }}" -H "User-Agent: AppName/1.2.3" https://portal.hedera.com/api/account)
         API_RESPONSE_2=$(curl -s -H "Authorization: Bearer ${{ inputs.api-access-token-2 }}" -H "User-Agent: AppName/1.2.3" https://portal.hedera.com/api/account)
 
+        # Validate API responses are valid JSON before parsing
+        if ! echo "$API_RESPONSE_1" | jq . > /dev/null 2>&1; then
+          echo "Error: API call 1 did not return valid JSON. Check that api-access-token-1 is set and valid."
+          exit 1
+        fi
+        if ! echo "$API_RESPONSE_2" | jq . > /dev/null 2>&1; then
+          echo "Error: API call 2 did not return valid JSON. Check that api-access-token-2 is set and valid."
+          exit 1
+        fi
+
         # Extract private keys in DER
-        TESTNET_PRIVATE_KEY_0_DER=$(echo $API_RESPONSE_1 | jq -r '.accounts[1].privateKey')
-        TESTNET_PRIVATE_KEY_1_DER=$(echo $API_RESPONSE_2 | jq -r '.accounts[1].privateKey')
+        TESTNET_PRIVATE_KEY_0_DER=$(echo "$API_RESPONSE_1" | jq -r '.accounts[1].privateKey')
+        TESTNET_PRIVATE_KEY_1_DER=$(echo "$API_RESPONSE_2" | jq -r '.accounts[1].privateKey')
 
         # Remove DER header and add 0x prefix
         TESTNET_PRIVATE_KEY_0="0x$(echo $TESTNET_PRIVATE_KEY_0_DER | tail -c 65)"  # Strip first 26 bytes (52 hex characters)
@@ -44,21 +54,31 @@ runs:
         API_RESPONSE_1=$(curl -s -H "Authorization: Bearer ${{ inputs.api-access-token-1 }}" -H "User-Agent: AppName/1.2.3" https://portal.hedera.com/api/account)
         API_RESPONSE_2=$(curl -s -H "Authorization: Bearer ${{ inputs.api-access-token-2 }}" -H "User-Agent: AppName/1.2.3" https://portal.hedera.com/api/account)
 
+        # Validate API responses are valid JSON before parsing
+        if ! echo "$API_RESPONSE_1" | jq . > /dev/null 2>&1; then
+          echo "Error: API call 1 did not return valid JSON. Check that api-access-token-1 is set and valid."
+          exit 1
+        fi
+        if ! echo "$API_RESPONSE_2" | jq . > /dev/null 2>&1; then
+          echo "Error: API call 2 did not return valid JSON. Check that api-access-token-2 is set and valid."
+          exit 1
+        fi
+
         # Extract account details from API_RESPONSE_1
-        CLIENT_PRIVATE_KEY_ECDSA=$(echo $API_RESPONSE_1 | jq -r '.accounts[1].privateKey')
-        CLIENT_PUBLIC_KEY_ECDSA=$(echo $API_RESPONSE_1 | jq -r '.accounts[1].publicKey')
-        CLIENT_ACCOUNT_ID_ECDSA=$(echo $API_RESPONSE_1 | jq -r '.accounts[1].accountNum')
-        CLIENT_PRIVATE_KEY_ED25519=$(echo $API_RESPONSE_1 | jq -r '.accounts[0].privateKey')
-        CLIENT_PUBLIC_KEY_ED25519=$(echo $API_RESPONSE_1 | jq -r '.accounts[0].publicKey')
-        CLIENT_ACCOUNT_ID_ED25519=$(echo $API_RESPONSE_1 | jq -r '.accounts[0].accountNum')
+        CLIENT_PRIVATE_KEY_ECDSA=$(echo "$API_RESPONSE_1" | jq -r '.accounts[1].privateKey')
+        CLIENT_PUBLIC_KEY_ECDSA=$(echo "$API_RESPONSE_1" | jq -r '.accounts[1].publicKey')
+        CLIENT_ACCOUNT_ID_ECDSA=$(echo "$API_RESPONSE_1" | jq -r '.accounts[1].accountNum')
+        CLIENT_PRIVATE_KEY_ED25519=$(echo "$API_RESPONSE_1" | jq -r '.accounts[0].privateKey')
+        CLIENT_PUBLIC_KEY_ED25519=$(echo "$API_RESPONSE_1" | jq -r '.accounts[0].publicKey')
+        CLIENT_ACCOUNT_ID_ED25519=$(echo "$API_RESPONSE_1" | jq -r '.accounts[0].accountNum')
 
         # Extract account details from API_RESPONSE_2
-        CLIENT_PRIVATE_KEY_ECDSA_2=$(echo $API_RESPONSE_2 | jq -r '.accounts[1].privateKey')
-        CLIENT_PUBLIC_KEY_ECDSA_2=$(echo $API_RESPONSE_2 | jq -r '.accounts[1].publicKey')
-        CLIENT_ACCOUNT_ID_ECDSA_2=$(echo $API_RESPONSE_2 | jq -r '.accounts[1].accountNum')
-        CLIENT_PRIVATE_KEY_ED25519_2=$(echo $API_RESPONSE_2 | jq -r '.accounts[0].privateKey')
-        CLIENT_PUBLIC_KEY_ED25519_2=$(echo $API_RESPONSE_2 | jq -r '.accounts[0].publicKey')
-        CLIENT_ACCOUNT_ID_ED25519_2=$(echo $API_RESPONSE_2 | jq -r '.accounts[0].accountNum')
+        CLIENT_PRIVATE_KEY_ECDSA_2=$(echo "$API_RESPONSE_2" | jq -r '.accounts[1].privateKey')
+        CLIENT_PUBLIC_KEY_ECDSA_2=$(echo "$API_RESPONSE_2" | jq -r '.accounts[1].publicKey')
+        CLIENT_ACCOUNT_ID_ECDSA_2=$(echo "$API_RESPONSE_2" | jq -r '.accounts[1].accountNum')
+        CLIENT_PRIVATE_KEY_ED25519_2=$(echo "$API_RESPONSE_2" | jq -r '.accounts[0].privateKey')
+        CLIENT_PUBLIC_KEY_ED25519_2=$(echo "$API_RESPONSE_2" | jq -r '.accounts[0].publicKey')
+        CLIENT_ACCOUNT_ID_ED25519_2=$(echo "$API_RESPONSE_2" | jq -r '.accounts[0].accountNum')
 
         # Fetch EVM addresses from Mirror Node API
         CLIENT_EVM_ADDRESS_ECDSA=$(curl -s https://testnet.mirrornode.hedera.com/api/v1/accounts/0.0.$CLIENT_ACCOUNT_ID_ECDSA | jq -r '.evm_address')
