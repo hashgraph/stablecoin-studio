@@ -21,7 +21,7 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import Injectable from '../../core/Injectable.js';
 import { CommandBus } from '../../core/command/CommandBus.js';
-import { InitializationData } from '../out/TransactionAdapter.js';
+import type { InitializationData } from '../out/TransactionAdapter.js';
 import { ConnectCommand } from '../../app/usecase/command/network/connect/ConnectCommand.js';
 import ConnectRequest, {
 	AWSKMSConfigRequest,
@@ -61,7 +61,8 @@ import { HederaWalletConnectTransactionAdapter } from '../out/hs/walletconnect/H
 import { AWSKMSTransactionAdapter } from '../out/hs/custodial/AWSKMSTransactionAdapter';
 import AWSKMSSettings from '../../domain/context/custodialwalletsettings/AWSKMSSettings';
 
-export { InitializationData, SupportedWallets };
+export type { InitializationData };
+export { SupportedWallets };
 
 export type NetworkResponse = {
 	environment: Environment;

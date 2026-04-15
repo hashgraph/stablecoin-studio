@@ -47,26 +47,7 @@ import { SigningError } from '../error/SigningError';
 import { RPCTransactionResponseAdapter } from '../../response/RPCTransactionResponseAdapter';
 import Hex from '../../../../core/Hex';
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-const { SupportedWallets } = require('@hashgraph/stablecoin-npm-sdk') as any;
-let HederaAdapter: typeof import('@hashgraph/hedera-wallet-connect').HederaAdapter;
-let HederaChainDefinition: typeof import('@hashgraph/hedera-wallet-connect').HederaChainDefinition;
-let hederaNamespace: typeof import('@hashgraph/hedera-wallet-connect').hederaNamespace;
-let HederaProvider: typeof import('@hashgraph/hedera-wallet-connect').HederaProvider;
-let base64StringToSignatureMap: typeof import('@hashgraph/hedera-wallet-connect').base64StringToSignatureMap;
-let createAppKit: typeof import('@reown/appkit').createAppKit;
-
-if (typeof window !== 'undefined') {
-	const hwc = require('@hashgraph/hedera-wallet-connect');
-	HederaAdapter = hwc.HederaAdapter;
-	HederaChainDefinition = hwc.HederaChainDefinition;
-	hederaNamespace = hwc.hederaNamespace;
-	HederaProvider = hwc.HederaProvider;
-	base64StringToSignatureMap = hwc.base64StringToSignatureMap;
-
-	const appkit = require('@reown/appkit');
-	createAppKit = appkit.createAppKit;
-}
+import { SupportedWallets } from '../../../../domain/context/network/Wallet';
 
 @singleton()
 export class HederaWalletConnectTransactionAdapter extends BaseHederaTransactionAdapter {
@@ -74,10 +55,10 @@ export class HederaWalletConnectTransactionAdapter extends BaseHederaTransaction
 	signerOrProvider!: Signer | Provider;
 	protected network!: Environment;
 	protected projectId = '';
-	protected hederaAdapter: InstanceType<typeof HederaAdapter> | undefined;
+	protected hederaAdapter: import('@hashgraph/hedera-wallet-connect').HederaAdapter | undefined;
 	// eslint-disable-next-line @typescript-eslint/no-explicit-any
 	protected appKit: any;
-	protected hederaProvider: InstanceType<typeof HederaProvider> | undefined;
+	protected hederaProvider: import('@hashgraph/hedera-wallet-connect').HederaProvider | undefined;
 	protected dappMetadata: {
 		name: string;
 		description: string;
@@ -322,6 +303,7 @@ export class HederaWalletConnectTransactionAdapter extends BaseHederaTransaction
 			}
 
 			// Decode the protobuf SignatureMap from base64
+			const { base64StringToSignatureMap } = await import('@hashgraph/hedera-wallet-connect');
 			const signatureMap = base64StringToSignatureMap(base64SigMap);
 
 			if (!signatureMap.sigPair || signatureMap.sigPair.length === 0) {
@@ -695,6 +677,15 @@ export class HederaWalletConnectTransactionAdapter extends BaseHederaTransaction
 		currentNetwork: string,
 	): Promise<void> {
 		const isTestnet = currentNetwork === testnet;
+
+		const {
+			HederaAdapter,
+			HederaChainDefinition,
+			hederaNamespace,
+			HederaProvider,
+		} = await import('@hashgraph/hedera-wallet-connect');
+
+		const { createAppKit } = await import('@reown/appkit');
 
 		// Order chains based on current network — HashPack prefers the first
 		const nativeNetworks = isTestnet

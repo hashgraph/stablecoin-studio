@@ -23,7 +23,7 @@ import { Environment } from '../../../domain/context/network/Environment.js';
 import { MirrorNode } from '../../../domain/context/network/MirrorNode.js';
 import { JsonRpcRelay } from '../../../domain/context/network/JsonRpcRelay.js';
 import { SupportedWallets } from '../../../domain/context/network/Wallet.js';
-import { BaseRequest, RequestAccount } from './BaseRequest.js';
+import type { BaseRequest, RequestAccount } from './BaseRequest.js';
 import ValidatedRequest from './validation/ValidatedRequest.js';
 import Validation from './validation/Validation.js';
 import { ConsensusNode } from '../../../domain/context/network/ConsensusNodes.js';

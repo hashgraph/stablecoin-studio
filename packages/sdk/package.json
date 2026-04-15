@@ -2,20 +2,26 @@
 	"name": "@hashgraph/stablecoin-npm-sdk",
 	"version": "4.2.0",
 	"description": "stablecoin studio SDK",
-	"main": "./build/cjs/src/index.js",
-	"module": "./build/esm/src/index.js",
+	"main": "./dist/cjs/index.js",
+	"module": "./dist/esm/index.mjs",
+	"types": "./dist/cjs/index.d.ts",
 	"engines": {
 		"node": ">= 16.17"
 	},
 	"files": [
-		"./build"
+		"dist/"
 	],
 	"readme": "README.md",
-	"types": "./build/esm/src/index.d.ts",
 	"exports": {
 		".": {
-			"import": "./build/esm/src/index.js",
-			"require": "./build/cjs/src/index.js"
+			"import": {
+				"types": "./dist/esm/index.d.mts",
+				"default": "./dist/esm/index.mjs"
+			},
+			"require": {
+				"types": "./dist/cjs/index.d.ts",
+				"default": "./dist/cjs/index.js"
+			}
 		}
 	},
 	"devDependencies": {
@@ -23,6 +29,8 @@
 		"@babel/core": "7.29.0",
 		"@babel/preset-env": "7.29.0",
 		"@babel/preset-typescript": "7.28.5",
+		"@swc/core": "^1.15.26",
+		"@swc/helpers": "^0.5.21",
 		"@types/jest": "29.5.14",
 		"@types/node": "18.19.130",
 		"@types/uuid": "9.0.8",
@@ -41,16 +49,17 @@
 		"prettier": "2.8.8",
 		"rimraf": "4.4.1",
 		"ts-jest": "29.4.6",
+		"tsup": "^8.5.1",
 		"tsutils": "3.21.0",
 		"typed-emitter": "2.1.0",
 		"typescript": "5.8.3"
 	},
 	"scripts": {
-		"start": "node build/src/index.js",
-		"clean": "rimraf coverage build",
+		"start": "node dist/cjs/index.js",
+		"clean": "rimraf coverage dist",
 		"clean:modules": "rimraf node_modules",
 		"prebuild": "npm run lint",
-		"build": "rimraf build && npx tsc -p tsconfig.json && npx tsc -p tsconfig-cjs.json",
+		"build": "rimraf dist && tsup",
 		"build:types": "npx tsc -p tsconfig.json --emitDeclarationOnly",
 		"build:tsc": "rm -rf build && tsc -p tsconfig.json",
 		"build:watch": "concurrently --kill-others --names \"ESM,CJS\" \"tsc -w -p tsconfig.json\" \"tsc -w -p tsconfig-cjs.json\"",
@@ -78,18 +87,18 @@
 		"@hashgraph/hedera-custodians-integration": "1.4.1",
 		"@hashgraph/hedera-wallet-connect": "2.0.3",
 		"@hashgraph/proto": "2.25.0",
-		"@reown/appkit": "1.8.9",
-		"@reown/appkit-adapter-ethers": "1.8.4",
-		"@reown/appkit-core": "1.8.4",
-		"@walletconnect/sign-client": "2.19.2",
-		"@walletconnect/universal-provider": "2.21.9",
-		"@walletconnect/utils": "2.19.2",
 		"@hashgraph/stablecoin-npm-contracts": "*",
 		"@hiero-ledger/proto": "2.25.0",
 		"@hiero-ledger/sdk": "2.79.0",
 		"@metamask/detect-provider": "2.0.0",
 		"@metamask/providers": "10.2.1",
 		"@notabene/pii-sdk": "1.17.1",
+		"@reown/appkit": "1.8.9",
+		"@reown/appkit-adapter-ethers": "1.8.4",
+		"@reown/appkit-core": "1.8.4",
+		"@walletconnect/sign-client": "2.19.2",
+		"@walletconnect/universal-provider": "2.21.9",
+		"@walletconnect/utils": "2.19.2",
 		"chai": "4.5.0",
 		"chai-as-promised": "7.1.2",
 		"dotenv": "16.4.7",

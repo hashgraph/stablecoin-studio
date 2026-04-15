@@ -6,6 +6,8 @@ package-lock.json
 
 # Transpiled files
 build/
+dist/
+*/dist/
 
 # Environment variables
 .env

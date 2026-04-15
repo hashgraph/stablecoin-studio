@@ -4,3 +4,5 @@
 /example
 /src_old
 package.json
+tsup.config.ts
+dist/

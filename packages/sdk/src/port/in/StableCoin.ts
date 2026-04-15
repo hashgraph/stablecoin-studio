@@ -40,8 +40,8 @@ import {
 import { QueryBus } from '../../core/query/QueryBus.js';
 import { CommandBus } from '../../core/command/CommandBus.js';
 import { CashInCommand } from '../../app/usecase/command/stablecoin/operations/cashin/CashInCommand.js';
-import StableCoinViewModel from '../out/mirror/response/StableCoinViewModel.js';
-import StableCoinListViewModel from '../out/mirror/response/StableCoinListViewModel.js';
+import type StableCoinViewModel from '../out/mirror/response/StableCoinViewModel.js';
+import type StableCoinListViewModel from '../out/mirror/response/StableCoinListViewModel.js';
 import StableCoinService from '../../app/service/StableCoinService.js';
 import { GetStableCoinQuery } from '../../app/usecase/query/stablecoin/get/GetStableCoinQuery.js';
 import { CreateCommand } from '../../app/usecase/command/stablecoin/create/CreateCommand.js';
@@ -100,7 +100,7 @@ import { AssociateCommand } from '../../app/usecase/command/account/associate/As
 import { MirrorNodeAdapter } from '../../port/out/mirror/MirrorNodeAdapter.js';
 import MultiSigTransactionViewModel from '../out/backend/response/MultiSigTransactionViewModel';
 import MultiSigTransactionsViewModel from '../out/backend/response/MultiSigTransactionsViewModel';
-import { PaginationViewModel } from '../out/backend/response/MultiSigTransactionsViewModel.js';
+import type { PaginationViewModel } from '../out/backend/response/MultiSigTransactionsViewModel.js';
 import SignTransactionRequest from './request/SignTransactionRequest.js';
 import SubmitTransactionRequest from './request/SubmitTransactionRequest.js';
 import RemoveTransactionRequest from './request/RemoveTransactionRequest.js';
@@ -132,13 +132,15 @@ import { CreateHoldByControllerCommand, CreateHoldByControllerCommandResponse } 
 import { SerializedTransactionData } from '../../domain/context/transaction/TransactionResponse.js';
 
 
-export {
+export type {
 	StableCoinViewModel,
 	StableCoinListViewModel,
 	ReserveViewModel,
 	MultiSigTransactionsViewModel,
 	MultiSigTransactionViewModel,
 	PaginationViewModel,
+};
+export {
 	TRANSFER_LIST_SIZE,
 };
 export { StableCoinCapabilities, Capability, Access, Operation, Balance };

@@ -18,8 +18,6 @@
  *
  */
 
-import ConfigInfoViewModel from './ConfigInfoViewModel';
-import HoldViewModel from './HoldViewModel';
-import { TransactionResult } from '../../../domain/context/transaction/TransactionResult';
-
-export { ConfigInfoViewModel, HoldViewModel, TransactionResult };
+export type { default as ConfigInfoViewModel } from './ConfigInfoViewModel.js';
+export type { default as HoldViewModel } from './HoldViewModel.js';
+export { TransactionResult } from '../../../domain/context/transaction/TransactionResult.js';
