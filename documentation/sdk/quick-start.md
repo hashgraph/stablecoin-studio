@@ -22,7 +22,8 @@ Or build from source:
 ```bash
 git clone https://github.com/hashgraph/stablecoin-studio.git
 cd stablecoin-studio
-npm run build:contracts   # Contracts must be built first
+npm run install
+npm run build:contracts
 npm run build:sdk
 ```
 

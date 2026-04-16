@@ -42,7 +42,7 @@ You can either run the automated setup or build manually:
 **Option A — Automated setup (recommended):**
 
 ```bash
-npm run install:all
+npm run setup
 ```
 
 **Option B — Manual build (in order):**

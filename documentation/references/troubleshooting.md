@@ -27,6 +27,12 @@ If the Mirror Node or backend fails to start, ensure the required ports are free
 - **5432** — PostgreSQL
 - **8080** — Mirror Node API
 
+### Dependencies errors or package errors
+You can clean builds and node modules executing in root folder:
+```bash
+npm run clean
+```
+
 ---
 
 ## Smart Contracts
