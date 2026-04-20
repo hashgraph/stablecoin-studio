@@ -21,14 +21,16 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import Injectable from '../../core/Injectable.js';
 import NetworkService from '../../app/service/NetworkService.js';
-import WalletEvent, {
+import type WalletEvent from '../../app/service/event/WalletEvent.js';
+import {
 	ConnectionState,
 	WalletEvents,
 } from '../../app/service/event/WalletEvent.js';
 import EventService from '../../app/service/event/EventService.js';
 import { LogError } from '../../core/decorator/LogErrorDecorator.js';
 
-export { WalletEvent, WalletEvents, ConnectionState };
+export type { WalletEvent };
+export { WalletEvents, ConnectionState };
 
 export type EventParameter<T extends keyof WalletEvent> = Parameters<
 	WalletEvent[T]

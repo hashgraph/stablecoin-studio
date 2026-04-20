@@ -25,7 +25,7 @@ import BigDecimal from '../../../domain/context/shared/BigDecimal.js';
 import InvalidDecimalRange from '../../../domain/context/stablecoin/error/InvalidDecimalRange.js';
 import { StableCoin } from '../../../domain/context/stablecoin/StableCoin.js';
 import { TokenSupplyType } from '../../../domain/context/stablecoin/TokenSupply.js';
-import { RequestPublicKey } from './BaseRequest.js';
+import type { RequestPublicKey } from './BaseRequest.js';
 import { InvalidType } from './error/InvalidType.js';
 import ValidatedRequest from './validation/ValidatedRequest.js';
 import Validation from './validation/Validation.js';

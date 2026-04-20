@@ -25,7 +25,7 @@
     "build:cli": "npm run build --workspace=apps/cli",
     "build:cli:full": "npm run build:backend && npm run build:contracts && npm run build:sdk && npm run build:cli",
     "build:backend": "npm run build --workspace=apps/backend",
-    "build:contracts": "npm run compile:force --workspace=packages/contracts",
+    "build:contracts": "npm run build --workspace=packages/contracts",
     "build:web": "npm run build --workspace=apps/web",
     "pack:backend": "npm pack --workspace=apps/backend",
     "pack:contracts": "npm pack --workspace=packages/contracts",
@@ -68,7 +68,8 @@
     "@commitlint/config-conventional": "19.8.0",
     "concurrently": "7.6.0",
     "dotenv": "16.4.7",
-    "rimraf": "4.4.1"
+    "rimraf": "4.4.1",
+    "typescript": "^5.1.6"
   },
   "dependencies": {
     "husky": "9.1.7"

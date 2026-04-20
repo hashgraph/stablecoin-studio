@@ -50,7 +50,7 @@ import {
 	TransferTransaction,
 } from '@hiero-ledger/sdk';
 import { MirrorNodeAdapter } from '../../port/out/mirror/MirrorNodeAdapter.js';
-import * as Factories from '@hashgraph/stablecoin-npm-contracts/typechain-types/factories/contracts';
+import * as Factories from '@hashgraph/stablecoin-npm-contracts/factories';
 import { ethers } from 'ethers';
 import Hex from '../../core/Hex.js';
 import { AWSKMSTransactionAdapter } from '../../port/out/hs/custodial/AWSKMSTransactionAdapter';

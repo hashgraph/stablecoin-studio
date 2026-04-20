@@ -29,15 +29,15 @@ import { GetListStableCoinQuery } from '../../app/usecase/query/stablecoin/list/
 import GetPublicKeyRequest from './request/GetPublicKeyRequest.js';
 import PublicKey from '../../domain/context/account/PublicKey.js';
 import { default as HederaAccount } from '../../domain/context/account/Account.js';
-import StableCoinListViewModel from '../out/mirror/response/StableCoinListViewModel.js';
-import AccountViewModel from '../out/mirror/response/AccountViewModel.js';
+import type StableCoinListViewModel from '../out/mirror/response/StableCoinListViewModel.js';
+import type AccountViewModel from '../out/mirror/response/AccountViewModel.js';
 import { HederaId } from '../../domain/context/shared/HederaId.js';
 import { GetAccountInfoQuery } from '../../app/usecase/query/account/info/GetAccountInfoQuery.js';
 import { InvalidResponse } from '../out/mirror/error/InvalidResponse.js';
 import { handleValidation } from './Common.js';
 import { LogError } from '../../core/decorator/LogErrorDecorator.js';
 
-export { AccountViewModel, StableCoinListViewModel };
+export type { AccountViewModel, StableCoinListViewModel };
 
 interface IAccountInPort {
 	getPublicKey(request: GetPublicKeyRequest): Promise<PublicKey>;

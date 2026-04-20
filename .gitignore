@@ -21,6 +21,7 @@ coverage/
 
 # Transpiled files
 build/
+**/dist/
 
 # IDE configurations
 .vscode/

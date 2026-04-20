@@ -2,29 +2,48 @@
     "name": "@hashgraph/stablecoin-npm-contracts",
     "version": "4.2.0",
     "description": "",
-    "main": "./build/typechain-types/index.js",
-    "module": "./build/typechain-types/index.js",
+    "main": "./dist/index.js",
+    "module": "./dist/index.mjs",
+    "types": "./dist/index.d.ts",
     "files": [
-        "build/"
+        "dist/"
     ],
     "exports": {
         ".": {
-            "import": "./build/typechain-types/index.js",
-            "require": "./build/typechain-types/index.js"
+            "import": {
+                "types": "./dist/index.d.mts",
+                "default": "./dist/index.mjs"
+            },
+            "require": {
+                "types": "./dist/index.d.ts",
+                "default": "./dist/index.js"
+            }
         },
-        "./typechain-types/index.js": {
-            "import": "./build/typechain-types/index.js",
-            "require": "./build/typechain-types/index.js"
+        "./factories": {
+            "import": {
+                "types": "./dist/factories.d.mts",
+                "default": "./dist/factories.mjs"
+            },
+            "require": {
+                "types": "./dist/factories.d.ts",
+                "default": "./dist/factories.js"
+            }
         },
-        "./typechain-types/*": {
-            "import": "./build/typechain-types/*",
-            "require": "./build/typechain-types/*"
+        "./factories/*": {
+            "import": {
+                "types": "./dist/factories/*.d.mts",
+                "default": "./dist/factories/*.mjs"
+            },
+            "require": {
+                "types": "./dist/factories/*.d.ts",
+                "default": "./dist/factories/*.js"
+            }
         }
     },
     "scripts": {
         "compile": "npx hardhat compile",
         "compile:force": "npx hardhat compile --force",
-        "build": "npm run compile && rimraf build && tsc -p tsconfig.json",
+        "build": "npm run compile && rimraf dist && tsup",
         "coverage": "npx hardhat coverage --solcoverjs .solcover.js",
         "test": "npx hardhat test test/**/*.test.ts",
         "test:parallel": "npx hardhat test test/**/*.test.ts --parallel",
@@ -76,8 +95,8 @@
         "@chainlink/contracts": "0.5.1",
         "@commitlint/cli": "19.8.0",
         "@commitlint/config-conventional": "19.8.0",
-        "@hiero-ledger/sdk": "2.79.0",
         "@hashgraph/smart-contracts": "github:hashgraph/hedera-smart-contracts#v0.10.1",
+        "@hiero-ledger/sdk": "2.79.0",
         "@nomicfoundation/hardhat-toolbox": "5.0.0",
         "@openzeppelin/contracts": "5.4.0",
         "@openzeppelin/contracts-upgradeable": "5.4.0",
@@ -97,6 +116,7 @@
         "solidity-coverage": "0.8.17",
         "ts-node": "10.9.2",
         "tsconfig-paths": "4.2.0",
+        "tsup": "^8.5.1",
         "typescript": "5.8.3"
     },
     "dependencies": {
