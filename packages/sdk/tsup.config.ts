@@ -14,7 +14,6 @@ export default defineConfig([
     // Externalize the contracts as it is a peer workspace package.
     external: ['@hashgraph/stablecoin-npm-contracts'],
     // Bundle other @hashgraph and @hiero-ledger packages to avoid ESM resolution issues in broken dependencies.
-    // Specifying @hiero-ledger/sdk as noExternal as requested by the user.
     noExternal: [
       /^@hashgraph\/(?!stablecoin-npm-contracts)/,
       /^@hiero-ledger\//,

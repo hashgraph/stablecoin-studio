@@ -28,6 +28,16 @@
                 "types": "./dist/factories.d.ts",
                 "default": "./dist/factories.js"
             }
+        },
+        "./factories/*": {
+            "import": {
+                "types": "./dist/factories/*.d.mts",
+                "default": "./dist/factories/*.mjs"
+            },
+            "require": {
+                "types": "./dist/factories/*.d.ts",
+                "default": "./dist/factories/*.js"
+            }
         }
     },
     "scripts": {
