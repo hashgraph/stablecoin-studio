@@ -46,7 +46,7 @@
     "tweetnacl": "1.0.3",
     "tweetnacl-util": "0.15.1",
     "typeorm": "0.3.28",
-    "uuid": "9.0.1",
+    "uuid": "14.0.0",
     "winston": "3.19.0",
     "winston-daily-rotate-file": "5.0.0"
   },
