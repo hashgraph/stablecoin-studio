@@ -53,20 +53,20 @@ runs:
         echo "API_RESPONSE_2 body (redacted): $(echo "$API_RESPONSE_2" | jq 'del(.. | .privateKey?)' 2>&1)"
 
         # Extract account details from API_RESPONSE_1
-        CLIENT_PRIVATE_KEY_ECDSA=$(echo $API_RESPONSE_1 | jq -r '.accounts[0].privateKey')
-        CLIENT_PUBLIC_KEY_ECDSA=$(echo $API_RESPONSE_1 | jq -r '.accounts[0].publicKey')
-        CLIENT_ACCOUNT_ID_ECDSA=$(echo $API_RESPONSE_1 | jq -r '.accounts[0].accountNum')
-        #CLIENT_PRIVATE_KEY_ED25519=$(echo $API_RESPONSE_1 | jq -r '.accounts[0].privateKey')
-        #CLIENT_PUBLIC_KEY_ED25519=$(echo $API_RESPONSE_1 | jq -r '.accounts[0].publicKey')
-        #CLIENT_ACCOUNT_ID_ED25519=$(echo $API_RESPONSE_1 | jq -r '.accounts[0].accountNum')
+        CLIENT_PRIVATE_KEY_ECDSA=$(echo $API_RESPONSE_1 | jq -r '.accounts[1].privateKey')
+        CLIENT_PUBLIC_KEY_ECDSA=$(echo $API_RESPONSE_1 | jq -r '.accounts[1].publicKey')
+        CLIENT_ACCOUNT_ID_ECDSA=$(echo $API_RESPONSE_1 | jq -r '.accounts[1].accountNum')
+        CLIENT_PRIVATE_KEY_ED25519=$(echo $API_RESPONSE_1 | jq -r '.accounts[0].privateKey')
+        CLIENT_PUBLIC_KEY_ED25519=$(echo $API_RESPONSE_1 | jq -r '.accounts[0].publicKey')
+        CLIENT_ACCOUNT_ID_ED25519=$(echo $API_RESPONSE_1 | jq -r '.accounts[0].accountNum')
 
         # Extract account details from API_RESPONSE_2
-        CLIENT_PRIVATE_KEY_ECDSA_2=$(echo $API_RESPONSE_2 | jq -r '.accounts[0].privateKey')
-        CLIENT_PUBLIC_KEY_ECDSA_2=$(echo $API_RESPONSE_2 | jq -r '.accounts[0].publicKey')
-        CLIENT_ACCOUNT_ID_ECDSA_2=$(echo $API_RESPONSE_2 | jq -r '.accounts[0].accountNum')
-        #CLIENT_PRIVATE_KEY_ED25519_2=$(echo $API_RESPONSE_2 | jq -r '.accounts[0].privateKey')
-        #CLIENT_PUBLIC_KEY_ED25519_2=$(echo $API_RESPONSE_2 | jq -r '.accounts[0].publicKey')
-        #CLIENT_ACCOUNT_ID_ED25519_2=$(echo $API_RESPONSE_2 | jq -r '.accounts[0].accountNum')
+        CLIENT_PRIVATE_KEY_ECDSA_2=$(echo $API_RESPONSE_2 | jq -r '.accounts[1].privateKey')
+        CLIENT_PUBLIC_KEY_ECDSA_2=$(echo $API_RESPONSE_2 | jq -r '.accounts[1].publicKey')
+        CLIENT_ACCOUNT_ID_ECDSA_2=$(echo $API_RESPONSE_2 | jq -r '.accounts[1].accountNum')
+        CLIENT_PRIVATE_KEY_ED25519_2=$(echo $API_RESPONSE_2 | jq -r '.accounts[0].privateKey')
+        CLIENT_PUBLIC_KEY_ED25519_2=$(echo $API_RESPONSE_2 | jq -r '.accounts[0].publicKey')
+        CLIENT_ACCOUNT_ID_ED25519_2=$(echo $API_RESPONSE_2 | jq -r '.accounts[0].accountNum')
 
         # Fetch EVM addresses from Mirror Node API
         CLIENT_EVM_ADDRESS_ECDSA=$(curl -s https://testnet.mirrornode.hedera.com/api/v1/accounts/0.0.$CLIENT_ACCOUNT_ID_ECDSA | jq -r '.evm_address')
@@ -81,20 +81,20 @@ runs:
         CLIENT_ACCOUNT_ID_ECDSA=0.0.$CLIENT_ACCOUNT_ID_ECDSA
         CLIENT_EVM_ADDRESS_ECDSA=$CLIENT_EVM_ADDRESS_ECDSA
 
-        #CLIENT_PRIVATE_KEY_ED25519=$CLIENT_PRIVATE_KEY_ED25519
-        #CLIENT_PUBLIC_KEY_ED25519=$CLIENT_PUBLIC_KEY_ED25519
-        #CLIENT_ACCOUNT_ID_ED25519=0.0.$CLIENT_ACCOUNT_ID_ED25519
-        #CLIENT_EVM_ADDRESS_ED25519=$CLIENT_EVM_ADDRESS_ED25519
+        CLIENT_PRIVATE_KEY_ED25519=$CLIENT_PRIVATE_KEY_ED25519
+        CLIENT_PUBLIC_KEY_ED25519=$CLIENT_PUBLIC_KEY_ED25519
+        CLIENT_ACCOUNT_ID_ED25519=0.0.$CLIENT_ACCOUNT_ID_ED25519
+        CLIENT_EVM_ADDRESS_ED25519=$CLIENT_EVM_ADDRESS_ED25519
 
         CLIENT_PRIVATE_KEY_ECDSA_2=$CLIENT_PRIVATE_KEY_ECDSA_2
         CLIENT_PUBLIC_KEY_ECDSA_2=$CLIENT_PUBLIC_KEY_ECDSA_2
         CLIENT_ACCOUNT_ID_ECDSA_2=0.0.$CLIENT_ACCOUNT_ID_ECDSA_2
         CLIENT_EVM_ADDRESS_ECDSA_2=$CLIENT_EVM_ADDRESS_ECDSA_2
 
-        #CLIENT_PRIVATE_KEY_ED25519_2=$CLIENT_PRIVATE_KEY_ED25519_2
-        #CLIENT_PUBLIC_KEY_ED25519_2=$CLIENT_PUBLIC_KEY_ED25519_2
-        #CLIENT_ACCOUNT_ID_ED25519_2=0.0.$CLIENT_ACCOUNT_ID_ED25519_2
-        #CLIENT_EVM_ADDRESS_ED25519_2=$CLIENT_EVM_ADDRESS_ED25519_2
+        CLIENT_PRIVATE_KEY_ED25519_2=$CLIENT_PRIVATE_KEY_ED25519_2
+        CLIENT_PUBLIC_KEY_ED25519_2=$CLIENT_PUBLIC_KEY_ED25519_2
+        CLIENT_ACCOUNT_ID_ED25519_2=0.0.$CLIENT_ACCOUNT_ID_ED25519_2
+        CLIENT_EVM_ADDRESS_ED25519_2=$CLIENT_EVM_ADDRESS_ED25519_2
 
         FIREBLOCKS_HEDERA_ACCOUNT_ID=0.0.$CLIENT_ACCOUNT_ID_ECDSA_2
         FIREBLOCKS_HEDERA_PUBLIC_KEY=$CLIENT_PUBLIC_KEY_ECDSA_2
