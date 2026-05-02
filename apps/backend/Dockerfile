@@ -37,17 +37,26 @@ FROM node:20.11.1-alpine3.19 as build
 WORKDIR /app
 # RUN apk add --no-cache libc6-compat
 
-# Set to production environment
-ENV NODE_ENV production
+# Build stage runs as development so `npm ci` installs devDependencies
+# (NestJS CLI lives in apps/backend's devDependencies; without it
+# `nest build` fails with `sh: nest: not found`). The final production
+# stage below copies dist + production-only node_modules — devDeps
+# don't ship in the runtime image.
+ENV NODE_ENV development
 
 # Re-create non-root user for Docker
 # RUN addgroup --system --gid 1001 node
 # RUN adduser --system --uid 1001 node
 
-# Copy workspace root files
+# Copy workspace root manifests + the backend workspace's package.json so
+# `npm ci` resolves the backend workspace and installs its devDependencies.
+# Without apps/backend/package.json on disk before `npm ci`, npm skips
+# the workspace's deps entirely and `nest build` fails even though
+# devDeps are nominally enabled.
 COPY --chown=node:node package*.json ./
+COPY --chown=node:node apps/backend/package.json ./apps/backend/
 
-# Install all workspace dependencies
+# Install all workspace dependencies (incl. devDeps — needed for `nest build`)
 RUN npm ci
 
 # Copy backend source code
