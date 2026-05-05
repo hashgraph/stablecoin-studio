@@ -65,13 +65,6 @@ jobs:
       # * Specific steps for the SDK
 
       - name: Run SDK Tests
-        env:
-          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          AWS_KMS_REGION: ${{ secrets.AWS_KMS_REGION }}
-          AWS_KMS_KEY_ID: ${{ secrets.AWS_KMS_KEY_ID }}
-          AWS_KMS_HEDERA_ACCOUNT_ID: ${{ secrets.AWS_KMS_HEDERA_ACCOUNT_ID }}
-          AWS_KMS_HEDERA_PUBLIC_KEY: ${{ secrets.AWS_KMS_HEDERA_PUBLIC_KEY }}
         run: npm run test:ci --workspace=packages/sdk
 
       - name: Clear Cache
