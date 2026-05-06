@@ -1789,15 +1789,18 @@ export default class RPCTransactionAdapter extends TransactionAdapter {
 			}
 		} catch (error) {
 			LogService.logError(error);
-			this.logTransaction(
-				(error as any).error.transactionHash ?? '',
-				this.networkService.environment,
-			);
+			const transactionHash = (error as any).error?.transactionHash;
+			if (transactionHash) {
+				this.logTransaction(
+					transactionHash,
+					this.networkService.environment,
+				);
+			}
 			throw new TransactionResponseError({
 				network: this.networkService.environment,
 				RPC_relay: true,
 				message: `Unexpected error in RPCTransactionAdapter ${operation} operation : ${error}`,
-				transactionId: (error as any).error.transactionHash,
+				transactionId: transactionHash,
 			});
 		}
 	}

@@ -7,7 +7,7 @@ slug: /backend
 
 # 🏠 Backend Service
 
-The **Backend Service** is a module designed to be used in combination with the **Hedera StableCoin Studio**. Its primary purpose is to enable multi-signatures for stable coins management operations.
+The **Backend Service** is a module designed to be used in combination with the **Hedera Stablecoin Studio**. Its primary purpose is to enable multi-signatures for stable coins management operations.
 
 ## 💡 Context
 

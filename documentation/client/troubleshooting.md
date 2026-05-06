@@ -6,7 +6,7 @@ sidebar_label: "🔍 Troubleshooting"
 
 # 🔍 Troubleshooting
 
-Solutions to common issues encountered while using the Stable Coin Studio CLI.
+Solutions to common issues encountered while using the Stablecoin Studio CLI.
 
 ## Common Errors
 

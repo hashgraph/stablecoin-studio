@@ -80,6 +80,7 @@ This project follows a **"Docs-as-Code"** philosophy with comprehensive document
 You can also run the documentation site locally:
 
 ```bash
+npm install  # if you haven't already run npm run install:all
 npm run docs
 ```
 

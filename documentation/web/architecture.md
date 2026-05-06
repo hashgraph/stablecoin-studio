@@ -56,7 +56,7 @@ graph TD
 ## Connection Flow
 
 1. **Initialization**: On app load, the `WalletProvider` establishes a session with the HashConnect pairing string.
-2. **SDK Injection**: Once connected, the app instantiates `StableCoinClient` with the wallet provider.
+2. **SDK Injection**: Once connected, the app initializes the SDK via `Network.connect()` using the wallet provider.
 3. **Action Execution**: When a user clicks "Mint", the service calls `sdk.cashIn()`, which sends a sign request to the wallet extension. The user approves the popup, and the transaction is submitted to Hedera.
 
 ---
