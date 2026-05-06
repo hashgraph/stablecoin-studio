@@ -10,8 +10,12 @@ npm install @hashgraph/stablecoin-npm-sdk
 
 ## 🗂️ Documentation Index
 
-- [**🏗️ Architecture & Design**](./architecture.md): Deep dive into connections via RPC, Mirror Nodes, and gRPC.
-- [**🚀 Getting Started & Usage**](./usage.md): Code examples for initialization, minting, burning, and transfers.
+- [**Overview**](./overview.md): API reference — all write and read operations, roles, and return types.
+- [**Quick Start**](./quick-start.md): Installation, environment setup, and your first stablecoin in minutes.
+- [**Usage**](./usage.md): Code examples for every operation — mint, burn, hold, fees, roles, and more.
+- [**Wallet Adapters**](./wallet-adapters.md): MetaMask, HashPack, HWC, external signers, multisig, and custodial wallets.
+- [**Examples**](./examples.md): What each example does, how to set up `.env`, and how to run them.
+- [**Architecture & Design**](./architecture.md): Deep dive into connections via RPC, Mirror Nodes, and gRPC.
 
 ## 🤝 Contributing
 

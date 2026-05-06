@@ -234,8 +234,8 @@ task(
             'Wipeable Facet': result.wipeableFacet.address,
         }
 
-        console.log('\n 🟢 StableCoin Studio Smart Contracts deployed successfully:')
-        let contractAddresses = '🟢 StableCoin Studio Smart Contracts deployed successfully:\n'
+        console.log('\n 🟢 Stablecoin Studio Smart Contracts deployed successfully:')
+        let contractAddresses = '🟢 Stablecoin Studio Smart Contracts deployed successfully:\n'
         for (const [key, address] of Object.entries(addressList)) {
             if (!address) {
                 continue

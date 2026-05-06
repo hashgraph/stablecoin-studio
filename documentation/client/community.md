@@ -7,7 +7,7 @@ sidebar_label: "🤝 Community & Guidelines"
 # 🤝 Community & Guidelines
 
 ## Contributing
-We welcome contributions to Stable Coin Studio! To contribute:
+We welcome contributions to Stablecoin Studio! To contribute:
 1. Fork the repository.
 2. Create a feature branch.
 3. Submit a Pull Request with a clear description of changes.

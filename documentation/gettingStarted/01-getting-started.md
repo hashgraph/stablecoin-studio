@@ -16,7 +16,7 @@ To ensure compatibility with cryptographic dependencies (specifically \`ed25519\
 ```bash
 git clone https://github.com/hashgraph/stablecoin-studio.git
 cd stablecoin-studio
-npm install
+npm run setup
 ```
 
 ## 3. Configuration (.env)

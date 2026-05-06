@@ -30,6 +30,8 @@ const sidebars: SidebarsConfig = {
         "sdk/overview",
         "sdk/quick-start",
         "sdk/usage",
+        "sdk/wallet-adapters",
+        "sdk/examples",
         "sdk/architecture",
       ],
     },

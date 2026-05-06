@@ -21,8 +21,14 @@ runs:
       shell: sh
       run: |
         # Making API call to fetch secrets
-        API_RESPONSE_1=$(curl -s -H "Authorization: Bearer ${{ inputs.api-access-token-1 }}" -H "User-Agent: AppName/1.2.3" https://portal.hedera.com/api/account)
-        API_RESPONSE_2=$(curl -s -H "Authorization: Bearer ${{ inputs.api-access-token-2 }}" -H "User-Agent: AppName/1.2.3" https://portal.hedera.com/api/account)
+        API_RESPONSE_1=$(curl -s -w "\nHTTP_STATUS:%{http_code}" -H "Authorization: Bearer ${{ inputs.api-access-token-1 }}" -H "User-Agent: AppName/1.2.3" https://portal.hedera.com/api/account)
+        API_RESPONSE_2=$(curl -s -w "\nHTTP_STATUS:%{http_code}" -H "Authorization: Bearer ${{ inputs.api-access-token-2 }}" -H "User-Agent: AppName/1.2.3" https://portal.hedera.com/api/account)
+        echo "API_RESPONSE_1 status: $(echo "$API_RESPONSE_1" | grep HTTP_STATUS)"
+        echo "API_RESPONSE_1 body (redacted): $(echo "$API_RESPONSE_1" | grep -v HTTP_STATUS | jq 'del(.. | .privateKey?)' 2>&1)"
+        echo "API_RESPONSE_2 status: $(echo "$API_RESPONSE_2" | grep HTTP_STATUS)"
+        echo "API_RESPONSE_2 body (redacted): $(echo "$API_RESPONSE_2" | grep -v HTTP_STATUS | jq 'del(.. | .privateKey?)' 2>&1)"
+        API_RESPONSE_1=$(echo "$API_RESPONSE_1" | grep -v HTTP_STATUS)
+        API_RESPONSE_2=$(echo "$API_RESPONSE_2" | grep -v HTTP_STATUS)
 
         # Extract private keys in DER
         TESTNET_PRIVATE_KEY_0_DER=$(echo $API_RESPONSE_1 | jq -r '.accounts[1].privateKey')
@@ -43,6 +49,8 @@ runs:
         # Making API call to fetch secrets
         API_RESPONSE_1=$(curl -s -H "Authorization: Bearer ${{ inputs.api-access-token-1 }}" -H "User-Agent: AppName/1.2.3" https://portal.hedera.com/api/account)
         API_RESPONSE_2=$(curl -s -H "Authorization: Bearer ${{ inputs.api-access-token-2 }}" -H "User-Agent: AppName/1.2.3" https://portal.hedera.com/api/account)
+        echo "API_RESPONSE_1 body (redacted): $(echo "$API_RESPONSE_1" | jq 'del(.. | .privateKey?)' 2>&1)"
+        echo "API_RESPONSE_2 body (redacted): $(echo "$API_RESPONSE_2" | jq 'del(.. | .privateKey?)' 2>&1)"
 
         # Extract account details from API_RESPONSE_1
         CLIENT_PRIVATE_KEY_ECDSA=$(echo $API_RESPONSE_1 | jq -r '.accounts[1].privateKey')
@@ -93,6 +101,9 @@ runs:
 
         DFNS_HEDERA_ACCOUNT_ID=0.0.$CLIENT_ACCOUNT_ID_ECDSA_2
         DFNS_WALLET_PUBLIC_KEY=$CLIENT_PUBLIC_KEY_ECDSA_2
+
+        AWS_KMS_HEDERA_ACCOUNT_ID=0.0.$CLIENT_ACCOUNT_ID_ECDSA_2
+        AWS_KMS_HEDERA_PUBLIC_KEY=$CLIENT_PUBLIC_KEY_ECDSA_2
 
         HEDERA_TOKEN_MANAGER_ADDRESS=0.0.2167020
         FACTORY_ADDRESS=0.0.7353542
