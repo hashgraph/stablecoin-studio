@@ -7,7 +7,7 @@
 tasks:
   - init: |
       npm install
-      cd web && mv .env.sample .env
+      cd web && mv .env.example .env
       echo "# Log level for the application. The default value is ERROR." > .env
       echo "# Acceptable values are ERROR, WARN, INFO, HTTP, VERBOSE, DEBUG and SILLY in order of priority (highest to lowest)." >> .env
       echo "REACT_APP_LOG_LEVEL=ERROR" >> .env

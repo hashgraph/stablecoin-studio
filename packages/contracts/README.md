@@ -146,7 +146,7 @@ Typescript test files are located in the `test` folder and are organized into tw
 
 ### Test accounts
 
-You need to create the `.env` file cloning the content of `.env.sample` and add **two Hedera accounts** that will be used for testing.
+You need to create the `.env` file cloning the content of `.env.example` and add **two Hedera accounts** that will be used for testing.
 
 These accounts must be existing valid accounts in the **Hedera network** you are using to test the smart contracts, they must also have a **positive balance large enough** to run all the contract deployments, invocations and token creations executed in the tests.
 

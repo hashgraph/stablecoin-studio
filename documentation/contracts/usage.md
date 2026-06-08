@@ -15,7 +15,7 @@ The contract test suite validates all stablecoin functionality against a live He
 
 ### Test Accounts
 
-Create a `.env` file from `.env.sample` and configure two Hedera accounts:
+Create a `.env` file from `.env.example` and configure two Hedera accounts:
 
 ```env
 # Private keys in RAW format (not DER)
