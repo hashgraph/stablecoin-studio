@@ -34,11 +34,7 @@ import NetworkService from '../../../../app/service/NetworkService.js';
 import { MirrorNodeAdapter } from '../../mirror/MirrorNodeAdapter.js';
 import { BackendAdapter } from '../../backend/BackendAdapter.js';
 import { SupportedWallets } from '../../../../domain/context/network/Wallet.js';
-import {
-	Environment,
-	previewnet,
-	mainnet,
-} from '../../../../domain/context/network/Environment.js';
+import { Environment } from '../../../../domain/context/network/Environment.js';
 import Injectable from '../../../../core/Injectable.js';
 import { InitializationData } from '../../TransactionAdapter.js';
 import LogService from '../../../../app/service/LogService.js';
@@ -93,14 +89,6 @@ export class MultiSigTransactionAdapter extends BaseHederaTransactionAdapter {
 		t.setTransactionValidDuration(180);
 		t._freezeWithAccountId(accountId);
 
-		let client: Client = Client.forTestnet();
-
-		if (this.networkService.environment == previewnet) {
-			client = Client.forPreviewnet();
-		} else if (this.networkService.environment == mainnet) {
-			client = Client.forMainnet();
-		}
-
 		if (
 			!this.networkService.consensusNodes ||
 			this.networkService.consensusNodes.length == 0
@@ -110,10 +98,11 @@ export class MultiSigTransactionAdapter extends BaseHederaTransactionAdapter {
 			);
 		}
 
-		client.setNetwork({
-			[this.networkService.consensusNodes[0].url]:
-				this.networkService.consensusNodes[0].nodeId,
-		});
+		const client = Client.forNetwork(
+			Object.fromEntries(
+				this.networkService.consensusNodes.map((n) => [n.url, n.nodeId]),
+			),
+		);
 
 		if (!this.account.multiKey) {
 			throw new Error('MultiKey not found in the account');
@@ -134,6 +123,7 @@ export class MultiSigTransactionAdapter extends BaseHederaTransactionAdapter {
 			this.account.multiKey.threshold,
 			this.networkService.environment,
 			new Date(dateStr),
+			this.networkService.consensusNodes,
 		);
 
 		return new TransactionResponse(transactionId);

@@ -63,9 +63,23 @@ export class SignCommandHandler implements ICommandHandler<SignCommand> {
 		);
 
 		// extracts bytes to sign
+		const signClient =
+			transaction.network === 'custom' &&
+			transaction.consensus_nodes?.length
+				? Client.forNetwork(
+						Object.fromEntries(
+							transaction.consensus_nodes.map(
+							(n: { url: string; nodeId: string }) => [
+								n.url,
+								n.nodeId,
+							],
+						),
+						),
+					)
+				: Client.forName(transaction.network);
 		const deserializedTransaction = Transaction.fromBytes(
 			Hex.toUint8Array(transaction.transaction_message),
-		).freezeWith(Client.forName(transaction.network));
+		).freezeWith(signClient);
 		if (
 			!deserializedTransaction ||
 			!deserializedTransaction._signedTransactions

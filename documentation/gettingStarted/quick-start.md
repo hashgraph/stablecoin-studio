@@ -42,7 +42,7 @@ You can either run the automated setup or build manually:
 **Option A — Automated setup (recommended):**
 
 ```bash
-npm run install:all
+npm run setup
 ```
 
 **Option B — Manual build (in order):**
@@ -64,7 +64,7 @@ The Web DApp is the recommended way to interact with Stablecoin Studio. Before s
 
 ```bash
 cd apps/web
-cp .env.example .env
+cp .env.sample .env
 ```
 
 Edit the `.env` file with the required variables. You can copy the following testnet configuration to get started quickly:
@@ -80,7 +80,7 @@ REACT_APP_RPC_NODE='[{"Environment":"testnet","BASE_URL":"https://testnet.hashio
 
 For the full list of optional variables (backend, consensus nodes, Hedera WalletConnect, etc.), see the [Web Quick Start](../web/quick-start.md#configuration-env).
 
-Then start the app:
+Then start the app (from the `apps/web` directory):
 
 ```bash
 npm run start

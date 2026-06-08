@@ -8,7 +8,7 @@ sidebar_position: 4
 # Internal Architecture
 
 ## Detailed CLI Flow
-The Stable Coin Studio CLI is not just a wrapper; it manages a complex lifecycle for every transaction to guarantee consensus on Hedera.
+The Stablecoin Studio CLI is not just a wrapper; it manages a complex lifecycle for every transaction to guarantee consensus on Hedera.
 
 ### 1. Initialization & Context
 When a command is typed, the `Entry Point` initializes the **Inversion of Control (IoC)** container. This loads:

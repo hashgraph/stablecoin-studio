@@ -1,5 +1,4 @@
 import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
-import { Network } from './network.enum';
 import { TransactionStatus } from './status.enum';
 
 @Entity()
@@ -46,12 +45,11 @@ export default class Transaction {
   @Column()
   threshold: number;
 
-  @Column({
-    type: 'enum',
-    enum: Network,
-    nullable: false,
-  })
-  network: Network;
+  @Column({ type: 'varchar', nullable: false })
+  network: string;
+
+  @Column({ type: 'jsonb', nullable: true })
+  consensus_nodes: { url: string; nodeId: string }[] | null;
 
   @Column({
     type: 'timestamp with time zone',

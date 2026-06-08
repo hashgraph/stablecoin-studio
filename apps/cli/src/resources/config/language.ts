@@ -52,7 +52,7 @@ const basicFeatureOptions = {
 
 export const english = {
   general: {
-    title: 'StableCoin Studio',
+    title: 'Stablecoin Studio',
     warning: '⚠️ All the transactions could incur a cost in HBar',
     newLine: '\n',
     incorrectNumber: 'Incorrect number',

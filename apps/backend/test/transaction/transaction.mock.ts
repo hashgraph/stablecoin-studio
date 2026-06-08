@@ -119,6 +119,7 @@ export default class TransactionMock extends Transaction {
     signatures: TransactionMock.txPending0().signatures,
     network: TransactionMock.txPending0().network,
     start_date: TransactionMock.txPending0().start_date.toDateString(),
+    consensus_nodes: null,
   };
 
   static txPending1(command: Partial<TransactionMockCommand> = {}) {

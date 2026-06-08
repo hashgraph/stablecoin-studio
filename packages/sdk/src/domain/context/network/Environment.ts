@@ -22,6 +22,7 @@ export const testnet = 'testnet';
 export const previewnet = 'previewnet';
 export const mainnet = 'mainnet';
 export const local = 'local';
+export const custom = 'custom';
 export const unrecognized = 'unrecognized';
 
 export type Environment =
@@ -29,6 +30,7 @@ export type Environment =
 	| 'previewnet'
 	| 'mainnet'
 	| 'local'
+	| 'custom'
 	| 'unrecognized'
 	| string;
 
