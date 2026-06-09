@@ -1,11 +1,12 @@
 {
 	"name": "@hashgraph/stablecoin-dapp",
-	"version": "4.2.0",
+	"version": "4.3.0",
 	"files": [
 		"build/"
 	],
 	"scripts": {
 		"start": "react-app-rewired start",
+		"serve": "npx serve -s build",
 		"build": "react-app-rewired build",
 		"test": "react-app-rewired test --maxWorkers=25% --watchAll=false --cache=false",
 		"test:watch": "react-app-rewired test --maxWorkers=50% --watchAll=true",
@@ -13,6 +14,7 @@
 		"test:ci": "react-app-rewired test --ci --runInBand --watchAll=false --cache=false",
 		"clear:cache": "react-app-rewired test --clearCache",
 		"clean:modules": "rimraf node_modules",
+		"clean": "rimraf build",
 		"eject": "react-app-rewired eject",
 		"lint": "eslint . --ext .ts --ext .mts --fix",
 		"prettier": "prettier --config .prettierrc --write .",
@@ -137,11 +139,11 @@
 			"<rootDir>/src/test/setupTests.tsx"
 		],
 		"moduleNameMapper": {
-			"^react$": "<rootDir>/node_modules/react",
-			"^react/jsx-runtime$": "<rootDir>/node_modules/react/jsx-runtime",
-			"^react/jsx-dev-runtime$": "<rootDir>/node_modules/react/jsx-dev-runtime",
-			"^react-dom$": "<rootDir>/node_modules/react-dom",
-			"^react-dom/(.*)$": "<rootDir>/node_modules/react-dom/$1",
+			"^react$": "<rootDir>/../../node_modules/react",
+			"^react/jsx-runtime$": "<rootDir>/../../node_modules/react/jsx-runtime",
+			"^react/jsx-dev-runtime$": "<rootDir>/../../node_modules/react/jsx-dev-runtime",
+			"^react-dom$": "<rootDir>/../../node_modules/react-dom",
+			"^react-dom/(.*)$": "<rootDir>/../../node_modules/react-dom/$1",
 			"^(\\.{1,2}/.*)\\.(m)?js$": "$1",
 			"axios": "<rootDir>/../../node_modules/axios/dist/node/axios.cjs",
 			"blade": "<rootDir>/src/mocks/blade-sdk-mock.js",

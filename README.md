@@ -80,6 +80,7 @@ This project follows a **"Docs-as-Code"** philosophy with comprehensive document
 You can also run the documentation site locally:
 
 ```bash
+npm install  # if you haven't already run npm run install:all
 npm run docs
 ```
 
@@ -194,7 +195,7 @@ npm run build:backend      # Independent
 
 Each module has its own `.env` configuration. Sample files are provided:
 
-- **Contracts**: `packages/contracts/.env` (test account credentials) — use `packages/contracts/.env.example`
+- **Contracts**: `packages/contracts/.env` (test account credentials) — use `packages/contracts/.env.sample`
 - **CLI**: `apps/cli/hsca-config.yaml` — use `apps/cli/hsca-config.sample.yaml`
 - **Web**: `apps/web/.env` (factory addresses, mirror node, RPC endpoints)
 - **Backend**: `apps/backend/.env` (database, port configuration)

@@ -333,6 +333,7 @@ describe('Transaction Controller Test', () => {
               DEFAULT.network,
               DEFAULT.hedera_account_id,
               DEFAULT.start_date.toDateString(),
+              null,
             ),
           ),
         );
@@ -349,6 +350,7 @@ describe('Transaction Controller Test', () => {
         DEFAULT.network,
         DEFAULT.hedera_account_id,
         DEFAULT.start_date.toDateString(),
+        null,
       );
       //* 🎬 Act ⬇
       const result = await controller.getTransactionById(
@@ -381,6 +383,7 @@ function createMockGetAllByPublicKeyTxServiceResult(
     pendingTransaction.network,
     pendingTransaction.hedera_account_id,
     pendingTransaction.start_date.toDateString(),
+    null,
   );
   return new Pagination<GetTransactionsResponseDto>(
     [transactionResponse, transactionResponse],

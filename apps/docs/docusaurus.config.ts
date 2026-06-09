@@ -5,9 +5,9 @@ import type * as Preset from '@docusaurus/preset-classic';
 // This runs in Node.js - Don't use client-side code here (browser APIs, JSX...)
 
 const config: Config = {
-  title: "Stable Coin Studio",
+  title: "Stablecoin Studio",
   tagline: "Issue and manage institutional stablecoins on Hedera",
-  favicon: "img/coin-dark.svg",
+  favicon: "img/favicon.svg",
 
   // Future flags, see https://docusaurus.io/docs/api/docusaurus-config#future
   future: {
@@ -89,11 +89,11 @@ const config: Config = {
       respectPrefersColorScheme: true,
     },
     navbar: {
-      title: "Stable Coin Studio",
+      title: "Stablecoin Studio",
       logo: {
-        alt: "Stable Coin Studio Logo",
-        src: "img/coin-dark.svg",
-        srcDark: "img/coin.svg",
+        alt: "Hedera Logo",
+        src: "img/hedera-logo.svg",
+        srcDark: "img/hedera-logo-dark.svg",
       },
       items: [
         {
@@ -132,7 +132,7 @@ const config: Config = {
           title: "Products",
           items: [
             {
-              label: "Stable Coin Studio",
+              label: "Stablecoin Studio",
               href: "https://github.com/hashgraph/stablecoin-studio/tree/main",
             }
           ],

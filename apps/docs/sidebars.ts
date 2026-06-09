@@ -30,6 +30,8 @@ const sidebars: SidebarsConfig = {
         "sdk/overview",
         "sdk/quick-start",
         "sdk/usage",
+        "sdk/wallet-adapters",
+        "sdk/examples",
         "sdk/architecture",
       ],
     },
@@ -63,6 +65,17 @@ const sidebars: SidebarsConfig = {
         "web/usage",
         "web/architecture",
         "web/multisig",
+      ],
+    },
+    {
+      type: "category",
+      label: "References",
+      items: [
+        "references/intro",
+        "references/migration",
+        "references/deployed-addresses",
+        "references/troubleshooting",
+        "references/security",
       ],
     },
     {
