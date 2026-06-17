@@ -29,10 +29,7 @@ contract RescuableFacet is
      * @param _amount The number of tokens to rescue
      */
     modifier checkRescueAmount(int64 _amount) {
-        int64 rescuableAmount = getRescuableAmount();
-        if (rescuableAmount < _amount) {
-            revert RescuableAmountExceeded(rescuableAmount);
-        }
+        _checkRescueAmount(_amount);
         _;
     }
 
@@ -102,10 +99,16 @@ contract RescuableFacet is
         amount_ = SafeCast.toInt64(SafeCast.toInt256(_balanceOf(address(this)))) - _holdDataStorage().totalHeldAmount;
     }
 
+    /**
+     * @dev Returns the resolver key that identifies this facet within the resolver.
+     */
     function getStaticResolverKey() external pure override returns (bytes32 staticResolverKey_) {
         staticResolverKey_ = _RESCUABLE_RESOLVER_KEY;
     }
 
+    /**
+     * @dev Returns the list of function selectors exposed by this facet.
+     */
     function getStaticFunctionSelectors() external pure override returns (bytes4[] memory staticFunctionSelectors_) {
         uint256 selectorIndex;
         staticFunctionSelectors_ = new bytes4[](3);
@@ -114,9 +117,26 @@ contract RescuableFacet is
         staticFunctionSelectors_[selectorIndex++] = this.getRescuableAmount.selector;
     }
 
+    /**
+     * @dev Returns the list of interface ids implemented by this facet.
+     */
     function getStaticInterfaceIds() external pure override returns (bytes4[] memory staticInterfaceIds_) {
         staticInterfaceIds_ = new bytes4[](1);
         uint256 selectorsIndex;
         staticInterfaceIds_[selectorsIndex++] = type(IRescuable).interfaceId;
+    }
+
+    /**
+     * @dev Checks that the requested rescue amount does not exceed the unreserved
+     * contract balance (the contract balance minus the amount held in escrow on
+     * token holders' behalf).
+     *
+     * @param _amount The number of tokens to rescue
+     */
+    function _checkRescueAmount(int64 _amount) private view {
+        int64 rescuableAmount = getRescuableAmount();
+        if (rescuableAmount < _amount) {
+            revert RescuableAmountExceeded(rescuableAmount);
+        }
     }
 }
