@@ -1613,6 +1613,13 @@ jest.mock('../src/port/out/rpc/RPCQueryAdapter', () => {
 				.toString();
 		},
 	);
+	singletonInstance.getRescuableAmount = jest.fn(
+		async (address: EvmAddress) => {
+			return BigDecimal.fromString(totalSupply)
+				.subUnsafe(totalHeldAmount)
+				.toString();
+		},
+	);
 
 	return {
 		RPCQueryAdapter: jest.fn(() => singletonInstance),

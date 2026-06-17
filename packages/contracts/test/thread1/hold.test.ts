@@ -10,6 +10,8 @@ import {
     HoldManagementFacet,
     CashInFacet,
     CashInFacet__factory,
+    RescuableFacet,
+    RescuableFacet__factory,
     StableCoinTokenMock__factory,
     IHRC__factory,
 } from '@contracts'
@@ -47,6 +49,7 @@ describe('➡️ Hold Management Tests', () => {
     let holdManagementFacet: HoldManagementFacet
     let cashInFacet: CashInFacet
     let burnableFacet: BurnableFacet
+    let rescuableFacet: RescuableFacet
 
     // Accounts
     let operator: SignerWithAddress
@@ -61,6 +64,7 @@ describe('➡️ Hold Management Tests', () => {
         holdManagementFacet = HoldManagementFacet__factory.connect(address, operator)
         cashInFacet = CashInFacet__factory.connect(address, operator)
         burnableFacet = BurnableFacet__factory.connect(address, operator)
+        rescuableFacet = RescuableFacet__factory.connect(address, operator)
     }
 
     async function checkCreatedHold_expected(
@@ -735,6 +739,53 @@ describe('➡️ Hold Management Tests', () => {
                 contract: burnableFacet,
                 customError: 'BurnableAmountExceeded',
             })
+        })
+    })
+
+    describe('Rescue when held amount greater than 0', () => {
+        beforeEach(async () => {
+            await setInitialData({})
+        })
+        it('GIVEN an active hold WHEN rescuing more than the unreserved balance THEN fails with RescuableAmountExceeded', async () => {
+            await expect(holdManagementFacet.createHold(hold)).to.emit(holdManagementFacet, 'HoldCreated')
+            await delay({ time: 1, unit: 'sec' })
+
+            // The held escrow is part of the contract balance but must NOT be rescuable
+            const contractBalance = await hederaTokenManagerFacet.balanceOf(stableCoinProxyAddress)
+            const heldAmount = await holdManagementFacet.getHeldAmount()
+            const rescuableAmount = await rescuableFacet.getRescuableAmount()
+            expect(rescuableAmount).to.equal(contractBalance - heldAmount)
+
+            // Trying to rescue the full contract balance (escrow included) must revert
+            await expectRevert({
+                txPromise: rescuableFacet.rescue(contractBalance, {
+                    gasLimit: GAS_LIMIT.hederaTokenManager.rescue,
+                }),
+                contract: rescuableFacet,
+                customError: 'RescuableAmountExceeded',
+                args: [rescuableAmount],
+            })
+        })
+        it('GIVEN an active hold WHEN rescuing only the unreserved balance THEN it succeeds and leaves the escrow intact', async () => {
+            await expect(holdManagementFacet.createHold(hold)).to.emit(holdManagementFacet, 'HoldCreated')
+            await delay({ time: 1, unit: 'sec' })
+
+            const heldAmount = await holdManagementFacet.getHeldAmount()
+            const rescuableAmount = await rescuableFacet.getRescuableAmount()
+
+            // Rescuing exactly the unreserved amount is allowed
+            const response = await rescuableFacet.rescue(rescuableAmount, {
+                gasLimit: GAS_LIMIT.hederaTokenManager.rescue,
+            })
+            await validateTxResponse(
+                new ValidateTxResponseCommand({ txResponse: response, confirmationEvent: 'TokenRescued' })
+            )
+            await delay({ time: 1, unit: 'sec' })
+
+            // The escrow backing the active hold must remain in the contract
+            const contractBalance = await hederaTokenManagerFacet.balanceOf(stableCoinProxyAddress)
+            expect(contractBalance).to.equal(heldAmount)
+            expect(await rescuableFacet.getRescuableAmount()).to.equal(0n)
         })
     })
 
