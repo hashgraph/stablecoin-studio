@@ -35,6 +35,8 @@ import { ExpiredHold } from '../../app/usecase/command/stablecoin/operations/hol
 import { HoldNotExpired } from '../../app/usecase/command/stablecoin/operations/hold/error/HoldNotExpired';
 import { GetBurnableAmountQuery } from '../../app/usecase/query/stablecoin/burn/getBurnableAmount/GetBurnableAmountQuery';
 import { BurnableAmountExceeded } from '../../app/usecase/command/stablecoin/operations/burn/error/BurnableAmountExceeded';
+import { GetRescuableAmountQuery } from '../../app/usecase/query/stablecoin/rescue/getRescuableAmount/GetRescuableAmountQuery';
+import { RescuableAmountExceeded } from '../../app/usecase/command/stablecoin/operations/rescue/error/RescuableAmountExceeded';
 
 export default class ValidationService extends Service {
 	constructor(
@@ -163,6 +165,18 @@ export default class ValidationService extends Service {
 		).payload;
 		if (burnableAmount.isLowerThan(BigDecimal.fromString(amount))) {
 			throw new BurnableAmountExceeded();
+		}
+	}
+
+	async checkRescuableAmount(
+		tokenId: HederaId,
+		amount: string,
+	): Promise<void> {
+		const rescuableAmount = (
+			await this.queryBus.execute(new GetRescuableAmountQuery(tokenId))
+		).payload;
+		if (rescuableAmount.isLowerThan(BigDecimal.fromString(amount))) {
+			throw new RescuableAmountExceeded();
 		}
 	}
 }
