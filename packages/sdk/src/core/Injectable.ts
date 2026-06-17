@@ -113,6 +113,7 @@ import { GetHoldForQueryHandler } from '../app/usecase/query/stablecoin/hold/get
 import { GetHeldAmountForQueryHandler } from '../app/usecase/query/stablecoin/hold/getHeldAmountFor/GetHeldAmountForQueryHandler.js';
 import { GetHoldCountForQueryHandler } from '../app/usecase/query/stablecoin/hold/getHoldCountFor/GetHoldCountForQueryHandler.js';
 import { GetBurnableAmountQueryHandler } from '../app/usecase/query/stablecoin/burn/getBurnableAmount/GetBurnableAmountQueryHandler.js';
+import { GetRescuableAmountQueryHandler } from '../app/usecase/query/stablecoin/rescue/getRescuableAmount/GetRescuableAmountQueryHandler.js';
 import { GetAccountAutoAssociationQueryHandler } from '../app/usecase/query/account/autoAssociation/GetAccountAutoAssociationQueryHandler';
 import { ClientTransactionAdapter } from '../port/out/hs/client/ClientTransactionAdapter.js';
 import { ExternalHederaTransactionAdapter } from '../port/out/hs/external/ExternalHederaTransactionAdapter.js';
@@ -413,6 +414,10 @@ const QUERY_HANDLERS = [
 	{
 		token: TOKENS.QUERY_HANDLER,
 		useClass: GetBurnableAmountQueryHandler,
+	},
+	{
+		token: TOKENS.QUERY_HANDLER,
+		useClass: GetRescuableAmountQueryHandler,
 	},
 ];
 

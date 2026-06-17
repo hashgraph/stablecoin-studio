@@ -56,6 +56,7 @@ export enum ErrorCode {
 	ExpiredHold = '20014',
 	HoldNotExpired = '20015',
 	BurnableAmountExceeded = '20016',
+	RescuableAmountExceeded = '20017',
 	ReceiptNotReceived = '30001',
 	ContractNotFound = '30002',
 	Unexpected = '30003',

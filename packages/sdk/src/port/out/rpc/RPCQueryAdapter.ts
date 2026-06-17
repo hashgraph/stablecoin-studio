@@ -39,6 +39,7 @@ import {
 	DiamondFacet__factory,
 	HoldManagementFacet__factory,
 	BurnableFacet__factory,
+	RescuableFacet__factory,
 } from '@hashgraph/stablecoin-npm-contracts';
 import { StableCoinRole } from '../../../domain/context/stablecoin/StableCoinRole.js';
 import ContractId from '../../../domain/context/contract/ContractId.js';
@@ -334,5 +335,16 @@ export class RPCQueryAdapter {
 		).getBurnableAmount();
 
 		return burnableAmount.toString();
+	}
+
+	async getRescuableAmount(address: EvmAddress): Promise<string> {
+		LogService.logTrace(`Getting rescuable amount`);
+
+		const rescuableAmount = await this.connect(
+			RescuableFacet__factory,
+			address.toString(),
+		).getRescuableAmount();
+
+		return rescuableAmount.toString();
 	}
 }

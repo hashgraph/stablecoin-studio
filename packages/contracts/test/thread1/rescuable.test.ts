@@ -146,14 +146,17 @@ describe('➡️ Rescue Tests', function () {
         const TokenOwnerBalance = await hederaTokenManagerFacet.balanceOf(stableCoinProxyAddress, {
             gasLimit: GAS_LIMIT.hederaTokenManager.balanceOf,
         })
+        // With no active holds the rescuable amount equals the full contract balance
+        const rescuableAmount = await rescuableFacet.getRescuableAmount()
+        expect(rescuableAmount).to.equal(TokenOwnerBalance)
         // Rescue TokenOwnerBalance + 1 : fail
         await expectRevert({
             txPromise: rescuableFacet.rescue(TokenOwnerBalance + 1n, {
                 gasLimit: GAS_LIMIT.hederaTokenManager.rescue,
             }),
             contract: rescuableFacet,
-            customError: 'GreaterThan',
-            args: [TokenOwnerBalance + 1n, TokenOwnerBalance],
+            customError: 'RescuableAmountExceeded',
+            args: [rescuableAmount],
         })
     })
 
