@@ -28,7 +28,7 @@ contract RescuableFacet is
      *
      * @param _amount The number of tokens to rescue
      */
-    modifier checkRescueAmount(int64 _amount) {
+    modifier onlyRescueAmount(int64 _amount) {
         _checkRescueAmount(_amount);
         _;
     }
@@ -47,7 +47,7 @@ contract RescuableFacet is
         override(IRescuable)
         onlyRole(_RESCUE_ROLE)
         greaterThanZero(amount)
-        checkRescueAmount(amount)
+        onlyRescueAmount(amount)
         returns (bool)
     {
         address currentTokenAddress = _getTokenAddress();
