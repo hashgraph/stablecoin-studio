@@ -16,4 +16,4 @@ We welcome contributions to Stablecoin Studio! To contribute:
 This project is governed by the Contributor Covenant Code of Conduct. By participating, you are expected to uphold this code of conduct. Please report unacceptable behavior to oss@hedera.com.
 
 ## Security Policy
-To report vulnerabilities, please follow our [Security Policy](../gettingStarted/07-security.md).
+To report vulnerabilities, please refer to the [SECURITY.md](https://github.com/hashgraph/stablecoin-studio/blob/main/SECURITY.md) file in the repository.

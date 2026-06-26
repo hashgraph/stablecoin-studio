@@ -27,7 +27,6 @@ The service is built using a modern and robust stack:
 - **Testing**: [Jest](https://jestjs.io/)
 
 ## 📚 Document Sections
-1. [**Architecture**](./architecture.md): Deep dive into the transaction flow and background jobs.
-2. [**Installation**](./installation.md): Full setup guide, environment variables, and testing.
-3. [**API Reference**](./api-reference.md): Detailed endpoint definitions and logic.
-4. [**Troubleshooting**](./troubleshooting.md): Common issues and log management.
+1. [**Quick Start**](./quick-start.md): Setup guide, environment variables, and running the service.
+2. [**Architecture**](./architecture.md): Deep dive into the transaction flow and background jobs.
+3. [**Overview**](./overview.md): High-level description of the backend service.

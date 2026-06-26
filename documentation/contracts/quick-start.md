@@ -16,7 +16,7 @@ This page covers how to deploy the full contract infrastructure, create individu
 - Node.js 16+ and npm
 - Hardhat (installed as a project dependency)
 - A Hedera account with sufficient HBAR balance
-- The `.env` file configured with your private key (see `.env.sample`)
+- The `.env` file configured with your private key (see `.env.example`)
 
 ---
 
