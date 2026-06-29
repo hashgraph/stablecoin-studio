@@ -1,6 +1,6 @@
 {
 	"name": "@hashgraph/stablecoin-npm-sdk",
-	"version": "4.3.0",
+	"version": "4.4.0",
 	"description": "stablecoin studio SDK",
 	"main": "./build/cjs/src/index.js",
 	"module": "./build/esm/src/index.js",
@@ -46,6 +46,8 @@
 		"typescript": "5.8.3"
 	},
 	"scripts": {
+		"execute:createMultisig": "node build/cjs/scripts/CreateMultisigAccount.js",
+		"execute:associateToken": "node build/cjs/scripts/AssociateToken.js",
 		"start": "node build/src/index.js",
 		"clean": "rimraf coverage build",
 		"clean:modules": "rimraf node_modules",
@@ -68,8 +70,8 @@
 		"pre-commit": "npm run lint && npm run prettier",
 		"prettierCheck": "prettier --config .prettierrc --check",
 		"prepack": "npm run build",
-		"test-external-evm": "ts-node --project example/ts/tsconfig.json example/ts/external/testExternalEVM.ts",
-		"test-external-hedera": "ts-node --project example/ts/tsconfig.json example/ts/external/testExternalHedera.ts"
+		"test-external-evm": "ts-node --project example/ts/tsconfig.json example/ts/testExternalEVM.ts",
+		"test-external-hedera": "ts-node --project example/ts/tsconfig.json example/ts/testExternalHedera.ts"
 	},
 	"license": "Apache-2.0",
 	"repository": "https://github.com/hashgraph/stablecoin-studio",

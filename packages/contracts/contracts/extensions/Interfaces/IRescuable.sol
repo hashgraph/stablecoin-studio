@@ -34,6 +34,15 @@ interface IRescuable {
     error HBARRescueError(uint256 amount);
 
     /**
+     * @dev Emitted when the requested rescue amount exceeds the unreserved contract
+     * balance (the contract balance minus the amount held in escrow on token holders'
+     * behalf).
+     *
+     * @param rescuableAmount The maximum amount of tokens that can be rescued
+     */
+    error RescuableAmountExceeded(int64 rescuableAmount);
+
+    /**
      * @dev Rescues `value` tokens from contractTokenOwner to rescuer
      *
      * @param amount The number of tokens to rescuer
@@ -46,4 +55,12 @@ interface IRescuable {
      * @param amount The number of tokens to rescuer
      */
     function rescueHBAR(uint256 amount) external returns (bool);
+
+    /**
+     * @dev Returns the amount of tokens that can be rescued from the contract, i.e. the
+     * contract balance minus the amount held in escrow on token holders' behalf.
+     *
+     * @return amount_ The maximum amount of tokens that can be rescued
+     */
+    function getRescuableAmount() external view returns (int64 amount_);
 }
