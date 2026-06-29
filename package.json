@@ -1,6 +1,6 @@
 {
   "name": "@hashgraph/hedera-stable-coin",
-  "version": "4.3.0",
+  "version": "4.4.0",
   "private": true,
   "description": "Stablecoin studio",
   "keywords": [
@@ -28,7 +28,7 @@
     "build:cli": "npm run build --workspace=apps/cli",
     "build:cli:full": "npm run build:backend && npm run build:contracts && npm run build:sdk && npm run build:cli",
     "build:backend": "npm run build --workspace=apps/backend",
-    "build:contracts": "npm run compile:force --workspace=packages/contracts",
+    "build:contracts": "npm run build --workspace=packages/contracts",
     "build:web": "npm run build --workspace=apps/web",
     "pack:backend": "npm pack --workspace=apps/backend",
     "pack:contracts": "npm pack --workspace=packages/contracts",
@@ -42,6 +42,7 @@
     "clean:cli:modules": "npm run clean:modules --workspace=apps/cli",
     "clean:web:modules": "npm run clean:modules --workspace=apps/web",
     "clean:contracts:modules": "npm run clean:modules --workspace=packages/contracts",
+    "clean:docs:modules": "npm run clean:modules --workspace=apps/docs",
     "clean:docs:modules": "npm run clean:modules --workspace=apps/docs",
     "clean:all:build": "concurrently \"npm run clean:sdk:build\" \"npm run clean:backend:build\" \"npm run clean:cli:build\" \"npm run clean:web:build\" \"npm run clean:contracts:build\" \"npm run clean:docs:build\"",
     "clean:sdk:build": "npm run clean --workspace=packages/sdk",

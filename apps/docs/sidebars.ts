@@ -89,6 +89,17 @@ const sidebars: SidebarsConfig = {
         "references/security",
       ],
     },
+    {
+      type: "category",
+      label: "References",
+      items: [
+        "references/intro",
+        "references/migration",
+        "references/deployed-addresses",
+        "references/troubleshooting",
+        "references/security",
+      ],
+    },
   ],
 };
 

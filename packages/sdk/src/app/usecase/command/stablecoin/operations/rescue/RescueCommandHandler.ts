@@ -28,6 +28,7 @@ import { StableCoinNotAssociated } from '../../error/StableCoinNotAssociated.js'
 import AccountService from '../../../../../service/AccountService.js';
 import StableCoinService from '../../../../../service/StableCoinService.js';
 import TransactionService from '../../../../../service/TransactionService.js';
+import ValidationService from '../../../../../service/ValidationService.js';
 
 import { DecimalsOverRange } from '../../error/DecimalsOverRange.js';
 import { OperationNotAllowed } from '../../error/OperationNotAllowed.js';
@@ -55,6 +56,8 @@ export class RescueCommandHandler implements ICommandHandler<RescueCommand> {
 		public readonly accountService: AccountService,
 		@lazyInject(TransactionService)
 		public readonly transactionService: TransactionService,
+		@lazyInject(ValidationService)
+		private readonly validationService: ValidationService,
 	) {}
 
 	async execute(command: RescueCommand): Promise<RescueCommandResponse> {
@@ -106,6 +109,9 @@ export class RescueCommandHandler implements ICommandHandler<RescueCommand> {
 				'The rescue amount is bigger than the treasury account balance',
 			);
 		}
+
+		await this.validationService.checkRescuableAmount(coin.tokenId, amount);
+
 		const res = await handler.rescue(capabilities, amountBd, startDate);
 		return Promise.resolve(
 			new RescueCommandResponse(res.error === undefined, res.id, res.serializedTransactionData),
